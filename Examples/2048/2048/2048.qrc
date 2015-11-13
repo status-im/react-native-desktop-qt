@@ -1,0 +1,5 @@
+<RCC>
+  <qresource>
+    <file>react-demo.qml</file>
+  </qresource>
+</RCC>
