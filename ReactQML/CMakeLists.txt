@@ -40,6 +40,6 @@ set_target_properties(
 qt5_use_modules(react-native Core Qml Quick)
 
 add_custom_target(
-  copy-data ALL
+  copy-qmldir ALL
   COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
  )

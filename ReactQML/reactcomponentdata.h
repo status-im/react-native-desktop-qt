@@ -4,6 +4,7 @@
 #include <QString>
 #include <QVariant>
 
+class QQuickItem;
 class UbuntuViewManager;
 
 class ReactComponentData
