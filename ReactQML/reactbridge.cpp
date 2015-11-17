@@ -5,6 +5,7 @@
 #include <QNetworkReply>
 #include <QPluginLoader>
 #include <QJsonDocument>
+#include <QQuickItem>
 #include <QTimer>
 
 #include "reactbridge.h"
@@ -50,7 +51,6 @@ void ReactBridge::init()
   initModules();
 
   loadSource();
-  // execute source code
 }
 
 
@@ -81,7 +81,13 @@ QQuickItem* ReactBridge::visualParent() const
 
 void ReactBridge::setVisualParent(QQuickItem* item)
 {
+  if (m_visualParent == item)
+    return;
+
   m_visualParent = item;
+  connect(m_visualParent, SIGNAL(widthChanged()), SLOT(rootViewHeightChanged()));
+  connect(m_visualParent, SIGNAL(heightChanged()), SLOT(rootViewHeightChanged()));
+  connect(m_visualParent, SIGNAL(scaleChanged()), SLOT(rootViewScaleChanged()));
 }
 
 QQmlEngine* ReactBridge::qmlEngine() const
@@ -229,7 +235,6 @@ void ReactBridge::processResult(const QJsonDocument& doc)
       continue;
     }
 
-    // TODO; work on argument coercion
     ReactModuleMethod* method = moduleData->method(methodIDs[i].toInt());
     if (method == nullptr) {
       qCritical() << "Request for unsupported method";

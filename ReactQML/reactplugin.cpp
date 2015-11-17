@@ -1,5 +1,6 @@
 
 #include <QtQml>
+#include <QMetaType>
 
 #include "reactplugin.h"
 #include "reactview.h"

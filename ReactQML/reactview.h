@@ -34,9 +34,6 @@ Q_SIGNALS:
   void propertiesChanged();
 
 private Q_SLOTS:
-  void widthChanged();
-  void heightChanged();
-  void scaleChanged();
   void bridgeReady();
 
 private:

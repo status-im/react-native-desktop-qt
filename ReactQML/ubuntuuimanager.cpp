@@ -1,4 +1,7 @@
 
+#include <iterator>
+#include <algorithm>
+
 #include <QMetaObject>
 #include <QMetaMethod>
 #include <QJsonDocument>
@@ -42,20 +45,61 @@ void UbuntuUIManager::updateView
   int reactTag,
   const QString& viewName,
   const QVariantMap& properties
-) {
+)
+{
+  qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << properties;
+
+  // set properties on iew
+  QQuickItem* item = m_views.value(reactTag);
+  if (item == nullptr) {
+    qWarning() << "Attempting to update properties on unknown view";
+    return;
+  }
+
+  item->property("viewManager").value<UbuntuViewManager*>()->applyProperties(item, properties);
+}
+
+QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
+{
 }
 
 void UbuntuUIManager::manageChildren
 (
   int containerReactTag,
-  const QVariantList& moveFromIndicies,
-  const QVariantList& moveToIndices,
-  const QVariantList& addChildReactTags,
-  const QVariantList& addAtIndices,
-  const QVariantList& removeAtIndices
+  const QList<int>& moveFromIndicies,
+  const QList<int>& moveToIndices,
+  const QList<int>& addChildReactTags,
+  const QList<int>& addAtIndices,
+  const QList<int>& removeAtIndices
 ) {
   qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags << addAtIndices << removeAtIndices;
+
+  QQuickItem* container = m_views[containerReactTag];
+
+  QList<QQuickItem*> children;
+
+  // removeAtIndices get unpluged and erased
+  //  children = indexedChildren(container, removeAtIndices);
+
+  // XXX: Assumption - addChildReactTags is sorted
+  if (containerReactTag == 11) //XXX: !!
+    container = m_bridge->visualParent();
+
+  std::transform(addChildReactTags.begin(), addChildReactTags.end(),
+                 std::back_inserter(children),
+                 [this](int key) {
+                   return m_views.value(key);
+                 });
+
+  // on iOS, order of the subviews implies z-order
+  // XXX: existing views
+  for (int i = 0; i < children.size(); ++i) {
+    QQuickItem* child = children.at(i);
+    child->setZ(i);
+    child->setParentItem(container);
+  }
 }
+
 
 void UbuntuUIManager::createView
 (
@@ -79,7 +123,8 @@ void UbuntuUIManager::createView
     return;
 
   item->setProperty("reactTag", reactTag);
-  item->setParentItem(m_bridge->visualParent());
+  item->setProperty("viewManager", QVariant::fromValue<UbuntuViewManager*>(cd->manager()));
+  m_views.insert(reactTag, item);
 
   // most likely we keep the properties then apply on manageChildren
 }
@@ -101,6 +146,10 @@ void UbuntuUIManager::setBridge(ReactBridge* bridge)
       m_componentData.insert(cd->name(), cd);
     }
   }
+
+  connect(m_bridge->visualParent(), SIGNAL(widthChanged()), SLOT(rootViewWidthChanged()));
+  connect(m_bridge->visualParent(), SIGNAL(heightChanged()), SLOT(rootViewHeightChanged()));
+  connect(m_bridge->visualParent(), SIGNAL(scaleChanged()), SLOT(rootViewScaleChanged()));
 }
 
 QString UbuntuUIManager::moduleName()
@@ -186,4 +235,17 @@ QVariantMap UbuntuUIManager::constantsToExport()
               { "height", getHeight()}});
 
   return rc;
+}
+
+
+void UbuntuUIManager::rootViewWidthChanged()
+{
+}
+
+void UbuntuUIManager::rootViewHeightChanged()
+{
+}
+
+void UbuntuUIManager::rootViewScaleChanged()
+{
 }

@@ -29,34 +29,21 @@ QString ReactModuleMethod::name() const
 void ReactModuleMethod::invokeWithBridge(ReactBridge* bridge, const QVariantList& args)
 {
   //qDebug() << __PRETTY_FUNCTION__ << "module" << m_moduleImpl << "name" << m_metaMethod.methodSignature();
+  const int parameterCount = m_metaMethod.parameterCount();
 
-  if (args.size() != m_metaMethod.parameterCount()) {
+  if (args.size() != parameterCount) {
     qCritical() << "Attempt to invoke" << m_metaMethod.methodSignature() <<
       "with" << args.size() << "arguments";
     return;
   }
 
-  QVariantList pa(args);
-  for (int i = 0; i < m_metaMethod.parameterCount(); ++i) {
-    const int parameterType = m_metaMethod.parameterType(i);
-    QVariant& arg = pa[i];
-
-    if (!arg.isValid()) {
-      arg = QVariant(parameterType, QMetaType::create(parameterType));
-    } else if (arg.canConvert(parameterType)) {
-      arg.convert(parameterType);
-    } else {
-      // custom conversion or fail
-      // TODO:
-      // - QVariantList -> QList<T>
-      // - double -> QDateTime
-      arg = reactCoerceValue(arg, parameterType);
-      if (!arg.isValid()) {
-        qWarning() << "Could not convert argument" << i << "for" <<
-          m_metaMethod.methodSignature() << "typeid" << parameterType << "from" <<
-          arg.typeName() << "type id" << arg.type() << "rep" << arg;
-        return;
-      }
+  QVariantList pa;
+  for (int i = 0; i < parameterCount; ++i) {
+    pa << reactCoerceValue(args.at(i), m_metaMethod.parameterType(i));
+    if (!pa.last().isValid()) {
+      qCritical() << "Could not convert argument" << i << "for" <<
+        m_metaMethod.methodSignature() << "from" << args.at(i).typeName();
+      return;
     }
   }
 

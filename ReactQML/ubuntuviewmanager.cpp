@@ -44,7 +44,6 @@ QVariantMap UbuntuViewManager::constantsToExport()
 QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
-  //  return new QQuickItem(m_bridge->visualParent());
 
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData("import QtQuick 2.4\nRectangle{}", QUrl());

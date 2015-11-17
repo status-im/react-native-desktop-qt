@@ -31,11 +31,11 @@ class UbuntuUIManager
                               const QString& viewName,
                               const QVariantMap& properties);
   Q_INVOKABLE void manageChildren(int containerReactTag,
-                                  const QVariantList& moveFromIndicies,
-                                  const QVariantList& moveToIndices,
-                                  const QVariantList& addChildReactTags,
-                                  const QVariantList& addAtIndices,
-                                  const QVariantList& removeAtIndices);
+                                  const QList<int>& moveFromIndicies,
+                                  const QList<int>& moveToIndices,
+                                  const QList<int>& addChildReactTags,
+                                  const QList<int>& addAtIndices,
+                                  const QList<int>& removeAtIndices);
   // Q_INVOKABLE void replaceExistingNonRootView();
   // Q_INVOKABLE void measureLayout();
   // Q_INVOKABLE void scrollTo();
@@ -61,9 +61,15 @@ public:
   QStringList methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+public Q_SLOTS:
+  void rootViewWidthChanged();
+  void rootViewHeightChanged();
+  void rootViewScaleChanged();
+
 private:
   ReactBridge* m_bridge;
   QMap<QString, ReactComponentData*> m_componentData;
+  QMap<int, QQuickItem*> m_views;
 };
 
 #endif // UBUNTUUIMANAGER_H

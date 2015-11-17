@@ -32,6 +32,8 @@ public:
 
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 
+  virtual void applyProperties(QQuickItem* item, const QVariantMap& properties) const;
+
 protected:
   ReactBridge* m_bridge;
 };

@@ -12,9 +12,6 @@ ReactView::ReactView(QQuickItem* parent)
   : QQuickItem(parent)
   , m_bridge(new ReactBridge(this))
 {
-  connect(this, SIGNAL(widthChanged()), SLOT(widthChanged()));
-  // connect(this, SIGNAL(heightChanged()), SLOT(heightChanged()));
-  // connect(this, SIGNAL(scaleChanged()), SLOT(scaleChanged()));
   connect(m_bridge, SIGNAL(bridgeReady()), SLOT(bridgeReady()));
 }
 
@@ -56,19 +53,6 @@ QVariantMap ReactView::properties() const
 void ReactView::setProperties(const QVariantMap& properties)
 {
   m_properties = properties;
-}
-
-void ReactView::widthChanged()
-{
-  qDebug() << __PRETTY_FUNCTION__ << width();
-}
-
-void ReactView::heightChanged()
-{
-}
-
-void ReactView::scaleChanged()
-{
 }
 
 void ReactView::bridgeReady()
