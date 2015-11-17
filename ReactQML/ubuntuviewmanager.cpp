@@ -82,3 +82,6 @@ QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
 
   return item;
 }
+
+void UbuntuViewManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const {
+}
