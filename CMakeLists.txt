@@ -5,6 +5,8 @@ project(react-native-qml)
 set(PROJECT_NAME "react-native-qml")
 set(PROJECT_VERSION "0.0.1")
 
+include_directories(./React/Layout)
+
 add_subdirectory(ReactQML)
 add_subdirectory(Examples)
 

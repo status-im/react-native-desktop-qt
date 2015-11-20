@@ -12,24 +12,13 @@
 #include "reactbridge.h"
 #include "reactcomponentdata.h"
 #include "reactmoduledata.h"
+#include "reactattachedproperties.h"
 #include "ubuntuuimanager.h"
 #include "ubuntuviewmanager.h"
 
 
+int UbuntuUIManager::m_nextTag = 1;
 
-namespace {
-
-QQuickItem* findItem(int reactTag, QQuickItem* parent)
-{
-
-}
-
-void applyProperties(QQuickItem* item, const QVariantMap& properties)
-{
-  
-}
-
-}
 
 UbuntuUIManager::UbuntuUIManager()
   : m_bridge(nullptr)
@@ -61,6 +50,7 @@ void UbuntuUIManager::updateView
 
 QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
 {
+  return QList<QQuickItem*>{};
 }
 
 void UbuntuUIManager::manageChildren
@@ -97,9 +87,10 @@ void UbuntuUIManager::manageChildren
     QQuickItem* child = children.at(i);
     child->setZ(i);
     child->setParentItem(container);
+    child->property("viewManager").value<UbuntuViewManager*>()->
+      updateLayout(child, child->property("reactProperties").toMap());
   }
 }
-
 
 void UbuntuUIManager::createView
 (
@@ -122,12 +113,19 @@ void UbuntuUIManager::createView
   if (item == nullptr)
     return;
 
-  item->setProperty("reactTag", reactTag);
+  ReactAttachedProperties* properties = ReactAttachedProperties::get(item);
+  properties->setTag(reactTag);
+
+  // XXX:
+  item->setProperty("reactProperties", props);
   item->setProperty("viewManager", QVariant::fromValue<UbuntuViewManager*>(cd->manager()));
+
+  // XXX:
   m_views.insert(reactTag, item);
 
   // most likely we keep the properties then apply on manageChildren
 }
+
 
 void UbuntuUIManager::setBridge(ReactBridge* bridge)
 {
@@ -237,6 +235,18 @@ QVariantMap UbuntuUIManager::constantsToExport()
   return rc;
 }
 
+int UbuntuUIManager::allocateRootTag()
+{
+  int tag = m_nextTag;
+  m_nextTag += 10;
+  return tag;
+}
+
+void UbuntuUIManager::registerRootView(QQuickItem* root)
+{
+  ReactAttachedProperties* properties = ReactAttachedProperties::get(root);
+  m_views.insert(properties->tag(), root);
+}
 
 void UbuntuUIManager::rootViewWidthChanged()
 {

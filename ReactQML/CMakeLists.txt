@@ -1,7 +1,8 @@
 
-set(CMAKE_INcLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
@@ -22,6 +23,8 @@ add_library(
   reactnetworking.cpp
   reacttiming.cpp
   reactview.cpp
+  reactattachedproperties.cpp
+  reactflexlayout.cpp
   ubuntuactivitymanager.cpp
   ubuntudatepickermanager.cpp
   ubunturawtextmanager.cpp
@@ -30,6 +33,7 @@ add_library(
   ubuntuuimanager.cpp
   ubuntuview.cpp
   ubuntuviewmanager.cpp
+  ../React/Layout/Layout.c
 )
 
 set_target_properties(

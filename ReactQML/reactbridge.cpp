@@ -85,9 +85,6 @@ void ReactBridge::setVisualParent(QQuickItem* item)
     return;
 
   m_visualParent = item;
-  connect(m_visualParent, SIGNAL(widthChanged()), SLOT(rootViewHeightChanged()));
-  connect(m_visualParent, SIGNAL(heightChanged()), SLOT(rootViewHeightChanged()));
-  connect(m_visualParent, SIGNAL(scaleChanged()), SLOT(rootViewScaleChanged()));
 }
 
 QQmlEngine* ReactBridge::qmlEngine() const
@@ -130,6 +127,11 @@ void ReactBridge::setBundleUrl(const QUrl& bundleUrl)
 QList<ReactModuleData*> ReactBridge::modules() const
 {
   return m_modules.values();
+}
+
+UbuntuUIManager* ReactBridge::uiManager() const
+{
+  return m_uiManager;
 }
 
 void ReactBridge::sourcesFinished()
@@ -183,7 +185,8 @@ void ReactBridge::initModules()
   //  modules << new UbuntuDatePickerManager;
   modules << new ReactNetworking;
   modules << new ReactTiming;
-  modules << new UbuntuUIManager;
+  m_uiManager = new UbuntuUIManager;
+  modules << m_uiManager;
 
   // XXX:
   Q_FOREACH(QObject* o, modules) {

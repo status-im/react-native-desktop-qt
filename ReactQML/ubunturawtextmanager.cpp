@@ -1,6 +1,7 @@
 #include <QString>
 #include <QVariant>
 #include <QQuickItem>
+#include <QQmlProperty>
 
 #include "ubunturawtextmanager.h"
 #include "reactbridge.h"
@@ -55,28 +56,36 @@ QQuickItem* UbuntuRawTextManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  // Set properties
-  if (!properties.isEmpty()) {
-    Q_FOREACH(const QString& key, properties.keys()) {
-      if (key == "text") {
-        item->setProperty("text", properties.value(key));
-      }
-
-      // XXX: hmm
-      if (key == "backgroundColor") {
-        item->setProperty("colour", QColor(properties.value(key).toUInt()));
-      } else if (key == "borderRadius") {
-        item->setProperty("radius", properties.value(key));
-      } else if (key == "height") {
-        item->setProperty("height", properties.value(key));
-      } else if (key == "width") {
-        item->setProperty("width", properties.value(key));
-      } else if (key == "margin") {
-        // TODO; this is valid?
-        item->setProperty("anchors.margins", properties.value(key));
-      }
-    }
-  }
+  applyProperties(item, properties);
 
   return item;
+}
+
+void UbuntuRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
+{
+  qDebug() << __PRETTY_FUNCTION__ << item << properties;
+
+  if (properties.isEmpty())
+    return;
+
+  UbuntuViewManager::applyProperties(item, properties);
+
+  Q_FOREACH(const QString& key, properties.keys()) {
+    if (key == "text") {
+      item->setProperty("text", properties.value(key));
+    } else if (key == "fontFamily") {
+      qDebug() << "setting font size";
+      QQmlProperty p(item, "font.family");
+      p.write(QVariant::fromValue(properties.value(key).toString()));
+    } else if (key == "fontSize") {
+      qDebug() << "setting font size";
+      QQmlProperty p(item, "font.pointSize");
+      p.write(QVariant::fromValue(100.0/*properties.value(key).toDouble()*/));
+    } else if (key == "color") {
+      item->setProperty("color", QColor(properties.value(key).toUInt()));
+    }
+    // TODO:
+    // weight
+    // font scaling
+  }
 }

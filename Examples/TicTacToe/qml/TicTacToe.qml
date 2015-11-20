@@ -1,4 +1,4 @@
-import React 1.0
+import React 0.1
 import QtQuick 2.4
 
 Rectangle {
