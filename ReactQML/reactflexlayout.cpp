@@ -37,9 +37,8 @@ public:
   static css_node_t* getChild(void* context, int i) {
     QQuickItem* child =
       static_cast<ReactFlexLayoutPrivate*>(context)->item->childItems().at(i);
-    ReactFlexLayout* flex =
-      qobject_cast<ReactFlexLayout*>(qmlAttachedPropertiesObject<ReactFlexLayout>(child));
-    ReactFlexLayoutPrivate::get(flex)->cssNode;
+    ReactFlexLayout* flex = ReactFlexLayout::get(child);
+    return ReactFlexLayoutPrivate::get(flex)->cssNode;
   }
   static bool isDirty(void* context) {
     static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
