@@ -61,12 +61,18 @@ public:
   QStringList methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  int allocateRootTag();
+
+  void registerRootView(QQuickItem* root);
+
 public Q_SLOTS:
   void rootViewWidthChanged();
   void rootViewHeightChanged();
   void rootViewScaleChanged();
 
 private:
+  static int m_nextTag;
+
   ReactBridge* m_bridge;
   QMap<QString, ReactComponentData*> m_componentData;
   QMap<int, QQuickItem*> m_views;

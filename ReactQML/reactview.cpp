@@ -2,10 +2,11 @@
 #include <QQmlEngine>
 #include <QTimer>
 
-#include "reactview.h"
-
 
 #include "reactbridge.h"
+#include "ubuntuuimanager.h"
+#include "reactattachedproperties.h"
+#include "reactview.h"
 
 
 ReactView::ReactView(QQuickItem* parent)
@@ -57,13 +58,18 @@ void ReactView::setProperties(const QVariantMap& properties)
 
 void ReactView::bridgeReady()
 {
-  QVariantList args;
-  args.append(m_moduleName);
+  // XXX: should do the root view tag allocation internally
+  ReactAttachedProperties* properties = ReactAttachedProperties::get(this);
+  properties->setTag(m_bridge->uiManager()->allocateRootTag());
+  m_bridge->uiManager()->registerRootView(this);
 
-  QVariantMap params;
-  params.insert("rootTag", 11); // TODO:
-  params.insert("initialProps", m_properties);
-  args.append(params);
+  QVariantList args{
+    m_moduleName,
+    QVariantMap{
+      { "rootTag", properties->tag() },
+      { "initialProps", m_properties }
+    }
+  };
 
   m_bridge->enqueueJSCall("AppRegistry", "runApplication", args);
 }

@@ -11,6 +11,7 @@ class QQmlEngine;
 class QNetworkAccessManager;
 class ReactNetExecutor;
 class ReactModuleData;
+class UbuntuUIManager;
 
 class ReactBridge : public QObject
 {
@@ -19,7 +20,8 @@ class ReactBridge : public QObject
   Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
   Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
   Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
-  Q_PROPERTY(QList<ReactModuleData*> modules READ modules);
+  Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
+  Q_PROPERTY(UbuntuUIManager* uiManager READ uiManager)
 
   enum Fields { FieldRequestModuleIDs, FieldMethodIDs, FieldParams };
 
@@ -45,6 +47,7 @@ public:
   void setBundleUrl(const QUrl& bundleUrl);
 
   QList<ReactModuleData*> modules() const;
+  UbuntuUIManager* uiManager() const;
 
 Q_SIGNALS:
   void bridgeReady();
@@ -62,6 +65,7 @@ private:
   QQmlEngine* m_qmlEngine;
   QQuickItem* m_visualParent;
   QNetworkAccessManager* m_nam;
+  UbuntuUIManager* m_uiManager;
   QByteArray m_sourceCode;
   QUrl m_bundleUrl;
   QMap<int, ReactModuleData*> m_modules;

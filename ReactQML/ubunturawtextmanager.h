@@ -30,6 +30,8 @@ public:
 
   QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
 
+  void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
+
 protected:
   ReactBridge* m_bridge;
 };

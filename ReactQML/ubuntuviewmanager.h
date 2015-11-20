@@ -34,6 +34,8 @@ public:
 
   virtual void applyProperties(QQuickItem* item, const QVariantMap& properties) const;
 
+  virtual void updateLayout(QQuickItem* item, const QVariantMap& properties) const;
+
 protected:
   ReactBridge* m_bridge;
 };
