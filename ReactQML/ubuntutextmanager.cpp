@@ -74,7 +74,7 @@ void UbuntuTextManager::applyProperties(QQuickItem* item, const QVariantMap& pro
 
   UbuntuViewManager::applyProperties(item, properties);
 
-  Q_FOREACH(const QString& key, properties.keys()) {
+  for (const QString& key : properties.keys()) {
     if (key == "text") {
       item->setProperty("text", properties.value(key));
     } else if (key == "fontFamily") {
@@ -94,6 +94,3 @@ void UbuntuTextManager::applyProperties(QQuickItem* item, const QVariantMap& pro
   }
 }
 
-void UbuntuTextManager::updateLayout(QQuickItem* item, const QVariantMap& properties) const
-{
-}

@@ -22,6 +22,7 @@ add_library(
   reactpipeexecutor.cpp
   reactnetworking.cpp
   reacttiming.cpp
+  reactitem.cpp
   reactview.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp

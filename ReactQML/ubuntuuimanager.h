@@ -71,7 +71,7 @@ public Q_SLOTS:
   void rootViewScaleChanged();
 
 private:
-  static int m_nextTag;
+  static int m_nextRootTag;
 
   ReactBridge* m_bridge;
   QMap<QString, ReactComponentData*> m_componentData;

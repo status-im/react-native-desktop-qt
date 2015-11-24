@@ -17,7 +17,7 @@
 #include "ubuntuviewmanager.h"
 
 
-int UbuntuUIManager::m_nextTag = 1;
+int UbuntuUIManager::m_nextRootTag = 1;
 
 
 UbuntuUIManager::UbuntuUIManager()
@@ -46,6 +46,8 @@ void UbuntuUIManager::updateView
   }
 
   item->property("viewManager").value<UbuntuViewManager*>()->applyProperties(item, properties);
+  // XXX:
+  m_bridge->visualParent()->polish();
 }
 
 QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
@@ -61,20 +63,19 @@ void UbuntuUIManager::manageChildren
   const QList<int>& addChildReactTags,
   const QList<int>& addAtIndices,
   const QList<int>& removeAtIndices
-) {
+)
+{
   qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags << addAtIndices << removeAtIndices;
 
   QQuickItem* container = m_views[containerReactTag];
 
+  qDebug() << __PRETTY_FUNCTION__ << "container=" << container;
   QList<QQuickItem*> children;
 
   // removeAtIndices get unpluged and erased
   //  children = indexedChildren(container, removeAtIndices);
 
   // XXX: Assumption - addChildReactTags is sorted
-  if (containerReactTag == 11) //XXX: !!
-    container = m_bridge->visualParent();
-
   std::transform(addChildReactTags.begin(), addChildReactTags.end(),
                  std::back_inserter(children),
                  [this](int key) {
@@ -82,14 +83,15 @@ void UbuntuUIManager::manageChildren
                  });
 
   // on iOS, order of the subviews implies z-order
+  // implicitly its the same in QML, barring some exceptions.
   // XXX: existing views
   for (int i = 0; i < children.size(); ++i) {
     QQuickItem* child = children.at(i);
     child->setZ(i);
     child->setParentItem(container);
-    child->property("viewManager").value<UbuntuViewManager*>()->
-      updateLayout(child, child->property("reactProperties").toMap());
   }
+
+  container->polish();
 }
 
 void UbuntuUIManager::createView
@@ -117,13 +119,10 @@ void UbuntuUIManager::createView
   properties->setTag(reactTag);
 
   // XXX:
-  item->setProperty("reactProperties", props);
   item->setProperty("viewManager", QVariant::fromValue<UbuntuViewManager*>(cd->manager()));
 
   // XXX:
   m_views.insert(reactTag, item);
-
-  // most likely we keep the properties then apply on manageChildren
 }
 
 
@@ -137,7 +136,7 @@ void UbuntuUIManager::setBridge(ReactBridge* bridge)
 
   m_bridge = bridge;
 
-  Q_FOREACH(ReactModuleData* data, m_bridge->modules()) {
+  for (ReactModuleData* data : m_bridge->modules()) {
     UbuntuViewManager* manager = data->viewManager();
     if (manager != nullptr) {
       ReactComponentData* cd = new ReactComponentData(manager);
@@ -167,28 +166,13 @@ QStringList UbuntuUIManager::methodsToExport()
   return methods;
 }
 
-
-
-int getWidth() {
-  return 640;
-}
-
-int getHeight() {
-  return 480;
-}
-
-int getScale()
-{
-  return 1;
-}
-
 QVariantMap UbuntuUIManager::constantsToExport()
 {
   QVariantMap rc;
   QVariantMap directEvents;
   QVariantMap bubblingEvents;
 
-  Q_FOREACH(const ReactComponentData* componentData, m_componentData) {
+  for (const ReactComponentData* componentData : m_componentData) {
     qDebug() << "Checking" << componentData->name();
 
     QVariantMap managerInfo;
@@ -198,7 +182,7 @@ QVariantMap UbuntuUIManager::constantsToExport()
       managerInfo.insert("NativeProps", config["propTypes"]);
     }
 
-    Q_FOREACH(const QString& eventName, config["directEvents"].toStringList()) {
+    for (const QString& eventName : config["directEvents"].toStringList()) {
       QString tmp = eventName; tmp.replace(0, 3, "on");
       if (!directEvents.contains(eventName)) {
         directEvents.insert(eventName,
@@ -206,7 +190,7 @@ QVariantMap UbuntuUIManager::constantsToExport()
       }
     }
 
-    Q_FOREACH(const QString& eventName, config["bubblingEvents"].toStringList()) {
+    for (const QString& eventName : config["bubblingEvents"].toStringList()) {
       if (!bubblingEvents.contains(eventName)) {
         QString eventNameTmp = eventName; eventNameTmp.replace(0, 3, "on");
         QString bubbleName = eventName; bubbleName.replace(0, 3, "on");
@@ -224,21 +208,21 @@ QVariantMap UbuntuUIManager::constantsToExport()
   rc.insert("customDirectEventTypes", directEvents);
   rc.insert("Dimensions",
             QVariantMap{
-              { "width", getWidth() },
-              { "height", getHeight()},
-              { "scale", getScale() }});
+              { "width", m_bridge->visualParent()->width() },
+              { "height", m_bridge->visualParent()->height() },
+              { "scale", m_bridge->visualParent()->scale() }});
   rc.insert("modalFullscreenView",
             QVariantMap{
-              { "width", getWidth() },
-              { "height", getHeight()}});
+              { "width", m_bridge->visualParent()->width() },
+              { "height", m_bridge->visualParent()->height() }});
 
   return rc;
 }
 
 int UbuntuUIManager::allocateRootTag()
 {
-  int tag = m_nextTag;
-  m_nextTag += 10;
+  int tag = m_nextRootTag;
+  m_nextRootTag += 10;
   return tag;
 }
 
@@ -250,12 +234,15 @@ void UbuntuUIManager::registerRootView(QQuickItem* root)
 
 void UbuntuUIManager::rootViewWidthChanged()
 {
+  m_bridge->visualParent()->polish();
 }
 
 void UbuntuUIManager::rootViewHeightChanged()
 {
+  m_bridge->visualParent()->polish();
 }
 
 void UbuntuUIManager::rootViewScaleChanged()
 {
+  m_bridge->visualParent()->polish();
 }
