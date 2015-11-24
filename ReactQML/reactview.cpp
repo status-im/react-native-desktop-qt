@@ -7,12 +7,14 @@
 #include "ubuntuuimanager.h"
 #include "reactattachedproperties.h"
 #include "reactview.h"
-
+#include "reactflexlayout.h"
 
 ReactView::ReactView(QQuickItem* parent)
-  : QQuickItem(parent)
+  : ReactItem(parent)
   , m_bridge(new ReactBridge(this))
 {
+  setAcceptedMouseButtons(Qt::LeftButton);
+  setFiltersChildMouseEvents(true);
   connect(m_bridge, SIGNAL(bridgeReady()), SLOT(bridgeReady()));
 }
 
@@ -77,6 +79,7 @@ void ReactView::bridgeReady()
 void ReactView::componentComplete()
 {
   QQuickItem::componentComplete();
+
   QTimer::singleShot(0, [=]() {
       // TODO: setQmlEngine && setNetworkAccessManager to be just setQmlEngine && then internal?
       m_bridge->setQmlEngine(qmlEngine(this));
@@ -85,4 +88,29 @@ void ReactView::componentComplete()
       m_bridge->setVisualParent(this);
       m_bridge->init();
     });
+}
+
+void printDetails(QQuickItem* item, const QString& indent)
+{
+  qDebug().noquote() << indent << ReactAttachedProperties::get(item)->tag() << item;
+  for (auto c : item->childItems()) {
+    printDetails(c, indent + "  ");
+  }
+}
+
+void ReactView::updatePolish()
+{
+  // XXX:
+  ReactFlexLayout::get(this)->setWidth(this->width());
+  ReactFlexLayout::get(this)->setHeight(this->height());
+  ReactItem::updatePolish();
+
+  //
+  //  qDebug() << "Items after polish";
+  // printDetails(this, "  ");
+}
+
+bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* e)
+{
+  qDebug() << __PRETTY_FUNCTION__;
 }

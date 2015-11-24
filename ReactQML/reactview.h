@@ -3,12 +3,13 @@
 
 #include <QString>
 #include <QUrl>
-#include <QQuickItem>
+
+#include "reactitem.h"
 
 
 class ReactBridge;
 
-class ReactView : public QQuickItem
+class ReactView : public ReactItem
 {
   Q_OBJECT
   Q_PROPERTY(QString moduleName READ moduleName WRITE setModuleName NOTIFY moduleNameChanged)
@@ -37,7 +38,10 @@ private Q_SLOTS:
   void bridgeReady();
 
 private:
-  void componentComplete();
+  void componentComplete() override;
+  void updatePolish() override;
+  bool childMouseEventFilter(QQuickItem* item, QEvent* e) override;
+  void mousePressEvent(QMouseEvent* event);
 
   QString m_moduleName;
   QUrl m_codeLocation;

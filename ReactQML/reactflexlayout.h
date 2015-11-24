@@ -12,13 +12,19 @@ class ReactFlexLayoutPrivate;
 class ReactFlexLayout : public QObject
 {
   Q_OBJECT
-  Q_PROPERTY(bool flex READ isFlex WRITE setFlex NOTIFY flexChanged)
+  Q_PROPERTY(double flex READ flex WRITE setFlex NOTIFY flexChanged)
   Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
   Q_PROPERTY(Justify justify READ justify WRITE setJustify NOTIFY justifyChanged)
   Q_PROPERTY(Alignment selfAlignment READ selfAlignment WRITE setSelfAlignment NOTIFY selfAlignmentChanged)
   Q_PROPERTY(Alignment itemAlignment READ itemAlignment WRITE setItemAlignment NOTIFY itemAlignmentChanged)
   Q_PROPERTY(Position position READ position WRITE setPosition NOTIFY positionChanged)
   Q_PROPERTY(Wrap wrap READ wrap WRITE setWrap NOTIFY wrapChanged)
+  Q_PROPERTY(double top READ top WRITE setTop NOTIFY topChanged)
+  Q_PROPERTY(double right READ right WRITE setRight NOTIFY rightChanged)
+  Q_PROPERTY(double bottom READ bottom WRITE setBottom NOTIFY bottomChanged)
+  Q_PROPERTY(double left READ left WRITE setLeft NOTIFY leftChanged)
+  Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
+  Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
 
   Q_ENUMS(Direction)
   Q_ENUMS(Justify)
@@ -32,8 +38,8 @@ public:
   ReactFlexLayout(QObject* parent = 0);
   ~ReactFlexLayout();
 
-  bool isFlex() const;
-  void setFlex(bool flex);
+  double flex() const;
+  void setFlex(double flex);
 
   enum Direction { DirectionColumn = 0, DirectionColumnReverse, DirectionRow, DirecctionRowReverse };
   Direction direction() const;
@@ -58,9 +64,27 @@ public:
   Wrap wrap() const;
   void setWrap(Wrap wrap);
 
+  double top() const;
+  void setTop(double top);
+
+  double right() const;
+  void setRight(double right);
+
+  double bottom() const;
+  void setBottom(double bottom);
+
+  double left() const;
+  void setLeft(double left);
+
+  double width() const;
+  void setWidth(double width);
+
+  double height() const;
+  void setHeight(double height);
+
   void layout();
 
-  static ReactFlexLayout* get(QQuickItem* item);
+  static ReactFlexLayout* get(QQuickItem* item, bool create = true);
   static ReactFlexLayout* qmlAttachedProperties(QObject* object);
 
 Q_SIGNALS:
@@ -71,6 +95,12 @@ Q_SIGNALS:
   void itemAlignmentChanged();
   void positionChanged();
   void wrapChanged();
+  void topChanged();
+  void rightChanged();
+  void bottomChanged();
+  void leftChanged();
+  void widthChanged();
+  void heightChanged();
 
 private:
   QScopedPointer<ReactFlexLayoutPrivate> d_ptr;

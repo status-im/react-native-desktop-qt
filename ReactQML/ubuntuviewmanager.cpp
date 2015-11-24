@@ -5,6 +5,7 @@
 #include <QQmlProperty>
 
 #include "ubuntuviewmanager.h"
+#include "reactitem.h"
 #include "reactbridge.h"
 #include "reactflexlayout.h"
 
@@ -37,11 +38,12 @@ static QMap<QString, ReactFlexLayout::Wrap> wraps{
 
 void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
 {
+  qDebug() << __PRETTY_FUNCTION__ << item << properties;
   ReactFlexLayout* flex = ReactFlexLayout::get(item);
 
-  Q_FOREACH(const QString& key, properties.keys()) {
+  for (const QString& key : properties.keys()) {
     if (key == "flex") {
-      flex->setFlex(properties.value(key).toBool());
+      flex->setFlex(properties.value(key).toDouble());
     } else if (key == "flexDirection") {
       flex->setDirection(directions[properties.value(key).toString()]);
     } else if (key == "alignItems") {
@@ -52,6 +54,18 @@ void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
       flex->setPosition(positions[properties.value(key).toString()]);
     } else if (key == "flexWrap") {
       flex->setWrap(wraps[properties.value(key).toString()]);
+    } else if (key == "top") {
+      flex->setTop(properties.value(key).toDouble());
+    } else if (key == "right") {
+      flex->setRight(properties.value(key).toDouble());
+    } else if (key == "bottom") {
+      flex->setBottom(properties.value(key).toDouble());
+    } else if (key == "left") {
+      flex->setLeft(properties.value(key).toDouble());
+    } else if (key == "width") {
+      flex->setWidth(properties.value(key).toDouble());
+    } else if (key == "height") {
+      flex->setHeight(properties.value(key).toDouble());
     }
   }
 }
@@ -98,7 +112,7 @@ QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
 
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nRectangle{border.width:2;}", QUrl());
+  component.setData("import QtQuick 2.4\nRectangle{}", QUrl());
   if (!component.isReady())
     qCritical() << "Rectangle not ready!";
 
@@ -131,23 +145,8 @@ void UbuntuViewManager::applyProperties(QQuickItem* item, const QVariantMap& pro
       item->setProperty("color", QColor(properties.value(key).toUInt()));
     } else if (key == "borderRadius") {
       item->setProperty("radius", properties.value(key));
-    } else if (key == "margin") {
-      // TODO; this is valid?
-      item->setProperty("anchors.margins", properties.value(key));
     } else if (key == "opacity") {
       item->setOpacity(properties.value(key).toDouble());
     }
   }
-}
-
-void UbuntuViewManager::updateLayout(QQuickItem* item, const QVariantMap& properties) const
-{
-  qDebug() << __PRETTY_FUNCTION__ << item << properties;
-
-  ReactFlexLayout* flex = ReactFlexLayout::get(item);
-
-  if (!flex->isFlex())
-    return;
-
-  flex->layout();
 }

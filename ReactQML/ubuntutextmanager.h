@@ -26,8 +26,6 @@ public:
   QQuickItem* view(const QVariantMap& properties) const override;
 
   void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
-
-  void updateLayout(QQuickItem* item, const QVariantMap& properties) const override;
 };
 
 #endif // UBUNTUTEXTMANAGER_H
