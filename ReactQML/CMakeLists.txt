@@ -14,6 +14,8 @@ add_library(
   reactplugin.cpp
   reactvaluecoercion.cpp
   reactbridge.cpp
+  reactevents.cpp
+  reactsourcecode.cpp
   reactcomponentdata.cpp
   reactmoduledata.cpp
   reactmodulemethod.cpp
@@ -26,6 +28,7 @@ add_library(
   reactview.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
+  reacttextproperties.cpp
   ubuntuactivitymanager.cpp
   ubuntudatepickermanager.cpp
   ubunturawtextmanager.cpp

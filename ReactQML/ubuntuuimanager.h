@@ -41,9 +41,9 @@ class UbuntuUIManager
   // Q_INVOKABLE void scrollTo();
   // Q_INVOKABLE void measureLayoutRelativeToParent();
   // Q_INVOKABLE void configureNextLayoutAnimation();
-  // Q_INVOKABLE void blur();
-  // Q_INVOKABLE void clearJSResponder();
-  // Q_INVOKABLE void setJSResponder();
+  Q_INVOKABLE void blur(int reactTag);
+  Q_INVOKABLE void setJSResponder(int reactTag, bool blockNativeResponder);
+  Q_INVOKABLE void clearJSResponder();
   // Q_INVOKABLE void zoomToRect();
   Q_INVOKABLE void createView(int reactTag,
                               const QString& viewName,

@@ -40,8 +40,9 @@ private Q_SLOTS:
 private:
   void componentComplete() override;
   void updatePolish() override;
-  bool childMouseEventFilter(QQuickItem* item, QEvent* e) override;
-  void mousePressEvent(QMouseEvent* event);
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
 
   QString m_moduleName;
   QUrl m_codeLocation;

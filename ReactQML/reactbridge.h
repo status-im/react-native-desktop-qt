@@ -9,6 +9,7 @@
 class QQuickItem;
 class QQmlEngine;
 class QNetworkAccessManager;
+class ReactSourceCode;
 class ReactNetExecutor;
 class ReactModuleData;
 class UbuntuUIManager;
@@ -32,6 +33,7 @@ public:
   void init();
 
   void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
+  void invokeAndProcess(const QString& module, const QString& method, const QVariantList &args);
   void executeSourceCode(const QByteArray& sourceCode);
 
   QQuickItem* visualParent() const;
@@ -66,7 +68,7 @@ private:
   QQuickItem* m_visualParent;
   QNetworkAccessManager* m_nam;
   UbuntuUIManager* m_uiManager;
-  QByteArray m_sourceCode;
+  ReactSourceCode* m_sourceCode;
   QUrl m_bundleUrl;
   QMap<int, ReactModuleData*> m_modules;
 };

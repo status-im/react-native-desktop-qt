@@ -3,8 +3,10 @@
 #include <QQuickItem>
 #include <QQmlProperty>
 
+#include "reacttextproperties.h"
 #include "ubunturawtextmanager.h"
 #include "reactbridge.h"
+
 
 UbuntuRawTextManager::UbuntuRawTextManager(QObject *parent)
   : UbuntuViewManager(parent)
@@ -46,7 +48,7 @@ QQuickItem* UbuntuRawTextManager::view(const QVariantMap& properties) const
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
 
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nText{}", QUrl());
+  component.setData("import QtQuick 2.4\nText{anchors.centerIn:parent;}", QUrl());
   if (!component.isReady())
     qCritical() << "Component for RCTRawTextManager not ready";
 
@@ -55,6 +57,9 @@ QQuickItem* UbuntuRawTextManager::view(const QVariantMap& properties) const
     qCritical() << "Unable to create component for RCTRawTextManager";
     return nullptr;
   }
+
+  //
+  item->setEnabled(false);
 
   applyProperties(item, properties);
 
@@ -70,22 +75,20 @@ void UbuntuRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& 
 
   UbuntuViewManager::applyProperties(item, properties);
 
-  Q_FOREACH(const QString& key, properties.keys()) {
-    if (key == "text") {
-      item->setProperty("text", properties.value(key));
-    } else if (key == "fontFamily") {
-      qDebug() << "setting font size";
-      QQmlProperty p(item, "font.family");
-      p.write(QVariant::fromValue(properties.value(key).toString()));
-    } else if (key == "fontSize") {
-      qDebug() << "setting font size";
-      QQmlProperty p(item, "font.pointSize");
-      p.write(QVariant::fromValue(100.0/*properties.value(key).toDouble()*/));
-    } else if (key == "color") {
-      item->setProperty("color", QColor(properties.value(key).toUInt()));
-    }
-    // TODO:
-    // weight
-    // font scaling
+  if (properties.contains("text")) {
+    item->setProperty("text", properties.value("text"));
   }
+
+  // Grab style from parent text item
+  ReactTextProperties *rtp = ReactTextProperties::get(item->parentItem(), false);
+  if (rtp == nullptr)
+    return; // XXX: prob should travel back up to the root text node
+
+  { QQmlProperty p(item, "font.pointSize");
+  p.write(QVariant::fromValue(rtp->fontSize())); }
+
+  { QQmlProperty p(item, "font.family");
+    p.write(QVariant::fromValue(rtp->fontFamily())); }
+
+  item->setProperty("color", rtp->color());
 }

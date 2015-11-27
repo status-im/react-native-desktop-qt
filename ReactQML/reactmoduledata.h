@@ -1,17 +1,18 @@
 #ifndef REACTMODULEDATA_H
 #define REACTMODULEDATA_H
 
-#include <QList>
+#include <QScopedPointer>
 
 class QObject;
-
-class ReactModuleInteface;
 class ReactModuleMethod;
 class UbuntuViewManager;
 
 
+class ReactModuleDataPrivate;
 class ReactModuleData
 {
+  Q_DECLARE_PRIVATE(ReactModuleData)
+
 public:
   ReactModuleData(QObject* moduleImpl);
   ~ReactModuleData();
@@ -26,11 +27,7 @@ public:
   UbuntuViewManager* viewManager() const;
 
 private:
-  int m_id;
-  QObject* m_moduleImpl;
-  QList<ReactModuleMethod*> m_methods;
-
-  static int m_nextModuleId;
+  QScopedPointer<ReactModuleDataPrivate> d_ptr;
 };
 
 #endif // REACTMODULEDATA_H

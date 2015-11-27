@@ -107,6 +107,16 @@ QVariantMap UbuntuViewManager::constantsToExport()
   return QVariantMap{};
 }
 
+QStringList UbuntuViewManager::customDirectEventTypes()
+{
+  return QStringList{};
+}
+
+QStringList UbuntuViewManager::customBubblingEventTypes()
+{
+  return QStringList{"press", "change", "focus", "blur", "submitEditing", "endEditing", "touchStart", "touchMove", "touchCancel", "touchEnd"};
+}
+
 QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;

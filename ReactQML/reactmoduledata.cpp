@@ -7,10 +7,9 @@
 #include "reactmodulemethod.h"
 
 
-int ReactModuleData::m_nextModuleId = 1;
-
 namespace
 {
+static int nextModuleId = 1;
 // TODO: sort out all the issues around methodsToExport
 
 QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl)
@@ -20,19 +19,53 @@ QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl)
 
   QList<ReactModuleMethod*> methods;
   for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
-    methods << new ReactModuleMethod(moduleImpl, metaObject->method(i));
+    QMetaMethod m = metaObject->method(i);
+    if (m.methodType() == QMetaMethod::Method)
+      methods << new ReactModuleMethod(moduleImpl, metaObject->method(i));
   }
 
   return methods;
 }
 
+QVariantMap buildConstantMap(QObject* moduleImpl)
+{
+  const QMetaObject* metaObject = moduleImpl->metaObject();
+  const int propertyCount = metaObject->propertyCount();
+
+  QVariantMap constants;
+
+  // from constantsToExport
+  ReactModuleInterface* rmi = qobject_cast<ReactModuleInterface*>(moduleImpl);
+  constants = rmi->constantsToExport();
+
+  // CONSTANT properties (limited usage?) - overrides values from constantsToExport
+  for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
+    QMetaProperty p = metaObject->property(i);
+    if (p.isConstant())
+      constants.insert(p.name(), p.read(moduleImpl));
+  }
+
+  return constants;
+}
 }
 
-ReactModuleData::ReactModuleData(QObject* moduleImpl)
-  : m_id(m_nextModuleId++)
-  , m_moduleImpl(moduleImpl)
+class ReactModuleDataPrivate
 {
-  m_methods = buildMethodList(moduleImpl);
+public:
+  int id;
+  QObject* moduleImpl;
+  QVariantMap constants;
+  QList<ReactModuleMethod*> methods;
+};
+
+ReactModuleData::ReactModuleData(QObject* moduleImpl)
+  : d_ptr(new ReactModuleDataPrivate)
+{
+  Q_D(ReactModuleData);
+  d->id = nextModuleId++;
+  d->moduleImpl = moduleImpl;
+  d->constants = buildConstantMap(moduleImpl);
+  d->methods = buildMethodList(moduleImpl);
 }
 
 ReactModuleData::~ReactModuleData()
@@ -41,30 +74,29 @@ ReactModuleData::~ReactModuleData()
 
 int ReactModuleData::id() const
 {
-  return m_id;
+  return d_func()->id;
 }
 
 QString ReactModuleData::name() const
 {
-  return qobject_cast<ReactModuleInterface*>(m_moduleImpl)->moduleName();
+  return qobject_cast<ReactModuleInterface*>(d_func()->moduleImpl)->moduleName();
 }
 
 QVariant ReactModuleData::info() const
 {
-  ReactModuleInterface* rmi = qobject_cast<ReactModuleInterface*>(m_moduleImpl);
+  Q_D(const ReactModuleData);
 
   QVariantMap config;
-  config.insert("moduleID", m_id);
+  config.insert("moduleID", d->id);
 
-  QVariantMap constants = rmi->constantsToExport();
-  if (!constants.isEmpty())
-    config.insert("constants", constants);
+  if (!d->constants.isEmpty())
+    config.insert("constants", d->constants);
 
   QVariantMap methodConfig;
-  for (int i = 0; i < m_methods.size(); ++i) {
+  for (int i = 0; i < d->methods.size(); ++i) {
     // TODO: method type
     //    @"type": method.functionType == RCTFunctionTypePromise ? @"remoteAsync" : @"remote",
-    methodConfig.insert(m_methods.at(i)->name(), QVariantMap{ {"methodID", i} });
+    methodConfig.insert(d->methods.at(i)->name(), QVariantMap{ {"methodID", i} });
   }
   config.insert("methods", methodConfig);
 
@@ -75,10 +107,10 @@ QVariant ReactModuleData::info() const
 ReactModuleMethod* ReactModuleData::method(int id) const
 {
   // assert bounds
-  return m_methods.value(id);
+  return d_func()->methods.value(id);
 }
 
 UbuntuViewManager* ReactModuleData::viewManager() const
 {
-  return qobject_cast<ReactModuleInterface*>(m_moduleImpl)->viewManager();
+  return qobject_cast<ReactModuleInterface*>(d_func()->moduleImpl)->viewManager();
 }
