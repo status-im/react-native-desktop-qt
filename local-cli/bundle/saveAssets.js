@@ -10,6 +10,7 @@
 
 const fs = require('fs');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
+const getAssetDestPathUbuntu = require('./getAssetDestPathUbuntu');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
 const log = require('../util/log').out('bundle');
 const mkdirp = require('mkdirp');
@@ -25,9 +26,13 @@ function saveAssets(
     return Promise.resolve();
   }
 
-  const getAssetDestPath = platform === 'android'
-    ? getAssetDestPathAndroid
-    : getAssetDestPathIOS;
+  const getAssetDestPath = (platform) => {
+    switch (platform) {
+        case 'android': return getAssetDestPathAndroid; break;
+        case 'ubuntu': return getAssetDestPathUbuntu; break;
+        case 'ioś':
+        default: return getAssetDestPathIOS; break;
+    }};
 
   const filesToCopy = Object.create(null); // Map src -> dest
   assets

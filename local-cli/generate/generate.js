@@ -25,7 +25,7 @@ function generate(argv, config) {
 function _generate(argv, config, resolve, reject) {
   const args = parseCommandLine([{
     command: 'platform',
-    description: 'Platform (ios|android)',
+    description: 'Platform (ios|android|ubuntu)',
     type: 'string',
     required: true,
   },
@@ -51,6 +51,7 @@ function _generate(argv, config, resolve, reject) {
     ['react:app', args['project-name']],
     {
       'skip-ios': args.platform !== 'ios',
+      'skip-ubuntu': args.platform !== 'ubuntu',
       'skip-android': args.platform !== 'android'
     },
     () => {
