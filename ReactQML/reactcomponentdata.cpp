@@ -5,6 +5,7 @@
 
 #include <QDebug>
 
+#include "reactevents.h"
 #include "reactcomponentdata.h"
 #include "ubuntuviewmanager.h"
 
@@ -58,6 +59,21 @@ QVariantMap ReactComponentData::viewConfig() const
 
   rc.insert("propTypes", propTypes);
 
+  // Events
+  QStringList de = m_viewManager->customDirectEventTypes();
+  QStringList dep;
+  std::transform(de.begin(), de.end(),
+                 std::back_inserter(dep),
+                 [](const QString& name) { return normalizeInputEventName(name); });
+  rc.insert("directEvents", dep);
+
+  de = m_viewManager->customBubblingEventTypes();
+  dep.clear();
+  std::transform(de.begin(), de.end(),
+                 std::back_inserter(dep),
+                 [](const QString& name) { return normalizeInputEventName(name); });
+  rc.insert("bubblingEvents", dep);
+
   return rc;
 }
 
@@ -66,3 +82,4 @@ QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& propertie
   // qDebug() << __PRETTY_FUNCTION__ << tag << properties;
   return m_viewManager->view(properties);
 }
+

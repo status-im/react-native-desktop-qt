@@ -6,12 +6,13 @@
 
 #include <QDebug>
 
+#include "reacttextproperties.h"
 #include "ubuntutextmanager.h"
 #include "reactbridge.h"
 
 
 UbuntuTextManager::UbuntuTextManager(QObject* parent)
-  : UbuntuViewManager(parent)
+  : UbuntuRawTextManager(parent)
 {
 }
 
@@ -46,11 +47,8 @@ QVariantMap UbuntuTextManager::constantsToExport()
 
 QQuickItem* UbuntuTextManager::view(const QVariantMap& properties) const
 {
-  // QQmlComponent component(m_bridge->qmlEngine(),
-  //                         "/usr/lib/x86_64-linux-gnu/qt5/qml/Ubuntu/Components/TextArea.qml",
-  //                         QQmlComponent::PreferSynchronous);
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nText{}", QUrl());
+  component.setData("import QtQuick 2.4\nItem{}", QUrl()); // TODO: depends on self text
   if (!component.isReady())
     qCritical() << "Component for RCTTextManager not ready";
 
@@ -59,6 +57,9 @@ QQuickItem* UbuntuTextManager::view(const QVariantMap& properties) const
     qCritical() << "Unable to create component for RCTTextManager";
     return nullptr;
   }
+
+  //
+  item->setEnabled(false);
 
   applyProperties(item, properties);
 
@@ -74,23 +75,19 @@ void UbuntuTextManager::applyProperties(QQuickItem* item, const QVariantMap& pro
 
   UbuntuViewManager::applyProperties(item, properties);
 
+  // These are added to the text style to be used by self(? - TODO) and all
+  // descendants
+  ReactTextProperties* rtp = ReactTextProperties::get(item);
+
+  qDebug() << "SETTING TEXT PROPERTIES" << rtp;
   for (const QString& key : properties.keys()) {
-    if (key == "text") {
-      item->setProperty("text", properties.value(key));
-    } else if (key == "fontFamily") {
-      qDebug() << "setting font size";
-      QQmlProperty p(item, "font.family");
-      p.write(QVariant::fromValue(properties.value(key).toString()));
+    if (key == "fontFamily") {
+      rtp->setFontFamily(properties.value(key).toString());
     } else if (key == "fontSize") {
-      qDebug() << "setting font size";
-      QQmlProperty p(item, "font.pointSize");
-      p.write(QVariant::fromValue(100.0/*properties.value(key).toDouble()*/));
+      rtp->setFontSize(properties.value(key).toDouble());
     } else if (key == "color") {
-      item->setProperty("color", QColor(properties.value(key).toUInt()));
+      rtp->setProperty("color", QColor(properties.value(key).toUInt()));
     }
-    // TODO:
-    // weight
-    // font scaling
   }
 }
 

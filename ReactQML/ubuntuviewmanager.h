@@ -30,6 +30,9 @@ public:
   QStringList methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  virtual QStringList customDirectEventTypes();
+  virtual QStringList customBubblingEventTypes();
+
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 
   virtual void applyProperties(QQuickItem* item, const QVariantMap& properties) const;

@@ -23,7 +23,7 @@ public:
   int tag() const;
   void setTag(int tag);
 
-  static ReactAttachedProperties* get(QQuickItem* item);
+  static ReactAttachedProperties* get(QQuickItem* item, bool create = true);
   static ReactAttachedProperties* qmlAttachedProperties(QObject* object);
 
 Q_SIGNALS:

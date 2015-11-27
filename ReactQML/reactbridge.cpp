@@ -1,14 +1,12 @@
 
 
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
 #include <QPluginLoader>
 #include <QJsonDocument>
 #include <QQuickItem>
 #include <QTimer>
 
 #include "reactbridge.h"
+#include "reactsourcecode.h"
 #include "reactnetexecutor.h"
 #include "reactmoduleinterface.h"
 #include "reactmoduledata.h"
@@ -54,12 +52,7 @@ void ReactBridge::init()
 }
 
 
-void ReactBridge::enqueueJSCall
-(
-  const QString& module,
-  const QString& method,
-  const QVariantList& args
-)
+void ReactBridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args)
 {
   m_executor->executeJSCall("BatchedBridge",
                             "callFunctionReturnFlushedQueue",
@@ -67,6 +60,11 @@ void ReactBridge::enqueueJSCall
                             [=](const QJsonDocument& doc) {
                               processResult(doc);
                             });
+}
+
+void ReactBridge::invokeAndProcess(const QString& module, const QString& method, const QVariantList &args)
+{
+  m_executor->executeJSCall(module, method, args, [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
@@ -136,22 +134,9 @@ UbuntuUIManager* ReactBridge::uiManager() const
 
 void ReactBridge::sourcesFinished()
 {
-  qDebug() << __PRETTY_FUNCTION__;
-  QNetworkReply* reply = qobject_cast<QNetworkReply*>(sender());
-  if (reply == 0) {
-    qCritical() << "Did not receive a QNetworkReply!";
-  }
-
-  if (reply->error() != QNetworkReply::NoError) {
-    qCritical() << "Error while loading source";
-  }
-
-  m_sourceCode = reply->readAll();
-  reply->deleteLater();
-
   // XXX:
   QTimer::singleShot(200, [this]() {
-      m_executor->executeApplicationScript(m_sourceCode, m_bundleUrl);
+      m_executor->executeApplicationScript(m_sourceCode->sourceCode(), m_bundleUrl);
     });
 }
 
@@ -163,9 +148,7 @@ void ReactBridge::loadSource()
     qCritical() << "No QNetworkAccessManager for loading sources";
   }
 
-  QNetworkRequest request(m_bundleUrl);
-  QNetworkReply* reply = m_nam->get(request);
-  connect(reply, SIGNAL(finished()), SLOT(sourcesFinished()));
+  m_sourceCode->loadSource(m_nam);
 }
 
 
@@ -185,8 +168,14 @@ void ReactBridge::initModules()
   //  modules << new UbuntuDatePickerManager;
   modules << new ReactNetworking;
   modules << new ReactTiming;
+  m_sourceCode = new ReactSourceCode;
+  modules << m_sourceCode;
   m_uiManager = new UbuntuUIManager;
   modules << m_uiManager;
+
+  // XXX:
+  m_sourceCode->setScriptUrl(m_bundleUrl);
+  connect(m_sourceCode, SIGNAL(sourceCodeChanged()), SLOT(sourcesFinished()));
 
   // XXX:
   Q_FOREACH(QObject* o, modules) {

@@ -1,11 +1,11 @@
 #ifndef UBUNTUTEXTMANAGER_H
 #define UBUNTUTEXTMANAGER_H
 
-#include "ubuntuviewmanager.h"
+#include "ubunturawtextmanager.h"
 
 // #define QT_STATICPLUGIN
 
-class UbuntuTextManager : public UbuntuViewManager
+class UbuntuTextManager : public UbuntuRawTextManager
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)

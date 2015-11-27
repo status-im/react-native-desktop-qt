@@ -94,6 +94,27 @@ void UbuntuUIManager::manageChildren
   container->polish();
 }
 
+// Reacts version of first responder
+void UbuntuUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
+{
+  Q_UNUSED(reactTag);
+  Q_UNUSED(blockNativeResponder);
+
+  qDebug() << __PRETTY_FUNCTION__;
+}
+
+void UbuntuUIManager::clearJSResponder()
+{
+}
+
+// in iOS, resign first responder (actual)
+void UbuntuUIManager::blur(int reactTag)
+{
+  Q_UNUSED(reactTag);
+
+  qDebug() << __PRETTY_FUNCTION__;
+}
+
 void UbuntuUIManager::createView
 (
   int reactTag,
@@ -183,8 +204,8 @@ QVariantMap UbuntuUIManager::constantsToExport()
     }
 
     for (const QString& eventName : config["directEvents"].toStringList()) {
-      QString tmp = eventName; tmp.replace(0, 3, "on");
       if (!directEvents.contains(eventName)) {
+        QString tmp = eventName; tmp.replace(0, 3, "on");
         directEvents.insert(eventName,
                             QVariantMap{{"registrationName", tmp}});
       }
@@ -192,12 +213,11 @@ QVariantMap UbuntuUIManager::constantsToExport()
 
     for (const QString& eventName : config["bubblingEvents"].toStringList()) {
       if (!bubblingEvents.contains(eventName)) {
-        QString eventNameTmp = eventName; eventNameTmp.replace(0, 3, "on");
-        QString bubbleName = eventName; bubbleName.replace(0, 3, "on");
+        QString tmp = eventName; tmp.replace(0, 3, "on");
         bubblingEvents.insert(eventName,
                               QVariantMap{{"phasedRegistrationNames",
-                                  QVariantMap{{"bubbled", eventNameTmp.replace(0, 3, "on")},
-                                              {"captured", bubbleName.append("Capture")}}}});
+                                  QVariantMap{{"bubbled", tmp},
+                                              {"captured", tmp.append("Capture")}}}});
       }
     }
 

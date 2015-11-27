@@ -1,12 +1,12 @@
 
 #include <iterator>
 #include <algorithm>
-#include <functional>
 
 #include <QDateTime>
 
 #include "reactvaluecoercion.h"
-
+#include "reactmoduleinterface.h"
+#include "reactbridge.h"
 
 typedef std::function<QVariant (const QVariant&)> coerce_function;
 
@@ -28,6 +28,34 @@ QMap<int, coerce_function> coerceFunctions
       QList<int> r;
       std::transform(s.begin(), s.end(), std::back_inserter(r), [](const QVariant& v) { return v.toInt(); });
       return QVariant::fromValue(r);
+    }
+  },
+  {
+    qRegisterMetaType<ReactModuleInterface::ResponseBlock>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert(ReactModuleInterface::ResponseBlock));
+      int callbackId = value.toInt();
+      ReactModuleInterface::ResponseBlock block =
+        [callbackId](ReactBridge* bridge, const QVariantList& args) {
+          bridge->invokeAndProcess("BatchedBridge",
+                                   "invokeCallbackAndReturnFlushedQueue",
+                                   QVariantList{ callbackId, args });
+        };
+      return QVariant::fromValue(block);
+    }
+  },
+  {
+    qRegisterMetaType<ReactModuleInterface::ErrorBlock>(),
+      [](const QVariant& value) {
+      Q_ASSERT(value.canConvert(ReactModuleInterface::ErrorBlock));
+      int callbackId = value.toInt();
+      ReactModuleInterface::ErrorBlock block =
+        [callbackId](ReactBridge* bridge, const QVariantMap& error) {
+          bridge->invokeAndProcess("BatchedBridge",
+                                   "invokeCallbackAndReturnFlushedQueue",
+                                   QVariantList{ callbackId, error });
+        };
+      return QVariant::fromValue(block);
     }
   }
 };

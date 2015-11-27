@@ -42,9 +42,9 @@ void ReactAttachedProperties::setTag(int tag)
   Q_EMIT tagChanged();
 }
 
-ReactAttachedProperties* ReactAttachedProperties::get(QQuickItem* item)
+ReactAttachedProperties* ReactAttachedProperties::get(QQuickItem* item, bool create)
 {
-  return qobject_cast<ReactAttachedProperties*>(qmlAttachedPropertiesObject<ReactAttachedProperties>(item));
+  return qobject_cast<ReactAttachedProperties*>(qmlAttachedPropertiesObject<ReactAttachedProperties>(item, create));
 }
 
 ReactAttachedProperties* ReactAttachedProperties::qmlAttachedProperties(QObject* object)
