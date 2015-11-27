@@ -30,6 +30,10 @@ module.exports = yeoman.generators.NamedBase.extend({
       desc: 'Specify an upgrade',
       type: Boolean,
       defaults: false
+    this.option('skip-ubuntu', {
+      desc: 'Skip generating Ubuntu files',
+      type: Boolean,
+      defaults: true
     });
 
     // this passes command line arguments down to the composed generators
