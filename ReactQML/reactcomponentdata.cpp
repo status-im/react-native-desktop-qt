@@ -7,10 +7,10 @@
 
 #include "reactevents.h"
 #include "reactcomponentdata.h"
-#include "ubuntuviewmanager.h"
+#include "reactviewmanager.h"
 
 
-ReactComponentData::ReactComponentData(UbuntuViewManager* viewManager)
+ReactComponentData::ReactComponentData(ReactViewManager* viewManager)
   : m_viewManager(viewManager)
 {
 }
@@ -29,7 +29,7 @@ QString ReactComponentData::name() const
   return mn;
 }
 
-UbuntuViewManager* ReactComponentData::manager() const
+ReactViewManager* ReactComponentData::manager() const
 {
   return m_viewManager;
 }

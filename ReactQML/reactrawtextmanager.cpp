@@ -4,46 +4,46 @@
 #include <QQmlProperty>
 
 #include "reacttextproperties.h"
-#include "ubunturawtextmanager.h"
+#include "reactrawtextmanager.h"
 #include "reactbridge.h"
 
 
-UbuntuRawTextManager::UbuntuRawTextManager(QObject *parent)
-  : UbuntuViewManager(parent)
+ReactRawTextManager::ReactRawTextManager(QObject *parent)
+  : ReactViewManager(parent)
 {
 }
 
-UbuntuRawTextManager::~UbuntuRawTextManager()
+ReactRawTextManager::~ReactRawTextManager()
 {
 }
 
-void UbuntuRawTextManager::setBridge(ReactBridge* bridge)
+void ReactRawTextManager::setBridge(ReactBridge* bridge)
 {
   m_bridge = bridge;
 }
 
 // TODO: this doesnt seem right
-UbuntuViewManager* UbuntuRawTextManager::viewManager()
+ReactViewManager* ReactRawTextManager::viewManager()
 {
   return this;
 }
 
-QString UbuntuRawTextManager::moduleName()
+QString ReactRawTextManager::moduleName()
 {
   return "RCTRawTextManager";
 }
 
-QStringList UbuntuRawTextManager::methodsToExport()
+QStringList ReactRawTextManager::methodsToExport()
 {
   return QStringList{};
 }
 
-QVariantMap UbuntuRawTextManager::constantsToExport()
+QVariantMap ReactRawTextManager::constantsToExport()
 {
   return QVariantMap{};
 }
 
-QQuickItem* UbuntuRawTextManager::view(const QVariantMap& properties) const
+QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
 
@@ -66,14 +66,14 @@ QQuickItem* UbuntuRawTextManager::view(const QVariantMap& properties) const
   return item;
 }
 
-void UbuntuRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
+void ReactRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << item << properties;
 
   if (properties.isEmpty())
     return;
 
-  UbuntuViewManager::applyProperties(item, properties);
+  ReactViewManager::applyProperties(item, properties);
 
   if (properties.contains("text")) {
     item->setProperty("text", properties.value("text"));

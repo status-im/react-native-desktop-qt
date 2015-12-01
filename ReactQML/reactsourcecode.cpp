@@ -34,7 +34,7 @@ void ReactSourceCode::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 }
 
-UbuntuViewManager* ReactSourceCode::viewManager()
+ReactViewManager* ReactSourceCode::viewManager()
 {
   return nullptr;
 }

@@ -1,5 +1,5 @@
 
-
+#include <QMap>
 #include <QPluginLoader>
 #include <QJsonDocument>
 #include <QQuickItem>
@@ -8,32 +8,73 @@
 #include "reactbridge.h"
 #include "reactsourcecode.h"
 #include "reactnetexecutor.h"
+#include "reactmoduleloader.h"
 #include "reactmoduleinterface.h"
 #include "reactmoduledata.h"
 #include "reactmodulemethod.h"
 
-#include "ubuntuuimanager.h"
-#include "ubuntuviewmanager.h"
-#include "ubunturawtextmanager.h"
-#include "ubuntutextmanager.h"
-#include "ubuntuactivitymanager.h"
-#include "ubuntuscrollviewmanager.h"
-//#include "ubuntudatepickermanager.h"
 #include "reactnetworking.h"
 #include "reacttiming.h"
+#include "reactviewmanager.h"
+#include "reactrawtextmanager.h"
+#include "reacttextmanager.h"
+#include "reactuimanager.h"
 
-// Q_IMPORT_PLUGIN(UbuntuUIManager)
-// Q_IMPORT_PLUGIN(UbuntuViewManager)
-// Q_IMPORT_PLUGIN(UbuntuActivityManager)
-// Q_IMPORT_PLUGIN(ReactNetworking)
+#include "ubuntuscrollviewmanager.h"
+#include "ubuntucomponentsloader.h"
+
+
+class ReactBridgePrivate
+{
+public:
+  ReactExecutor* executor;
+  QQmlEngine* qmlEngine;
+  QQuickItem* visualParent;
+  QNetworkAccessManager* nam;
+  ReactUIManager* uiManager;
+  ReactSourceCode* sourceCode;
+  QUrl bundleUrl;
+  QMap<int, ReactModuleData*> modules;
+
+  QObjectList internalModules() {
+    return QObjectList {
+      new ReactTiming,
+      new ReactNetworking,
+      new ReactViewManager,
+      new ReactRawTextManager,
+      new ReactTextManager,
+    };
+  }
+
+  QObjectList pluginModules() {
+    UbuntuComponentsLoader loader;
+    QObjectList modules = loader.availableModules();
+    // for (QObject* o : QPluginLoader::staticInstances()) {
+    //   ReactModuleLoader* ml = qobject_cast<ReactModuleLoader*>(o);
+    //   if (o == nullptr)
+    //     continue;
+
+    //   modules << ml->availableModules();
+    // }
+    modules << new UbuntuScrollViewManager; //XXX:
+    return modules;
+  }
+};
 
 
 ReactBridge::ReactBridge(QObject* parent)
   : QObject(parent)
-  , m_executor(new ReactNetExecutor(this))
-  , m_nam(0)
+  , d_ptr(new ReactBridgePrivate)
 {
-  connect(m_executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
+  Q_D(ReactBridge);
+
+  d->executor = new ReactNetExecutor(this); // TODO: config/property
+  connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
+
+  d->qmlEngine = nullptr;
+  d->nam = nullptr;
+  d->visualParent = nullptr;
+  d->uiManager = nullptr;
 }
 
 ReactBridge::~ReactBridge()
@@ -42,9 +83,10 @@ ReactBridge::~ReactBridge()
 
 void ReactBridge::init()
 {
+  Q_D(ReactBridge);
   qDebug() << __func__;
 
-  m_executor->init();
+  d->executor->init();
 
   initModules();
 
@@ -54,17 +96,17 @@ void ReactBridge::init()
 
 void ReactBridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args)
 {
-  m_executor->executeJSCall("BatchedBridge",
-                            "callFunctionReturnFlushedQueue",
-                            QVariantList{module, method, args},
-                            [=](const QJsonDocument& doc) {
-                              processResult(doc);
-                            });
+  d_func()->executor->executeJSCall("BatchedBridge",
+                                    "callFunctionReturnFlushedQueue",
+                                    QVariantList{module, method, args},
+                                    [=](const QJsonDocument& doc) {
+                                      processResult(doc);
+                                    });
 }
 
 void ReactBridge::invokeAndProcess(const QString& module, const QString& method, const QVariantList &args)
 {
-  m_executor->executeJSCall(module, method, args, [=](const QJsonDocument& doc) { processResult(doc); });
+  d_func()->executor->executeJSCall(module, method, args, [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
@@ -74,118 +116,119 @@ void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
 
 QQuickItem* ReactBridge::visualParent() const
 {
-  return m_visualParent;
+  return d_func()->visualParent;
 }
 
 void ReactBridge::setVisualParent(QQuickItem* item)
 {
-  if (m_visualParent == item)
+  Q_D(ReactBridge);
+  if (d->visualParent == item)
     return;
-
-  m_visualParent = item;
+  d->visualParent = item;
 }
 
 QQmlEngine* ReactBridge::qmlEngine() const
 {
-  return m_qmlEngine;
+  return d_func()->qmlEngine;
 }
 
 void ReactBridge::setQmlEngine(QQmlEngine* qmlEngine)
 {
-  if (m_qmlEngine == qmlEngine)
+  Q_D(ReactBridge);
+  if (d->qmlEngine == qmlEngine)
     return;
-
-  m_qmlEngine = qmlEngine;
+  d->qmlEngine = qmlEngine;
 }
 
 QNetworkAccessManager* ReactBridge::networkAccessManager() const
 {
-  return m_nam;
+  return d_func()->nam;
 }
 
 void ReactBridge::setNetworkAccessManager(QNetworkAccessManager* nam)
 {
-  if (m_nam != nam) {
-    m_nam = nam;
-  }
+  Q_D(ReactBridge);
+  if (d->nam == nam)
+    return;
+  d->nam = nam;
 }
 
 QUrl ReactBridge::bundleUrl() const
 {
-  return m_bundleUrl;
+  return d_func()->bundleUrl;
 }
 
 void ReactBridge::setBundleUrl(const QUrl& bundleUrl)
 {
-  if (m_bundleUrl != bundleUrl) {
-    m_bundleUrl = bundleUrl;
-  }
+  Q_D(ReactBridge);
+  if (d->bundleUrl == bundleUrl)
+    return;
+  d->bundleUrl = bundleUrl;
 }
 
 QList<ReactModuleData*> ReactBridge::modules() const
 {
-  return m_modules.values();
+  return d_func()->modules.values();
 }
 
-UbuntuUIManager* ReactBridge::uiManager() const
+ReactUIManager* ReactBridge::uiManager() const
 {
-  return m_uiManager;
+  return d_func()->uiManager;
 }
 
 void ReactBridge::sourcesFinished()
 {
+  Q_D(ReactBridge);
   // XXX:
-  QTimer::singleShot(200, [this]() {
-      m_executor->executeApplicationScript(m_sourceCode->sourceCode(), m_bundleUrl);
+  QTimer::singleShot(200, [=]() {
+      d->executor->executeApplicationScript(d->sourceCode->sourceCode(), d->bundleUrl);
     });
 }
 
 void ReactBridge::loadSource()
 {
-  qDebug() << __PRETTY_FUNCTION__;
-
-  if (m_nam == 0) {
+  Q_D(ReactBridge);
+  if (d->nam == nullptr) {
     qCritical() << "No QNetworkAccessManager for loading sources";
+    return;
   }
-
-  m_sourceCode->loadSource(m_nam);
+  d->sourceCode->loadSource(d->nam);
 }
 
 
 void ReactBridge::initModules()
 {
+  Q_D(ReactBridge);
+
   qDebug() << __func__;
   QVariantMap config;
   QVariantMap moduleConfig;
 
-  // QObjectList modules = QPluginLoader::staticInstances();
   QObjectList modules;
-  modules << new UbuntuViewManager;
-  modules << new UbuntuRawTextManager;
-  modules << new UbuntuTextManager;
-  modules << new UbuntuActivityManager;
-  modules << new UbuntuScrollViewManager;
-  //  modules << new UbuntuDatePickerManager;
-  modules << new ReactNetworking;
-  modules << new ReactTiming;
-  m_sourceCode = new ReactSourceCode;
-  modules << m_sourceCode;
-  m_uiManager = new UbuntuUIManager;
-  modules << m_uiManager;
+  modules << d->internalModules();
+  modules << d->pluginModules();
+
+  // Special cases // TODO:
+  d->sourceCode = new ReactSourceCode;
+  modules << d->sourceCode;
+  d->uiManager = new ReactUIManager; // XXX: this needs to be at end, FIXME:
+  modules << d->uiManager;
 
   // XXX:
-  m_sourceCode->setScriptUrl(m_bundleUrl);
-  connect(m_sourceCode, SIGNAL(sourceCodeChanged()), SLOT(sourcesFinished()));
+  d->sourceCode->setScriptUrl(d->bundleUrl);
+  connect(d->sourceCode, SIGNAL(sourceCodeChanged()), SLOT(sourcesFinished()));
 
   // XXX:
-  Q_FOREACH(QObject* o, modules) {
+  for (QObject* o : modules) {
     ReactModuleInterface* module = qobject_cast<ReactModuleInterface*>(o);
     if (module != nullptr) {
       module->setBridge(this);
       ReactModuleData* moduleData = new ReactModuleData(o);
-      m_modules.insert(moduleData->id(), moduleData);
+      d->modules.insert(moduleData->id(), moduleData);
       qDebug() << "Added module" << moduleData->name() << moduleData->id();
       moduleConfig.insert(moduleData->name(), moduleData->info());
+    } else {
+      qWarning() << "A module loader exported an invalid module";
     }
   }
 
@@ -194,12 +237,13 @@ void ReactBridge::initModules()
   QJsonDocument doc = QJsonDocument::fromVariant(config);
   qDebug() << doc.toJson();
 
-  m_executor->injectJson("__fbBatchedBridgeConfig", config);
+  d->executor->injectJson("__fbBatchedBridgeConfig", config);
 }
 
 void ReactBridge::processResult(const QJsonDocument& doc)
 {
-//  qDebug() << __PRETTY_FUNCTION__ << doc << m_modules;
+  Q_D(ReactBridge);
+
   if (doc.isNull())
     return;
 
@@ -221,7 +265,7 @@ void ReactBridge::processResult(const QJsonDocument& doc)
   // XXX: this should all really be wrapped up in a Module class
   // including invocations etc
   for (int i = 0; i < moduleIDs.size(); ++i) {
-    ReactModuleData* moduleData = m_modules[moduleIDs[i].toInt()];
+    ReactModuleData* moduleData = d->modules[moduleIDs[i].toInt()];
     if (moduleData == nullptr) {
       qCritical() << "Could not find referenced module";
       continue;
@@ -241,7 +285,7 @@ void ReactBridge::applicationScriptDone()
 {
   // XXX
   QTimer::singleShot(200, [this]() {
-      m_executor->executeJSCall("BatchedBridge", "flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
+      d_func()->executor->executeJSCall("BatchedBridge", "flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
           processResult(doc);
           Q_EMIT bridgeReady();
         });

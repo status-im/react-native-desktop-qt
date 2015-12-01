@@ -7,45 +7,45 @@
 #include <QDebug>
 
 #include "reacttextproperties.h"
-#include "ubuntutextmanager.h"
+#include "reacttextmanager.h"
 #include "reactbridge.h"
 
 
-UbuntuTextManager::UbuntuTextManager(QObject* parent)
-  : UbuntuRawTextManager(parent)
+ReactTextManager::ReactTextManager(QObject* parent)
+  : ReactRawTextManager(parent)
 {
 }
 
-UbuntuTextManager::~UbuntuTextManager()
+ReactTextManager::~ReactTextManager()
 {
 }
 
-void UbuntuTextManager::setBridge(ReactBridge* bridge)
+void ReactTextManager::setBridge(ReactBridge* bridge)
 {
   m_bridge = bridge;
 }
 
-UbuntuViewManager* UbuntuTextManager::viewManager()
+ReactViewManager* ReactTextManager::viewManager()
 {
   return this;
 }
 
-QString UbuntuTextManager::moduleName()
+QString ReactTextManager::moduleName()
 {
   return "RCTTextManager";
 }
 
-QStringList UbuntuTextManager::methodsToExport()
+QStringList ReactTextManager::methodsToExport()
 {
   return QStringList{};
 }
 
-QVariantMap UbuntuTextManager::constantsToExport()
+QVariantMap ReactTextManager::constantsToExport()
 {
   return QVariantMap{};
 }
 
-QQuickItem* UbuntuTextManager::view(const QVariantMap& properties) const
+QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 {
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData("import QtQuick 2.4\nItem{}", QUrl()); // TODO: depends on self text
@@ -58,7 +58,6 @@ QQuickItem* UbuntuTextManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  //
   item->setEnabled(false);
 
   applyProperties(item, properties);
@@ -67,13 +66,13 @@ QQuickItem* UbuntuTextManager::view(const QVariantMap& properties) const
 }
 
 
-void UbuntuTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
+void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << item << properties;
   if (properties.isEmpty())
     return;
 
-  UbuntuViewManager::applyProperties(item, properties);
+  ReactViewManager::applyProperties(item, properties);
 
   // These are added to the text style to be used by self(? - TODO) and all
   // descendants

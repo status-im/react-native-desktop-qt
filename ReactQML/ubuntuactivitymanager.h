@@ -1,11 +1,11 @@
 #ifndef UBUNTUACTIVITYMANAGER_H
 #define UBUNTUACTIVITYMANAGER_H
 
-#include "ubuntuviewmanager.h"
+#include "reactviewmanager.h"
 
 // #define QT_STATICPLUGIN
 
-class UbuntuActivityManager : public UbuntuViewManager
+class UbuntuActivityManager : public ReactViewManager
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
@@ -17,7 +17,7 @@ public:
 
   void setBridge(ReactBridge* bridge) override;
 
-  UbuntuViewManager* viewManager() override;
+  ReactViewManager* viewManager() override;
 
   QString moduleName() override;
   QStringList methodsToExport() override;

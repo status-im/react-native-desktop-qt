@@ -1,28 +1,28 @@
-#ifndef UBUNTURAWTEXTMANAGER_H
-#define UBUNTURAWTEXTMANAGER_H
+#ifndef REACTRAWTEXTMANAGER_H
+#define REACTRAWTEXTMANAGER_H
 
 #include <QVariant>
 
-#include "ubuntuviewmanager.h"
+#include "reactviewmanager.h"
 
 class QQuickItem;
 
 // #define QT_STATICPLUGIN
 
-class UbuntuRawTextManager : public UbuntuViewManager
+class ReactRawTextManager : public ReactViewManager
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
 public:
-  UbuntuRawTextManager(QObject *parent = 0);
-  ~UbuntuRawTextManager();
+  ReactRawTextManager(QObject *parent = 0);
+  ~ReactRawTextManager();
 
   void setBridge(ReactBridge* bridge) override;
 
   // TODO: this doesnt seem right
-  UbuntuViewManager* viewManager() override;
+  ReactViewManager* viewManager() override;
 
   QString moduleName() override;
   QStringList methodsToExport() override;

@@ -1,5 +1,5 @@
-#ifndef UBUNTUVIEWMANAGER_H
-#define UBUNTUVIEWMANAGER_H
+#ifndef REACTVIEWMANAGER_H
+#define REACTVIEWMANAGER_H
 
 #include <QVariant>
 
@@ -9,7 +9,7 @@ class QQuickItem;
 
 // #define QT_STATICPLUGIN
 
-class UbuntuViewManager
+class ReactViewManager
   : public QObject
   , public ReactModuleInterface
 {
@@ -18,13 +18,13 @@ class UbuntuViewManager
   Q_INTERFACES(ReactModuleInterface)
 
 public:
-  UbuntuViewManager(QObject *parent = 0);
-  ~UbuntuViewManager();
+  ReactViewManager(QObject *parent = 0);
+  ~ReactViewManager();
 
   void setBridge(ReactBridge* bridge) override;
 
   // TODO: this doesnt seem right
-  UbuntuViewManager* viewManager() override;
+  ReactViewManager* viewManager() override;
 
   QString moduleName() override;
   QStringList methodsToExport() override;
@@ -41,4 +41,4 @@ protected:
   ReactBridge* m_bridge;
 };
 
-#endif // UBUNTUVIEWMANAGER_H
+#endif // REACTVIEWMANAGER_H

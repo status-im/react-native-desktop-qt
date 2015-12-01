@@ -1,5 +1,5 @@
-#ifndef UBUNTUUIMANAGER_H
-#define UBUNTUUIMANAGER_H
+#ifndef REACTUIMANAGER_H
+#define REACTUIMANAGER_H
 
 #include <QString>
 #include <QVariant>
@@ -12,7 +12,7 @@
 class ReactBridge;
 class ReactComponentData;
 
-class UbuntuUIManager
+class ReactUIManager
   : public QObject
   , public ReactModuleInterface
 {
@@ -52,8 +52,8 @@ class UbuntuUIManager
   //  Q_INVOKABLE void findSubviewIn();
 
 public:
-  UbuntuUIManager();
-  ~UbuntuUIManager();
+  ReactUIManager();
+  ~ReactUIManager();
 
   void setBridge(ReactBridge *bridge) override;
 
@@ -78,4 +78,4 @@ private:
   QMap<int, QQuickItem*> m_views;
 };
 
-#endif // UBUNTUUIMANAGER_H
+#endif // REACTUIMANAGER_H

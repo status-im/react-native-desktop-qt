@@ -5,23 +5,23 @@
 #include <QVariant>
 
 class QQuickItem;
-class UbuntuViewManager;
+class ReactViewManager;
 
 class ReactComponentData
 {
 public:
-  ReactComponentData(UbuntuViewManager* viewManager);
+  ReactComponentData(ReactViewManager* viewManager);
   ~ReactComponentData();
 
   QString name() const;
-  UbuntuViewManager* manager() const;
+  ReactViewManager* manager() const;
 
   QVariantMap viewConfig() const;
 
   QQuickItem* createView(int tag, const QVariantMap& properties);
 
 private:
-  UbuntuViewManager* m_viewManager;
+  ReactViewManager* m_viewManager;
 };
 
 

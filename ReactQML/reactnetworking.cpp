@@ -24,7 +24,7 @@ void ReactNetworking::setBridge(ReactBridge* bridge)
   m_nam = bridge->networkAccessManager();
 }
 
-UbuntuViewManager* ReactNetworking::viewManager()
+ReactViewManager* ReactNetworking::viewManager()
 {
   return nullptr;
 }

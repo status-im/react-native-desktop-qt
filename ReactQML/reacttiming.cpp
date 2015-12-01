@@ -24,7 +24,7 @@ void ReactTiming::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 }
 
-UbuntuViewManager* ReactTiming::viewManager()
+ReactViewManager* ReactTiming::viewManager()
 {
   return nullptr;
 }
