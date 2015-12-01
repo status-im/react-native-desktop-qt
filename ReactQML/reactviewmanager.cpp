@@ -148,9 +148,7 @@ void ReactViewManager::applyProperties(QQuickItem* item, const QVariantMap& prop
   // Apply Flex properties
   applyFlexProperties(item, properties);
 
-  // Set properties
-  // XXX: hmm, translation rules, etc
-  Q_FOREACH(const QString& key, properties.keys()) {
+  for (const QString& key : properties.keys()) {
     if (key == "backgroundColor") {
       item->setProperty("color", QColor(properties.value(key).toUInt()));
     } else if (key == "borderRadius") {
