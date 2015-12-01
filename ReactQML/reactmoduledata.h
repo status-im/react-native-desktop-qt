@@ -5,7 +5,7 @@
 
 class QObject;
 class ReactModuleMethod;
-class UbuntuViewManager;
+class ReactViewManager;
 
 
 class ReactModuleDataPrivate;
@@ -24,7 +24,7 @@ public:
 
   ReactModuleMethod* method(int id) const;
 
-  UbuntuViewManager* viewManager() const;
+  ReactViewManager* viewManager() const;
 
 private:
   QScopedPointer<ReactModuleDataPrivate> d_ptr;

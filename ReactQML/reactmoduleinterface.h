@@ -7,7 +7,7 @@
 
 
 class ReactBridge;
-class UbuntuViewManager;
+class ReactViewManager;
 
 
 class ReactModuleInterface
@@ -23,7 +23,7 @@ public:
   virtual void setBridge(ReactBridge* bridge) { Q_UNUSED(bridge); }
 
   // TODO: this doesnt seem right
-  virtual UbuntuViewManager* viewManager() { return nullptr; }
+  virtual ReactViewManager* viewManager() { return nullptr; }
 
   virtual QString moduleName() = 0;
   virtual QStringList methodsToExport() = 0;

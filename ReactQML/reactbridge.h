@@ -1,19 +1,18 @@
 #ifndef REACTBRIDGE_H
 #define REACTBRIDGE_H
 
-#include <QMap>
 #include <QUrl>
 #include <QObject>
-
+#include <QScopedPointer>
 
 class QQuickItem;
 class QQmlEngine;
 class QNetworkAccessManager;
-class ReactSourceCode;
-class ReactNetExecutor;
 class ReactModuleData;
-class UbuntuUIManager;
+class ReactUIManager;
 
+
+class ReactBridgePrivate;
 class ReactBridge : public QObject
 {
   Q_OBJECT
@@ -22,9 +21,11 @@ class ReactBridge : public QObject
   Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
   Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
   Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
-  Q_PROPERTY(UbuntuUIManager* uiManager READ uiManager)
+  Q_PROPERTY(ReactUIManager* uiManager READ uiManager)
 
   enum Fields { FieldRequestModuleIDs, FieldMethodIDs, FieldParams };
+
+  Q_DECLARE_PRIVATE(ReactBridge)
 
 public:
   ReactBridge(QObject* parent = 0);
@@ -49,7 +50,7 @@ public:
   void setBundleUrl(const QUrl& bundleUrl);
 
   QList<ReactModuleData*> modules() const;
-  UbuntuUIManager* uiManager() const;
+  ReactUIManager* uiManager() const;
 
 Q_SIGNALS:
   void bridgeReady();
@@ -63,14 +64,7 @@ private:
   void initModules();
   void processResult(const QJsonDocument& document);
 
-  ReactNetExecutor* m_executor;
-  QQmlEngine* m_qmlEngine;
-  QQuickItem* m_visualParent;
-  QNetworkAccessManager* m_nam;
-  UbuntuUIManager* m_uiManager;
-  ReactSourceCode* m_sourceCode;
-  QUrl m_bundleUrl;
-  QMap<int, ReactModuleData*> m_modules;
+  QScopedPointer<ReactBridgePrivate> d_ptr;
 };
 
 #endif // REACTBRIDGE_H

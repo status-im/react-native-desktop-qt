@@ -5,10 +5,10 @@
 
 #include "reactevents.h"
 #include "reactbridge.h"
-#include "ubuntuuimanager.h"
+#include "reactuimanager.h"
 #include "reactattachedproperties.h"
-#include "reactview.h"
 #include "reactflexlayout.h"
+#include "reactview.h"
 
 
 namespace

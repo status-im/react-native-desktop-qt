@@ -9,7 +9,7 @@
 #include "reactbridge.h"
 
 UbuntuDatePickerManager::UbuntuDatePickerManager(QObject* parent)
-  : UbuntuViewManager(parent)
+  : ReactViewManager(parent)
 {
 }
 
@@ -22,7 +22,7 @@ void UbuntuDatePickerManager::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 }
 
-UbuntuViewManager* UbuntuDatePickerManager::viewManager()
+ReactViewManager* UbuntuDatePickerManager::viewManager()
 {
   return this;
 }

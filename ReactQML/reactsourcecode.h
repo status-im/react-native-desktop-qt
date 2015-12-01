@@ -32,7 +32,7 @@ public:
   void setBridge(ReactBridge* bridge) override;
 
   // TODO: this doesnt seem right
-  UbuntuViewManager* viewManager() override;
+  ReactViewManager* viewManager() override;
 
   QString moduleName() override;
   QStringList methodsToExport() override;

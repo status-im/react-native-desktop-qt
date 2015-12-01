@@ -10,7 +10,7 @@
 #include "reactbridge.h"
 
 UbuntuScrollViewManager::UbuntuScrollViewManager(QObject* parent)
-  : UbuntuViewManager(parent)
+  : ReactViewManager(parent)
 {
 }
 
@@ -23,7 +23,7 @@ void UbuntuScrollViewManager::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 }
 
-UbuntuViewManager* UbuntuScrollViewManager::viewManager()
+ReactViewManager* UbuntuScrollViewManager::viewManager()
 {
   return this;
 }

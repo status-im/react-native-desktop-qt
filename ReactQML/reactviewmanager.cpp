@@ -4,7 +4,7 @@
 #include <QQuickItem>
 #include <QQmlProperty>
 
-#include "ubuntuviewmanager.h"
+#include "reactviewmanager.h"
 #include "reactitem.h"
 #include "reactbridge.h"
 #include "reactflexlayout.h"
@@ -72,52 +72,52 @@ void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
 }
 
 
-UbuntuViewManager::UbuntuViewManager(QObject *parent)
+ReactViewManager::ReactViewManager(QObject *parent)
   : QObject(parent)
 {
 }
 
-UbuntuViewManager::~UbuntuViewManager()
+ReactViewManager::~ReactViewManager()
 {
 }
 
-void UbuntuViewManager::setBridge(ReactBridge* bridge)
+void ReactViewManager::setBridge(ReactBridge* bridge)
 {
   m_bridge = bridge;
 }
 
 // TODO: this doesnt seem right
-UbuntuViewManager* UbuntuViewManager::viewManager()
+ReactViewManager* ReactViewManager::viewManager()
 {
   return this;
 }
 
-QString UbuntuViewManager::moduleName()
+QString ReactViewManager::moduleName()
 {
   return "RCTViewManager";
 }
 
-QStringList UbuntuViewManager::methodsToExport()
+QStringList ReactViewManager::methodsToExport()
 {
   return QStringList{};
 }
 
-QVariantMap UbuntuViewManager::constantsToExport()
+QVariantMap ReactViewManager::constantsToExport()
 {
   return QVariantMap{};
 }
 
-QStringList UbuntuViewManager::customDirectEventTypes()
+QStringList ReactViewManager::customDirectEventTypes()
 {
   return QStringList{};
 }
 
-QStringList UbuntuViewManager::customBubblingEventTypes()
+QStringList ReactViewManager::customBubblingEventTypes()
 {
   return QStringList{"press", "change", "focus", "blur", "submitEditing", "endEditing", "touchStart", "touchMove", "touchCancel", "touchEnd"};
 }
 
-QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
+QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
 
@@ -137,7 +137,7 @@ QQuickItem* UbuntuViewManager::view(const QVariantMap& properties) const
   return item;
 }
 
-void UbuntuViewManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
+void ReactViewManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << item << properties;
   if (properties.isEmpty())

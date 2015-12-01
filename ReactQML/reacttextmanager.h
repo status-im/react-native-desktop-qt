@@ -1,23 +1,23 @@
-#ifndef UBUNTUTEXTMANAGER_H
-#define UBUNTUTEXTMANAGER_H
+#ifndef REACTTEXTMANAGER_H
+#define REACTTEXTMANAGER_H
 
-#include "ubunturawtextmanager.h"
+#include "reactrawtextmanager.h"
 
 // #define QT_STATICPLUGIN
 
-class UbuntuTextManager : public UbuntuRawTextManager
+class ReactTextManager : public ReactRawTextManager
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
 public:
-  UbuntuTextManager(QObject* parent = 0);
-  ~UbuntuTextManager();
+  ReactTextManager(QObject* parent = 0);
+  ~ReactTextManager();
 
   void setBridge(ReactBridge* bridge) override;
 
-  UbuntuViewManager* viewManager() override;
+  ReactViewManager* viewManager() override;
 
   QString moduleName() override;
   QStringList methodsToExport() override;
@@ -28,4 +28,4 @@ public:
   void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 };
 
-#endif // UBUNTUTEXTMANAGER_H
+#endif // REACTTEXTMANAGER_H

@@ -26,17 +26,16 @@ add_library(
   reacttiming.cpp
   reactitem.cpp
   reactview.cpp
+  reactviewmanager.cpp
+  reactrawtextmanager.cpp
+  reacttextmanager.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
   reacttextproperties.cpp
-  ubuntuactivitymanager.cpp
-  ubuntudatepickermanager.cpp
-  ubunturawtextmanager.cpp
+  reactuimanager.cpp
+  ubuntucomponentsloader.cpp
+  ubuntucomponentmodule.cpp
   ubuntuscrollviewmanager.cpp
-  ubuntutextmanager.cpp
-  ubuntuuimanager.cpp
-  ubuntuview.cpp
-  ubuntuviewmanager.cpp
   ../React/Layout/Layout.c
 )
 

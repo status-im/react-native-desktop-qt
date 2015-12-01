@@ -10,7 +10,7 @@
 #include "reactbridge.h"
 
 UbuntuActivityManager::UbuntuActivityManager(QObject* parent)
-  : UbuntuViewManager(parent)
+  : ReactViewManager(parent)
 {
 }
 
@@ -23,7 +23,7 @@ void UbuntuActivityManager::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 }
 
-UbuntuViewManager* UbuntuActivityManager::viewManager()
+ReactViewManager* UbuntuActivityManager::viewManager()
 {
   return this;
 }

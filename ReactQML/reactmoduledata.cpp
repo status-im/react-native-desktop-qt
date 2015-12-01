@@ -110,7 +110,7 @@ ReactModuleMethod* ReactModuleData::method(int id) const
   return d_func()->methods.value(id);
 }
 
-UbuntuViewManager* ReactModuleData::viewManager() const
+ReactViewManager* ReactModuleData::viewManager() const
 {
   return qobject_cast<ReactModuleInterface*>(d_func()->moduleImpl)->viewManager();
 }

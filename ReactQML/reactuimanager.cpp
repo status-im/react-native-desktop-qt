@@ -13,23 +13,23 @@
 #include "reactcomponentdata.h"
 #include "reactmoduledata.h"
 #include "reactattachedproperties.h"
-#include "ubuntuuimanager.h"
-#include "ubuntuviewmanager.h"
+#include "reactviewmanager.h"
+#include "reactuimanager.h"
 
 
-int UbuntuUIManager::m_nextRootTag = 1;
+int ReactUIManager::m_nextRootTag = 1;
 
 
-UbuntuUIManager::UbuntuUIManager()
+ReactUIManager::ReactUIManager()
   : m_bridge(nullptr)
 {
 }
 
-UbuntuUIManager::~UbuntuUIManager()
+ReactUIManager::~ReactUIManager()
 {
 }
 
-void UbuntuUIManager::updateView
+void ReactUIManager::updateView
 (
   int reactTag,
   const QString& viewName,
@@ -45,7 +45,7 @@ void UbuntuUIManager::updateView
     return;
   }
 
-  item->property("viewManager").value<UbuntuViewManager*>()->applyProperties(item, properties);
+  item->property("viewManager").value<ReactViewManager*>()->applyProperties(item, properties);
   // XXX:
   m_bridge->visualParent()->polish();
 }
@@ -55,7 +55,7 @@ QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices
   return QList<QQuickItem*>{};
 }
 
-void UbuntuUIManager::manageChildren
+void ReactUIManager::manageChildren
 (
   int containerReactTag,
   const QList<int>& moveFromIndicies,
@@ -95,7 +95,7 @@ void UbuntuUIManager::manageChildren
 }
 
 // Reacts version of first responder
-void UbuntuUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
+void ReactUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
 {
   Q_UNUSED(reactTag);
   Q_UNUSED(blockNativeResponder);
@@ -103,19 +103,19 @@ void UbuntuUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
   qDebug() << __PRETTY_FUNCTION__;
 }
 
-void UbuntuUIManager::clearJSResponder()
+void ReactUIManager::clearJSResponder()
 {
 }
 
 // in iOS, resign first responder (actual)
-void UbuntuUIManager::blur(int reactTag)
+void ReactUIManager::blur(int reactTag)
 {
   Q_UNUSED(reactTag);
 
   qDebug() << __PRETTY_FUNCTION__;
 }
 
-void UbuntuUIManager::createView
+void ReactUIManager::createView
 (
   int reactTag,
   const QString& viewName,
@@ -140,14 +140,14 @@ void UbuntuUIManager::createView
   properties->setTag(reactTag);
 
   // XXX:
-  item->setProperty("viewManager", QVariant::fromValue<UbuntuViewManager*>(cd->manager()));
+  item->setProperty("viewManager", QVariant::fromValue<ReactViewManager*>(cd->manager()));
 
   // XXX:
   m_views.insert(reactTag, item);
 }
 
 
-void UbuntuUIManager::setBridge(ReactBridge* bridge)
+void ReactUIManager::setBridge(ReactBridge* bridge)
 {
   qDebug() << __PRETTY_FUNCTION__;
   if (m_bridge != nullptr) {
@@ -158,7 +158,7 @@ void UbuntuUIManager::setBridge(ReactBridge* bridge)
   m_bridge = bridge;
 
   for (ReactModuleData* data : m_bridge->modules()) {
-    UbuntuViewManager* manager = data->viewManager();
+    ReactViewManager* manager = data->viewManager();
     if (manager != nullptr) {
       ReactComponentData* cd = new ReactComponentData(manager);
       m_componentData.insert(cd->name(), cd);
@@ -170,12 +170,12 @@ void UbuntuUIManager::setBridge(ReactBridge* bridge)
   connect(m_bridge->visualParent(), SIGNAL(scaleChanged()), SLOT(rootViewScaleChanged()));
 }
 
-QString UbuntuUIManager::moduleName()
+QString ReactUIManager::moduleName()
 {
   return "RCTUIManager";
 }
 
-QStringList UbuntuUIManager::methodsToExport()
+QStringList ReactUIManager::methodsToExport()
 {
   const QMetaObject* metaObject = this->metaObject();
   const int methodCount = metaObject->methodCount();
@@ -187,7 +187,7 @@ QStringList UbuntuUIManager::methodsToExport()
   return methods;
 }
 
-QVariantMap UbuntuUIManager::constantsToExport()
+QVariantMap ReactUIManager::constantsToExport()
 {
   QVariantMap rc;
   QVariantMap directEvents;
@@ -239,30 +239,30 @@ QVariantMap UbuntuUIManager::constantsToExport()
   return rc;
 }
 
-int UbuntuUIManager::allocateRootTag()
+int ReactUIManager::allocateRootTag()
 {
   int tag = m_nextRootTag;
   m_nextRootTag += 10;
   return tag;
 }
 
-void UbuntuUIManager::registerRootView(QQuickItem* root)
+void ReactUIManager::registerRootView(QQuickItem* root)
 {
   ReactAttachedProperties* properties = ReactAttachedProperties::get(root);
   m_views.insert(properties->tag(), root);
 }
 
-void UbuntuUIManager::rootViewWidthChanged()
+void ReactUIManager::rootViewWidthChanged()
 {
   m_bridge->visualParent()->polish();
 }
 
-void UbuntuUIManager::rootViewHeightChanged()
+void ReactUIManager::rootViewHeightChanged()
 {
   m_bridge->visualParent()->polish();
 }
 
-void UbuntuUIManager::rootViewScaleChanged()
+void ReactUIManager::rootViewScaleChanged()
 {
   m_bridge->visualParent()->polish();
 }
