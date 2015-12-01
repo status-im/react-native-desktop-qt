@@ -26,6 +26,17 @@ class ReactFlexLayout : public QObject
   Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
   Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
 
+  Q_PROPERTY(double padding READ padding WRITE setPadding)
+  Q_PROPERTY(double paddingVertical READ paddingVertical WRITE setPaddingVertical)
+  Q_PROPERTY(double paddingHorizontal READ paddingHorizontal WRITE setPaddingHorizontal)
+  Q_PROPERTY(double paddingTop READ paddingTop WRITE setPaddingTop)
+  Q_PROPERTY(double paddingLeft READ paddingLeft WRITE setPaddingLeft)
+  Q_PROPERTY(double paddingBottom READ paddingBottom WRITE setPaddingBottom)
+  Q_PROPERTY(double paddingRight READ paddingRight WRITE setPaddingRight)
+
+  Q_PROPERTY(double margin READ margin WRITE setMargin)
+  Q_PROPERTY(double marginBottom READ marginBottom WRITE setMarginBottom)
+
   Q_ENUMS(Direction)
   Q_ENUMS(Justify)
   Q_ENUMS(Alignment)
@@ -81,6 +92,33 @@ public:
 
   double height() const;
   void setHeight(double height);
+
+  double padding() const;
+  void setPadding(double padding);
+
+  double paddingVertical() const;
+  void setPaddingVertical(double padding);
+
+  double paddingHorizontal() const;
+  void setPaddingHorizontal(double padding);
+
+  double paddingTop() const;
+  void setPaddingTop(double padding);
+
+  double paddingLeft() const;
+  void setPaddingLeft(double padding);
+
+  double paddingBottom() const;
+  void setPaddingBottom(double padding);
+
+  double paddingRight() const;
+  void setPaddingRight(double padding);
+
+  double margin() const;
+  void setMargin(double margin);
+
+  double marginBottom() const;
+  void setMarginBottom(double margin);
 
   void layout();
 
