@@ -295,6 +295,85 @@ void ReactFlexLayout::setHeight(double height)
   Q_EMIT heightChanged();
 }
 
+double ReactFlexLayout::padding() const
+{
+  return d_func()->cssNode->style.padding[CSS_TOP]; // XXX: need to map this, like react?
+}
+
+void ReactFlexLayout::setPadding(double padding)
+{
+  Q_D(ReactFlexLayout);
+  d->cssNode->style.padding[CSS_TOP] =
+    d->cssNode->style.padding[CSS_LEFT] =
+    d->cssNode->style.padding[CSS_BOTTOM] =
+    d->cssNode->style.padding[CSS_RIGHT] = padding;
+}
+
+double ReactFlexLayout::paddingVertical() const
+{
+}
+
+void ReactFlexLayout::setPaddingVertical(double padding)
+{
+}
+
+double ReactFlexLayout::paddingHorizontal() const
+{
+}
+
+void ReactFlexLayout::setPaddingHorizontal(double padding)
+{
+}
+
+double ReactFlexLayout::paddingTop() const
+{
+}
+
+void ReactFlexLayout::setPaddingTop(double padding)
+{
+}
+
+double ReactFlexLayout::paddingLeft() const
+{
+}
+
+void ReactFlexLayout::setPaddingLeft(double padding)
+{
+}
+
+double ReactFlexLayout::paddingBottom() const
+{
+}
+
+void ReactFlexLayout::setPaddingBottom(double padding)
+{
+}
+
+double ReactFlexLayout::margin() const
+{
+  return d_func()->cssNode->style.margin[CSS_TOP]; // XXX: as with padding
+}
+
+void ReactFlexLayout::setMargin(double margin)
+{
+  Q_D(ReactFlexLayout);
+  d->cssNode->style.padding[CSS_TOP] =
+    d->cssNode->style.padding[CSS_LEFT] =
+    d->cssNode->style.padding[CSS_BOTTOM] =
+    d->cssNode->style.padding[CSS_RIGHT] = margin;
+}
+
+double ReactFlexLayout::marginBottom() const
+{
+  return d_func()->cssNode->style.margin[CSS_BOTTOM]; // XXX: as with padding
+}
+
+void ReactFlexLayout::setMarginBottom(double margin)
+{
+  Q_D(ReactFlexLayout);
+  d->cssNode->style.margin[CSS_BOTTOM] = margin;
+}
+
 void ReactFlexLayout::layout()
 {
   d_func()->layout();

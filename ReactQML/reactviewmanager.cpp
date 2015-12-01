@@ -66,6 +66,12 @@ void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
       flex->setWidth(properties.value(key).toDouble());
     } else if (key == "height") {
       flex->setHeight(properties.value(key).toDouble());
+    } else if (key == "padding") {
+      flex->setPadding(properties.value(key).toDouble());
+    } else if (key == "margin") {
+      flex->setMargin(properties.value(key).toDouble());
+    } else if (key == "marginBottom") {
+      flex->setMarginBottom(properties.value(key).toDouble());
     }
   }
 }
