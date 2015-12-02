@@ -4,6 +4,8 @@
 
 #include <QDateTime>
 
+#include <QDebug>
+
 #include "reactvaluecoercion.h"
 #include "reactmoduleinterface.h"
 #include "reactbridge.h"

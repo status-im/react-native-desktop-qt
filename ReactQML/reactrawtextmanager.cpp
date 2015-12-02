@@ -48,7 +48,7 @@ QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
   qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
 
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nText{anchors.centerIn:parent;}", QUrl());
+  component.setData("import QtQuick 2.4\nText{horizontalAlignment:Text.AlignHCenter;verticalAlignment:Text.AlignVCenter;}", QUrl());
   if (!component.isReady())
     qCritical() << "Component for RCTRawTextManager not ready";
 

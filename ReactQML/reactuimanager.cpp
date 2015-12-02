@@ -12,6 +12,7 @@
 #include "reactbridge.h"
 #include "reactcomponentdata.h"
 #include "reactmoduledata.h"
+#include "reactflexlayout.h"
 #include "reactattachedproperties.h"
 #include "reactviewmanager.h"
 #include "reactuimanager.h"
@@ -20,13 +21,42 @@
 int ReactUIManager::m_nextRootTag = 1;
 
 
-ReactUIManager::ReactUIManager()
-  : m_bridge(nullptr)
+void ReactUIManager::measure
+(
+ int reactTag,
+ const ReactModuleInterface::ResponseBlock& callback
+)
 {
-}
+  qDebug() << __PRETTY_FUNCTION__;
 
-ReactUIManager::~ReactUIManager()
-{
+  QQuickItem* item = m_views.value(reactTag);
+  if (item == nullptr) {
+    qWarning() << "Attempting to update properties on unknown view";
+    callback(m_bridge, QVariantList{});
+    return;
+  }
+
+  // grab root item, probably should store it per uimanager than doing this
+  QQuickItem* root = item;
+  forever {
+    QQuickItem* parent = root->parentItem();
+    if (parent != nullptr && ReactAttachedProperties::get(parent) != nullptr)
+      root = parent;
+    else
+      break;
+  }
+
+  QPointF rvo(item->x(), item->y());
+  rvo = item->mapToItem(root, rvo);
+
+  callback(m_bridge, QVariantList{
+      item->x(),
+      item->y(),
+      item->width(),
+      item->height(),
+      rvo.x(),
+      rvo.y()
+    });
 }
 
 void ReactUIManager::updateView
@@ -46,8 +76,9 @@ void ReactUIManager::updateView
   }
 
   item->property("viewManager").value<ReactViewManager*>()->applyProperties(item, properties);
+
   // XXX:
-  m_bridge->visualParent()->polish();
+  //  m_bridge->visualParent()->polish();
 }
 
 QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
@@ -69,7 +100,6 @@ void ReactUIManager::manageChildren
 
   QQuickItem* container = m_views[containerReactTag];
 
-  qDebug() << __PRETTY_FUNCTION__ << "container=" << container;
   QList<QQuickItem*> children;
 
   // removeAtIndices get unpluged and erased
@@ -91,7 +121,9 @@ void ReactUIManager::manageChildren
     child->setParentItem(container);
   }
 
-  container->polish();
+  ReactFlexLayout::get(container)->setDirty(true);
+
+  //  container->polish();
 }
 
 // Reacts version of first responder
@@ -146,6 +178,15 @@ void ReactUIManager::createView
   m_views.insert(reactTag, item);
 }
 
+
+ReactUIManager::ReactUIManager()
+  : m_bridge(nullptr)
+{
+}
+
+ReactUIManager::~ReactUIManager()
+{
+}
 
 void ReactUIManager::setBridge(ReactBridge* bridge)
 {

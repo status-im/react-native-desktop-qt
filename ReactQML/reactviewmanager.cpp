@@ -68,12 +68,36 @@ void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
       flex->setHeight(properties.value(key).toDouble());
     } else if (key == "padding") {
       flex->setPadding(properties.value(key).toDouble());
+    } else if (key == "paddingLeft") {
+      flex->setPaddingLeft(properties.value(key).toDouble());
+    } else if (key == "paddingTop") {
+      flex->setPaddingTop(properties.value(key).toDouble());
+    } else if (key == "paddingRight") {
+      flex->setPaddingRight(properties.value(key).toDouble());
+    } else if (key == "paddingBottom") {
+      flex->setPaddingBottom(properties.value(key).toDouble());
+    } else if (key == "paddingHorizontal") {
+      flex->setPaddingHorizontal(properties.value(key).toDouble());
+    } else if (key == "paddingVertical") {
+      flex->setPaddingVertical(properties.value(key).toDouble());
     } else if (key == "margin") {
       flex->setMargin(properties.value(key).toDouble());
+    } else if (key == "marginLeft") {
+      flex->setMarginLeft(properties.value(key).toDouble());
+    } else if (key == "marginTop") {
+      flex->setMarginTop(properties.value(key).toDouble());
+    } else if (key == "marginRight") {
+      flex->setMarginRight(properties.value(key).toDouble());
     } else if (key == "marginBottom") {
       flex->setMarginBottom(properties.value(key).toDouble());
+    } else if (key == "marginHorizontal") {
+      flex->setMarginHorizontal(properties.value(key).toDouble());
+    } else if (key == "marginVertical") {
+      flex->setMarginVertical(properties.value(key).toDouble());
     }
   }
+
+  //flex->layout(); // XXX: should compute here
 }
 }
 
