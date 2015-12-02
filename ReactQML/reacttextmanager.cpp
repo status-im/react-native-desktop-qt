@@ -48,7 +48,7 @@ QVariantMap ReactTextManager::constantsToExport()
 QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 {
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nItem{}", QUrl()); // TODO: depends on self text
+  component.setData("import QtQuick 2.4\nText{}", QUrl()); // TODO: depends on self text
   if (!component.isReady())
     qCritical() << "Component for RCTTextManager not ready";
 
@@ -58,7 +58,7 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  item->setEnabled(false);
+  // item->setEnabled(false);
 
   applyProperties(item, properties);
 
@@ -78,7 +78,6 @@ void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& prop
   // descendants
   ReactTextProperties* rtp = ReactTextProperties::get(item);
 
-  qDebug() << "SETTING TEXT PROPERTIES" << rtp;
   for (const QString& key : properties.keys()) {
     if (key == "fontFamily") {
       rtp->setFontFamily(properties.value(key).toString());

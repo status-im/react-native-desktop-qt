@@ -12,6 +12,7 @@ class ReactFlexLayoutPrivate;
 class ReactFlexLayout : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool dirty READ isDirty WRITE setDirty)
   Q_PROPERTY(double flex READ flex WRITE setFlex NOTIFY flexChanged)
   Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
   Q_PROPERTY(Justify justify READ justify WRITE setJustify NOTIFY justifyChanged)
@@ -26,7 +27,6 @@ class ReactFlexLayout : public QObject
   Q_PROPERTY(double width READ width WRITE setWidth NOTIFY widthChanged)
   Q_PROPERTY(double height READ height WRITE setHeight NOTIFY heightChanged)
 
-  Q_PROPERTY(double padding READ padding WRITE setPadding)
   Q_PROPERTY(double paddingVertical READ paddingVertical WRITE setPaddingVertical)
   Q_PROPERTY(double paddingHorizontal READ paddingHorizontal WRITE setPaddingHorizontal)
   Q_PROPERTY(double paddingTop READ paddingTop WRITE setPaddingTop)
@@ -34,8 +34,12 @@ class ReactFlexLayout : public QObject
   Q_PROPERTY(double paddingBottom READ paddingBottom WRITE setPaddingBottom)
   Q_PROPERTY(double paddingRight READ paddingRight WRITE setPaddingRight)
 
-  Q_PROPERTY(double margin READ margin WRITE setMargin)
+  Q_PROPERTY(double marginVertical READ marginVertical WRITE setMarginVertical)
+  Q_PROPERTY(double marginHorizontal READ marginHorizontal WRITE setMarginHorizontal)
+  Q_PROPERTY(double marginTop READ marginTop WRITE setMarginTop)
+  Q_PROPERTY(double marginLeft READ marginLeft WRITE setMarginLeft)
   Q_PROPERTY(double marginBottom READ marginBottom WRITE setMarginBottom)
+  Q_PROPERTY(double marginRight READ marginRight WRITE setMarginRight)
 
   Q_ENUMS(Direction)
   Q_ENUMS(Justify)
@@ -48,6 +52,9 @@ class ReactFlexLayout : public QObject
 public:
   ReactFlexLayout(QObject* parent = 0);
   ~ReactFlexLayout();
+
+  bool isDirty();
+  void setDirty(bool dirty);
 
   double flex() const;
   void setFlex(double flex);
@@ -93,7 +100,6 @@ public:
   double height() const;
   void setHeight(double height);
 
-  double padding() const;
   void setPadding(double padding);
 
   double paddingVertical() const;
@@ -114,11 +120,25 @@ public:
   double paddingRight() const;
   void setPaddingRight(double padding);
 
-  double margin() const;
   void setMargin(double margin);
+
+  double marginVertical() const;
+  void setMarginVertical(double margin);
+
+  double marginHorizontal() const;
+  void setMarginHorizontal(double margin);
+
+  double marginTop() const;
+  void setMarginTop(double margin);
+
+  double marginLeft() const;
+  void setMarginLeft(double margin);
 
   double marginBottom() const;
   void setMarginBottom(double margin);
+
+  double marginRight() const;
+  void setMarginRight(double margin);
 
   void layout();
 
