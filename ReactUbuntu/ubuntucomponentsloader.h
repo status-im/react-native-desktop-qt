@@ -10,6 +10,7 @@ class UbuntuComponentsLoader
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleLoader_IID)
+  Q_INTERFACES(ReactModuleLoader)
 
 public:
 
