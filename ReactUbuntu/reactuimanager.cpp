@@ -21,6 +21,23 @@
 int ReactUIManager::m_nextRootTag = 1;
 
 
+void ReactUIManager::removeSubviewsFromContainerWithID(int containerReactTag)
+{
+  qDebug() << __PRETTY_FUNCTION__;
+
+  QQuickItem* item = m_views.value(containerReactTag);
+  if (item == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
+    return;
+  }
+
+  QList<int> childIndexes;
+  childIndexes.reserve(item->childItems().size());
+  std::iota(childIndexes.begin(), childIndexes.end(), 0);
+
+  manageChildren(containerReactTag, QList<int>(), QList<int>(), QList<int>(), QList<int>(), childIndexes);
+}
+
 void ReactUIManager::measure
 (
  int reactTag,
@@ -31,23 +48,13 @@ void ReactUIManager::measure
 
   QQuickItem* item = m_views.value(reactTag);
   if (item == nullptr) {
-    qWarning() << "Attempting to update properties on unknown view";
+    qWarning() << "Attempting to access unknown view";
     callback(m_bridge, QVariantList{});
     return;
   }
 
-  // grab root item, probably should store it per uimanager than doing this
-  QQuickItem* root = item;
-  forever {
-    QQuickItem* parent = root->parentItem();
-    if (parent != nullptr && ReactAttachedProperties::get(parent) != nullptr)
-      root = parent;
-    else
-      break;
-  }
-
   QPointF rvo(item->x(), item->y());
-  rvo = item->mapToItem(root, rvo);
+  rvo = item->mapToItem(m_bridge->visualParent(), rvo);
 
   callback(m_bridge, QVariantList{
       item->x(),
@@ -75,10 +82,10 @@ void ReactUIManager::updateView
     return;
   }
 
-  item->property("viewManager").value<ReactViewManager*>()->applyProperties(item, properties);
+  ReactAttachedProperties::get(item)->viewManager()->applyProperties(item, properties);
 
   // XXX:
-  //  m_bridge->visualParent()->polish();
+  m_bridge->visualParent()->polish();
 }
 
 QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
@@ -99,10 +106,32 @@ void ReactUIManager::manageChildren
   qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags << addAtIndices << removeAtIndices;
 
   QQuickItem* container = m_views[containerReactTag];
+  if (container == nullptr) {
+    qWarning() << "Attempting to manage children on an unknown container";
+    return;
+  }
 
   QList<QQuickItem*> children;
 
-  // removeAtIndices get unpluged and erased
+  if (!removeAtIndices.isEmpty()) {
+    // removeAtIndices get unpluged and erased
+    children = container->childItems();
+    std::sort(children.begin(), children.end(), [](QQuickItem* a, QQuickItem* b) {
+          return a->z() < b->z();
+        });
+    for (int i : removeAtIndices) {
+      QQuickItem* item = children[i];
+      ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
+      if (rap == nullptr) {
+        qCritical() << "Attempting to manage non react view!";
+        return;
+      }
+      m_views.remove(rap->tag());
+      item->setParent(0);
+      item->deleteLater();
+    }
+  }
+
   //  children = indexedChildren(container, removeAtIndices);
 
   // XXX: Assumption - addChildReactTags is sorted
@@ -123,7 +152,7 @@ void ReactUIManager::manageChildren
 
   ReactFlexLayout::get(container)->setDirty(true);
 
-  //  container->polish();
+  m_bridge->visualParent()->polish();
 }
 
 // Reacts version of first responder
@@ -168,14 +197,58 @@ void ReactUIManager::createView
   if (item == nullptr)
     return;
 
-  ReactAttachedProperties* properties = ReactAttachedProperties::get(item);
-  properties->setTag(reactTag);
-
-  // XXX:
-  item->setProperty("viewManager", QVariant::fromValue<ReactViewManager*>(cd->manager()));
+  ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
+  rap->setTag(reactTag);
+  rap->setViewManager(cd->manager());
 
   // XXX:
   m_views.insert(reactTag, item);
+}
+
+void ReactUIManager::findSubviewIn
+(
+ int reactTag,
+ const QPointF& point,
+ const ReactModuleInterface::ResponseBlock& callback
+)
+{
+  QQuickItem* item = m_views.value(reactTag);
+  if (item == nullptr) {
+    qWarning() << "Attempting to access unknown view";
+    callback(m_bridge, QVariantList{});
+    return;
+  }
+
+  // Find the deepest match
+  QQuickItem* target = nullptr;
+  QQuickItem* next = item;
+  QPointF local = point;
+  forever {
+    target = next;
+    next = target->childAt(local.x(), local.y());
+    if (next == nullptr || !next->isEnabled())
+      break;
+    local = target->mapToItem(next, local);
+  }
+
+  // XXX: should climb back up to a matching react target?
+  ReactAttachedProperties* properties = ReactAttachedProperties::get(target, false);
+  if (properties == nullptr) {
+    qWarning() << "Found target on a non react view";
+    callback(m_bridge, QVariantList{});
+    return;
+  }
+
+  QRectF frame = item->mapRectFromItem(target,
+                                       QRectF(target->x(), target->y(),
+                                              target->width(), target->height()));
+  callback(m_bridge, QVariantList{
+      properties->tag(),
+      frame.x(),
+      frame.y(),
+      frame.width(),
+      frame.height()
+    });
 }
 
 
@@ -295,15 +368,21 @@ void ReactUIManager::registerRootView(QQuickItem* root)
 
 void ReactUIManager::rootViewWidthChanged()
 {
-  m_bridge->visualParent()->polish();
+  QQuickItem* root = m_bridge->visualParent();
+  ReactFlexLayout::get(root)->setWidth(root->width());
+  root->polish();
 }
 
 void ReactUIManager::rootViewHeightChanged()
 {
-  m_bridge->visualParent()->polish();
+  QQuickItem* root = m_bridge->visualParent();
+  ReactFlexLayout::get(root)->setHeight(root->height());
+  root->polish();
 }
 
 void ReactUIManager::rootViewScaleChanged()
 {
-  m_bridge->visualParent()->polish();
+  QQuickItem* root = m_bridge->visualParent();
+  ReactFlexLayout::get(root)->setDirty(true);
+  root->polish();
 }

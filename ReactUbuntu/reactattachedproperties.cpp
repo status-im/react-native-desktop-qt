@@ -1,6 +1,7 @@
 
 #include <QQuickItem>
 
+#include "reactviewmanager.h"
 #include "reactattachedproperties.h"
 
 
@@ -10,6 +11,7 @@ public:
   ReactAttachedPropertiesPrivate()
     : tag(-1) {}
   int tag;
+  ReactViewManager* viewManager;
   QQuickItem* item;
 };
 
@@ -18,6 +20,7 @@ ReactAttachedProperties::ReactAttachedProperties(QObject* parent)
   , d_ptr(new ReactAttachedPropertiesPrivate)
 {
   Q_D(ReactAttachedProperties);
+  d->viewManager = nullptr;
   d->item = qobject_cast<QQuickItem*>(parent);
   if (d->item == nullptr) {
     qCritical() << "Flex layout only applies to visual items";
@@ -40,6 +43,20 @@ void ReactAttachedProperties::setTag(int tag)
     return;
   d->tag = tag;
   Q_EMIT tagChanged();
+}
+
+ReactViewManager* ReactAttachedProperties::viewManager() const
+{
+  return d_func()->viewManager;
+}
+
+void ReactAttachedProperties::setViewManager(ReactViewManager* viewManager)
+{
+  Q_D(ReactAttachedProperties);
+  if (d->viewManager== viewManager)
+    return;
+  d->viewManager = viewManager;
+  Q_EMIT viewManagerChanged();
 }
 
 ReactAttachedProperties* ReactAttachedProperties::get(QQuickItem* item, bool create)

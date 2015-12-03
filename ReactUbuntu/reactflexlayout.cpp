@@ -73,8 +73,9 @@ public:
     }
   }
   void setChildInfo(ReactFlexLayoutPrivate* p) {
-    if (p->item == nullptr)
+    if (p->item == nullptr || !p->dirty)
       return;
+
     p->cssNode->children_count = p->item->childItems().size();
     updateMargin(p);
     updatePadding(p);
@@ -88,11 +89,16 @@ public:
     if (pl != nullptr)
       pl->setDirty(drty);
   }
-  void layout() {
+  void layout() { // called only at top level
     qDebug() << __PRETTY_FUNCTION__ << this;
+    if (!dirty)
+      return;
     setChildInfo(this);
-    print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
+    // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
+    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
     layoutNode(cssNode, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
+    // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
+    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_CHILDREN));
     applyLayout();
   }
   static ReactFlexLayoutPrivate* get(ReactFlexLayout* rfl) {
@@ -115,8 +121,6 @@ public:
 
 private:
   void applyLayout() {
-    qDebug() << __PRETTY_FUNCTION__ << this;
-
     if (!cssNode->layout.should_update)
       return;
     cssNode->layout.should_update = false;
@@ -131,10 +135,10 @@ private:
       ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->applyLayout();
     }
 
-    cssNode->layout.dimensions[CSS_WIDTH] = CSS_UNDEFINED;
-    cssNode->layout.dimensions[CSS_HEIGHT] = CSS_UNDEFINED;
-    cssNode->layout.dimensions[CSS_LEFT] = 0;
-    cssNode->layout.dimensions[CSS_RIGHT] = 0;
+    // cssNode->layout.position[CSS_LEFT] = 0;
+    // cssNode->layout.position[CSS_RIGHT] = 0;
+    // cssNode->layout.dimensions[CSS_WIDTH] = CSS_UNDEFINED;
+    // cssNode->layout.dimensions[CSS_HEIGHT] = CSS_UNDEFINED;
   }
 };
 
@@ -142,7 +146,7 @@ QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p)
 {
   QDebugStateSaver s(debug);
   debug.nospace() << "ReactFlexLayoutPrivate(this=" << (void*)p <<
-    ", item=" << p->item << ", layout={" <<
+    ", dirty=" << p->dirty << ", item=" << p->item << ", layout={" <<
     p->cssNode->layout.position[CSS_LEFT] << " " <<
     p->cssNode->layout.position[CSS_TOP] << " " <<
     p->cssNode->layout.dimensions[CSS_WIDTH] << " " <<
@@ -195,6 +199,7 @@ void ReactFlexLayout::setFlex(double flex)
     return;
 
   d->cssNode->style.flex = flex;
+  setDirty(true);
   Q_EMIT flexChanged();
 }
 
@@ -210,6 +215,7 @@ void ReactFlexLayout::setDirection(Direction direction)
     return;
 
   d->cssNode->style.flex_direction = (css_flex_direction_t)direction;
+  setDirty(true);
   Q_EMIT directionChanged();
 }
 
@@ -225,6 +231,7 @@ void ReactFlexLayout::setJustify(Justify justify)
     return;
 
   d->cssNode->style.justify_content = (css_justify_t)justify;
+  setDirty(true);
   Q_EMIT justifyChanged();
 }
 
@@ -240,6 +247,7 @@ void ReactFlexLayout::setSelfAlignment(Alignment alignment)
     return;
 
   d->cssNode->style.align_self = (css_align_t)alignment;
+  setDirty(true);
   Q_EMIT selfAlignmentChanged();
 }
 
@@ -255,6 +263,7 @@ void ReactFlexLayout::setItemAlignment(Alignment alignment)
     return;
 
   d->cssNode->style.align_items = (css_align_t)alignment;
+  setDirty(true);
   Q_EMIT itemAlignmentChanged();
 }
 
@@ -270,6 +279,7 @@ void ReactFlexLayout::setPosition(Position position)
     return;
 
   d->cssNode->style.position_type = (css_position_type_t)position;
+  setDirty(true);
   Q_EMIT positionChanged();
 }
 
@@ -285,6 +295,7 @@ void ReactFlexLayout::setWrap(Wrap wrap)
     return;
 
   d->cssNode->style.flex_wrap = (css_wrap_type_t)wrap;
+  setDirty(true);
   Q_EMIT wrapChanged();
 }
 
@@ -300,6 +311,7 @@ void ReactFlexLayout::setTop(double top)
     return;
 
   d->cssNode->style.position[CSS_TOP] = top;
+  setDirty(true);
   Q_EMIT topChanged();
 }
 
@@ -315,6 +327,7 @@ void ReactFlexLayout::setRight(double right)
     return;
 
   d->cssNode->style.position[CSS_RIGHT] = right;
+  setDirty(true);
   Q_EMIT rightChanged();
 }
 
@@ -330,6 +343,7 @@ void ReactFlexLayout::setBottom(double bottom)
     return;
 
   d->cssNode->style.position[CSS_BOTTOM] = bottom;
+  setDirty(true);
   Q_EMIT bottomChanged();
 }
 
@@ -345,6 +359,7 @@ void ReactFlexLayout::setLeft(double left)
     return;
 
   d->cssNode->style.position[CSS_LEFT] = left;
+  setDirty(true);
   Q_EMIT leftChanged();
 }
 
@@ -360,6 +375,7 @@ void ReactFlexLayout::setWidth(double width)
     return;
 
   d->cssNode->style.dimensions[CSS_WIDTH] = width;
+  setDirty(true);
   Q_EMIT widthChanged();
 }
 
@@ -375,6 +391,7 @@ void ReactFlexLayout::setHeight(double height)
     return;
 
   d->cssNode->style.dimensions[CSS_HEIGHT] = height;
+  setDirty(true);
   Q_EMIT heightChanged();
 }
 
@@ -385,6 +402,7 @@ void ReactFlexLayout::setPadding(double padding)
     d->cssNode->style.padding[CSS_LEFT] =
     d->cssNode->style.padding[CSS_BOTTOM] =
     d->cssNode->style.padding[CSS_RIGHT] = padding;
+  setDirty(true);
 }
 
 double ReactFlexLayout::paddingVertical() const
@@ -395,7 +413,8 @@ double ReactFlexLayout::paddingVertical() const
 void ReactFlexLayout::setPaddingVertical(double padding)
 {
   Q_D(ReactFlexLayout);
-  d->padding[CSS_VERTICAL]= padding;
+  d->padding[CSS_VERTICAL] = padding;
+  setDirty(true);
 }
 
 double ReactFlexLayout::paddingHorizontal() const
@@ -407,6 +426,7 @@ void ReactFlexLayout::setPaddingHorizontal(double padding)
 {
   Q_D(ReactFlexLayout);
   d->padding[CSS_HORIZONTAL] = padding;
+  setDirty(true);
 }
 
 double ReactFlexLayout::paddingTop() const
@@ -418,6 +438,7 @@ void ReactFlexLayout::setPaddingTop(double padding)
 {
   Q_D(ReactFlexLayout);
   d->padding[CSS_TOP] = padding;
+  setDirty(true);
 }
 
 double ReactFlexLayout::paddingLeft() const
@@ -429,6 +450,7 @@ void ReactFlexLayout::setPaddingLeft(double padding)
 {
   Q_D(ReactFlexLayout);
   d->padding[CSS_LEFT] = padding;
+  setDirty(true);
 }
 
 double ReactFlexLayout::paddingBottom() const
@@ -440,15 +462,17 @@ void ReactFlexLayout::setPaddingBottom(double padding)
 {
   Q_D(ReactFlexLayout);
   d->padding[CSS_BOTTOM] = padding;
+  setDirty(true);
 }
 
 void ReactFlexLayout::setMargin(double margin)
 {
   Q_D(ReactFlexLayout);
-  d->cssNode->style.padding[CSS_TOP] =
-    d->cssNode->style.padding[CSS_LEFT] =
-    d->cssNode->style.padding[CSS_BOTTOM] =
-    d->cssNode->style.padding[CSS_RIGHT] = margin;
+  d->cssNode->style.margin[CSS_TOP] =
+    d->cssNode->style.margin[CSS_LEFT] =
+    d->cssNode->style.margin[CSS_BOTTOM] =
+    d->cssNode->style.margin[CSS_RIGHT] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginVertical() const
@@ -460,6 +484,7 @@ void ReactFlexLayout::setMarginVertical(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_VERTICAL] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginHorizontal() const
@@ -471,6 +496,7 @@ void ReactFlexLayout::setMarginHorizontal(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_HORIZONTAL] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginTop() const
@@ -482,6 +508,7 @@ void ReactFlexLayout::setMarginTop(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_TOP] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginLeft() const
@@ -493,6 +520,7 @@ void ReactFlexLayout::setMarginLeft(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_LEFT] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginBottom() const
@@ -504,6 +532,7 @@ void ReactFlexLayout::setMarginBottom(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_BOTTOM] = margin;
+  setDirty(true);
 }
 
 double ReactFlexLayout::marginRight() const
@@ -515,11 +544,18 @@ void ReactFlexLayout::setMarginRight(double margin)
 {
   Q_D(ReactFlexLayout);
   d->margin[CSS_RIGHT] = margin;
+  setDirty(true);
 }
 
-void ReactFlexLayout::layout()
+void ReactFlexLayout::polish(QQuickItem* item)
 {
-  d_func()->layout();
+  ReactFlexLayout* rfl = ReactFlexLayout::get(item, false);
+  if (rfl == nullptr) {
+    qCritical() << "Attempting to start Flex layout on non-flex item!";
+    return;
+  }
+
+  ReactFlexLayoutPrivate::get(rfl)->layout();
 }
 
 ReactFlexLayout* ReactFlexLayout::get(QQuickItem* item, bool create)

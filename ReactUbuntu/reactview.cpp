@@ -137,26 +137,6 @@ void ReactView::componentComplete()
     });
 }
 
-void printDetails(QQuickItem* item, const QString& indent)
-{
-  qDebug().noquote() << indent << ReactAttachedProperties::get(item)->tag() << item;
-  for (auto c : item->childItems()) {
-    printDetails(c, indent + "  ");
-  }
-}
-
-void ReactView::updatePolish()
-{
-  // XXX:
-  ReactFlexLayout::get(this)->setWidth(this->width());
-  ReactFlexLayout::get(this)->setHeight(this->height());
-  ReactItem::updatePolish();
-
-  //
-  //  qDebug() << "Items after polish";
-  // printDetails(this, "  ");
-}
-
 void ReactView::mousePressEvent(QMouseEvent* event)
 {
   QVariantMap e = makeReactTouchEvent(this, event);

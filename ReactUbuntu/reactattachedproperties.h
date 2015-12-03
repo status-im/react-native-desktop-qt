@@ -7,12 +7,15 @@
 
 
 class QQuickItem;
+class ReactViewManager;
+
 
 class ReactAttachedPropertiesPrivate;
 class ReactAttachedProperties : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int tag READ tag WRITE setTag NOTIFY tagChanged)
+  Q_PROPERTY(ReactViewManager* viewManager READ viewManager WRITE setViewManager NOTIFY viewManagerChanged)
 
   Q_DECLARE_PRIVATE(ReactAttachedProperties)
 
@@ -23,11 +26,15 @@ public:
   int tag() const;
   void setTag(int tag);
 
+  ReactViewManager* viewManager() const;
+  void setViewManager(ReactViewManager* viewManager);
+
   static ReactAttachedProperties* get(QQuickItem* item, bool create = true);
   static ReactAttachedProperties* qmlAttachedProperties(QObject* object);
 
 Q_SIGNALS:
   void tagChanged();
+  void viewManagerChanged();
 
 private:
   QScopedPointer<ReactAttachedPropertiesPrivate> d_ptr;

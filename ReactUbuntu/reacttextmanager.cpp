@@ -65,7 +65,6 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
   return item;
 }
 
-
 void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
   qDebug() << __PRETTY_FUNCTION__ << item << properties;
@@ -84,7 +83,7 @@ void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& prop
     } else if (key == "fontSize") {
       rtp->setFontSize(properties.value(key).toDouble());
     } else if (key == "color") {
-      rtp->setProperty("color", QColor(properties.value(key).toUInt()));
+      rtp->setColor(QColor(properties.value(key).toUInt()));
     }
   }
 }

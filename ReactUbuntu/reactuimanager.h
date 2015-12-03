@@ -5,24 +5,23 @@
 #include <QVariant>
 #include <QObject>
 
-// #define QT_STATICPLUGIN
-
 #include "reactmoduleinterface.h"
+
 
 class ReactBridge;
 class ReactComponentData;
+
 
 class ReactUIManager
   : public QObject
   , public ReactModuleInterface
 {
   Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
   // Q_INVOKABLE void measureViewsInRect();
   // Q_INVOKABLE void scrollWithoutAnimationTo();
-  // Q_INVOKABLE void removeSubviewsFromContainerWithID();
+  Q_INVOKABLE void removeSubviewsFromContainerWithID(int containerReactTag);
   // Q_INVOKABLE void setMainScrollViewTag();
   // Q_INVOKABLE void focus();
   Q_INVOKABLE void measure(int reactTag, const ReactModuleInterface::ResponseBlock& callback);
@@ -49,7 +48,9 @@ class ReactUIManager
                               const QString& viewName,
                               int rootTag,
                               const QVariantMap& props);
-  //  Q_INVOKABLE void findSubviewIn();
+  Q_INVOKABLE void findSubviewIn(int reactTag,
+                                 const QPointF& point,
+                                 const ReactModuleInterface::ResponseBlock& callback);
 
 public:
   ReactUIManager();
