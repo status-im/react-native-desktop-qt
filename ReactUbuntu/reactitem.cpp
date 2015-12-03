@@ -1,6 +1,8 @@
 
 #include "reactitem.h"
 #include "reactflexlayout.h"
+#include "reacttextproperties.h"
+
 
 class ReactItemPrivate
 {
@@ -26,5 +28,6 @@ ReactItem::~ReactItem()
 
 void ReactItem::updatePolish()
 {
-  ReactFlexLayout::get(this)->layout();
+  ReactFlexLayout::polish(this);
+  ReactTextProperties::polish(this);
 }

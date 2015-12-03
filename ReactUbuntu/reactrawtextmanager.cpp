@@ -80,6 +80,8 @@ void ReactRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& p
   }
 
   // Grab style from parent text item
+  // XXX: we can most likely not apply these sensibly the first time
+  // because the item has not been added to the visual hierarchy
   ReactTextProperties *rtp = ReactTextProperties::get(item->parentItem(), false);
   if (rtp == nullptr)
     return; // XXX: prob should travel back up to the root text node

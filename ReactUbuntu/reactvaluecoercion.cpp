@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <QDateTime>
+#include <QPointF>
 
 #include <QDebug>
 
@@ -35,7 +36,7 @@ QMap<int, coerce_function> coerceFunctions
   {
     qRegisterMetaType<ReactModuleInterface::ResponseBlock>(),
     [](const QVariant& value) {
-      Q_ASSERT(value.canConvert(ReactModuleInterface::ResponseBlock));
+      Q_ASSERT(value.canConvert<int>());
       int callbackId = value.toInt();
       ReactModuleInterface::ResponseBlock block =
         [callbackId](ReactBridge* bridge, const QVariantList& args) {
@@ -48,8 +49,8 @@ QMap<int, coerce_function> coerceFunctions
   },
   {
     qRegisterMetaType<ReactModuleInterface::ErrorBlock>(),
-      [](const QVariant& value) {
-      Q_ASSERT(value.canConvert(ReactModuleInterface::ErrorBlock));
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<int>());
       int callbackId = value.toInt();
       ReactModuleInterface::ErrorBlock block =
         [callbackId](ReactBridge* bridge, const QVariantMap& error) {
@@ -58,6 +59,15 @@ QMap<int, coerce_function> coerceFunctions
                                    QVariantList{ callbackId, error });
         };
       return QVariant::fromValue(block);
+    }
+  },
+  {
+    qMetaTypeId<QPointF>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<QVariantList>());
+      QVariantList s = value.toList();
+      Q_ASSERT(s.size() == 2);
+      return QVariant::fromValue(QPointF(s[0].toDouble(), s[1].toDouble()));
     }
   }
 };

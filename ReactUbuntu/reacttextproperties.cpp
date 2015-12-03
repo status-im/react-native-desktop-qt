@@ -7,11 +7,44 @@
 class ReactTextPropertiesPrivate
 {
 public:
+  bool dirty;
   bool allowFontScaling;
   QString fontFamily;
   double fontSize;
   bool highlighted;
   QColor color;
+  QQuickItem* item;
+
+  void apply() {
+    if (!dirty)
+      return;
+    applyTextProperties(item, this);
+    dirty = false;
+  }
+
+  static ReactTextPropertiesPrivate* get(ReactTextProperties* rtp) {
+    return rtp->d_func();
+  }
+
+private:
+  void applyTextProperties(QQuickItem* item, ReactTextPropertiesPrivate* rtp)
+  {
+    if (rtp->fontSize != -1) {
+      QQmlProperty p(item, "font.pointSize");
+      p.write(QVariant::fromValue(rtp->fontSize));
+    }
+
+    if (!rtp->fontFamily.isEmpty()) {
+      QQmlProperty p(item, "font.family");
+      p.write(QVariant::fromValue(rtp->fontFamily));
+    }
+
+    if (rtp->color.isValid())
+      item->setProperty("color", rtp->color);
+
+    for (auto c : item->childItems())
+      applyTextProperties(c, rtp);
+  }
 };
 
 
@@ -19,6 +52,15 @@ ReactTextProperties::ReactTextProperties(QObject* parent)
   : QObject(parent)
   , d_ptr(new ReactTextPropertiesPrivate)
 {
+  Q_D(ReactTextProperties);
+  d->dirty = false;
+  d->allowFontScaling = false;
+  d->fontSize = -1;
+  d->highlighted = false;
+  d->item = qobject_cast<QQuickItem*>(parent);
+  if (d->item == nullptr) {
+    qCritical() << "ReactTextProperties only applies to visual items";
+  }
 }
 
 ReactTextProperties::~ReactTextProperties()
@@ -36,6 +78,7 @@ void ReactTextProperties::setAllowFontScaling(bool allowFontScaling)
   if (d->allowFontScaling == allowFontScaling)
     return;
   d->allowFontScaling = allowFontScaling;
+  d->dirty = true;
   Q_EMIT allowFontScalingChanged();
 }
 
@@ -50,6 +93,7 @@ void ReactTextProperties::setFontFamily(const QString& fontFamily)
   if (d->fontFamily == fontFamily)
     return;
   d->fontFamily = fontFamily;
+  d->dirty = true;
   Q_EMIT fontFamilyChanged();
 }
 
@@ -64,6 +108,7 @@ void ReactTextProperties::setFontSize(double fontSize)
   if (d->fontSize == fontSize) // XXX:
     return;
   d->fontSize = fontSize;
+  d->dirty = true;
   Q_EMIT fontSizeChanged();
 }
 
@@ -78,6 +123,7 @@ void ReactTextProperties::setHighlighted(bool highlighted)
   if (d->highlighted == highlighted)
     return;
   d->highlighted = highlighted;
+  d->dirty = true;
   Q_EMIT highlightedChanged();
 }
 
@@ -92,7 +138,22 @@ void ReactTextProperties::setColor(const QColor& color)
   if (d->color == color)
     return;
   d->color = color;
+  d->dirty = true;
   Q_EMIT colorChanged();
+}
+
+void ReactTextProperties::polish(QQuickItem* item)
+{
+  ReactTextProperties* rtp = ReactTextProperties::get(item, false);
+  if (rtp != nullptr) {
+    // apply text properties to all children
+    ReactTextPropertiesPrivate::get(rtp)->apply();
+  }
+
+  // Keep searching
+  for (auto c : item->childItems()) {
+    polish(c);
+  }
 }
 
 ReactTextProperties* ReactTextProperties::get(QQuickItem* item, bool create)

@@ -38,7 +38,6 @@ static QMap<QString, ReactFlexLayout::Wrap> wraps{
 
 void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
 {
-  qDebug() << __PRETTY_FUNCTION__ << item << properties;
   ReactFlexLayout* flex = ReactFlexLayout::get(item);
 
   for (const QString& key : properties.keys()) {
@@ -96,8 +95,6 @@ void applyFlexProperties(QQuickItem* item, const QVariantMap& properties)
       flex->setMarginVertical(properties.value(key).toDouble());
     }
   }
-
-  //flex->layout(); // XXX: should compute here
 }
 }
 
