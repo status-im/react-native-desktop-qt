@@ -146,7 +146,7 @@ QStringList ReactViewManager::customBubblingEventTypes()
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__ << "properties" << properties;
+  qDebug() << __PRETTY_FUNCTION__;
 
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData("import QtQuick 2.4\nRectangle{}", QUrl());

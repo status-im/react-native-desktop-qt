@@ -49,7 +49,8 @@ QVariantMap UbuntuComponentModule::constantsToExport()
 
 QQuickItem* UbuntuComponentModule::view(const QVariantMap& properties) const
 {
-  // Should probably build a string with import statement instead of doing this
+  // Should probably build a string with import statement (using version)
+  // instead of doing this
   QQmlComponent component(m_bridge->qmlEngine(), m_path, QQmlComponent::PreferSynchronous);
   if (!component.isReady())
     qCritical() << m_name << "was not ready!";
