@@ -3,7 +3,10 @@
 extern "C" {
 #include "Layout.h"
 }
+
 #include "reactflexlayout.h"
+#include "reactattachedproperties.h"
+
 
 QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p);
 
@@ -84,21 +87,26 @@ public:
     }
   }
   void setDirty(bool drty) {
+    // qDebug() << __PRETTY_FUNCTION__ << "tag" << ReactAttachedProperties::get(item)->tag() << "old" << dirty << "new" << drty;
     dirty = drty;
+    if (!dirty)
+      return; // dont reset parent
     ReactFlexLayout* pl = ReactFlexLayout::get(item->parentItem(), false);
     if (pl != nullptr)
       pl->setDirty(drty);
   }
   void layout() { // called only at top level
-    qDebug() << __PRETTY_FUNCTION__ << this;
+    // qDebug() << __PRETTY_FUNCTION__ << this;
     if (!dirty)
       return;
     setChildInfo(this);
     // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
-    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
+    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
+    // fflush(stdout);
     layoutNode(cssNode, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
     // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
-    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_CHILDREN));
+    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
+    // fflush(stdout);
     applyLayout();
   }
   static ReactFlexLayoutPrivate* get(ReactFlexLayout* rfl) {
@@ -110,7 +118,7 @@ public:
     return ReactFlexLayoutPrivate::get(ReactFlexLayout::get(child))->cssNode;
   }
   static bool isDirty(void* context) {
-    static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
+    return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
   }
   bool dirty;
   float padding[CSS_PROP_COUNT];
@@ -121,6 +129,7 @@ public:
 
 private:
   void applyLayout() {
+    // qDebug() << __PRETTY_FUNCTION__ << this << cssNode->layout.should_update;
     if (!cssNode->layout.should_update)
       return;
     cssNode->layout.should_update = false;
@@ -135,10 +144,10 @@ private:
       ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->applyLayout();
     }
 
-    // cssNode->layout.position[CSS_LEFT] = 0;
-    // cssNode->layout.position[CSS_RIGHT] = 0;
-    // cssNode->layout.dimensions[CSS_WIDTH] = CSS_UNDEFINED;
-    // cssNode->layout.dimensions[CSS_HEIGHT] = CSS_UNDEFINED;
+    cssNode->layout.position[CSS_LEFT] = 0;
+    cssNode->layout.position[CSS_RIGHT] = 0;
+    cssNode->layout.dimensions[CSS_WIDTH] = CSS_UNDEFINED;
+    cssNode->layout.dimensions[CSS_HEIGHT] = CSS_UNDEFINED;
   }
 };
 
@@ -146,7 +155,8 @@ QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p)
 {
   QDebugStateSaver s(debug);
   debug.nospace() << "ReactFlexLayoutPrivate(this=" << (void*)p <<
-    ", dirty=" << p->dirty << ", item=" << p->item << ", layout={" <<
+    ", tag=" << ReactAttachedProperties::get(p->item)->tag() << ", dirty=" << p->dirty <<
+    ", item=" << p->item << ", layout={" <<
     p->cssNode->layout.position[CSS_LEFT] << " " <<
     p->cssNode->layout.position[CSS_TOP] << " " <<
     p->cssNode->layout.dimensions[CSS_WIDTH] << " " <<

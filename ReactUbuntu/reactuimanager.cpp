@@ -75,7 +75,6 @@ void ReactUIManager::updateView
 {
   qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << properties;
 
-  // set properties on iew
   QQuickItem* item = m_views.value(reactTag);
   if (item == nullptr) {
     qWarning() << "Attempting to update properties on unknown view";
@@ -84,13 +83,7 @@ void ReactUIManager::updateView
 
   ReactAttachedProperties::get(item)->viewManager()->applyProperties(item, properties);
 
-  // XXX:
   m_bridge->visualParent()->polish();
-}
-
-QList<QQuickItem*> indexedChildren(QQuickItem* parent, const QList<int>& indices)
-{
-  return QList<QQuickItem*>{};
 }
 
 void ReactUIManager::manageChildren
@@ -132,8 +125,7 @@ void ReactUIManager::manageChildren
     }
   }
 
-  //  children = indexedChildren(container, removeAtIndices);
-
+  children.clear();
   // XXX: Assumption - addChildReactTags is sorted
   std::transform(addChildReactTags.begin(), addChildReactTags.end(),
                  std::back_inserter(children),
@@ -141,16 +133,16 @@ void ReactUIManager::manageChildren
                    return m_views.value(key);
                  });
 
-  // on iOS, order of the subviews implies z-order
-  // implicitly its the same in QML, barring some exceptions.
-  // XXX: existing views
-  for (int i = 0; i < children.size(); ++i) {
-    QQuickItem* child = children.at(i);
-    child->setZ(i);
+  // on iOS, order of the subviews implies z-order, implicitly its the same in
+  // QML, barring some exceptions. revisit - set zorder appears to be the only
+  // exception can probably self order items, but it's not an explicit guarantee
+  QList<QQuickItem*>::iterator it = children.begin();
+  for (int i : addAtIndices) {
+    QQuickItem* child = *it++;
     child->setParentItem(container);
+    child->setZ(i);
+    ReactFlexLayout::get(child)->setDirty(true);
   }
-
-  ReactFlexLayout::get(container)->setDirty(true);
 
   m_bridge->visualParent()->polish();
 }
@@ -189,19 +181,26 @@ void ReactUIManager::createView
   qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag; // << props;
   ReactComponentData* cd = m_componentData.value(viewName);
   if (cd == nullptr) {
-    qCritical() << "Attempt to create unknow view of type" << viewName;
+    qCritical() << "Attempt to create unknown view of type" << viewName;
     return;
   }
 
   QQuickItem* item = cd->createView(reactTag, props);
-  if (item == nullptr)
+  if (item == nullptr) {
+    qWarning() << "Failed to create view of type" << viewName;
     return;
+  }
 
   ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
   rap->setTag(reactTag);
   rap->setViewManager(cd->manager());
 
-  // XXX:
+  // At creation properties have been applied which can lead to the new item's
+  // layout being marked as dirty - but we want to be able to mark items being
+  // positioned in the visual hierarchy as dirty, so force a reset until that
+  // time.
+  ReactFlexLayout::get(item)->setDirty(false);
+
   m_views.insert(reactTag, item);
 }
 
@@ -369,20 +368,23 @@ void ReactUIManager::registerRootView(QQuickItem* root)
 void ReactUIManager::rootViewWidthChanged()
 {
   QQuickItem* root = m_bridge->visualParent();
-  ReactFlexLayout::get(root)->setWidth(root->width());
+  if (ReactAttachedProperties::get(root)->tag() == -1)
+    return;
   root->polish();
 }
 
 void ReactUIManager::rootViewHeightChanged()
 {
   QQuickItem* root = m_bridge->visualParent();
-  ReactFlexLayout::get(root)->setHeight(root->height());
+  if (ReactAttachedProperties::get(root)->tag() == -1)
+    return;
   root->polish();
 }
 
 void ReactUIManager::rootViewScaleChanged()
 {
   QQuickItem* root = m_bridge->visualParent();
-  ReactFlexLayout::get(root)->setDirty(true);
+  if (ReactAttachedProperties::get(root)->tag() == -1)
+    return;
   root->polish();
 }

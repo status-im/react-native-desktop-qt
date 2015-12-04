@@ -42,11 +42,11 @@ QVariantMap ReactComponentData::viewConfig() const
 
   // Create a temporary view to inspect, oh well
   QQuickItem* view = m_viewManager->view();
-
   if (view == nullptr) {
     qDebug() << name() << "has no view for inspecting!";
     return rc;
   }
+  view->deleteLater();
 
   const QMetaObject* metaObject = view->metaObject();
   const int propertyCount = metaObject->propertyCount();
