@@ -67,7 +67,7 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 
 void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__ << item << properties;
+  // qDebug() << __PRETTY_FUNCTION__ << item << properties;
   if (properties.isEmpty())
     return;
 
