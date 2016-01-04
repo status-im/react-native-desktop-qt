@@ -84,7 +84,7 @@ void ReactTiming::createTimer
     bool repeats
 )
 {
-  qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
+  // qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
   if (duration == 0 && !repeats) {
     m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
     return;
@@ -107,7 +107,7 @@ void ReactTiming::createTimer
 
 void ReactTiming::deleteTimer(int timerId)
 {
-  qDebug() << __PRETTY_FUNCTION__ << timerId;
+  // qDebug() << __PRETTY_FUNCTION__ << timerId;
   QMap<int, QTimer*>::iterator it = m_activeTimers.find(timerId);
   if (it == m_activeTimers.end())
     return;

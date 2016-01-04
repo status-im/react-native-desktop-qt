@@ -45,7 +45,7 @@ QVariantMap ReactRawTextManager::constantsToExport()
 
 QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData("import QtQuick 2.4\nText{horizontalAlignment:Text.AlignHCenter;verticalAlignment:Text.AlignVCenter;}", QUrl());
@@ -68,7 +68,7 @@ QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
 
 void ReactRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__ << item << properties;
+  // qDebug() << __PRETTY_FUNCTION__ << item << properties;
 
   if (properties.isEmpty())
     return;

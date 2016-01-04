@@ -59,7 +59,7 @@ void ReactNetExecutor::executeJSCall
     const ExecuteCallback& callback
 )
 {
-  qDebug() << __func__ << "method=" << method << "args=" << args;
+  // qDebug() << __func__ << "method=" << method << "args=" << args;
 
   m_socket->waitForConnected();  // TODO:
 

@@ -95,18 +95,29 @@ public:
     if (pl != nullptr)
       pl->setDirty(drty);
   }
+  void local_print_node(int tab) {
+    for (int i = 0; i < tab; ++i)
+      printf(" ");
+
+    printf("%d: ", ReactAttachedProperties::get(item)->tag());
+    print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE));
+
+    for (QQuickItem* c : item->childItems()) {
+      ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->local_print_node(tab + 2);
+    }
+    fflush(stdout);
+  }
   void layout() { // called only at top level
     // qDebug() << __PRETTY_FUNCTION__ << this;
     if (!dirty)
       return;
     setChildInfo(this);
+
     // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
-    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
-    // fflush(stdout);
+    // local_print_node(0);
     layoutNode(cssNode, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
     // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
-    // print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE | CSS_PRINT_CHILDREN));
-    // fflush(stdout);
+    // local_print_node(0);
     applyLayout();
   }
   static ReactFlexLayoutPrivate* get(ReactFlexLayout* rfl) {
@@ -130,8 +141,9 @@ public:
 private:
   void applyLayout() {
     // qDebug() << __PRETTY_FUNCTION__ << this << cssNode->layout.should_update;
-    if (!cssNode->layout.should_update)
+    if (!cssNode->layout.should_update) {
       return;
+    }
     cssNode->layout.should_update = false;
     dirty = false;
 
@@ -145,7 +157,7 @@ private:
     }
 
     cssNode->layout.position[CSS_LEFT] = 0;
-    cssNode->layout.position[CSS_RIGHT] = 0;
+    cssNode->layout.position[CSS_TOP] = 0;
     cssNode->layout.dimensions[CSS_WIDTH] = CSS_UNDEFINED;
     cssNode->layout.dimensions[CSS_HEIGHT] = CSS_UNDEFINED;
   }

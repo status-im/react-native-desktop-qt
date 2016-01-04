@@ -178,7 +178,7 @@ void ReactUIManager::createView
 {
   Q_UNUSED(rootTag);
 
-  qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag; // << props;
+  qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag << props;
   ReactComponentData* cd = m_componentData.value(viewName);
   if (cd == nullptr) {
     qCritical() << "Attempt to create unknown view of type" << viewName;
