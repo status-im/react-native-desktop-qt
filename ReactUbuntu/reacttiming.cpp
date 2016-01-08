@@ -34,17 +34,9 @@ QString ReactTiming::moduleName()
   return "RCTTiming";
 }
 
-QStringList ReactTiming::methodsToExport()
+QList<ReactModuleMethod*> ReactTiming::methodsToExport()
 {
-  // TODO: move into moduledata
-  const QMetaObject* metaObject = this->metaObject();
-  const int methodCount = metaObject->methodCount();
-
-  QStringList methods;
-  for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
-    methods << metaObject->method(i).name();
-  }
-  return methods;
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactTiming::constantsToExport()

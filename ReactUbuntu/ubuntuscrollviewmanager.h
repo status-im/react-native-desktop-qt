@@ -20,7 +20,7 @@ public:
   ReactViewManager* viewManager() override;
 
   QString moduleName() override;
-  QStringList methodsToExport() override;
+  QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
   QQuickItem* view(const QVariantMap& properties) const override;

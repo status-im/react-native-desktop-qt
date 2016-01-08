@@ -33,9 +33,9 @@ QString ReactRawTextManager::moduleName()
   return "RCTRawTextManager";
 }
 
-QStringList ReactRawTextManager::methodsToExport()
+QList<ReactModuleMethod*> ReactRawTextManager::methodsToExport()
 {
-  return QStringList{};
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactRawTextManager::constantsToExport()

@@ -124,9 +124,9 @@ QString ReactViewManager::moduleName()
   return "RCTViewManager";
 }
 
-QStringList ReactViewManager::methodsToExport()
+QList<ReactModuleMethod*> ReactViewManager::methodsToExport()
 {
-  return QStringList{};
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactViewManager::constantsToExport()
