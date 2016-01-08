@@ -21,6 +21,7 @@ ReactNetworking::~ReactNetworking()
 
 void ReactNetworking::setBridge(ReactBridge* bridge)
 {
+  m_bridge = bridge;
   m_nam = bridge->networkAccessManager();
 }
 
@@ -34,17 +35,9 @@ QString ReactNetworking::moduleName()
   return "RCTNetworking";
 }
 
-QStringList ReactNetworking::methodsToExport()
+QList<ReactModuleMethod*> ReactNetworking::methodsToExport()
 {
-  // TODO: move into moduledata
-  const QMetaObject* metaObject = this->metaObject();
-  const int methodCount = metaObject->methodCount();
-
-  QStringList methods;
-  for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
-    methods << metaObject->method(i).name();
-  }
-  return methods;
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactNetworking::constantsToExport()
@@ -64,9 +57,13 @@ int ReactNetworking::sendRequest(const QVariantMap& query)
   // TODO: data (post etc)
   // TODO: incrementalUpdates
 
-  if (query["method"].toString() == "get") {
+  if (query["method"].toString().compare("get", Qt::CaseInsensitive) == 0) {
     QNetworkReply* reply = m_nam->get(request);
-    connect(reply, SIGNAL(finished()), SLOT(requestFinished()));
+    QObject::connect(reply, &QNetworkReply::finished, [=] {
+        QByteArray body = reply->readAll();
+        qDebug() << "Recieved network reply" << body;
+        m_bridge->enqueueJSCall("RCTDeviceEventEmitter", "emit", QVariantList{QVariantList{"didReceiveNetworkData", body}});
+      });
     m_activeConnections[m_id++] = reply;
   }
 
@@ -75,8 +72,14 @@ int ReactNetworking::sendRequest(const QVariantMap& query)
 
 void ReactNetworking::cancelRequest(int request)
 {
+  qDebug() << __PRETTY_FUNCTION__ << request;
+
   QNetworkReply* reply = m_activeConnections[request];
   if (reply == nullptr)
     return;
   reply->abort();
+}
+
+void ReactNetworking::requestFinished()
+{
 }

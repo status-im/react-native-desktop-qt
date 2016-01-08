@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QMetaObject>
 
+#include <QDebug>
+
 #include "reactmoduleinterface.h"
 #include "reactmoduledata.h"
 #include "reactmodulemethod.h"
@@ -18,10 +20,18 @@ QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl)
   const int methodCount = metaObject->methodCount();
 
   QList<ReactModuleMethod*> methods;
+
+  // from methodsToExport
+  ReactModuleInterface* rmi = qobject_cast<ReactModuleInterface*>(moduleImpl);
+  methods = rmi->methodsToExport();
+
   for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
     QMetaMethod m = metaObject->method(i);
     if (m.methodType() == QMetaMethod::Method)
-      methods << new ReactModuleMethod(moduleImpl, metaObject->method(i));
+      methods << new ReactModuleMethod(metaObject->method(i),
+                                       [moduleImpl](QVariantList&) {
+                                         return moduleImpl;
+                                       });
   }
 
   return methods;
@@ -102,7 +112,6 @@ QVariant ReactModuleData::info() const
 
   return config;
 }
-
 
 ReactModuleMethod* ReactModuleData::method(int id) const
 {

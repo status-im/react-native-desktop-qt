@@ -33,9 +33,9 @@ QString UbuntuScrollViewManager::moduleName()
   return "RCTScrollViewManager";
 }
 
-QStringList UbuntuScrollViewManager::methodsToExport()
+QList<ReactModuleMethod*> UbuntuScrollViewManager::methodsToExport()
 {
-  return QStringList{};
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap UbuntuScrollViewManager::constantsToExport()

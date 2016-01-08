@@ -288,16 +288,9 @@ QString ReactUIManager::moduleName()
   return "RCTUIManager";
 }
 
-QStringList ReactUIManager::methodsToExport()
+QList<ReactModuleMethod*> ReactUIManager::methodsToExport()
 {
-  const QMetaObject* metaObject = this->metaObject();
-  const int methodCount = metaObject->methodCount();
-
-  QStringList methods;
-  for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
-    methods << metaObject->method(i).name();
-  }
-  return methods;
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactUIManager::constantsToExport()
@@ -341,9 +334,17 @@ QVariantMap ReactUIManager::constantsToExport()
   rc.insert("customDirectEventTypes", directEvents);
   rc.insert("Dimensions",
             QVariantMap{
-              { "width", m_bridge->visualParent()->width() },
-              { "height", m_bridge->visualParent()->height() },
-              { "scale", m_bridge->visualParent()->scale() }});
+              { "window", QVariantMap{
+                  { "width", m_bridge->visualParent()->width() },
+                  { "height", m_bridge->visualParent()->height() },
+                  { "scale", m_bridge->visualParent()->scale() }
+                }
+              },
+              { "modalFullscreenView", QVariantMap{
+                    { "width", m_bridge->visualParent()->width() },
+                    { "height", m_bridge->visualParent()->height() }
+                }
+              }});
   rc.insert("modalFullscreenView",
             QVariantMap{
               { "width", m_bridge->visualParent()->width() },

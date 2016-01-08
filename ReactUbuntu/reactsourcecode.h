@@ -35,7 +35,7 @@ public:
   ReactViewManager* viewManager() override;
 
   QString moduleName() override;
-  QStringList methodsToExport() override;
+  QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
   QUrl scriptUrl() const;

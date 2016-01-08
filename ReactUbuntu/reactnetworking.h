@@ -31,11 +31,15 @@ public:
   ReactViewManager* viewManager() override;
 
   QString moduleName() override;
-  QStringList methodsToExport() override;
+  QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
+
+private Q_SLOTS:
+  void requestFinished();
 
 private:
   int m_id;
+  ReactBridge* m_bridge;
   QNetworkAccessManager* m_nam;
   QMap<int, QNetworkReply*> m_activeConnections;
 };

@@ -44,9 +44,9 @@ QString ReactSourceCode::moduleName()
   return "RCTSourceCode";
 }
 
-QStringList ReactSourceCode::methodsToExport()
+QList<ReactModuleMethod*> ReactSourceCode::methodsToExport()
 {
-  return QStringList{};
+  return QList<ReactModuleMethod*>{};
 }
 
 QVariantMap ReactSourceCode::constantsToExport()

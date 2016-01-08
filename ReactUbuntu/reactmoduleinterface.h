@@ -8,6 +8,7 @@
 
 class ReactBridge;
 class ReactViewManager;
+class ReactModuleMethod;
 
 
 class ReactModuleInterface
@@ -26,7 +27,7 @@ public:
   virtual ReactViewManager* viewManager() { return nullptr; }
 
   virtual QString moduleName() = 0;
-  virtual QStringList methodsToExport() = 0;
+  virtual QList<ReactModuleMethod*> methodsToExport() = 0;
   virtual QVariantMap constantsToExport() = 0;
 };
 

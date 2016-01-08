@@ -59,12 +59,14 @@ public:
   void setBridge(ReactBridge *bridge) override;
 
   QString moduleName() override;
-  QStringList methodsToExport() override;
+  QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
   int allocateRootTag();
 
   void registerRootView(QQuickItem* root);
+
+  QQuickItem* viewForTag(int reactTag);
 
 public Q_SLOTS:
   void rootViewWidthChanged();
