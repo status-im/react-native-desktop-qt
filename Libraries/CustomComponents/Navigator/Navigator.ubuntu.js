@@ -10,11 +10,8 @@ var PropTypes = React.PropTypes;
 var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandler = require('findNodeHandle');
 
-var {
-  UbuntuMainViewManager,
-  UbuntuPageStackManager,
-  UbuntuPageManager
-} = require('NativeModules');
+var View = require('View');
+
 
 var MainView = React.createClass({
   propTypes: {
@@ -23,7 +20,11 @@ var MainView = React.createClass({
   },
 
   render: function() {
-    return (<UbuntuMainView />);
+      return (
+            <UbuntuMainView>
+              {this.props.children}
+            </UbuntuMainView>
+      );
   }
 });
 
@@ -51,12 +52,15 @@ var PageStack = React.createClass({
   },
 
   render: function () {
-    return (<UbuntuPageStack />);
+    return (
+        <UbuntuPageStack>
+          {this.props.children}
+        </UbuntuPageStack>
+      );
   }
 });
 
 var UbuntuPageStack = requireNativeComponent('UbuntuPageStack', PageStack);
-
 
 var Page = React.createClass({
   propTypes: {
@@ -64,7 +68,11 @@ var Page = React.createClass({
   },
 
   render: function() {
-    return (<UbuntuPage />);
+    return (
+        <UbuntuPage>
+          {this.props.children}
+        </UbuntuPage>
+      );
   }
 });
 
@@ -78,46 +86,62 @@ var Navigator = React.createClass({
   },
 
   getInitialState: function() {
-    return {};
+    return { pageStack: [] };
   },
 
   componentWillMount: function() {
-    this._routeStack = [];
-    this._pageStack = <PageStack ref='pageStack'/>;
+    this._pages = [];
+    this._routeMap = new Map();
+
     if (this.props.initialRoute) {
-//        util.inspect(this._pageStack, { colors: true });
-        console.log("" + PageStack);
-//      this._pageStack.push(this.props.initialRoute);
-      this.refs.pageStack.push(this.initialRoute);
+      this.setState({
+        pageStack: [this.props.initialRoute]
+      });
     }
   },
 
   push: function(route) {
-    this._routeStack.unshift(route);
-    var newPage = <Page>
-                    {this.props.renderScene(route, this)}
-                  </Page>;
-    this._pageStack.push(newPage);
+    var newPages = [route].concat(this.state.routeStack);
     this.setState({
-          activePage: newPage
-        });
+        pageStack: newPages
+      });
   },
 
   pop: function() {
-    var route = this._pageStack.shift();
+    var route = this.state.pageStack[0];
+    this._routeMap.delete(route);
+    var newPages = this.state.pageStack.slice(1);
     this.setState({
-        activePage: this._routeStack[0]
+        pageStack: newPages
       });
   },
 
   render: function() {
+    var pages = [];
+    for (var page in this.state.pageStack) {
+      var route = this.state.pageStack[page];
+      if (this._routeMap.has(route)) {
+        pages.push(this._routeMap.get(route));
+      } else {
+        var newPage = <Page>
+                        {this.props.renderScene(route, this)}
+                      </Page>;
+        this._routeMap.set(route, newPage);
+        pages.push(newPage);
+      }
+    }
+    this._pages = pages;
+
     return (
-      <MainView>
-        {this._pageStack}
-      </MainView>
+      <View style={this.props.style}>
+        <MainView style={this.props.style}>
+          <PageStack ref={(stack) => this._pageStack = stack}>
+            {this._pages}
+          </PageStack>
+        </MainView>
+      </View>
     );
   },
 });
 
 module.exports = Navigator;
-

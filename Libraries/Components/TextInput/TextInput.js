@@ -45,6 +45,8 @@ if (Platform.OS === 'android') {
 } else if (Platform.OS === 'ios') {
   var RCTTextView = requireNativeComponent('RCTTextView', null);
   var RCTTextField = requireNativeComponent('RCTTextField', null);
+} else if (Platform.OS === 'ubuntu') {
+  var UbuntuTextField = requireNativeComponent('UbuntuTextField', null);
 }
 
 type Event = Object;
@@ -368,6 +370,8 @@ var TextInput = React.createClass({
       return this._renderIOS();
     } else if (Platform.OS === 'android') {
       return this._renderAndroid();
+    } else if (Platform.OS == 'ubuntu') {
+      return this._renderUbuntu();
     }
   },
 
@@ -526,6 +530,12 @@ var TextInput = React.createClass({
         {textContainer}
       </TouchableWithoutFeedback>
     );
+  },
+
+  _renderUbuntu: function()  {
+    return (
+      <UbuntuTextField />
+    )
   },
 
   _onFocus: function(event: Event) {
