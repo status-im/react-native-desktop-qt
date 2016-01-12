@@ -8,7 +8,11 @@ var React = require('React');
 var PropTypes = React.PropTypes;
 
 var requireNativeComponent = require('requireNativeComponent');
-var findNodeHandler = require('findNodeHandle');
+var findNodeHandle = require('findNodeHandle');
+
+var {
+  UbuntuPageStackManager
+} = require('NativeModules');
 
 var View = require('View');
 
@@ -40,7 +44,7 @@ var PageStack = React.createClass({
   },
 
   push: function(page) {
-    UbuntuPageStackManager.push(findNodeHandle(this), page);
+    UbuntuPageStackManager.push(findNodeHandle(this), {reactTag: page}, {});
   },
 
   pop: function() {
@@ -90,18 +94,35 @@ var Navigator = React.createClass({
   },
 
   componentWillMount: function() {
+    this._pageStack = null;
+    this._pushPage = null;
     this._pages = [];
+    this._pageRefs = [];
     this._routeMap = new Map();
 
     if (this.props.initialRoute) {
-      this.setState({
-        pageStack: [this.props.initialRoute]
-      });
+      this.push(this.props.initialRoute);
     }
   },
 
+  componentDidMount: function() {
+    console.log("=== componentDidMount");
+    if (this._pushPage == null)
+      return;
+    this._pageStack.push(findNodeHandle(this._pageRefs[this._pushPage]));
+    this._pushPage = null;
+  },
+
+  componentDidUpdate: function() {
+    console.log("=== componentDidUpdate");
+    if (this._pushPage == null)
+      return;
+    this._pageStack.push(this.findNodeHandle(this._pageRefs[this._pushPage]));
+    this._pushPage = null;
+  },
+
   push: function(route) {
-    var newPages = [route].concat(this.state.routeStack);
+    var newPages = [route].concat(this.state.pageStack);
     this.setState({
         pageStack: newPages
       });
@@ -118,16 +139,19 @@ var Navigator = React.createClass({
 
   render: function() {
     var pages = [];
-    for (var page in this.state.pageStack) {
-      var route = this.state.pageStack[page];
-      if (this._routeMap.has(route)) {
-        pages.push(this._routeMap.get(route));
+      console.log("=== pageStack="+ JSON.stringify(this.state.pageStack));
+    for (var i in this.state.pageStack) {
+      var page = this.state.pageStack[i];
+      console.log("=== page="+ JSON.stringify(page));
+      if (this._routeMap.has(page)) {
+        pages.push(this._routeMap.get(page));
       } else {
-        var newPage = <Page>
-                        {this.props.renderScene(route, this)}
+        var newPage = <Page ref={(page) => this._pageRefs[i] = page}>
+                        {this.props.renderScene(page, this)}
                       </Page>;
-        this._routeMap.set(route, newPage);
+        this._routeMap.set(page, newPage);
         pages.push(newPage);
+        this._pushPage = i;
       }
     }
     this._pages = pages;

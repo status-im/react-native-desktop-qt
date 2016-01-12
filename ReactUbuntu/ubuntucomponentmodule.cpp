@@ -69,12 +69,24 @@ QList<ReactModuleMethod*> UbuntuComponentModule::methodsToExport()
         continue;
       m_methodCache << new ReactModuleMethod(metaObject->method(i),
                                         [=](QVariantList& args) {
-                                           if (args.length() == 0)
-                                             return (QObject*)nullptr;
-                                           int reactTag = args.first().toInt();
-                                           args.pop_front();
-                                           return (QObject*)m_bridge->uiManager()->viewForTag(reactTag);
-                                         });
+                                            // The first is the object to apply the function to
+                                            if (args.length() == 0)
+                                              return (QObject*)nullptr;
+                                            int reactTag = args.first().toInt();
+                                            args.pop_front();
+
+                                            // XXX: Scan for objects with "reactTag"
+                                            // These need to be converted to views
+                                            for (int i = 0; i < args.size(); ++i) {
+                                              if (args[i].type() == QVariant::Map) {
+                                                QVariantMap m = args[i].toMap();
+                                                if (m.size() == 1 && m.contains("reactTag")) {
+                                                  args[i] = QVariant::fromValue(m_bridge->uiManager()->viewForTag(m.value("viewTag").toInt()));
+                                                }
+                                              }
+                                            }
+                                            return (QObject*)m_bridge->uiManager()->viewForTag(reactTag);
+                                          });
     }
   }
 

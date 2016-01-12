@@ -366,6 +366,11 @@ void ReactUIManager::registerRootView(QQuickItem* root)
   m_views.insert(properties->tag(), root);
 }
 
+QQuickItem* ReactUIManager::viewForTag(int reactTag)
+{
+  return m_views.value(reactTag);
+}
+
 void ReactUIManager::rootViewWidthChanged()
 {
   QQuickItem* root = m_bridge->visualParent();

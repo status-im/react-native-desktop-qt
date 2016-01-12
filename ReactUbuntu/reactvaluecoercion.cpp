@@ -75,11 +75,13 @@ QMap<int, coerce_function> coerceFunctions
 
 QVariant reactCoerceValue(const QVariant& data, int parameterType)
 {
-  if (!data.isValid() || data.isNull())
+  if (!data.isValid() || data.isNull()) {
     return QVariant(parameterType, QMetaType::create(parameterType));
+  }
 
-  if (data.type() == parameterType)
+  if (data.type() == parameterType || parameterType == QMetaType::QVariant) {
     return data;
+  }
 
   if (data.canConvert(parameterType)) {
     QVariant converted = data;
