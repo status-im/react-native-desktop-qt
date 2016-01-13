@@ -16,7 +16,7 @@ var server = net.createServer(function(sock) {
     vm.createContext(sandbox);
 
     var internalEval = function(code) {
-        DEBUG && console.log("-- internalEval: executing script(length=" + code.length + "): " + code.slice(0, 90));
+        DEBUG && console.log("-- internalEval: executing script(length=" + code.length + "): " + code.slice(0, 80) + " ... " + code.slice(-80));
         DEBUG > 2 && console.log("-- before sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
         result = vm.runInContext(code, sandbox);
         DEBUG > 2 && console.log("-- internalEval: result = " + result);

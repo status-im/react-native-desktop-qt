@@ -4,12 +4,13 @@
 
 #include <QDateTime>
 #include <QPointF>
-
 #include <QDebug>
 
 #include "reactvaluecoercion.h"
 #include "reactmoduleinterface.h"
 #include "reactbridge.h"
+#include "reactnetworking.h"
+
 
 typedef std::function<QVariant (const QVariant&)> coerce_function;
 
@@ -68,6 +69,20 @@ QMap<int, coerce_function> coerceFunctions
       QVariantList s = value.toList();
       Q_ASSERT(s.size() == 2);
       return QVariant::fromValue(QPointF(s[0].toDouble(), s[1].toDouble()));
+    }
+  },
+  {
+    qRegisterMetaType<ReactNetworking::Callback>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<int>());
+      int callbackId = value.toInt();
+      ReactNetworking::Callback callback =
+        [callbackId](ReactBridge* bridge, int status, const QVariantMap& headers, const QByteArray& responseText) {
+          bridge->invokeAndProcess("BatchedBridge",
+                                   "invokeCallbackAndReturnFlushedQueue",
+                                   QVariantList{callbackId, QVariantList{status, headers, responseText}});
+        };
+      return QVariant::fromValue(callback);
     }
   }
 };

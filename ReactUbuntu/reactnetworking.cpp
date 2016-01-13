@@ -10,7 +10,6 @@
 
 ReactNetworking::ReactNetworking(QObject* parent)
   : QObject(parent)
-  , m_id(0)
   , m_nam(nullptr)
 {
 }
@@ -45,29 +44,35 @@ QVariantMap ReactNetworking::constantsToExport()
   return QVariantMap{};
 }
 
-int ReactNetworking::sendRequest(const QVariantMap& query)
+void ReactNetworking::sendRequest(
+  int requestId,
+  const QString& method,
+  const QUrl& url,
+  const QVariantMap& headers,
+  const QByteArray& data,
+  const ReactNetworking::Callback& callback
+)
 {
-  QNetworkRequest request(query["url"].toString());
+  qDebug() << __PRETTY_FUNCTION__ << method << url;
 
-  QVariantMap headers = query["headers"].toMap();
-  Q_FOREACH(const QString& key, headers.keys()) {
+  QNetworkRequest request(url);
+
+  for (const QString& key : headers.keys()) {
     request.setRawHeader(key.toLocal8Bit(), headers[key].toString().toLocal8Bit());
   }
 
   // TODO: data (post etc)
-  // TODO: incrementalUpdates
 
-  if (query["method"].toString().compare("get", Qt::CaseInsensitive) == 0) {
+  if (method.compare("get", Qt::CaseInsensitive) == 0) {
     QNetworkReply* reply = m_nam->get(request);
     QObject::connect(reply, &QNetworkReply::finished, [=] {
-        QByteArray body = reply->readAll();
-        qDebug() << "Recieved network reply" << body;
-        m_bridge->enqueueJSCall("RCTDeviceEventEmitter", "emit", QVariantList{QVariantList{"didReceiveNetworkData", body}});
+        callback(m_bridge,
+                 reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
+                 QVariantMap{},
+                 reply->readAll());
       });
-    m_activeConnections[m_id++] = reply;
+    m_activeConnections[requestId] = reply;
   }
-
-  return m_id - 1;
 }
 
 void ReactNetworking::cancelRequest(int request)

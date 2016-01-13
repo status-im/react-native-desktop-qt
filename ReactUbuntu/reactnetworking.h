@@ -1,6 +1,8 @@
 #ifndef REACTNETWORKING_H
 #define REACTNETWORKING_H
 
+#include <functional>
+
 #include <QObject>
 #include <QVariant>
 
@@ -18,8 +20,17 @@ class ReactNetworking
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE int sendRequest(const QVariantMap& query);
-  Q_INVOKABLE void cancelRequest(int request);
+public:
+  typedef std::function<void (ReactBridge*, int requestId, const QVariantMap& headers, const QByteArray& responseText)> Callback;
+
+private:
+  Q_INVOKABLE void sendRequest(int requestId,
+                              const QString& method,
+                              const QUrl& url,
+                              const QVariantMap& headers,
+                              const QByteArray& data,
+                              const ReactNetworking::Callback& callback);
+  Q_INVOKABLE void cancelRequest(int requestId);
 
 public:
   ReactNetworking(QObject* parent = 0);
@@ -38,10 +49,11 @@ private Q_SLOTS:
   void requestFinished();
 
 private:
-  int m_id;
   ReactBridge* m_bridge;
   QNetworkAccessManager* m_nam;
   QMap<int, QNetworkReply*> m_activeConnections;
 };
+
+Q_DECLARE_METATYPE(ReactNetworking::Callback);
 
 #endif // REACTNETWORKING_H
