@@ -9,19 +9,14 @@ var RCTNetworking = require('NativeModules').Networking;
 
 var XMLHttpRequestBase = require('XMLHttpRequestBase');
 
-class XMLHttpRequest extends XMLHttpRequestBase {
+var requestId = 0;
 
+class XMLHttpRequest extends XMLHttpRequestBase {
   _requestId: ?number;
-  _subscriptions: [any];
-  upload: {
-    onprogress?: (event: Object) => void;
-  };
 
   constructor() {
     super();
-    this._requestId = null;
-    this._subscriptions = [];
-    this.upload = {};
+    this._requestId = requestId++;
   }
 
   sendImpl(method: ?string, url: ?string, headers: Object, data: any): void {
@@ -30,14 +25,15 @@ class XMLHttpRequest extends XMLHttpRequestBase {
     } else if (data instanceof FormData) {
       data = {formData: data.getParts()};
     }
+
     RCTNetworking.sendRequest(
-      {
+        this._requestId,
         method,
         url,
-        data,
         headers,
-        incrementalUpdates: this.onreadystatechange ? true : false,
-      });
+        data,
+        this.callback.bind(this)
+      );
   }
 
   abortImpl(): void {
