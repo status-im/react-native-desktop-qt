@@ -29,6 +29,7 @@ add_library(
   reactviewmanager.cpp
   reactrawtextmanager.cpp
   reacttextmanager.cpp
+  reactimagemanager.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
   reacttextproperties.cpp

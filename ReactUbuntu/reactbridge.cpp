@@ -18,6 +18,7 @@
 #include "reactviewmanager.h"
 #include "reactrawtextmanager.h"
 #include "reacttextmanager.h"
+#include "reactimagemanager.h"
 #include "reactuimanager.h"
 
 #include "ubuntuscrollviewmanager.h"
@@ -43,6 +44,7 @@ public:
       new ReactViewManager,
       new ReactRawTextManager,
       new ReactTextManager,
+      new ReactImageManager,
     };
   }
 

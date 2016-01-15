@@ -114,6 +114,8 @@ void ReactUIManager::manageChildren
         });
     for (int i : removeAtIndices) {
       QQuickItem* item = children[i];
+      Q_ASSERT(item != nullptr);
+
       ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
       if (rap == nullptr) {
         qCritical() << "Attempting to manage non react view!";
@@ -132,16 +134,19 @@ void ReactUIManager::manageChildren
                  [this](int key) {
                    return m_views.value(key);
                  });
+  if (children.size() > 0) {
+    // on iOS, order of the subviews implies z-order, implicitly its the same in
+    // QML, barring some exceptions. revisit - set zorder appears to be the only
+    // exception can probably self order items, but it's not an explicit guarantee
+    QList<QQuickItem*>::iterator it = children.begin();
+    for (int i : addAtIndices) {
+      QQuickItem* child = *it++;
+      child->setParentItem(container);
+      child->setZ(i);
+      ReactFlexLayout::get(child)->setDirty(true);
+    }
 
-  // on iOS, order of the subviews implies z-order, implicitly its the same in
-  // QML, barring some exceptions. revisit - set zorder appears to be the only
-  // exception can probably self order items, but it's not an explicit guarantee
-  QList<QQuickItem*>::iterator it = children.begin();
-  for (int i : addAtIndices) {
-    QQuickItem* child = *it++;
-    child->setParentItem(container);
-    child->setZ(i);
-    ReactFlexLayout::get(child)->setDirty(true);
+    ReactFlexLayout::get(container)->setDirty(true);
   }
 
   m_bridge->visualParent()->polish();

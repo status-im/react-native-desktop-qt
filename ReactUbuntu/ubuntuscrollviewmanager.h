@@ -23,7 +23,20 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  QStringList customDirectEventTypes() override;
+
   QQuickItem* view(const QVariantMap& properties) const override;
+
+private Q_SLOTS:
+  void scrollBeginDrag();
+  void scrollEndDrag();
+  void scroll();
+
+  void momentumScrollBegin();
+  void momentumScrollEnd();
+
+private:
+  void configureView(QQuickItem* view) const;
 };
 
 #endif // UBUNTUSCROLLVIEWMANAGER_H
