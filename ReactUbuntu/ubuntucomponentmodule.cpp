@@ -48,7 +48,7 @@ QString UbuntuComponentModule::moduleName()
 
 QList<ReactModuleMethod*> UbuntuComponentModule::methodsToExport()
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
   if (!m_methodsExported) {
     m_methodsExported = true;
 
@@ -72,8 +72,12 @@ QList<ReactModuleMethod*> UbuntuComponentModule::methodsToExport()
                                             // The first is the object to apply the function to
                                             if (args.length() == 0)
                                               return (QObject*)nullptr;
+                                            Q_ASSERT(args.first().canConvert<int>());
                                             int reactTag = args.first().toInt();
                                             args.pop_front();
+
+                                            QObject* module = m_bridge->uiManager()->viewForTag(reactTag);
+                                            Q_ASSERT(module != nullptr);
 
                                             // XXX: Scan for objects with "reactTag"
                                             // These need to be converted to views
@@ -81,11 +85,16 @@ QList<ReactModuleMethod*> UbuntuComponentModule::methodsToExport()
                                               if (args[i].type() == QVariant::Map) {
                                                 QVariantMap m = args[i].toMap();
                                                 if (m.size() == 1 && m.contains("reactTag")) {
-                                                  args[i] = QVariant::fromValue(m_bridge->uiManager()->viewForTag(m.value("viewTag").toInt()));
+                                                  QQuickItem* item = m_bridge->uiManager()->viewForTag(m.value("reactTag").toInt());
+                                                  if (item == nullptr) {
+                                                    qCritical() << "Could not find view for tag" << m.value("reactTag");
+                                                    return (QObject*)nullptr;
+                                                  }
+                                                  args[i] = QVariant::fromValue(item);
                                                 }
                                               }
                                             }
-                                            return (QObject*)m_bridge->uiManager()->viewForTag(reactTag);
+                                            return (QObject*)module;
                                           });
     }
   }

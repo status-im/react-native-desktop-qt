@@ -26,7 +26,7 @@ var server = net.createServer(function(sock) {
 
     var sendResponse = function(result) {
         stringifiedResult = JSON.stringify(result);
-        DEBUG > 1 && console.log("-- sending result=" + stringifiedResult);
+        DEBUG > 2 && console.log("-- sending result=" + stringifiedResult);
         if (stringifiedResult === undefined) {
             sock.write('undefined');
             return;
@@ -35,21 +35,21 @@ var server = net.createServer(function(sock) {
     }
 
     sock.on('data', function(chunk) {
-        DEBUG && console.log("-- Data received from RN Client: state = " + state)
-        DEBUG && console.log("-- chunk length: " + chunk.length)
-        DEBUG && console.log("-- buffer length(original): " + buffer.length)
+        DEBUG > 2 && console.log("-- Data received from RN Client: state = " + state)
+        DEBUG > 2 && console.log("-- chunk length: " + chunk.length)
+        DEBUG > 2 && console.log("-- buffer length(original): " + buffer.length)
 
         if (chunk == null || state === 'eof')
             return;
 
         buffer = Buffer.concat([buffer, chunk]);
-        DEBUG && console.log("-- buffer length(concat): " + buffer.length)
+        DEBUG > 2 && console.log("-- buffer length(concat): " + buffer.length)
 
         if (state === 'start') {
             if (buffer.length < 4)
                 return; 
             length = chunk.readUInt32LE(0);
-            DEBUG && console.log("-- Packet length: " + length);
+            DEBUG > 2 && console.log("-- Packet length: " + length);
 
             if (buffer.length >= length + 4) {
                 result = internalEval(buffer.toString('utf8', 4, length + 4));
@@ -64,7 +64,7 @@ var server = net.createServer(function(sock) {
         }
 
         if (state == 'script') {
-            DEBUG && console.log("-- Packet length: " + length);
+            DEBUG > 2 && console.log("-- Packet length: " + length);
             if (buffer.length >= length + 4) {
                 result = internalEval(buffer.toString('utf8', 4, length + 4));
                 var tmpBuffer = new Buffer(buffer.length - 4 - length);
