@@ -20,32 +20,8 @@ function checkUbuntu() {
 
 function buildAndRun() {
   process.chdir('ubuntu');
-  try {
-    var cmakeArgs = ['installDebug'].concat(process.argv.slice(3));
-    console.log(chalk.bold('Building and installing the app on the device (cd ubuntu && ' + cmd + ' ' + cmakeArgs.join(' ') + ')...'));
-    child_process.execFileSync(cmd, cmakeArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr]
-    });
-  } catch (e) {
-    console.log(chalk.red('Could not install the app on the device, see the error above.'));
-    // stderr is automatically piped from the gradle process, so the user should see the error
-    // already, there is no need to do console.log(e.stderr)
-    return;
-  }
-  try {
-    var packageName = fs.readFileSync('app/src/main/AndroidManifest.xml', 'utf8').match(/package="(.+?)"/)[1];
-    var adbPath = process.env.ANDROID_HOME ? process.env.ANDROID_HOME + '/platform-tools/adb' : 'adb';
-    var adbArgs = ['shell', 'am', 'start', '-n', packageName + '/.MainActivity'];
-    console.log(chalk.bold('Starting the app (' + adbPath + ' ' + adbArgs.join(' ') + ')...'));
-    child_process.spawnSync(adbPath, adbArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr]
-    });
-  } catch (e) {
-    console.log(chalk.red('adb invocation failed. Do you have adb in your PATH?'));
-    // stderr is automatically piped from the adb process, so the user should see the error already,
-    // there is no need to do console.log(e.stderr)
-    return;
-  }
+
+  // TODO
 }
 
 module.exports = function() {
