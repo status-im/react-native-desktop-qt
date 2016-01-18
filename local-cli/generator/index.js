@@ -48,6 +48,11 @@ module.exports = yeoman.generators.NamedBase.extend({
         local: require.resolve(path.resolve(__dirname, '..', 'generator-android'))
       });
     }
+    if (!this.options['skip-ubuntu']) {
+      this.composeWith('react:ubuntu', {args: args}, {
+        local: require.resolve(path.resolve(__dirname, '..', 'generator-ubuntu'))
+      });
+    }
   },
 
   configuring: function() {
