@@ -75,15 +75,19 @@ public:
       p->cssNode->style.padding[CSS_BOTTOM] = p->padding[CSS_VERTICAL];
     }
   }
-  void setChildInfo(ReactFlexLayoutPrivate* p) {
-    if (p->item == nullptr || !p->dirty)
-      return;
+//  void setChildInfo(ReactFlexLayoutPrivate* p) {
+  void setChildInfo(QQuickItem* item) {
+    ReactFlexLayout* fl = ReactFlexLayout::get(item, false);
+    if (fl != nullptr) {
+      ReactFlexLayoutPrivate* np = ReactFlexLayoutPrivate::get(fl);
 
-    p->cssNode->children_count = p->item->childItems().size();
-    updateMargin(p);
-    updatePadding(p);
-    for (auto c : p->item->childItems()) {
-      setChildInfo(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
+      np->cssNode->children_count = np->item->childItems().size();
+      updateMargin(np);
+      updatePadding(np);
+    }
+
+    for (auto c : item->childItems()) {
+      setChildInfo(c);
     }
   }
   void setDirty(bool drty) {
@@ -111,7 +115,7 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << this;
     if (!dirty)
       return;
-    setChildInfo(this);
+    setChildInfo(item);
 
     // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
     // local_print_node(0);
