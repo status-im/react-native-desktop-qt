@@ -67,35 +67,36 @@ QList<ReactModuleMethod*> UbuntuComponentModule::methodsToExport()
       QMetaMethod m = metaObject->method(i);
       if (m.name().startsWith("__") || m.name().endsWith("Changed"))
         continue;
-      m_methodCache << new ReactModuleMethod(metaObject->method(i),
-                                        [=](QVariantList& args) {
-                                            // The first is the object to apply the function to
-                                            if (args.length() == 0)
-                                              return (QObject*)nullptr;
-                                            Q_ASSERT(args.first().canConvert<int>());
-                                            int reactTag = args.first().toInt();
-                                            args.pop_front();
+      m_methodCache << new ReactModuleMethod(
+                              m,
+                              [this](QVariantList& args) {
+                                  // The first is the object to apply the function to
+                                  if (args.length() == 0)
+                                    return (QObject*)nullptr;
+                                  Q_ASSERT(args.first().canConvert<int>());
+                                  int reactTag = args.first().toInt();
+                                  args.pop_front();
 
-                                            QObject* module = m_bridge->uiManager()->viewForTag(reactTag);
-                                            Q_ASSERT(module != nullptr);
+                                  QObject* module = m_bridge->uiManager()->viewForTag(reactTag);
+                                  Q_ASSERT(module != nullptr);
 
-                                            // XXX: Scan for objects with "reactTag"
-                                            // These need to be converted to views
-                                            for (int i = 0; i < args.size(); ++i) {
-                                              if (args[i].type() == QVariant::Map) {
-                                                QVariantMap m = args[i].toMap();
-                                                if (m.size() == 1 && m.contains("reactTag")) {
-                                                  QQuickItem* item = m_bridge->uiManager()->viewForTag(m.value("reactTag").toInt());
-                                                  if (item == nullptr) {
-                                                    qCritical() << "Could not find view for tag" << m.value("reactTag");
-                                                    return (QObject*)nullptr;
-                                                  }
-                                                  args[i] = QVariant::fromValue(item);
-                                                }
-                                              }
-                                            }
-                                            return (QObject*)module;
-                                          });
+                                  // XXX: Scan for objects with "reactTag"
+                                  // These need to be converted to views
+                                  for (int i = 0; i < args.size(); ++i) {
+                                    if (args[i].type() == QVariant::Map) {
+                                      QVariantMap m = args[i].toMap();
+                                      if (m.size() == 1 && m.contains("reactTag")) {
+                                        QQuickItem* item = m_bridge->uiManager()->viewForTag(m.value("reactTag").toInt());
+                                        if (item == nullptr) {
+                                          qCritical() << "Could not find view for tag" << m.value("reactTag");
+                                          return (QObject*)nullptr;
+                                        }
+                                        args[i] = QVariant::fromValue(item);
+                                      }
+                                    }
+                                  }
+                                  return (QObject*)module;
+                                });
     }
   }
 

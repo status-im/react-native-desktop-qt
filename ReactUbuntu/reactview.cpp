@@ -62,6 +62,7 @@ ReactView::ReactView(QQuickItem* parent)
   , m_bridge(new ReactBridge(this))
 {
   setAcceptedMouseButtons(Qt::LeftButton);
+  setFiltersChildMouseEvents(true);
   connect(m_bridge, SIGNAL(bridgeReady()), SLOT(bridgeReady()));
 }
 
@@ -174,4 +175,31 @@ void ReactView::mouseReleaseEvent(QMouseEvent* event)
                                         QVariantList{e},
                                         QVariantList{0} });
   event->setAccepted(true);
+}
+
+bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
+{
+  qDebug() << __PRETTY_FUNCTION__;
+  QVariantMap e = makeReactTouchEvent(item, static_cast<QMouseEvent*>(event));
+  if (e.isEmpty())
+    return false;
+
+  QString eventName;
+  if (event->type() == QEvent::MouseButtonPress) {
+    eventName = "touchStart";
+  } else if (event->type() == QEvent::MouseButtonRelease) {
+    eventName = "touchEnd";
+  } else if (event->type() == QEvent::MouseMove) {
+    eventName = "touchMove";
+  }
+
+  QTimer::singleShot(0, [=]() {
+      m_bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
+                              QVariantList{ normalizeInputEventName(eventName),
+                                            QVariantList{e},
+                                            QVariantList{0} });
+    });
+
+  event->setAccepted(true);
+  return true;
 }

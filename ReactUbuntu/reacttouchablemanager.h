@@ -1,18 +1,18 @@
-#ifndef REACTIMAGEMANAGER_H
-#define REACTIMAGEMANAGER_H
+#ifndef REACTTOUCHABLEMANAGER_H
+#define REACTTOUCHABLEMANAGER_H
 
 #include "reactviewmanager.h"
 
 // #define QT_STATICPLUGIN
 
-class ReactImageManager : public ReactViewManager
+class ReactTouchableManager : public ReactViewManager
 {
   Q_OBJECT
   Q_INTERFACES(ReactModuleInterface)
 
 public:
-  ReactImageManager(QObject* parent = 0);
-  ~ReactImageManager();
+  ReactTouchableManager(QObject* parent = 0);
+  ~ReactTouchableManager();
 
   void setBridge(ReactBridge* bridge) override;
 
@@ -27,10 +27,12 @@ public:
   void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 
 private Q_SLOTS:
-  void statusChanged();
+  void clicked();
 
 private:
   void configureView(QQuickItem* view) const;
+
+  int m_id;
 };
 
-#endif // REACTIMAGEMANAGER_H
+#endif // REACTTOUCHABLEMANAGER_H

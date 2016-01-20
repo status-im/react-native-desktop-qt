@@ -11,6 +11,7 @@ var {
   StyleSheet,
 } = React;
 
+var MovieScreen = require('./MovieScreen');
 var SearchScreen = require('./SearchScreen');
 
 var View = require('View');
@@ -25,7 +26,7 @@ var RouteMapper = function(route, nav) {
       <View style={{flex: 1}}>
         <MovieScreen
           style={{flex: 1}}
-          navigator={navigationOperations}
+          navigator={nav}
           movie={route.movie}
         />
       </View>

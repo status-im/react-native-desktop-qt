@@ -117,7 +117,7 @@ var Navigator = React.createClass({
     console.log("=== componentDidUpdate");
     if (this._pushPage == null)
       return;
-    this._pageStack.push(this.findNodeHandle(this._pageRefs[this._pushPage]));
+    this._pageStack.push(findNodeHandle(this._pageRefs[this._pushPage]));
     this._pushPage = null;
   },
 

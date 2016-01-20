@@ -74,12 +74,12 @@ void ReactSourceCode::loadSource(QNetworkAccessManager* nam)
   QNetworkRequest request(m_scriptUrl);
   QNetworkReply* reply = nam->get(request);
   QObject::connect(reply, &QNetworkReply::finished, [=]() {
+      reply->deleteLater();
       if (reply->error() != QNetworkReply::NoError) {
         qCritical() << __PRETTY_FUNCTION__ << ": Error while loading source" << reply->errorString();
         return;
       }
       m_sourceCode = reply->readAll();
-      reply->deleteLater();
       Q_EMIT sourceCodeChanged();
     });
 }

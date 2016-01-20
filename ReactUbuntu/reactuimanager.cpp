@@ -108,7 +108,15 @@ void ReactUIManager::manageChildren
 
   if (!removeAtIndices.isEmpty()) {
     // removeAtIndices get unpluged and erased
-    children = container->childItems();
+    QList<QQuickItem*> allChildren = container->childItems();
+    // Filter out non-react items
+    std::copy_if(allChildren.begin(), allChildren.end(),
+                 std::back_inserter(children),
+                 [](QQuickItem* item) {
+                   return ReactAttachedProperties::get(item, false)->tag() != -1; // XXX: creating them somewhere
+                 });
+
+    // XXX:
     std::sort(children.begin(), children.end(), [](QQuickItem* a, QQuickItem* b) {
           return a->z() < b->z();
         });
@@ -116,12 +124,7 @@ void ReactUIManager::manageChildren
       QQuickItem* item = children[i];
       Q_ASSERT(item != nullptr);
 
-      ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
-      if (rap == nullptr) {
-        qCritical() << "Attempting to manage non react view!";
-        return;
-      }
-      m_views.remove(rap->tag());
+      m_views.remove(ReactAttachedProperties::get(item)->tag());
       item->setParent(0);
       item->deleteLater();
     }
