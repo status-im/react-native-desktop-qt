@@ -1,5 +1,6 @@
  /*
  * @providesModule ScrollView
+ @ @flow
  */
 
 'use strict';
@@ -54,9 +55,7 @@ var ScrollView = React.createClass({
 
   render: function() {
     return (
-      <UbuntuScrollView>
-        {this.props.children}
-      </UbuntuScrollView>
+      <UbuntuScrollView {...this.props} />
     );
   }
 });

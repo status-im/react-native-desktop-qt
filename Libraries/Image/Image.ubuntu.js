@@ -16,12 +16,11 @@ var Image = React.createClass({
 
   render: function() {
     var source = resolveAssetSource(this.props.source) || {};
-    var {width, height} = source;
 
     return (
       <RCTImageView
-        source={this.props.source}
-        style={{width, height}}
+        source={source.uri}
+        style={this.props.style}
         >
       </RCTImageView>
     );

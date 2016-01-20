@@ -44,6 +44,18 @@ QVariantMap ReactImageManager::constantsToExport()
   return QVariantMap{};
 }
 
+namespace {
+static const char* component_qml = 
+"import QtQuick 2.4\n"
+"\n"
+"Image {\n"
+"  Rectangle {\n"
+"    color: \"blue\"\n"
+"    anchors.fill: parent\n"
+"  }\n"
+"}\n";
+}
+
 QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
 {
   QQmlComponent component(m_bridge->qmlEngine());
@@ -57,6 +69,7 @@ QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
+  configureView(item);
   applyProperties(item, properties);
 
   return item;
@@ -71,8 +84,17 @@ void ReactImageManager::applyProperties(QQuickItem* item, const QVariantMap& pro
 
   for (const QString& key : properties.keys()) {
     if (key == "source") {
-      QVariantMap si = properties.value("source").toMap();
-      item->setProperty("source", si.value("uri"));
+      item->setProperty("source", properties.value("source").toUrl());
     }
   }
+}
+
+void ReactImageManager::statusChanged()
+{
+  qDebug() << __PRETTY_FUNCTION__;
+}
+
+void ReactImageManager::configureView(QQuickItem* view) const
+{
+  connect(view, SIGNAL(statusChanged(QQuickImageBase::Status)), SLOT(statusChanged()));
 }

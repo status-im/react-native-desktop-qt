@@ -34,8 +34,8 @@ var MovieCell = React.createClass({
   render: function() {
     var criticsScore = this.props.movie.ratings.critics_score;
     var TouchableElement = TouchableHighlight;
-    if (Platform.OS === 'android') {
-      TouchableElement = TouchableNativeFeedback;
+    if (Platform.OS === 'android' || Platform.OS === 'ubuntu') {
+      TouchableElement = TouchableHighlight;
     }
     return (
       <View>

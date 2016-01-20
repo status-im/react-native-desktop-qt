@@ -22,6 +22,7 @@
 #include "reactuimanager.h"
 
 #include "ubuntuscrollviewmanager.h"
+#include "ubuntunavigatormanager.h"
 #include "ubuntucomponentsloader.h"
 
 
@@ -59,6 +60,7 @@ public:
     //   modules << ml->availableModules();
     // }
     modules << new UbuntuScrollViewManager; //XXX:
+    modules << new UbuntuNavigatorManager;
     return modules;
   }
 };
