@@ -11,60 +11,11 @@ var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandle = require('findNodeHandle');
 
 var {
-  UbuntuPageStackManager
+  UbuntuNavigatorManager
 } = require('NativeModules');
 
 var View = require('View');
 
-
-var MainView = React.createClass({
-  propTypes: {
-    automaticOrientation: PropTypes.bool,
-    contentsItem: PropTypes.array
-  },
-
-  render: function() {
-      return (
-            <UbuntuMainView>
-              {this.props.children}
-            </UbuntuMainView>
-      );
-  }
-});
-
-var UbuntuMainView = requireNativeComponent('UbuntuMainView', MainView);
-
-
-var PageStack = React.createClass({
-  propTypes: {
-    __showHeader: PropTypes.bool,
-    currentPage: PropTypes.object,
-    data: PropTypes.array,
-    depth: PropTypes.number
-  },
-
-  push: function(page) {
-    UbuntuPageStackManager.push(findNodeHandle(this), {reactTag: page}, {});
-  },
-
-  pop: function() {
-    UbuntuPageStackManager.pop(findNodeHandle(this));
-  },
-
-  clear: function() {
-    UbuntuPageStackManager.clear(findNodeHandle(this));
-  },
-
-  render: function () {
-    return (
-        <UbuntuPageStack>
-          {this.props.children}
-        </UbuntuPageStack>
-      );
-  }
-});
-
-var UbuntuPageStack = requireNativeComponent('UbuntuPageStack', PageStack);
 
 var Page = React.createClass({
   propTypes: {
@@ -94,7 +45,7 @@ var Navigator = React.createClass({
   },
 
   componentWillMount: function() {
-    this._pageStack = null;
+    this._navigator = null;
     this._pushPage = null;
     this._pages = [];
     this._pageRefs = [];
@@ -106,18 +57,16 @@ var Navigator = React.createClass({
   },
 
   componentDidMount: function() {
-    console.log("=== componentDidMount");
     if (this._pushPage == null)
       return;
-    this._pageStack.push(findNodeHandle(this._pageRefs[this._pushPage]));
+    UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
     this._pushPage = null;
   },
 
   componentDidUpdate: function() {
-    console.log("=== componentDidUpdate");
     if (this._pushPage == null)
       return;
-    this._pageStack.push(findNodeHandle(this._pageRefs[this._pushPage]));
+    UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
     this._pushPage = null;
   },
 
@@ -157,15 +106,16 @@ var Navigator = React.createClass({
     this._pages = pages;
 
     return (
-      <View style={this.props.style}>
-        <MainView style={this.props.style}>
-          <PageStack ref={(stack) => this._pageStack = stack}>
-            {this._pages}
-          </PageStack>
-        </MainView>
-      </View>
+      <UbuntuNavigator
+        ref={(nav) => this._navigator = nav}
+        style={this.props.style}
+        >
+        {this._pages}
+      </UbuntuNavigator>
     );
   },
 });
+
+var UbuntuNavigator = requireNativeComponent('UbuntuNavigator', Navigator);
 
 module.exports = Navigator;

@@ -64,7 +64,7 @@ void ReactNetExecutor::executeJSCall
   m_socket->waitForConnected();  // TODO:
 
   QByteArrayList stringifiedArgs;
-  Q_FOREACH(const QVariant& arg, args) {
+  for (const QVariant& arg : args) {
     if (arg.type() == QVariant::List || arg.type() == QVariant::Map) {
       QJsonDocument doc = QJsonDocument::fromVariant(arg);
       stringifiedArgs += doc.toJson(QJsonDocument::Compact);
