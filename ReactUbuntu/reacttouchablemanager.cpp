@@ -51,7 +51,7 @@ static const char* component_qml =
 "\n"
 "Rectangle {\n"
 "  signal clicked()"
-"  color: \"blue\"\n"
+"  color: \"green\"\n"
 "  MouseArea {\n"
 "    id: touchableMouseId%1\n"
 "    anchors.fill: parent\n"

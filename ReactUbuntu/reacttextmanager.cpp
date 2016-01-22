@@ -84,7 +84,8 @@ void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& prop
       rtp->setFontSize(properties.value(key).toDouble());
     } else if (key == "color") {
       rtp->setColor(QColor(properties.value(key).toUInt()));
+    } else if (key == "numberOfLines") {
+      rtp->setNumberOfLines(properties.value(key).toInt());
     }
   }
 }
-

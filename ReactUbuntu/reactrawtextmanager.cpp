@@ -93,4 +93,8 @@ void ReactRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& p
     p.write(QVariant::fromValue(rtp->fontFamily())); }
 
   item->setProperty("color", rtp->color());
+
+  if (rtp->numberOfLines() != -1) {
+    item->setProperty("maximumLineCount", rtp->numberOfLines());
+  }
 }

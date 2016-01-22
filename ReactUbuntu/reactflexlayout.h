@@ -140,6 +140,9 @@ public:
   double marginRight() const;
   void setMarginRight(double margin);
 
+  void insertChild(int position, QQuickItem* child);
+  QList<QQuickItem*> removeChildren(const QList<int>& indexes);
+
   static void polish(QQuickItem* item);
   static ReactFlexLayout* get(QQuickItem* item, bool create = true);
   static ReactFlexLayout* qmlAttachedProperties(QObject* object);

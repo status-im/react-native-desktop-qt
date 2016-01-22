@@ -104,33 +104,25 @@ void ReactUIManager::manageChildren
     return;
   }
 
-  QList<QQuickItem*> children;
+  ReactFlexLayout* rfl = ReactFlexLayout::get(container);
 
   if (!removeAtIndices.isEmpty()) {
     // removeAtIndices get unpluged and erased
-    QList<QQuickItem*> allChildren = container->childItems();
-    // Filter out non-react items
-    std::copy_if(allChildren.begin(), allChildren.end(),
-                 std::back_inserter(children),
-                 [](QQuickItem* item) {
-                   return ReactAttachedProperties::get(item, false)->tag() != -1; // XXX: creating them somewhere
-                 });
+    QList<QQuickItem*> removed = rfl->removeChildren(removeAtIndices);
 
-    // XXX:
-    std::sort(children.begin(), children.end(), [](QQuickItem* a, QQuickItem* b) {
-          return a->z() < b->z();
-        });
-    for (int i : removeAtIndices) {
-      QQuickItem* item = children[i];
-      Q_ASSERT(item != nullptr);
+    for (QQuickItem* child : removed) {
+      // remove from visual hierarchy
+      child->setParent(0);
 
-      m_views.remove(ReactAttachedProperties::get(item)->tag());
-      item->setParent(0);
-      item->deleteLater();
+      // cleanup references
+      m_views.remove(ReactAttachedProperties::get(child)->tag());
+      child->deleteLater();
     }
+
+    rfl->setDirty(true);
   }
 
-  children.clear();
+  QList<QQuickItem*> children;
   // XXX: Assumption - addChildReactTags is sorted
   std::transform(addChildReactTags.begin(), addChildReactTags.end(),
                  std::back_inserter(children),
@@ -144,12 +136,18 @@ void ReactUIManager::manageChildren
     QList<QQuickItem*>::iterator it = children.begin();
     for (int i : addAtIndices) {
       QQuickItem* child = *it++;
+
+      // Add to visual hierarchy
       child->setParentItem(container);
       child->setZ(i);
+
+      // Add to layout
+      rfl->insertChild(i, child);
+
       ReactFlexLayout::get(child)->setDirty(true);
     }
 
-    ReactFlexLayout::get(container)->setDirty(true);
+    rfl->setDirty(true);
   }
 
   m_bridge->visualParent()->polish();

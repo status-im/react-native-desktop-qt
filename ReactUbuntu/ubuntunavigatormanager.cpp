@@ -84,6 +84,7 @@ static const char* component_qml =
 "import Ubuntu.Components 1.2\n"
 "\n"
 "MainView {\n"
+"  id: mainView%1\n"
 "  PageStack {\n"
 "    id: pageStack%1\n"
 "    anchors.fill: parent\n"
