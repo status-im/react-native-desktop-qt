@@ -13,6 +13,7 @@ public:
   double fontSize;
   bool highlighted;
   QColor color;
+  int numberOfLines;
   QQuickItem* item;
 
   void apply() {
@@ -57,6 +58,7 @@ ReactTextProperties::ReactTextProperties(QObject* parent)
   d->allowFontScaling = false;
   d->fontSize = -1;
   d->highlighted = false;
+  d->numberOfLines = -1;
   d->item = qobject_cast<QQuickItem*>(parent);
   if (d->item == nullptr) {
     qCritical() << "ReactTextProperties only applies to visual items";
@@ -140,6 +142,19 @@ void ReactTextProperties::setColor(const QColor& color)
   d->color = color;
   d->dirty = true;
   Q_EMIT colorChanged();
+}
+
+int ReactTextProperties::numberOfLines() const
+{
+  return d_func()->numberOfLines;
+}
+
+void ReactTextProperties::setNumberOfLines(int numberOfLines)
+{
+  Q_D(ReactTextProperties);
+  if (d->numberOfLines == numberOfLines)
+    return;
+  d->numberOfLines = numberOfLines;
 }
 
 void ReactTextProperties::polish(QQuickItem* item)

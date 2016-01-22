@@ -57,6 +57,11 @@ QVariantMap ReactComponentData::viewConfig() const
     propTypes.insert(p.name(), p.typeName());
   }
 
+  if (name() == "UbuntuPage") {
+    // XXX: need a refactor because
+    propTypes.insert("title", "QString");
+  }
+
   rc.insert("propTypes", propTypes);
 
   // Events

@@ -75,19 +75,13 @@ public:
       p->cssNode->style.padding[CSS_BOTTOM] = p->padding[CSS_VERTICAL];
     }
   }
-//  void setChildInfo(ReactFlexLayoutPrivate* p) {
-  void setChildInfo(QQuickItem* item) {
-    ReactFlexLayout* fl = ReactFlexLayout::get(item, false);
-    if (fl != nullptr) {
-      ReactFlexLayoutPrivate* np = ReactFlexLayoutPrivate::get(fl);
+  void setChildInfo(ReactFlexLayoutPrivate* p) {
+    p->cssNode->children_count = p->children.size();
+    updateMargin(p);
+    updatePadding(p);
 
-      np->cssNode->children_count = np->item->childItems().size();
-      updateMargin(np);
-      updatePadding(np);
-    }
-
-    for (auto c : item->childItems()) {
-      setChildInfo(c);
+    for (auto c : p->children) {
+      setChildInfo(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
     }
   }
   void setDirty(bool drty) {
@@ -95,6 +89,7 @@ public:
     dirty = drty;
     if (!dirty)
       return; // dont reset parent
+    // XXX: change to internal
     ReactFlexLayout* pl = ReactFlexLayout::get(item->parentItem(), false);
     if (pl != nullptr)
       pl->setDirty(drty);
@@ -103,7 +98,7 @@ public:
     for (int i = 0; i < tab; ++i)
       printf(" ");
 
-    printf("%d: ", ReactAttachedProperties::get(item)->tag());
+    printf("%d:(%s - %f, %f) ", ReactAttachedProperties::get(item)->tag(), item->metaObject()->className(), item->width(), item->height());
     print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE));
 
     for (QQuickItem* c : item->childItems()) {
@@ -115,7 +110,7 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << this;
     if (!dirty)
       return;
-    setChildInfo(item);
+    setChildInfo(this);
 
     // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
     // local_print_node(0);
@@ -128,9 +123,10 @@ public:
     return rfl->d_func();
   }
   static css_node_t* getChild(void* context, int i) {
-    QQuickItem* child =
-      static_cast<ReactFlexLayoutPrivate*>(context)->item->childItems().at(i);
-    return ReactFlexLayoutPrivate::get(ReactFlexLayout::get(child))->cssNode;
+    const QList<QQuickItem*>& childItems =
+      static_cast<ReactFlexLayoutPrivate*>(context)->children;
+
+    return ReactFlexLayoutPrivate::get(ReactFlexLayout::get(childItems.at(i)))->cssNode;
   }
   static bool isDirty(void* context) {
     return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
@@ -139,6 +135,7 @@ public:
   float padding[CSS_PROP_COUNT];
   float margin[CSS_PROP_COUNT];
   QQuickItem* item;
+  QList<QQuickItem*> children;
   css_node_t* cssNode;
   ReactFlexLayout* q_ptr;
 
@@ -156,7 +153,7 @@ private:
     item->setWidth(cssNode->layout.dimensions[CSS_WIDTH]);
     item->setHeight(cssNode->layout.dimensions[CSS_HEIGHT]);
 
-    for (QQuickItem* c : item->childItems()) {
+    for (auto c : children) {
       ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->applyLayout();
     }
 
@@ -571,6 +568,32 @@ void ReactFlexLayout::setMarginRight(double margin)
   Q_D(ReactFlexLayout);
   d->margin[CSS_RIGHT] = margin;
   setDirty(true);
+}
+
+void ReactFlexLayout::insertChild(int position, QQuickItem* child)
+{
+  Q_D(ReactFlexLayout);
+  d->children.insert(position, child);
+}
+
+QList<QQuickItem*> ReactFlexLayout::removeChildren(const QList<int>& children)
+{
+  Q_D(ReactFlexLayout);
+
+  QList<QQuickItem*> removable;
+  std::transform(children.begin(), children.end(),
+                 std::back_inserter(removable),
+                 [=](int index) {
+                   return d->children.at(index);
+                 });
+
+  d->children.erase(std::remove_if(d->children.begin(), d->children.end(),
+                                   [=](QQuickItem* item) {
+                                     return removable.contains(item);
+                                   }),
+                    d->children.end());
+
+  return removable;
 }
 
 void ReactFlexLayout::polish(QQuickItem* item)

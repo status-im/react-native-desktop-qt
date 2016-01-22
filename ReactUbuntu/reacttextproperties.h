@@ -41,6 +41,9 @@ public:
   QColor color() const;
   void setColor(const QColor& color);
 
+  int numberOfLines() const;
+  void setNumberOfLines(int numberOfLines);
+
   static void polish(QQuickItem* item);
   static ReactTextProperties* get(QQuickItem* item, bool create = true);
   static ReactTextProperties* qmlAttachedProperties(QObject* object);

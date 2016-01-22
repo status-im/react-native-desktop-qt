@@ -19,12 +19,13 @@ var View = require('View');
 
 var Page = React.createClass({
   propTypes: {
-    head: PropTypes.object
+    head: PropTypes.object,
+    title: PropTypes.string
   },
 
   render: function() {
     return (
-        <UbuntuPage>
+        <UbuntuPage title={this.props.title}>
           {this.props.children}
         </UbuntuPage>
       );
@@ -95,7 +96,9 @@ var Navigator = React.createClass({
       if (this._routeMap.has(page)) {
         pages.push(this._routeMap.get(page));
       } else {
-        var newPage = <Page ref={(page) => this._pageRefs[i] = page}>
+        var newPage = <Page
+                        ref={(page) => this._pageRefs[i] = page}
+                        title={page.name}>
                         {this.props.renderScene(page, this)}
                       </Page>;
         this._routeMap.set(page, newPage);

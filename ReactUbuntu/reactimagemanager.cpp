@@ -50,7 +50,7 @@ static const char* component_qml =
 "\n"
 "Image {\n"
 "  Rectangle {\n"
-"    color: \"blue\"\n"
+"    color: \"grey\"\n"
 "    anchors.fill: parent\n"
 "  }\n"
 "}\n";
