@@ -117,7 +117,6 @@ QQuickItem* UbuntuNavigatorManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  applyProperties(item, properties);
   configureView(item);
 
   return item;

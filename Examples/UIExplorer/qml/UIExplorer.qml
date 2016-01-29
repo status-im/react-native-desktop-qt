@@ -7,7 +7,7 @@ Rectangle {
   color: "red"
 
   ReactView {
-    anchors.fill: parent 
+    anchors.fill: parent
 
     moduleName: "UIExplorerApp"
     codeLocation: "http://localhost:8081/Examples/UIExplorer/UIExplorerApp.ubuntu.bundle?platform=ubuntu&dev=true"

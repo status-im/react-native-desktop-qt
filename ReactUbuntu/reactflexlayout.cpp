@@ -7,6 +7,93 @@ extern "C" {
 #include "reactflexlayout.h"
 #include "reactattachedproperties.h"
 
+namespace {
+static QMap<QString, ReactFlexLayout::Direction> directions{
+  { "row", ReactFlexLayout::DirectionRow },
+  { "column", ReactFlexLayout::DirectionColumn }
+};
+static QMap<QString, ReactFlexLayout::Alignment> alignments{
+  { "flex-start", ReactFlexLayout::AlignmentFlexStart },
+  { "flex-end", ReactFlexLayout::AlignmentFlexEnd },
+  { "center", ReactFlexLayout::AlignmentCenter },
+  { "stretch", ReactFlexLayout::AlignmentStretch }
+};
+static QMap<QString, ReactFlexLayout::Justify> justifys{ { "flex-start", ReactFlexLayout::JustifyFlexStart },
+  { "flex-end", ReactFlexLayout::JustifyFlexEnd },
+  { "center", ReactFlexLayout::JustifyCenter },
+  { "space-between", ReactFlexLayout::JustifySpaceBetween },
+  { "space-around", ReactFlexLayout::JustifySpaceAround }
+};
+static QMap<QString, ReactFlexLayout::Position> positions{
+  { "absolute", ReactFlexLayout::PositionAbsolute },
+  { "relative", ReactFlexLayout::PositionRelative }
+};
+static QMap<QString, ReactFlexLayout::Wrap> wraps{
+  { "wrap", ReactFlexLayout::WrapYes },
+  { "nowrap", ReactFlexLayout::WrapNo }
+};
+
+// TODO: move to property application code like ReactPropertyHandler
+void applyFlexProperties(ReactFlexLayout* flex, const QVariantMap& properties)
+{
+  for (const QString& key : properties.keys()) {
+    if (key == "flex") {
+      flex->setFlex(properties.value(key).toDouble());
+    } else if (key == "flexDirection") {
+      flex->setDirection(directions[properties.value(key).toString()]);
+    } else if (key == "alignItems") {
+      flex->setItemAlignment(alignments[properties.value(key).toString()]);
+    } else if (key == "justifyContent") {
+      flex->setJustify(justifys[properties.value(key).toString()]);
+    } else if (key == "position") {
+      flex->setPosition(positions[properties.value(key).toString()]);
+    } else if (key == "flexWrap") {
+      flex->setWrap(wraps[properties.value(key).toString()]);
+    } else if (key == "top") {
+      flex->setTop(properties.value(key).toDouble());
+    } else if (key == "right") {
+      flex->setRight(properties.value(key).toDouble());
+    } else if (key == "bottom") {
+      flex->setBottom(properties.value(key).toDouble());
+    } else if (key == "left") {
+      flex->setLeft(properties.value(key).toDouble());
+    } else if (key == "width") {
+      flex->setWidth(properties.value(key).toDouble());
+    } else if (key == "height") {
+      flex->setHeight(properties.value(key).toDouble());
+    } else if (key == "padding") {
+      flex->setPadding(properties.value(key).toDouble());
+    } else if (key == "paddingLeft") {
+      flex->setPaddingLeft(properties.value(key).toDouble());
+    } else if (key == "paddingTop") {
+      flex->setPaddingTop(properties.value(key).toDouble());
+    } else if (key == "paddingRight") {
+      flex->setPaddingRight(properties.value(key).toDouble());
+    } else if (key == "paddingBottom") {
+      flex->setPaddingBottom(properties.value(key).toDouble());
+    } else if (key == "paddingHorizontal") {
+      flex->setPaddingHorizontal(properties.value(key).toDouble());
+    } else if (key == "paddingVertical") {
+      flex->setPaddingVertical(properties.value(key).toDouble());
+    } else if (key == "margin") {
+      flex->setMargin(properties.value(key).toDouble());
+    } else if (key == "marginLeft") {
+      flex->setMarginLeft(properties.value(key).toDouble());
+    } else if (key == "marginTop") {
+      flex->setMarginTop(properties.value(key).toDouble());
+    } else if (key == "marginRight") {
+      flex->setMarginRight(properties.value(key).toDouble());
+    } else if (key == "marginBottom") {
+      flex->setMarginBottom(properties.value(key).toDouble());
+    } else if (key == "marginHorizontal") {
+      flex->setMarginHorizontal(properties.value(key).toDouble());
+    } else if (key == "marginVertical") {
+      flex->setMarginVertical(properties.value(key).toDouble());
+    }
+  }
+}
+}
+
 
 QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p);
 
@@ -594,6 +681,11 @@ QList<QQuickItem*> ReactFlexLayout::removeChildren(const QList<int>& children)
                     d->children.end());
 
   return removable;
+}
+
+void ReactFlexLayout::applyLayoutProperties(const QVariantMap& properties)
+{
+  applyFlexProperties(this, properties);
 }
 
 void ReactFlexLayout::polish(QQuickItem* item)

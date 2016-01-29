@@ -89,10 +89,8 @@ var Navigator = React.createClass({
 
   render: function() {
     var pages = [];
-      console.log("=== pageStack="+ JSON.stringify(this.state.pageStack));
     for (var i in this.state.pageStack) {
       var page = this.state.pageStack[i];
-      console.log("=== page="+ JSON.stringify(page));
       if (this._routeMap.has(page)) {
         pages.push(this._routeMap.get(page));
       } else {

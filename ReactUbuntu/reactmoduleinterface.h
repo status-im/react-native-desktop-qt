@@ -8,6 +8,7 @@
 
 class ReactBridge;
 class ReactViewManager;
+class ReactPropertyHandler;
 class ReactModuleMethod;
 
 
@@ -25,6 +26,7 @@ public:
 
   // TODO: this doesnt seem right
   virtual ReactViewManager* viewManager() { return nullptr; }
+  virtual ReactPropertyHandler* propertyHandler(QObject* object) { return nullptr; }
 
   virtual QString moduleName() = 0;
   virtual QList<ReactModuleMethod*> methodsToExport() = 0;

@@ -25,7 +25,7 @@ public:
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
-  void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
+  // void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 };
 
 #endif // REACTTEXTMANAGER_H

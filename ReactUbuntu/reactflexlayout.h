@@ -143,6 +143,8 @@ public:
   void insertChild(int position, QQuickItem* child);
   QList<QQuickItem*> removeChildren(const QList<int>& indexes);
 
+  void applyLayoutProperties(const QVariantMap& properties);
+
   static void polish(QQuickItem* item);
   static ReactFlexLayout* get(QQuickItem* item, bool create = true);
   static ReactFlexLayout* qmlAttachedProperties(QObject* object);

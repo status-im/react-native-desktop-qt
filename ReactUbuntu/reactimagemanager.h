@@ -3,7 +3,8 @@
 
 #include "reactviewmanager.h"
 
-// #define QT_STATICPLUGIN
+
+class ReactPropertyHandler;
 
 class ReactImageManager : public ReactViewManager
 {
@@ -17,14 +18,13 @@ public:
   void setBridge(ReactBridge* bridge) override;
 
   ReactViewManager* viewManager() override;
+  ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
   QQuickItem* view(const QVariantMap& properties) const override;
-
-  void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 
 private Q_SLOTS:
   void statusChanged();

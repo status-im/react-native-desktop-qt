@@ -126,15 +126,13 @@ QQuickItem* UbuntuComponentModule::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  applyProperties(item, properties);
-
   return item;
 }
 
-void UbuntuComponentModule::applyProperties(QQuickItem* item, const QVariantMap& properties) const
-{
-  if (properties.isEmpty())
-    return;
-
-  ReactViewManager::applyProperties(item, properties);
-}
+// void UbuntuComponentModule::applyProperties(QQuickItem* item, const QVariantMap& properties) const
+// {
+//   if (properties.isEmpty())
+//     return;
+// 
+//   ReactViewManager::applyProperties(item, properties);
+// }

@@ -24,7 +24,7 @@ public:
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
-  void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
+  // void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 
 private:
   QString m_name;

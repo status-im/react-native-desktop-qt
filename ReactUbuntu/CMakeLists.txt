@@ -19,6 +19,7 @@ add_library(
   reactcomponentdata.cpp
   reactmoduledata.cpp
   reactmodulemethod.cpp
+  reactpropertyhandler.cpp
   reactexecutor.cpp
   reactnetexecutor.cpp
   reactpipeexecutor.cpp
