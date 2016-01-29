@@ -33,8 +33,10 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event)
 
   // XXX: should climb back up to a matching react target?
   ReactAttachedProperties* properties = ReactAttachedProperties::get(target, false);
-  if (properties == nullptr)
+  if (properties == nullptr) {
+    qDebug() << __PRETTY_FUNCTION__ << "target was not a reactItem";
     return e;
+  }
 
   e.insert("target", properties->tag());
   e.insert("identifier", 1);
@@ -201,5 +203,5 @@ bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
     });
 
   event->setAccepted(true);
-  return true;
+  return false;
 }

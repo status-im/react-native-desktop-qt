@@ -81,7 +81,8 @@ void ReactUIManager::updateView
     return;
   }
 
-  ReactAttachedProperties::get(item)->viewManager()->applyProperties(item, properties);
+  Q_ASSERT(ReactAttachedProperties::get(item) != nullptr);
+  ReactAttachedProperties::get(item)->applyProperties(properties);
 
   m_bridge->visualParent()->polish();
 }
@@ -197,15 +198,21 @@ void ReactUIManager::createView
     return;
   }
 
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
-  rap->setTag(reactTag);
-  rap->setViewManager(cd->manager());
+  // TODO: move to createView?
+  if (!props.isEmpty()) {
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
+    rap->applyProperties(props);
+  }
+
+  // Layout properties
+  ReactFlexLayout* layout = ReactFlexLayout::get(item);
+  layout->applyLayoutProperties(props);
 
   // At creation properties have been applied which can lead to the new item's
   // layout being marked as dirty - but we want to be able to mark items being
   // positioned in the visual hierarchy as dirty, so force a reset until that
   // time.
-  ReactFlexLayout::get(item)->setDirty(false);
+  layout->setDirty(false);
 
   m_views.insert(reactTag, item);
 }

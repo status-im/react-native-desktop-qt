@@ -7,11 +7,13 @@
 #include <QtQml>
 #include <QScopedPointer>
 
+#include "reactpropertyhandler.h"
+
 
 class QQuickItem;
 
 class ReactTextPropertiesPrivate;
-class ReactTextProperties : public QObject
+class ReactTextProperties : public ReactPropertyHandler
 {
   Q_OBJECT
   Q_PROPERTY(bool allowFontScaling READ allowFontScaling WRITE setAllowFontScaling NOTIFY allowFontScalingChanged)
@@ -19,6 +21,11 @@ class ReactTextProperties : public QObject
   Q_PROPERTY(double fontSize READ fontSize WRITE setFontSize NOTIFY fontSizeChanged)
   Q_PROPERTY(bool highlighted READ isHighlighted WRITE setHighlighted NOTIFY highlightedChanged)
   Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+  Q_PROPERTY(QString fontStyle READ fontStyle WRITE setFontStyle)
+  Q_PROPERTY(QString fontWeight READ fontWeight WRITE setFontWeight)
+  Q_PROPERTY(double letterSpacing READ letterSpacing WRITE setLetterSpacing)
+  Q_PROPERTY(double lineHeight READ lineHeight WRITE setLineHeight)
+  Q_PROPERTY(QString textAlign READ textAlign WRITE setTextAlign)
 
   Q_DECLARE_PRIVATE(ReactTextProperties);
 
@@ -40,6 +47,21 @@ public:
 
   QColor color() const;
   void setColor(const QColor& color);
+
+  QString fontStyle() const;
+  void setFontStyle(const QString& fontStyle);
+
+  QString fontWeight();
+  void setFontWeight(const QString& fontWeight);
+
+  double letterSpacing();
+  void setLetterSpacing(double letterSpacing);
+
+  double lineHeight() const;
+  void setLineHeight(double lineHeight);
+
+  QString textAlign() const;
+  void setTextAlign(const QString& textAlign);
 
   int numberOfLines() const;
   void setNumberOfLines(int numberOfLines);

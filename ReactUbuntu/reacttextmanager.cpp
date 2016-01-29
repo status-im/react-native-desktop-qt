@@ -60,32 +60,5 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 
   // item->setEnabled(false);
 
-  applyProperties(item, properties);
-
   return item;
-}
-
-void ReactTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
-{
-  // qDebug() << __PRETTY_FUNCTION__ << item << properties;
-  if (properties.isEmpty())
-    return;
-
-  ReactViewManager::applyProperties(item, properties);
-
-  // These are added to the text style to be used by self(? - TODO) and all
-  // descendants
-  ReactTextProperties* rtp = ReactTextProperties::get(item);
-
-  for (const QString& key : properties.keys()) {
-    if (key == "fontFamily") {
-      rtp->setFontFamily(properties.value(key).toString());
-    } else if (key == "fontSize") {
-      rtp->setFontSize(properties.value(key).toDouble());
-    } else if (key == "color") {
-      rtp->setColor(QColor(properties.value(key).toUInt()));
-    } else if (key == "numberOfLines") {
-      rtp->setNumberOfLines(properties.value(key).toInt());
-    }
-  }
 }

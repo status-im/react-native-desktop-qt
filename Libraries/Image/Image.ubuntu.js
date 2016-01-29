@@ -6,12 +6,19 @@
 var React = require('React');
 var PropTypes = React.PropTypes;
 
+var ImageResizeMode = require('ImageResizeMode');
+
 var requireNativeComponent = require('requireNativeComponent');
 var resolveAssetSource = require('resolveAssetSource');
 
 var Image = React.createClass({
   propTypes: {
     source: PropTypes.shape({uri: PropTypes.string}),
+    resizeMode: PropTypes.oneOf(['cover', 'contain', 'stretch']),
+  },
+
+  statics: {
+    resizeMode: ImageResizeMode,
   },
 
   render: function() {

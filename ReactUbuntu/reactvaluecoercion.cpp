@@ -4,6 +4,8 @@
 
 #include <QDateTime>
 #include <QPointF>
+#include <QColor>
+
 #include <QDebug>
 
 #include "reactvaluecoercion.h"
@@ -83,6 +85,13 @@ QMap<int, coerce_function> coerceFunctions
                                    QVariantList{callbackId, QVariantList{status, headers, responseText}});
         };
       return QVariant::fromValue(callback);
+    }
+  },
+  {
+    qMetaTypeId<QColor>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<uint>());
+      return QVariant::fromValue(QColor(value.toUInt()));
     }
   }
 };

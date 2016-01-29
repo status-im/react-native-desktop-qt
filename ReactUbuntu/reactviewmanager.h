@@ -25,6 +25,7 @@ public:
 
   // TODO: this doesnt seem right
   ReactViewManager* viewManager() override;
+  ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
@@ -34,8 +35,6 @@ public:
   virtual QStringList customBubblingEventTypes();
 
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
-
-  virtual void applyProperties(QQuickItem* item, const QVariantMap& properties) const;
 
 protected:
   ReactBridge* m_bridge;

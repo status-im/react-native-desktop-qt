@@ -6,7 +6,7 @@
 #include "reactviewmanager.h"
 
 class QQuickItem;
-
+class ReactPropertyHandler;
 // #define QT_STATICPLUGIN
 
 class ReactRawTextManager : public ReactViewManager
@@ -23,6 +23,7 @@ public:
 
   // TODO: this doesnt seem right
   ReactViewManager* viewManager() override;
+  ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
@@ -30,7 +31,7 @@ public:
 
   QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
 
-  void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
+  // void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
 
 protected:
   ReactBridge* m_bridge;

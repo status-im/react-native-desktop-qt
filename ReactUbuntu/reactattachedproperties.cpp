@@ -2,6 +2,7 @@
 #include <QQuickItem>
 
 #include "reactviewmanager.h"
+#include "reactpropertyhandler.h"
 #include "reactattachedproperties.h"
 
 
@@ -12,6 +13,7 @@ public:
     : tag(-1) {}
   int tag;
   ReactViewManager* viewManager;
+  ReactPropertyHandler* propertyHandler;
   QQuickItem* item;
 };
 
@@ -42,7 +44,6 @@ void ReactAttachedProperties::setTag(int tag)
   if (d->tag == tag)
     return;
   d->tag = tag;
-  Q_EMIT tagChanged();
 }
 
 ReactViewManager* ReactAttachedProperties::viewManager() const
@@ -53,10 +54,29 @@ ReactViewManager* ReactAttachedProperties::viewManager() const
 void ReactAttachedProperties::setViewManager(ReactViewManager* viewManager)
 {
   Q_D(ReactAttachedProperties);
-  if (d->viewManager== viewManager)
+  if (d->viewManager == viewManager)
     return;
   d->viewManager = viewManager;
-  Q_EMIT viewManagerChanged();
+}
+
+ReactPropertyHandler* ReactAttachedProperties::propertyHandler() const
+{
+  return d_func()->propertyHandler;
+}
+
+void ReactAttachedProperties::setPropertyHandler(ReactPropertyHandler* propertyHandler)
+{
+  Q_D(ReactAttachedProperties);
+  if (d->propertyHandler == propertyHandler)
+    return;
+  d->propertyHandler = propertyHandler;
+}
+
+void ReactAttachedProperties::applyProperties(const QVariantMap& properties) const
+{
+  Q_D(const ReactAttachedProperties);
+  Q_ASSERT(d->propertyHandler != nullptr);
+  d->propertyHandler->applyProperties(properties);
 }
 
 ReactAttachedProperties* ReactAttachedProperties::get(QQuickItem* item, bool create)
