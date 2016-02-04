@@ -29,9 +29,9 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
-  QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
+  bool shouldLayout() const override;
 
-  // void applyProperties(QQuickItem* item, const QVariantMap& properties) const override;
+  QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
 
 protected:
   ReactBridge* m_bridge;

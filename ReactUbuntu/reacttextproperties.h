@@ -16,16 +16,20 @@ class ReactTextPropertiesPrivate;
 class ReactTextProperties : public ReactPropertyHandler
 {
   Q_OBJECT
-  Q_PROPERTY(bool allowFontScaling READ allowFontScaling WRITE setAllowFontScaling NOTIFY allowFontScalingChanged)
-  Q_PROPERTY(QString fontFamily READ fontFamily WRITE setFontFamily NOTIFY fontFamilyChanged)
-  Q_PROPERTY(double fontSize READ fontSize WRITE setFontSize NOTIFY fontSizeChanged)
-  Q_PROPERTY(bool highlighted READ isHighlighted WRITE setHighlighted NOTIFY highlightedChanged)
-  Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
+  Q_PROPERTY(bool allowFontScaling READ allowFontScaling WRITE setAllowFontScaling)
+  Q_PROPERTY(QString fontFamily READ fontFamily WRITE setFontFamily)
+  Q_PROPERTY(double fontSize READ fontSize WRITE setFontSize)
+  Q_PROPERTY(bool highlighted READ isHighlighted WRITE setHighlighted)
+  Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString fontStyle READ fontStyle WRITE setFontStyle)
   Q_PROPERTY(QString fontWeight READ fontWeight WRITE setFontWeight)
   Q_PROPERTY(double letterSpacing READ letterSpacing WRITE setLetterSpacing)
   Q_PROPERTY(double lineHeight READ lineHeight WRITE setLineHeight)
   Q_PROPERTY(QString textAlign READ textAlign WRITE setTextAlign)
+  Q_PROPERTY(QString textDecorationLine READ textDecorationLine WRITE setTextDecorationLine)
+  Q_PROPERTY(QString textDecorationStyle READ textDecorationStyle WRITE setTextDecorationStyle)
+  Q_PROPERTY(QColor textDecorationColor READ textDecorationColor WRITE setTextDecorationColor)
+  Q_PROPERTY(QString writingDirection READ writingDirection WRITE setWritingDirection)
 
   Q_DECLARE_PRIVATE(ReactTextProperties);
 
@@ -63,19 +67,24 @@ public:
   QString textAlign() const;
   void setTextAlign(const QString& textAlign);
 
+  QString textDecorationLine() const;
+  void setTextDecorationLine(const QString& textDecorationLine);
+
+  QString textDecorationStyle() const;
+  void setTextDecorationStyle(const QString& textDecorationStyle);
+
+  QColor textDecorationColor() const;
+  void setTextDecorationColor(const QColor& textDecorationColor);
+
+  QString writingDirection() const;
+  void setWritingDirection(const QString& writingDirection);
+
   int numberOfLines() const;
   void setNumberOfLines(int numberOfLines);
 
   static void polish(QQuickItem* item);
   static ReactTextProperties* get(QQuickItem* item, bool create = true);
   static ReactTextProperties* qmlAttachedProperties(QObject* object);
-
-Q_SIGNALS:
-  void allowFontScalingChanged();
-  void fontFamilyChanged();
-  void fontSizeChanged();
-  void highlightedChanged();
-  void colorChanged();
 
 private:
   QScopedPointer<ReactTextPropertiesPrivate> d_ptr;

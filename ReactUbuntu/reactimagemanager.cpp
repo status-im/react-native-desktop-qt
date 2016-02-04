@@ -11,19 +11,23 @@
 #include "reactbridge.h"
 
 
+int ReactImageManager::m_id = 0;
+
 class ImagePropertyHandler : public ReactPropertyHandler {
   Q_OBJECT
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
   Q_PROPERTY(QString resizeMode READ resizeMode WRITE setResizeMode)
+  Q_PROPERTY(QUrl source READ source WRITE setSource)
 public:
   enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
   ImagePropertyHandler(QObject* object)
     : ReactPropertyHandler(object) {
-    }
-  QColor backgroundColor() const;
+    } QColor backgroundColor() const;
   void setBackgroundColor(const QColor& backgroundColor);
   QString resizeMode() const;
   void setResizeMode(const QString& resizeMode);
+  QUrl source() const;
+  void setSource(const QUrl& source);
 };
 
 void ImagePropertyHandler::setBackgroundColor(const QColor& backgroundColor)
@@ -46,14 +50,18 @@ QString ImagePropertyHandler::resizeMode() const
 void ImagePropertyHandler::setResizeMode(const QString& resizeMode)
 {
   if (resizeMode == "stretch") {
-    m_object->setProperty("fillMode", QVariant::fromValue(int(Stretch)));
+    m_object->setProperty("resizeMode", QVariant::fromValue(int(Stretch)));
   } else if (resizeMode == "contain") {
-    m_object->setProperty("fillMode", QVariant::fromValue(int(PreserveAspectFit)));
+    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectFit)));
   } else if (resizeMode == "cover") {
-    m_object->setProperty("fillMode", QVariant::fromValue(int(PreserveAspectCrop)));
+    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectCrop)));
   }
 }
 
+void ImagePropertyHandler::setSource(const QUrl& source)
+{
+  m_object->setProperty("source", source);
+}
 
 ReactImageManager::ReactImageManager(QObject* parent)
   : ReactViewManager(parent)
@@ -98,10 +106,13 @@ namespace {
 static const char* component_qml =
 "import QtQuick 2.4\n"
 "\n"
-"Image {\n"
-"  property color backgroundColor: \"transparent\"\n"
-"  Rectangle {\n"
-"    color: backgroundColor\n"
+"Rectangle {\n"
+"  id: imageRect%1\n"
+"  property alias backgroundColor: imageRect%1.color\n"
+"  property alias source: image%1.source\n"
+"  property alias resizeMode: image%1.fillMode\n"
+"  Image {\n"
+"    id: image%1\n"
 "    anchors.fill: parent\n"
 "  }\n"
 "}\n";
@@ -109,12 +120,12 @@ static const char* component_qml =
 
 QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
 {
-  QString componentString = QString(component_qml);
+  QString componentString = QString(component_qml).arg(m_id++);
 
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(componentString.toLocal8Bit(), QUrl());
   if (!component.isReady())
-    qCritical() << "Component for RCTImageViewManager not ready";
+    qCritical() << "Component for RCTImageViewManager not ready" << component.errors();
 
   QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
   if (item == nullptr) {

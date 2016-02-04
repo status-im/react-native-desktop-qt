@@ -185,7 +185,11 @@ public:
     for (int i = 0; i < tab; ++i)
       printf(" ");
 
-    printf("%d:(%s - %f, %f) ", ReactAttachedProperties::get(item)->tag(), item->metaObject()->className(), item->width(), item->height());
+    printf("%d:(%s(%p) - (%f,%f, %fx%f)\n",
+          ReactAttachedProperties::get(item)->tag(),
+          item->metaObject()->className(), (void*)item, item->x(), item->y(), item->width(), item->height());
+    for (int i = 0; i < tab + 2; ++i)
+      printf(" ");
     print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE));
 
     for (QQuickItem* c : item->childItems()) {

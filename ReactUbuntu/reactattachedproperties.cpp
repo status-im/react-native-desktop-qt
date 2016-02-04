@@ -12,6 +12,7 @@ public:
   ReactAttachedPropertiesPrivate()
     : tag(-1) {}
   int tag;
+  bool shouldLayout;
   ReactViewManager* viewManager;
   ReactPropertyHandler* propertyHandler;
   QQuickItem* item;
@@ -44,6 +45,19 @@ void ReactAttachedProperties::setTag(int tag)
   if (d->tag == tag)
     return;
   d->tag = tag;
+}
+
+bool ReactAttachedProperties::shouldLayout() const
+{
+  return d_func()->shouldLayout;
+}
+
+void ReactAttachedProperties::setShouldLayout(bool shouldLayout)
+{
+  Q_D(ReactAttachedProperties);
+  if (d->shouldLayout == shouldLayout)
+    return;
+  d->shouldLayout = shouldLayout;
 }
 
 ReactViewManager* ReactAttachedProperties::viewManager() const

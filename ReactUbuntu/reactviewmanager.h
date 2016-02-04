@@ -34,6 +34,8 @@ public:
   virtual QStringList customDirectEventTypes();
   virtual QStringList customBubblingEventTypes();
 
+  virtual bool shouldLayout() const;
+
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 
 protected:

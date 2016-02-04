@@ -143,7 +143,9 @@ void ReactUIManager::manageChildren
       child->setZ(i);
 
       // Add to layout
-      rfl->insertChild(i, child);
+      if (ReactAttachedProperties::get(child)->shouldLayout()) {
+        rfl->insertChild(i, child);
+      }
 
       ReactFlexLayout::get(child)->setDirty(true);
     }
@@ -165,6 +167,7 @@ void ReactUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
 
 void ReactUIManager::clearJSResponder()
 {
+  qDebug() << __PRETTY_FUNCTION__;
 }
 
 // in iOS, resign first responder (actual)
