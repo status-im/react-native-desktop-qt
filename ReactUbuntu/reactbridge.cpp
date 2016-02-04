@@ -204,7 +204,6 @@ void ReactBridge::initModules()
 {
   Q_D(ReactBridge);
 
-  qDebug() << __func__;
   QVariantMap config;
   QVariantMap moduleConfig;
 

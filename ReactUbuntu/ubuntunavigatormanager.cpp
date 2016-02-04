@@ -103,7 +103,6 @@ static const char* component_qml =
 
 QQuickItem* UbuntuNavigatorManager::view(const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__ << properties;
   QString componentString = QString(component_qml).arg(m_id++);
 
   QQmlComponent component(m_bridge->qmlEngine());

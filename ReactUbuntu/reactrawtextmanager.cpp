@@ -6,7 +6,9 @@
 #include "reacttextproperties.h"
 #include "reactrawtextmanager.h"
 #include "reactbridge.h"
-#include "reactpropertyhandler.h"
+#include "reactrawtextproperties.h"
+
+
 
 
 ReactRawTextManager::ReactRawTextManager(QObject *parent)
@@ -32,7 +34,7 @@ ReactViewManager* ReactRawTextManager::viewManager()
 ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return ReactTextProperties::get(qobject_cast<QQuickItem*>(object));
+  return ReactRawTextProperties::get(qobject_cast<QQuickItem*>(object));
 }
 
 QString ReactRawTextManager::moduleName()
@@ -50,13 +52,18 @@ QVariantMap ReactRawTextManager::constantsToExport()
   return QVariantMap{};
 }
 
+bool ReactRawTextManager::shouldLayout() const
+{
+  return false;
+}
+
+// TODO: this is a virtual node, not a real text node
 namespace {
 static const char* component_qml =
 "import QtQuick 2.4\n"
 "\n"
 "Text {\n"
-"  horizontalAlignment: Text.AlignHCenter\n"
-"  verticalAlignment: Text.AlignVCenter\n"
+"  visible: false\n"
 "}\n";
 }
 
@@ -80,33 +87,5 @@ QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
 
   return item;
 }
-
-// void ReactRawTextManager::applyProperties(QQuickItem* item, const QVariantMap& properties) const
-// {
-//   // qDebug() << __PRETTY_FUNCTION__ << item << properties;
-// 
-//   if (properties.isEmpty())
-//     return;
-// 
-//   ReactViewManager::applyProperties(item, properties);
-// 
-//   if (properties.contains("text")) {
-//     item->setProperty("text", properties.value("text"));
-//   }
-// 
-//   // Grab style from parent text item
-//   // XXX: we can most likely not apply these sensibly the first time
-//   // because the item has not been added to the visual hierarchy
-//   ReactTextProperties *rtp = ReactTextProperties::get(item->parentItem(), false);
-//   if (rtp == nullptr)
-//     return; // XXX: prob should travel back up to the root text node
-// 
-// 
-//   item->setProperty("color", rtp->color());
-// 
-//   if (rtp->numberOfLines() != -1) {
-//     item->setProperty("maximumLineCount", rtp->numberOfLines());
-//   }
-// }
 
 #include "reactrawtextmanager.moc"

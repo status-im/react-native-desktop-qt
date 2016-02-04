@@ -17,6 +17,7 @@ ReactPropertyHandler::~ReactPropertyHandler()
 
 QList<QMetaProperty> ReactPropertyHandler::availableProperties()
 {
+  buildPropertyMap();
   return m_coreProperties.values() + m_extraProperties.values();
 }
 
@@ -61,8 +62,7 @@ void ReactPropertyHandler::buildPropertyMap()
   const QMetaObject* metaObject = this->metaObject();
   const int propertyCount = metaObject->propertyCount();
 
-  // Snaffle up QObject::objectName as well, leave for now, might be good for testing
-  for (int i = 0; i < propertyCount; ++i) {
+  for (int i = 1; i < propertyCount; ++i) {
     QMetaProperty p = metaObject->property(i);
     if (p.isScriptable())
       m_extraProperties.insert(p.name(), p);

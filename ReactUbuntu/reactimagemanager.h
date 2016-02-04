@@ -31,6 +31,8 @@ private Q_SLOTS:
 
 private:
   void configureView(QQuickItem* view) const;
+
+  static int m_id;
 };
 
 #endif // REACTIMAGEMANAGER_H

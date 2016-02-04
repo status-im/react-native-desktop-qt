@@ -30,6 +30,12 @@ ReactViewManager* ReactTextManager::viewManager()
   return this;
 }
 
+ReactPropertyHandler* ReactTextManager::propertyHandler(QObject* object)
+{
+  Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
+  return ReactTextProperties::get(qobject_cast<QQuickItem*>(object));
+}
+
 QString ReactTextManager::moduleName()
 {
   return "RCTTextManager";
@@ -45,10 +51,27 @@ QVariantMap ReactTextManager::constantsToExport()
   return QVariantMap{};
 }
 
+namespace {
+static const char* component_qml =
+"import QtQuick 2.4\n"
+"\n"
+"Text {\n"
+"  visible: false\n"
+"  textFormat: Text.RichText\n"
+"}\n";
+}
+
+bool ReactTextManager::shouldLayout() const
+{
+  return true;
+}
+
 QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 {
+  QString componentString = QString(component_qml);
+
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nText{}", QUrl()); // TODO: depends on self text
+  component.setData(componentString.toLocal8Bit(), QUrl());
   if (!component.isReady())
     qCritical() << "Component for RCTTextManager not ready";
 

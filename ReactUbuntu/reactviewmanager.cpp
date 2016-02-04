@@ -198,6 +198,11 @@ QStringList ReactViewManager::customBubblingEventTypes()
   return QStringList{"press", "change", "focus", "blur", "submitEditing", "endEditing", "touchStart", "touchMove", "touchCancel", "touchEnd"};
 }
 
+bool ReactViewManager::shouldLayout() const
+{
+  return true;
+}
+
 // TODO: Going to need to return a custom item here, to support
 // all relevant properties
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const

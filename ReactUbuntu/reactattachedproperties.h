@@ -16,6 +16,7 @@ class ReactAttachedProperties : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(int tag READ tag WRITE setTag)
+  Q_PROPERTY(bool shouldLayout READ shouldLayout WRITE setShouldLayout)
   Q_PROPERTY(ReactViewManager* viewManager READ viewManager WRITE setViewManager)
   Q_PROPERTY(ReactPropertyHandler* propertyHandler READ propertyHandler WRITE setPropertyHandler)
 
@@ -27,6 +28,9 @@ public:
 
   int tag() const;
   void setTag(int tag);
+
+  bool shouldLayout() const;
+  void setShouldLayout(bool shouldLayout);
 
   ReactViewManager* viewManager() const;
   void setViewManager(ReactViewManager* viewManager);

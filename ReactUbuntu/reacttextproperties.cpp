@@ -1,31 +1,60 @@
 
+#include <map>
+
 #include <QQuickItem>
 
 #include "reacttextproperties.h"
+#include "reactrawtextproperties.h"
+#include "reactflexlayout.h"
 
+
+namespace {
+const char* k_allow_font_scaling = "allowFontScaling";
+const char* k_font_family = "fontFamily";
+const char* k_font_size = "fontSize";
+const char* k_highlighted = "highlighted";
+const char* k_color = "color";
+const char* k_font_style = "fontStyle";
+const char* k_font_weight = "fontWeight";
+const char* k_letter_spacing = "letterSpacing";
+const char* k_line_height = "lineHeight";
+const char* k_text_align = "textAlign";
+const char* k_text_decoration_line = "textDecorationLine";
+const char* k_text_decoration_style = "textDecorationStyle";
+const char* k_text_decoration_color = "textDecorationColor";
+const char* k_writing_direction = "textDecorationColor";
+const char* k_number_of_lines = "numberOfLines";
+}
 
 class ReactTextPropertiesPrivate
 {
 public:
+  typedef std::map<QString, QVariant> property_map;
   bool dirty;
-  bool allowFontScaling;
-  QString fontFamily;
-  double fontSize;
-  bool highlighted;
-  QColor color;
-  QString fontStyle;
-  QString fontWeight;
-  double letterSpacing;
-  double lineHeight;
-  QString textAlign;
-  int numberOfLines;
+  property_map properties;
   QQuickItem* item;
 
   void apply() {
-    if (!dirty)
-      return;
-    applyTextProperties(item, this);
-    dirty = false;
+    QString text = textWithProperties(item, property_map());
+    item->setProperty("text", text);
+    item->setProperty("visible", true);
+
+    ReactFlexLayout* fl = ReactFlexLayout::get(item);
+    fl->setWidth(item->property("contentWidth").value<double>());
+    fl->setHeight(item->property("contentHeight").value<double>());
+  }
+
+  template<typename VT>
+  VT value(const char* key, const VT& defaulValue = VT()) const {
+    property_map::const_iterator it = properties.find(key);
+    if (it == properties.end())
+      return defaulValue;
+    return (*it).second.value<VT>();
+  }
+
+  template<typename VT>
+  void setValue(const char* key, const VT& value) {
+    properties[key] = value;
   }
 
   static ReactTextPropertiesPrivate* get(ReactTextProperties* rtp) {
@@ -33,36 +62,19 @@ public:
   }
 
 private:
-  void applyTextProperties(QQuickItem* item, ReactTextPropertiesPrivate* rtp)
-  {
-    // XXX: only set dirty properties
-    if (rtp->fontSize != -1) {
-      QQmlProperty p(item, "font.pointSize");
-      p.write(QVariant::fromValue(rtp->fontSize));
-    }
+  QString textWithProperties(QQuickItem* item, const property_map& properties) {
+    property_map mp = this->properties;
+    mp.insert(properties.begin(), properties.end());
 
-    if (!rtp->fontFamily.isEmpty()) {
-      QQmlProperty p(item, "font.family");
-      p.write(QVariant::fromValue(rtp->fontFamily));
-    }
-
-    if (rtp->color.isValid())
-      item->setProperty("color", rtp->color);
-
-    if (!rtp->textAlign.isEmpty()) {
-      if (textAlign == "auto" || textAlign == "center") {
-        item->setProperty("horizontalAlignment", Qt::AlignHCenter);
-      } else if (textAlign == "left") {
-        item->setProperty("horizontalAlignment", Qt::AlignLeft);
-      } else if (textAlign == "right") {
-        item->setProperty("horizontalAlignment", Qt::AlignRight);
-      } else if (textAlign == "justify") {
-        item->setProperty("horizontalAlignment", Qt::AlignJustify);
+    QString text;
+    for (auto c : item->childItems()) {
+      ReactRawTextProperties* rtp = ReactRawTextProperties::get(c, false);
+      if (rtp != nullptr) {
+        text += rtp->textWithProperties(QMap<QString, QVariant>(mp));
       }
+      text += textWithProperties(c, mp);
     }
-
-    for (auto c : item->childItems())
-      applyTextProperties(c, rtp);
+    return text;
   }
 };
 
@@ -73,10 +85,6 @@ ReactTextProperties::ReactTextProperties(QObject* parent)
 {
   Q_D(ReactTextProperties);
   d->dirty = false;
-  d->allowFontScaling = false;
-  d->fontSize = -1;
-  d->highlighted = false;
-  d->numberOfLines = -1;
   d->item = qobject_cast<QQuickItem*>(parent);
   if (d->item == nullptr) {
     qCritical() << "ReactTextProperties only applies to visual items";
@@ -89,160 +97,153 @@ ReactTextProperties::~ReactTextProperties()
 
 bool ReactTextProperties::allowFontScaling() const
 {
-  return d_func()->allowFontScaling;
+  return d_func()->value<bool>(k_allow_font_scaling);
 }
 
 void ReactTextProperties::setAllowFontScaling(bool allowFontScaling)
 {
-  Q_D(ReactTextProperties);
-  if (d->allowFontScaling == allowFontScaling)
-    return;
-  d->allowFontScaling = allowFontScaling;
-  d->dirty = true;
-  Q_EMIT allowFontScalingChanged();
+  // XXX:
+  d_func()->item->setProperty("fontSizeMode", allowFontScaling ? 3 : 0);
 }
 
 QString ReactTextProperties::fontFamily() const
 {
-  return d_func()->fontFamily;
+  return d_func()->value<QString>(k_font_family);
 }
 
 void ReactTextProperties::setFontFamily(const QString& fontFamily)
 {
-  Q_D(ReactTextProperties);
-  if (d->fontFamily == fontFamily)
-    return;
-  d->fontFamily = fontFamily;
-  d->dirty = true;
-  Q_EMIT fontFamilyChanged();
+  d_func()->setValue(k_font_family, fontFamily);
 }
 
 double ReactTextProperties::fontSize() const
 {
-  return d_func()->fontSize;
+  return d_func()->value<double>(k_font_size, -1);
 }
 
 void ReactTextProperties::setFontSize(double fontSize)
 {
-  Q_D(ReactTextProperties);
-  if (d->fontSize == fontSize) // XXX:
-    return;
-  d->fontSize = fontSize;
-  d->dirty = true;
-  Q_EMIT fontSizeChanged();
+  d_func()->setValue(k_font_size, fontSize);
 }
 
 bool ReactTextProperties::isHighlighted() const
 {
-  return d_func()->highlighted;
+  return d_func()->value<bool>(k_highlighted);
 }
 
-void ReactTextProperties::setHighlighted(bool highlighted)
+void ReactTextProperties::setHighlighted(bool isHighlighted)
 {
-  Q_D(ReactTextProperties);
-  if (d->highlighted == highlighted)
-    return;
-  d->highlighted = highlighted;
-  d->dirty = true;
-  Q_EMIT highlightedChanged();
+  d_func()->setValue(k_highlighted, isHighlighted);
 }
 
 QColor ReactTextProperties::color() const
 {
-  return d_func()->color;
+  return d_func()->value<QColor>(k_color);
 }
 
 void ReactTextProperties::setColor(const QColor& color)
 {
-  Q_D(ReactTextProperties);
-  if (d->color == color)
-    return;
-  d->color = color;
-  d->dirty = true;
-  Q_EMIT colorChanged();
+  d_func()->setValue(k_color, color);
 }
 
 QString ReactTextProperties::fontStyle() const
 {
-  return d_func()->fontStyle;
+  return d_func()->value<QString>(k_font_style);
 }
 
 void ReactTextProperties::setFontStyle(const QString& fontStyle)
 {
-  Q_D(ReactTextProperties);
-  if (d->fontStyle == fontStyle)
-    return;
-  d->fontStyle = fontStyle;
-  d->dirty = true;
+  d_func()->setValue(k_font_style, fontStyle);
 }
 
 QString ReactTextProperties::fontWeight()
 {
-  return d_func()->fontWeight;
+  return d_func()->value<QString>(k_font_weight);
 }
 
 void ReactTextProperties::setFontWeight(const QString& fontWeight)
 {
-  Q_D(ReactTextProperties);
-  if (d->fontWeight == fontWeight)
-    return;
-  d->fontWeight = fontWeight;
-  d->dirty = true;
+  d_func()->setValue(k_font_weight, fontWeight);
 }
 
 double ReactTextProperties::letterSpacing()
 {
-  return d_func()->letterSpacing;
+  return d_func()->value<double>(k_letter_spacing);
 }
 
 void ReactTextProperties::setLetterSpacing(double letterSpacing)
 {
-  Q_D(ReactTextProperties);
-  if (d->letterSpacing == letterSpacing)
-    return;
-  d->letterSpacing = letterSpacing;
-  d->dirty = true;
+  d_func()->setValue(k_letter_spacing, letterSpacing);
 }
 
 double ReactTextProperties::lineHeight() const
 {
-  return d_func()->lineHeight;
+  return d_func()->value<double>(k_line_height, -1);
 }
 
 void ReactTextProperties::setLineHeight(double lineHeight)
 {
-  Q_D(ReactTextProperties);
-  if (d->lineHeight == lineHeight)
-    return;
-  d->lineHeight = lineHeight;
-  d->dirty = true;
+  d_func()->setValue(k_line_height, lineHeight);
 }
 
 QString ReactTextProperties::textAlign() const
 {
-  return d_func()->textAlign;
+  return d_func()->value<QString>(k_text_align);
 }
 
 void ReactTextProperties::setTextAlign(const QString& textAlign)
 {
-  Q_D(ReactTextProperties);
-  if (d->textAlign == textAlign)
-    return;
-  d->textAlign = textAlign;
-  d->dirty = true;
+  d_func()->setValue(k_text_align, textAlign);
+}
+
+QString ReactTextProperties::textDecorationLine() const
+{
+  return d_func()->value<QString>(k_text_decoration_line);
+}
+
+void ReactTextProperties::setTextDecorationLine(const QString& textDecorationLine)
+{
+  d_func()->setValue(k_text_decoration_line, textDecorationLine);
+}
+
+QString ReactTextProperties::textDecorationStyle() const
+{
+  return d_func()->value<QString>(k_text_decoration_style);
+}
+
+void ReactTextProperties::setTextDecorationStyle(const QString& textDecorationStyle)
+{
+  d_func()->setValue(k_text_decoration_style, textDecorationStyle);
+}
+
+QColor ReactTextProperties::textDecorationColor() const
+{
+  return d_func()->value<QString>(k_text_decoration_color);
+}
+
+void ReactTextProperties::setTextDecorationColor(const QColor& textDecorationColor)
+{
+  d_func()->setValue(k_text_decoration_style, textDecorationColor);
+}
+
+QString ReactTextProperties::writingDirection() const
+{
+  return d_func()->value<QString>(k_writing_direction);
+}
+
+void ReactTextProperties::setWritingDirection(const QString& writingDirection)
+{
+  d_func()->setValue(k_writing_direction, writingDirection);
 }
 
 int ReactTextProperties::numberOfLines() const
 {
-  return d_func()->numberOfLines;
+  return d_func()->value<int>(k_number_of_lines, -1);
 }
 
 void ReactTextProperties::setNumberOfLines(int numberOfLines)
 {
-  Q_D(ReactTextProperties);
-  if (d->numberOfLines == numberOfLines)
-    return;
-  d->numberOfLines = numberOfLines;
+  d_func()->item->setProperty("maxiumLineCount", numberOfLines);
 }
 
 void ReactTextProperties::polish(QQuickItem* item)
@@ -251,11 +252,10 @@ void ReactTextProperties::polish(QQuickItem* item)
   if (rtp != nullptr) {
     // apply text properties to all children
     ReactTextPropertiesPrivate::get(rtp)->apply();
-  }
-
-  // Keep searching
-  for (auto c : item->childItems()) {
-    polish(c);
+  } else {
+    for (auto c : item->childItems()) {
+      polish(c);
+    }
   }
 }
 

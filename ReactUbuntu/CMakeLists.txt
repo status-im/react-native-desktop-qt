@@ -34,6 +34,7 @@ add_library(
   reactattachedproperties.cpp
   reactflexlayout.cpp
   reacttextproperties.cpp
+  reactrawtextproperties.cpp
   reactuimanager.cpp
   ubuntucomponentsloader.cpp
   ubuntucomponentmodule.cpp
