@@ -42,7 +42,7 @@ module.exports = yeoman.generators.NamedBase.extend({
     );
     this.fs.copyTpl(
       this.templatePath(path.join('qml', '**')),
-      this.destinationPath(path.join('ubuntu', 'qml')),
+      this.destinationPath('ubuntu'),
       templateParams
     );
   },
