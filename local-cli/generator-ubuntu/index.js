@@ -36,13 +36,14 @@ module.exports = yeoman.generators.NamedBase.extend({
       name: this.name
     };
     this.fs.copyTpl(
-      this.templatePath(path.join('src', '**')),
-      this.destinationPath('ubuntu'),
+      this.templatePath('CMakeLists.txt'),
+      this.destinationPath(path.join('ubuntu', 'CMakeLists.txt')),
       templateParams
     );
-    this.fs.copy(
-      this.templatePath(path.join('bin', '**')),
-      this.destinationPath('ubuntu')
+    this.fs.copyTpl(
+      this.templatePath(path.join('qml', '**')),
+      this.destinationPath('ubuntu'),
+      templateParams
     );
   },
 

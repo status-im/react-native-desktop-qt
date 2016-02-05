@@ -14,7 +14,7 @@ var http = require('http');
 var runPackager = require('./run-packager.js');
 
 function checkUbuntu() {
-  return fs.existsSync('ubuntu/CMakeList.txt') && 
+  return fs.existsSync('ubuntu/CMakeLists.txt') && 
          process.platform.startsWith('linux');
 }
 
