@@ -26,8 +26,6 @@ public:
 
 void PagePropertyHandler::setTitle(const QString& title)
 {
-  qDebug() << __PRETTY_FUNCTION__ << m_object << title;
-  // m_object->setProperty("title", title);
   QQmlProperty p(m_object, "title");
   p.write(QVariant::fromValue(title));
 }
