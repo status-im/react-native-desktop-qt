@@ -6,6 +6,8 @@
 var Map = require('Map');
 var React = require('React');
 var PropTypes = React.PropTypes;
+var LayoutPropTypes = require("LayoutPropTypes");
+var StyleSheetPropType = require("StyleSheetPropType");
 
 var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandle = require('findNodeHandle');
@@ -16,16 +18,18 @@ var {
 
 var View = require('View');
 
-
 var Page = React.createClass({
   propTypes: {
+    style: StyleSheetPropType(LayoutPropTypes),
     head: PropTypes.object,
     title: PropTypes.string
   },
 
   render: function() {
     return (
-        <UbuntuPage title={this.props.title}>
+        <UbuntuPage
+          title={this.props.title}
+          style={this.props.style}>
           {this.props.children}
         </UbuntuPage>
       );
@@ -72,7 +76,7 @@ var Navigator = React.createClass({
   },
 
   push: function(route) {
-    var newPages = [route].concat(this.state.pageStack);
+    var newPages = this.state.pageStack.concat([route]);
     this.setState({
         pageStack: newPages
       });
@@ -109,8 +113,7 @@ var Navigator = React.createClass({
     return (
       <UbuntuNavigator
         ref={(nav) => this._navigator = nav}
-        style={this.props.style}
-        >
+        style={this.props.style}>
         {this._pages}
       </UbuntuNavigator>
     );

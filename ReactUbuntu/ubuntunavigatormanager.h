@@ -6,9 +6,8 @@
 
 #include "reactviewmanager.h"
 
-class QQuickItem;
 
-// #define QT_STATICPLUGIN
+class QQuickItem;
 
 class UbuntuNavigatorManager : public ReactViewManager
 {
@@ -33,8 +32,6 @@ public:
   QVariantMap constantsToExport() override;
 
   QQuickItem* view(const QVariantMap& properties) const override;
-
-private Q_SLOTS:
 
 private:
   void configureView(QQuickItem* view) const;

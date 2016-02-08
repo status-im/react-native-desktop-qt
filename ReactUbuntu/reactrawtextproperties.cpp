@@ -1,6 +1,7 @@
 
 #include <QQuickItem>
 
+#include "reacttextproperties.h"
 #include "reactrawtextproperties.h"
 
 
@@ -10,6 +11,14 @@ public:
   bool dirty;
   QQuickItem* item;
   QString text;
+
+  void setDirty(bool dirty) {
+    dirty = true;
+    ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
+    if (tp != nullptr) {
+      tp->setDirty(dirty);
+    }
+  }
 
   static ReactRawTextPropertiesPrivate* get(ReactRawTextProperties* rtp) {
     return rtp->d_func();
@@ -44,6 +53,7 @@ void ReactRawTextProperties::setText(const QString& text)
   if (d->text == text)
     return;
   d->text = text;
+  d->setDirty(true);
 }
 
 QString ReactRawTextProperties::textWithProperties(const QVariantMap& properties) const

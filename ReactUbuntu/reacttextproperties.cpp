@@ -35,13 +35,14 @@ public:
   QQuickItem* item;
 
   void apply() {
+    if (!dirty) return;
     QString text = textWithProperties(item, property_map());
     item->setProperty("text", text);
-    item->setProperty("visible", true);
 
     ReactFlexLayout* fl = ReactFlexLayout::get(item);
     fl->setWidth(item->property("contentWidth").value<double>());
     fl->setHeight(item->property("contentHeight").value<double>());
+    dirty = false;
   }
 
   template<typename VT>
@@ -55,10 +56,19 @@ public:
   template<typename VT>
   void setValue(const char* key, const VT& value) {
     properties[key] = value;
+    setDirty(true);
   }
 
-  static ReactTextPropertiesPrivate* get(ReactTextProperties* rtp) {
-    return rtp->d_func();
+  void setDirty(bool drty) {
+    dirty = drty;
+    ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
+    if (tp != nullptr) {
+      tp->setDirty(drty);
+    }
+  }
+
+  static ReactTextPropertiesPrivate* get(ReactTextProperties* tp) {
+    return tp->d_func();
   }
 
 private:
@@ -68,9 +78,9 @@ private:
 
     QString text;
     for (auto c : item->childItems()) {
-      ReactRawTextProperties* rtp = ReactRawTextProperties::get(c, false);
-      if (rtp != nullptr) {
-        text += rtp->textWithProperties(QMap<QString, QVariant>(mp));
+      ReactRawTextProperties* tp = ReactRawTextProperties::get(c, false);
+      if (tp != nullptr) {
+        text += tp->textWithProperties(QMap<QString, QVariant>(mp));
       }
       text += textWithProperties(c, mp);
     }
@@ -102,8 +112,9 @@ bool ReactTextProperties::allowFontScaling() const
 
 void ReactTextProperties::setAllowFontScaling(bool allowFontScaling)
 {
-  // XXX:
-  d_func()->item->setProperty("fontSizeMode", allowFontScaling ? 3 : 0);
+  Q_D(ReactTextProperties);
+  d->item->setProperty("fontSizeMode", allowFontScaling ? 3 : 0);// XXX:
+  d->setDirty(true);
 }
 
 QString ReactTextProperties::fontFamily() const
@@ -243,15 +254,22 @@ int ReactTextProperties::numberOfLines() const
 
 void ReactTextProperties::setNumberOfLines(int numberOfLines)
 {
-  d_func()->item->setProperty("maxiumLineCount", numberOfLines);
+  Q_D(ReactTextProperties);
+  d->item->setProperty("maxiumLineCount", numberOfLines);
+  d->setDirty(true);
+}
+
+void ReactTextProperties::setDirty(bool dirty)
+{
+  d_func()->setDirty(dirty);
 }
 
 void ReactTextProperties::polish(QQuickItem* item)
 {
-  ReactTextProperties* rtp = ReactTextProperties::get(item, false);
-  if (rtp != nullptr) {
+  ReactTextProperties* tp = ReactTextProperties::get(item, false);
+  if (tp != nullptr) {
     // apply text properties to all children
-    ReactTextPropertiesPrivate::get(rtp)->apply();
+    ReactTextPropertiesPrivate::get(tp)->apply();
   } else {
     for (auto c : item->childItems()) {
       polish(c);

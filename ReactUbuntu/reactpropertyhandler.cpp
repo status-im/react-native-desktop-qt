@@ -23,7 +23,19 @@ QList<QMetaProperty> ReactPropertyHandler::availableProperties()
 
 void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
 {
+  qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
   buildPropertyMap();
+
+  /*
+  qDebug() << "Available properties";
+  for (auto p : m_coreProperties) {
+    qDebug() << p.name();
+  }
+
+  for (auto p : m_extraProperties) {
+    qDebug() << p.name();
+  }
+  */
 
   for (const QString& key : properties.keys()) {
     QMap<QString, QMetaProperty>::iterator it = m_extraProperties.find(key);

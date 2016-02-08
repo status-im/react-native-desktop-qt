@@ -56,7 +56,6 @@ static const char* component_qml =
 "import QtQuick 2.4\n"
 "\n"
 "Text {\n"
-"  visible: false\n"
 "  textFormat: Text.RichText\n"
 "}\n";
 }
