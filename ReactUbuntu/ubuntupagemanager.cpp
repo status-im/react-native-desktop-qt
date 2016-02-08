@@ -81,6 +81,7 @@ static const char* component_qml =
 "\n"
 "Page {\n"
 "  id: page%1\n"
+"  visible: false\n"
 "}\n";
 }
 

@@ -85,7 +85,7 @@ var Navigator = React.createClass({
   pop: function() {
     var route = this.state.pageStack[0];
     this._routeMap.delete(route);
-    var newPages = this.state.pageStack.slice(1);
+    var newPages = this.state.pageStack.slice(0, -1);
     this.setState({
         pageStack: newPages
       });
@@ -99,6 +99,7 @@ var Navigator = React.createClass({
         pages.push(this._routeMap.get(page));
       } else {
         var newPage = <Page
+                        style={{flex: 1}}
                         ref={(page) => this._pageRefs[i] = page}
                         title={page.name}>
                         {this.props.renderScene(page, this)}
