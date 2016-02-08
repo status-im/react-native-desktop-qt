@@ -23,6 +23,7 @@
 
 #include "ubuntuscrollviewmanager.h"
 #include "ubuntunavigatormanager.h"
+#include "ubuntupagemanager.h"
 #include "ubuntucomponentsloader.h"
 
 
@@ -61,6 +62,7 @@ public:
     // }
     modules << new UbuntuScrollViewManager; //XXX:
     modules << new UbuntuNavigatorManager;
+    modules << new UbuntuPageManager;
     return modules;
   }
 };

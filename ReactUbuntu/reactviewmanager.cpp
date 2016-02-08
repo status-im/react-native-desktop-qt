@@ -99,7 +99,6 @@ QColor ViewPropertyHandler::backgroundColor() const
 
 void ViewPropertyHandler::setBackgroundColor(const QColor& backgroundColor)
 {
-  qDebug() << __PRETTY_FUNCTION__ << backgroundColor;
   m_object->setProperty("color", backgroundColor);
 }
 
@@ -210,7 +209,7 @@ QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
   // qDebug() << __PRETTY_FUNCTION__;
 
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData("import QtQuick 2.4\nRectangle{}", QUrl());
+  component.setData("import QtQuick 2.4\nRectangle{color:\"transparent\"\n}", QUrl());
   if (!component.isReady())
     qCritical() << "Rectangle not ready!";
 

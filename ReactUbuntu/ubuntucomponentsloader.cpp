@@ -18,7 +18,8 @@ namespace
 const char* components_path = "/Ubuntu/Components/";
 
 QStringList blackList{
-  "OptionSelectorDelegate", "Header", "UbuntuNumberAnimation", "Scrollbar"
+  "OptionSelectorDelegate", "Header", "UbuntuNumberAnimation", "Scrollbar",
+  "Page"
 };
 
 struct UbuntuComponent {

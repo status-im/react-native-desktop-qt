@@ -192,7 +192,7 @@ public:
       printf(" ");
     print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE));
 
-    for (QQuickItem* c : item->childItems()) {
+    for (QQuickItem* c : children /*item->childItems()*/) {
       ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->local_print_node(tab + 2);
     }
     fflush(stdout);

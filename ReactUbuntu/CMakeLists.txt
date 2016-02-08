@@ -40,6 +40,7 @@ add_library(
   ubuntucomponentmodule.cpp
   ubuntuscrollviewmanager.cpp
   ubuntunavigatormanager.cpp
+  ubuntupagemanager.cpp
   ../React/Layout/Layout.c
 )
 

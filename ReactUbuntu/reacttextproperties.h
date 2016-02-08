@@ -82,6 +82,8 @@ public:
   int numberOfLines() const;
   void setNumberOfLines(int numberOfLines);
 
+  void setDirty(bool dirty);
+
   static void polish(QQuickItem* item);
   static ReactTextProperties* get(QQuickItem* item, bool create = true);
   static ReactTextProperties* qmlAttachedProperties(QObject* object);
