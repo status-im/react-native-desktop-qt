@@ -5,13 +5,13 @@
 #include <QtQml>
 #include <QScopedPointer>
 
-
 // XXX: The enumeration values are in sync with those defined in the layout code
 
 class ReactFlexLayoutPrivate;
 class ReactFlexLayout : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool qmlAnchors READ qmlAnchors WRITE setQmlAnchors)
   Q_PROPERTY(bool dirty READ isDirty WRITE setDirty)
   Q_PROPERTY(double flex READ flex WRITE setFlex NOTIFY flexChanged)
   Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
@@ -52,6 +52,9 @@ class ReactFlexLayout : public QObject
 public:
   ReactFlexLayout(QObject* parent = 0);
   ~ReactFlexLayout();
+
+  bool qmlAnchors() const;
+  void setQmlAnchors(bool qmlAnchors);
 
   bool isDirty();
   void setDirty(bool dirty);
@@ -139,6 +142,9 @@ public:
 
   double marginRight() const;
   void setMarginRight(double margin);
+
+  QQuickItem* parentItem() const;
+  void setParentItem(QQuickItem* parentItem);
 
   void insertChild(int position, QQuickItem* child);
   QList<QQuickItem*> removeChildren(const QList<int>& indexes);

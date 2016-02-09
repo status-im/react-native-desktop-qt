@@ -22,14 +22,16 @@ var Page = React.createClass({
   propTypes: {
     style: StyleSheetPropType(LayoutPropTypes),
     head: PropTypes.object,
-    title: PropTypes.string
+    title: PropTypes.string,
+    qmlAnchors: PropTypes.bool
   },
 
   render: function() {
     return (
         <UbuntuPage
           title={this.props.title}
-          style={this.props.style}>
+          style={this.props.style}
+          qmlAnchors={true}>
           {this.props.children}
         </UbuntuPage>
       );
@@ -101,7 +103,7 @@ var Navigator = React.createClass({
         var newPage = <Page
                         style={{flex: 1}}
                         ref={(page) => this._pageRefs[i] = page}
-                        title={page.name}>
+                        title={page.title || page.name}>
                         {this.props.renderScene(page, this)}
                       </Page>;
         this._routeMap.set(page, newPage);
