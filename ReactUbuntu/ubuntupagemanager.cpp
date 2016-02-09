@@ -11,23 +11,32 @@
 #include "reactbridge.h"
 #include "reactuimanager.h"
 #include "reactpropertyhandler.h"
+#include "reactflexlayout.h"
 
 
 class PagePropertyHandler : public ReactPropertyHandler {
   Q_OBJECT
   Q_PROPERTY(QString title READ title WRITE setTitle)
+  Q_PROPERTY(bool qmlAnchors READ qmlAnchors WRITE setQmlAnchors)
 public:
   PagePropertyHandler(QObject* object)
     : ReactPropertyHandler(object) {
     }
   QString title() const;
   void setTitle(const QString& title);
+  bool qmlAnchors() const;
+  void setQmlAnchors(bool qmlAnchors);
 };
 
 void PagePropertyHandler::setTitle(const QString& title)
 {
   QQmlProperty p(m_object, "title");
   p.write(QVariant::fromValue(title));
+}
+
+void PagePropertyHandler::setQmlAnchors(bool qmlAnchors)
+{
+  ReactFlexLayout::get(qobject_cast<QQuickItem*>(m_object))->setQmlAnchors(qmlAnchors);
 }
 
 
@@ -98,7 +107,33 @@ QQuickItem* UbuntuPageManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
+  configureView(item);
+
   return item;
+}
+
+void UbuntuPageManager::widthChanged()
+{
+  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+  QTimer::singleShot(0, [=] {
+    ReactFlexLayout::get(item)->setDirty(true);
+    m_bridge->visualParent()->polish();
+  });
+}
+
+void UbuntuPageManager::heightChanged()
+{
+  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+  QTimer::singleShot(0, [=] {
+    ReactFlexLayout::get(item)->setDirty(true);
+    m_bridge->visualParent()->polish();
+  });
+}
+
+void UbuntuPageManager::configureView(QQuickItem* view) const
+{
+  connect(view, SIGNAL(widthChanged()), SLOT(widthChanged()));
+  connect(view, SIGNAL(heightChanged()), SLOT(heightChanged()));
 }
 
 #include "ubuntupagemanager.moc"

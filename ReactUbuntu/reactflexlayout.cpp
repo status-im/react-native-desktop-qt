@@ -18,7 +18,8 @@ static QMap<QString, ReactFlexLayout::Alignment> alignments{
   { "center", ReactFlexLayout::AlignmentCenter },
   { "stretch", ReactFlexLayout::AlignmentStretch }
 };
-static QMap<QString, ReactFlexLayout::Justify> justifys{ { "flex-start", ReactFlexLayout::JustifyFlexStart },
+static QMap<QString, ReactFlexLayout::Justify> justifys{
+  { "flex-start", ReactFlexLayout::JustifyFlexStart },
   { "flex-end", ReactFlexLayout::JustifyFlexEnd },
   { "center", ReactFlexLayout::JustifyCenter },
   { "space-between", ReactFlexLayout::JustifySpaceBetween },
@@ -167,19 +168,27 @@ public:
     updateMargin(p);
     updatePadding(p);
 
+    if (p->qmlAnchors) {
+      p->cssNode->style.position[CSS_TOP] = p->item->y();
+      p->cssNode->style.position[CSS_LEFT] = p->item->x();
+      p->cssNode->style.dimensions[CSS_WIDTH] = p->item->width();
+      p->cssNode->style.dimensions[CSS_HEIGHT] = p->item->height();
+    }
+
     for (auto c : p->children) {
       setChildInfo(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
     }
   }
   void setDirty(bool drty) {
-    // qDebug() << __PRETTY_FUNCTION__ << "tag" << ReactAttachedProperties::get(item)->tag() << "old" << dirty << "new" << drty;
+    // qDebug() << __PRETTY_FUNCTION__ << this << "old" << dirty << "new" << drty;
     dirty = drty;
     if (!dirty)
       return; // dont reset parent
-    // XXX: change to internal
-    ReactFlexLayout* pl = ReactFlexLayout::get(item->parentItem(), false);
-    if (pl != nullptr)
-      pl->setDirty(drty);
+    if (parentItem != nullptr) {
+      ReactFlexLayout* pl = ReactFlexLayout::get(parentItem, false);
+      if (pl != nullptr)
+        pl->setDirty(drty);
+    }
   }
   void local_print_node(int tab) {
     for (int i = 0; i < tab; ++i)
@@ -222,10 +231,12 @@ public:
   static bool isDirty(void* context) {
     return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
   }
+  bool qmlAnchors;
   bool dirty;
   float padding[CSS_PROP_COUNT];
   float margin[CSS_PROP_COUNT];
   QQuickItem* item;
+  QQuickItem* parentItem;
   QList<QQuickItem*> children;
   css_node_t* cssNode;
   ReactFlexLayout* q_ptr;
@@ -239,12 +250,14 @@ private:
     cssNode->layout.should_update = false;
     dirty = false;
 
-    item->setX(cssNode->layout.position[CSS_LEFT]);
-    item->setY(cssNode->layout.position[CSS_TOP]);
-    item->setWidth(cssNode->layout.dimensions[CSS_WIDTH]);
-    item->setHeight(cssNode->layout.dimensions[CSS_HEIGHT]);
+    if (!qmlAnchors) {
+      item->setX(cssNode->layout.position[CSS_LEFT]);
+      item->setY(cssNode->layout.position[CSS_TOP]);
+      item->setWidth(cssNode->layout.dimensions[CSS_WIDTH]);
+      item->setHeight(cssNode->layout.dimensions[CSS_HEIGHT]);
+    }
 
-    for (auto c : children) {
+    for (auto& c : children) {
       ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c))->applyLayout();
     }
 
@@ -260,7 +273,7 @@ QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p)
   QDebugStateSaver s(debug);
   debug.nospace() << "ReactFlexLayoutPrivate(this=" << (void*)p <<
     ", tag=" << ReactAttachedProperties::get(p->item)->tag() << ", dirty=" << p->dirty <<
-    ", item=" << p->item << ", layout={" <<
+    ", item=" << p->item << ", parent=" << p->parentItem << ", layout={" <<
     p->cssNode->layout.position[CSS_LEFT] << " " <<
     p->cssNode->layout.position[CSS_TOP] << " " <<
     p->cssNode->layout.dimensions[CSS_WIDTH] << " " <<
@@ -273,12 +286,14 @@ ReactFlexLayout::ReactFlexLayout(QObject* parent)
   , d_ptr(new ReactFlexLayoutPrivate(this))
 {
   Q_D(ReactFlexLayout);
+  d->qmlAnchors = false;
   d->dirty = false;
   for (int i = 0; i < CSS_PROP_COUNT; ++i) {
     d->margin[i] = CSS_UNDEFINED;
     d->padding[i] = CSS_UNDEFINED;
   }
   d->item = qobject_cast<QQuickItem*>(parent);
+  d->parentItem = nullptr;
   if (d->item == nullptr) {
     qCritical() << "Flex layout only applies to visual items";
   }
@@ -286,6 +301,19 @@ ReactFlexLayout::ReactFlexLayout(QObject* parent)
 
 ReactFlexLayout::~ReactFlexLayout()
 {
+}
+
+bool ReactFlexLayout::qmlAnchors() const
+{
+  return d_func()->qmlAnchors;
+}
+
+void ReactFlexLayout::setQmlAnchors(bool qmlAnchors)
+{
+  Q_D(ReactFlexLayout);
+  if (d->qmlAnchors == qmlAnchors)
+    return;
+  d->qmlAnchors = qmlAnchors;
 }
 
 bool ReactFlexLayout::isDirty()
@@ -660,6 +688,18 @@ void ReactFlexLayout::setMarginRight(double margin)
   d->margin[CSS_RIGHT] = margin;
   setDirty(true);
 }
+
+QQuickItem* ReactFlexLayout::parentItem() const
+{
+  return d_func()->parentItem;
+}
+
+void ReactFlexLayout::setParentItem(QQuickItem* parentItem)
+{
+  Q_D(ReactFlexLayout);
+  d->parentItem = parentItem;
+}
+
 
 void ReactFlexLayout::insertChild(int position, QQuickItem* child)
 {

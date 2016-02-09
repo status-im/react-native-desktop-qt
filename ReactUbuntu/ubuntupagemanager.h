@@ -29,7 +29,13 @@ public:
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
+private Q_SLOTS:
+  void widthChanged();
+  void heightChanged();
+
 private:
+  void configureView(QQuickItem* view) const;
+
   mutable int m_id;
   QMap<QPair<QString, QQuickItem*>, QMetaMethod> m_methodCache;
 };

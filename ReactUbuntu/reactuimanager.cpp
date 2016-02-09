@@ -145,9 +145,9 @@ void ReactUIManager::manageChildren
       // Add to layout
       if (ReactAttachedProperties::get(child)->shouldLayout()) {
         rfl->insertChild(i, child);
+        ReactFlexLayout::get(child)->setDirty(true);
+        ReactFlexLayout::get(child)->setParentItem(container);
       }
-
-      ReactFlexLayout::get(child)->setDirty(true);
     }
 
     rfl->setDirty(true);
