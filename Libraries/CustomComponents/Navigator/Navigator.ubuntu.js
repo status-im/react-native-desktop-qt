@@ -54,6 +54,7 @@ var Navigator = React.createClass({
   componentWillMount: function() {
     this._navigator = null;
     this._pushPage = null;
+    this._popPage = null;
     this._pages = [];
     this._pageRefs = [];
     this._routeMap = new Map();
@@ -71,10 +72,19 @@ var Navigator = React.createClass({
   },
 
   componentDidUpdate: function() {
-    if (this._pushPage == null)
-      return;
-    UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
-    this._pushPage = null;
+    console.log("=== componentDidUpdate: pushPage=" + this._pushPage);
+    if (this._pushPage != null) {
+      console.log("=== componentDidUpdate: will call push(" +
+                  findNodeHandle(this._navigator) +", " +
+                  findNodeHandle(this._pageRefs[this._pushPage]) + ")");
+      UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
+      this._pushPage = null;
+    }
+    if (this._popPage != null) {
+      console.log("=== componentDidUpdate: will call pop()");
+      UbuntuNavigatorManager.pop(findNodeHandle(this._navigator));
+      this._popPage = null;
+    }
   },
 
   push: function(route) {
@@ -85,9 +95,16 @@ var Navigator = React.createClass({
   },
 
   pop: function() {
-    var route = this.state.pageStack[0];
+    console.log("=== Navigator.pop()");
+    var pageStack = this.state.pageStack;
+    if (pageStack.length == 0)
+      return;
+
+    var route = pageStack[pageStack.length - 1];
+    console.log("=== Navigator.pop(); delete route" + util.inspect(route));
     this._routeMap.delete(route);
-    var newPages = this.state.pageStack.slice(0, -1);
+    var newPages = pageStack.slice(0, -1);
+    this._popPage = true;
     this.setState({
         pageStack: newPages
       });
