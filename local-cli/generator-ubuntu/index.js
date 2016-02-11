@@ -52,6 +52,7 @@ module.exports = yeoman.generators.NamedBase.extend({
     this.log(chalk.white.bold('To run your app on Ubuntu:'));
     this.log(chalk.white('   Have an Ubuntu emulator running, or a device connected'));
     this.log(chalk.white('   cd ' + projectPath));
+    this.log(chalk.white('   cmake . && make'));
     this.log(chalk.white('   react-native run-ubuntu'));
   }
 });

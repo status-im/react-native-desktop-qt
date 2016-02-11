@@ -21,7 +21,34 @@ function checkUbuntu() {
 function buildAndRun() {
   process.chdir('ubuntu');
 
-  // TODO
+  console.log(chalk.bold('Building the app...'));
+  try {
+    var cmd = 'cmake';
+    var cmdArgs = '.';
+    child_process.execFileSync(cmd, cmdArgs, {
+      stdio: [process.stdin, process.stdout, process.stderr]
+    });
+    cmd = 'make'; cmdArgs = '';
+    child_process.execFileSync(cmd, cmdArgs, {
+      stdio: [process.stdin, process.stdout, process.stderr]
+    });
+  } catch (e) {
+    console.log(chalk.red('Could not build the app, see the error above.'));
+    console.log(e.stdout)
+    console.log(e.stderr)
+  }
+
+  console.log(chalk.bold('Starting the app (desktop mode)...'));
+  try {
+    var cmd = 'run-app.sh';
+    var cmdArgs = '';
+    child_process.execFileSync(cmd, cmdArgs, {
+      stdio: [process.stdin, process.stdout, process.stderr]
+    });
+  } catch (e) {
+    console.log(chalk.red('Failed to start the app, see the logs'));
+    return;
+  }
 }
 
 module.exports = function() {
