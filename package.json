@@ -102,6 +102,8 @@
     "React.podspec",
     "ReactAndroid",
     "android",
+    "ReactUbuntu",
+    "ubuntu-server.js",
     "Libraries",
     "packager",
     "cli.js",
