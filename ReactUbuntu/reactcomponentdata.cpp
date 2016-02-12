@@ -67,30 +67,42 @@ QVariantMap ReactComponentData::viewConfig() const
   view->deleteLater();
 
   ReactPropertyHandler* ph = m_moduleInterface->propertyHandler(view);
-  ph->deleteLater();
+  ph->deleteLater(); // XXX:
+
+  QStringList directEvents;
+  QStringList bubblingEvents;
 
   // {{{ propTypes
   QList<QMetaProperty> properties = ph->availableProperties();
 
+  // XXX: sort out the callback events..
   QVariantMap propTypes;
-  for (auto p : properties) {
-    propTypes.insert(p.name(), p.typeName());
+  for (auto& p : properties) {
+    if (p.userType() == qMetaTypeId<ReactModuleInterface::BubblingEventBlock>()) {
+      propTypes.insert(p.name(), "bool");
+      bubblingEvents << p.name();
+    } else if (p.userType() == qMetaTypeId<ReactModuleInterface::DirectEventBlock>()) {
+      propTypes.insert(p.name(), "bool");
+      directEvents << p.name();
+    } else {
+      propTypes.insert(p.name(), p.typeName());
+    }
   }
 
   rc.insert("propTypes", propTypes);
   // }}}
 
   // Events
-  QStringList de = m_moduleInterface->viewManager()->customDirectEventTypes();
+  directEvents << m_moduleInterface->viewManager()->customDirectEventTypes();
   QStringList dep;
-  std::transform(de.begin(), de.end(),
+  std::transform(directEvents.begin(), directEvents.end(),
                  std::back_inserter(dep),
                  [](const QString& name) { return normalizeInputEventName(name); });
   rc.insert("directEvents", dep);
 
-  de = m_moduleInterface->viewManager()->customBubblingEventTypes();
+  bubblingEvents << m_moduleInterface->viewManager()->customBubblingEventTypes();
   dep.clear();
-  std::transform(de.begin(), de.end(),
+  std::transform(bubblingEvents.begin(), bubblingEvents.end(),
                  std::back_inserter(dep),
                  [](const QString& name) { return normalizeInputEventName(name); });
   rc.insert("bubblingEvents", dep);

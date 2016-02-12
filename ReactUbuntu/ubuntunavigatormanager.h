@@ -26,12 +26,18 @@ public:
   void setBridge(ReactBridge* bridge) override;
 
   ReactViewManager* viewManager() override;
+  ReactPropertyHandler* propertyHandler(QObject* object);
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  QStringList customBubblingEventTypes() override;
+
   QQuickItem* view(const QVariantMap& properties) const override;
+
+private Q_SLOTS:
+  void backTriggered();
 
 private:
   void configureView(QQuickItem* view) const;

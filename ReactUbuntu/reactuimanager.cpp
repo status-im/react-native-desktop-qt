@@ -224,7 +224,7 @@ void ReactUIManager::findSubviewIn
 (
  int reactTag,
  const QPointF& point,
- const ReactModuleInterface::ResponseBlock& callback
+ const ReactModuleInterface::ListArgumentBlock& callback
 )
 {
   QQuickItem* item = m_views.value(reactTag);

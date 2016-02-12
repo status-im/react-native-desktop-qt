@@ -18,6 +18,7 @@ public:
   void setBridge(ReactBridge* bridge) override;
 
   ReactViewManager* viewManager() override;
+  // ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;

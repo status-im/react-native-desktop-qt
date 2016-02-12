@@ -45,6 +45,8 @@ var Navigator = React.createClass({
   propTypes: {
     initialRoute: PropTypes.object,
     renderScene: PropTypes.func.isRequired,
+    onBackButtonPress: PropTypes.func,
+    numberPages: PropTypes.number
   },
 
   getInitialState: function() {
@@ -133,7 +135,8 @@ var Navigator = React.createClass({
     return (
       <UbuntuNavigator
         ref={(nav) => this._navigator = nav}
-        style={this.props.style}>
+        style={this.props.style}
+        onBackButtonPress={() => this.pop()}>
         {this._pages}
       </UbuntuNavigator>
     );
