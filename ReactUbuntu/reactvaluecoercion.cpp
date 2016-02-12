@@ -37,7 +37,7 @@ QMap<int, coerce_function> coerceFunctions
     }
   },
   {
-    qRegisterMetaType<ReactModuleInterface::ResponseBlock>(),
+    qRegisterMetaType<ReactModuleInterface::ListArgumentBlock>(),
     [](const QVariant& value) {
       Q_ASSERT(value.canConvert<int>());
       int callbackId = value.toInt();
@@ -51,7 +51,7 @@ QMap<int, coerce_function> coerceFunctions
     }
   },
   {
-    qRegisterMetaType<ReactModuleInterface::ErrorBlock>(),
+    qRegisterMetaType<ReactModuleInterface::MapArgumentBlock>(),
     [](const QVariant& value) {
       Q_ASSERT(value.canConvert<int>());
       int callbackId = value.toInt();

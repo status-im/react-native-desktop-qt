@@ -15,10 +15,14 @@ class ReactModuleMethod;
 class ReactModuleInterface
 {
 public:
-  // Probably should typedef the functions generically then typedef to the block name
-  // and register the generic functions with the meta system
-  typedef std::function<void (ReactBridge*, const QVariantList&)> ResponseBlock;
-  typedef std::function<void (ReactBridge*, const QVariantMap&)> ErrorBlock;
+  typedef std::function<void (ReactBridge*, const QVariantMap&)> MapArgumentBlock;
+  typedef std::function<void (ReactBridge*, const QVariantList&)> ListArgumentBlock;
+
+  // XXX:
+  typedef ListArgumentBlock ResponseBlock;
+  typedef MapArgumentBlock ErrorBlock;
+  typedef MapArgumentBlock BubblingEventBlock;
+  typedef MapArgumentBlock DirectEventBlock;
 
   virtual ~ReactModuleInterface() {}
 
@@ -37,7 +41,7 @@ public:
 
 Q_DECLARE_INTERFACE(ReactModuleInterface, ReactModuleInterface_IID);
 
-Q_DECLARE_METATYPE(ReactModuleInterface::ResponseBlock);
-Q_DECLARE_METATYPE(ReactModuleInterface::ErrorBlock);
+Q_DECLARE_METATYPE(ReactModuleInterface::MapArgumentBlock);
+Q_DECLARE_METATYPE(ReactModuleInterface::ListArgumentBlock);
 
 #endif // REACTMODULEINTERFACE_H

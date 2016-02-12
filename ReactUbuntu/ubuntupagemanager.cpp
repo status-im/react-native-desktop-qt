@@ -99,7 +99,7 @@ QQuickItem* UbuntuPageManager::view(const QVariantMap& properties) const
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(componentString.toLocal8Bit(), QUrl());
   if (!component.isReady())
-    qCritical() << "Component for UbuntuPageManager not ready";
+    qCritical() << "Component for UbuntuPageManager not ready" << component.errors();
 
   QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
   if (item == nullptr) {
