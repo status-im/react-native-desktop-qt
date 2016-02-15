@@ -10,6 +10,6 @@ Rectangle {
     anchors.fill: parent 
 
     moduleName: "<%= name %>"
-    codeLocation: "http://localhost:8081/<%= package %>.bundle?platform=ubuntu&dev=true"
+    codeLocation: "http://localhost:8081/index.ubuntu.bundle?platform=ubuntu&dev=true"
   }
 }
