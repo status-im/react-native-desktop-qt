@@ -20,7 +20,7 @@ var <%= name %> = React.createClass({
           Welcome to React Native!
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.android.js
+          To get started, edit index.ubuntu.js
         </Text>
         <Text style={styles.instructions}>
           Press menu button for dev menu
