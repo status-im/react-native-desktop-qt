@@ -25,26 +25,20 @@ function buildAndRun() {
   try {
     var cmd = 'cmake';
     var cmdArgs = '.';
-    child_process.execFileSync(cmd, cmdArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr]
-    });
-    cmd = 'make'; cmdArgs = '';
-    child_process.execFileSync(cmd, cmdArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr]
-    });
-  } catch (e) {
+    child_process.spawnSync('cmake', ['.'],
+                            {stdio: 'inherit'});
+   child_process.spawnSync('make', ['.'],
+                           {stdio: 'inherit'});
+   } catch (e) {
     console.log(chalk.red('Could not build the app, see the error above.'));
     console.log(e.stdout)
     console.log(e.stderr)
   }
 
-  console.log(chalk.bold('Starting the app (desktop mode)...'));
+  console.log(chalk.bold('Starting the app (local mode)...'));
   try {
-    var cmd = 'run-app.sh';
-    var cmdArgs = '';
-    child_process.execFileSync(cmd, cmdArgs, {
-      stdio: [process.stdin, process.stdout, process.stderr]
-    });
+      child_process.spawn('./ubuntu/run-app.sh', [],
+                          {stdio: 'inherit'});
   } catch (e) {
     console.log(chalk.red('Failed to start the app, see the logs'));
     return;
@@ -64,9 +58,9 @@ module.exports = function() {
     });
     res.on('end', function() {
       if (response === 'packager-status:running') {
-        console.log(chalk.bold('JS server already running.'));
+        console.log(chalk.bold('Packager already running.'));
       } else {
-        console.log(chalk.yellow('[warn] JS server not recognized, continuing with build...'));
+        console.log(chalk.yellow('[warn] Packager not recognized, continuing with build...'));
       }
       buildAndRun();
       // make sure we don't wait around for the packager process
@@ -75,7 +69,7 @@ module.exports = function() {
   });
   statusReq.on('error', function() {
     // start packager first so it warms up
-    console.log(chalk.bold('Starting JS server...'));
+    console.log(chalk.bold('Starting Packager...'));
     runPackager(true);
     buildAndRun();
   });
