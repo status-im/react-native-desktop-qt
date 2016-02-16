@@ -35,6 +35,7 @@ public:
   virtual QStringList customBubblingEventTypes();
 
   virtual bool shouldLayout() const;
+  virtual void addChildItem(QQuickItem* parent, QQuickItem* child, int position) const;
 
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 

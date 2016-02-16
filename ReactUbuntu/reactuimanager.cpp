@@ -139,8 +139,13 @@ void ReactUIManager::manageChildren
       QQuickItem* child = *it++;
 
       // Add to visual hierarchy
-      child->setParentItem(container);
-      child->setZ(i);
+      ReactViewManager* vm = ReactAttachedProperties::get(container)->viewManager();
+      if (vm != nullptr) {
+        vm->addChildItem(container, child, i);
+      } else {
+        child->setParentItem(container);
+        child->setZ(i);
+      }
 
       // Add to layout
       if (ReactAttachedProperties::get(child)->shouldLayout()) {

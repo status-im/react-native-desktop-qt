@@ -18,13 +18,15 @@ public:
   void setBridge(ReactBridge* bridge) override;
 
   ReactViewManager* viewManager() override;
-  // ReactPropertyHandler* propertyHandler(QObject* object) override;
+  ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
   QStringList customDirectEventTypes() override;
+
+  void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
@@ -37,6 +39,7 @@ private Q_SLOTS:
   void momentumScrollEnd();
 
 private:
+  QVariantMap buildEventData(QQuickItem* item) const;
   void configureView(QQuickItem* view) const;
 };
 
