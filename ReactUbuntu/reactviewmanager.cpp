@@ -202,6 +202,12 @@ bool ReactViewManager::shouldLayout() const
   return true;
 }
 
+void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const
+{
+  child->setParentItem(container);
+  child->setZ(position);
+}
+
 // TODO: Going to need to return a custom item here, to support
 // all relevant properties
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const

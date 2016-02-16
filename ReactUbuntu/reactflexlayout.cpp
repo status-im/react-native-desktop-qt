@@ -175,7 +175,7 @@ public:
       p->cssNode->style.dimensions[CSS_HEIGHT] = p->item->height();
     }
 
-    for (auto c : p->children) {
+    for (auto& c : p->children) {
       setChildInfo(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
     }
   }
@@ -218,6 +218,8 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
     // local_print_node(0);
     applyLayout();
+    // qDebug() << __PRETTY_FUNCTION__ << "After applyLayout";
+    // local_print_node(0);
   }
   static ReactFlexLayoutPrivate* get(ReactFlexLayout* rfl) {
     return rfl->d_func();

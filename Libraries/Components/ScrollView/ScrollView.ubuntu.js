@@ -50,12 +50,17 @@ var ScrollView = React.createClass({
     rightMargin: PropTypes.number,
     topMargin: PropTypes.number,
     verticalVelocity: PropTypes.number,
-    visibleArea: PropTypes.object
+    visibleArea: PropTypes.object,
+
+    onScroll: PropTypes.func,
   },
 
   render: function() {
     return (
-      <UbuntuScrollView {...this.props} />
+      <UbuntuScrollView
+        {...this.props}
+        style={{flex: 1}}
+      />
     );
   }
 });

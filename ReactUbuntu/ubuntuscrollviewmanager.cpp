@@ -10,6 +10,33 @@
 #include "reactevents.h"
 #include "ubuntuscrollviewmanager.h"
 #include "reactbridge.h"
+#include "reactpropertyhandler.h"
+#include "reactevents.h"
+
+
+class ScrollViewPropertyHandler : public ReactPropertyHandler {
+  Q_OBJECT
+  Q_PROPERTY(bool onScroll READ onScroll WRITE setOnScroll)
+public:
+  ScrollViewPropertyHandler(QObject* object)
+    : ReactPropertyHandler(object) {
+      m_onScroll = false;
+    }
+  bool onScroll() const;
+  void setOnScroll(bool backButtonPress);
+
+  bool m_onScroll;
+};
+
+bool ScrollViewPropertyHandler::onScroll() const
+{
+  return m_onScroll;
+}
+
+void ScrollViewPropertyHandler::setOnScroll(bool onScroll)
+{
+  m_onScroll = onScroll;
+}
 
 
 UbuntuScrollViewManager::UbuntuScrollViewManager(QObject* parent)
@@ -31,6 +58,12 @@ ReactViewManager* UbuntuScrollViewManager::viewManager()
   return this;
 }
 
+ReactPropertyHandler* UbuntuScrollViewManager::propertyHandler(QObject* object)
+{
+  Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
+  return new ScrollViewPropertyHandler(object);
+}
+
 QString UbuntuScrollViewManager::moduleName()
 {
   return "RCTScrollViewManager";
@@ -48,8 +81,18 @@ QVariantMap UbuntuScrollViewManager::constantsToExport()
 
 QStringList UbuntuScrollViewManager::customDirectEventTypes()
 {
-  return QStringList{"scrollBeginDrag", "scroll", "scrollEndDrag", "scrollAnimationEnd",
+  return QStringList{"scrollBeginDrag", normalizeInputEventName("onScroll"), "scrollEndDrag", "scrollAnimationEnd",
                      "momentumScrollBegin", "momentumScrollEnd"};
+}
+
+void UbuntuScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child , int position) const
+{
+  // add to parents content item
+  QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
+  Q_ASSERT(contentItem != nullptr);
+
+  child->setParentItem(contentItem);
+  child->setZ(position);
 }
 
 namespace {
@@ -59,9 +102,12 @@ static const char* component_qml =
 "\n"
 "Flickable {\n"
 "  id: flikka\n"
-"  Scrollbar {\n"
-"    flickableItem: flikka\n"
-"  }\n"
+"  clip: true\n"
+"  contentWidth: contentItem.childrenRect.width\n"
+"  contentHeight: contentItem.childrenRect.height\n"
+// "  Scrollbar {\n"
+// "    flickableItem: flikka\n"
+// "  }\n"
 "}\n";
 }
 
@@ -120,15 +166,22 @@ void UbuntuScrollViewManager::scroll()
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-  if (rap == nullptr) {
-    qCritical() << "Could not get reacTag for ScrollView!";
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(item);
+  if (ap == nullptr) {
+    qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
     return;
   }
-  int reactTag = rap->tag();
-
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag, normalizeInputEventName("scroll")});
+  ScrollViewPropertyHandler* ph = qobject_cast<ScrollViewPropertyHandler*>(ap->propertyHandler());
+  if (ph == nullptr) {
+    qCritical() << __PRETTY_FUNCTION__ << "failed to find ScrollViewPropertyHandler";
+    return;
+  }
+  if (ph->onScroll()) {
+    m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+                            QVariantList{ap->tag(),
+                                         normalizeInputEventName("onScroll"),
+                                         buildEventData(item)});
+  }
 }
 
 void UbuntuScrollViewManager::momentumScrollBegin()
@@ -144,7 +197,9 @@ void UbuntuScrollViewManager::momentumScrollBegin()
   int reactTag = rap->tag();
 
   m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag, normalizeInputEventName("momentumScrollBegin")});
+                          QVariantList{reactTag,
+                                       normalizeInputEventName("momentumScrollBegin"),
+                                       buildEventData(item)});
 }
 
 void UbuntuScrollViewManager::momentumScrollEnd()
@@ -160,7 +215,38 @@ void UbuntuScrollViewManager::momentumScrollEnd()
   int reactTag = rap->tag();
 
   m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag, normalizeInputEventName("momentumScrollEnd")});
+                          QVariantList{reactTag,
+                                       normalizeInputEventName("momentumScrollEnd"),
+                                       buildEventData(item)});
+}
+
+namespace {
+template<typename TP>
+TP propertyValue(QQuickItem* item, const QString& property)
+{
+  return QQmlProperty(item, property).read().value<TP>();
+}
+}
+
+QVariantMap UbuntuScrollViewManager::buildEventData(QQuickItem* item) const
+{
+  QVariantMap ed;
+  ed.insert("contentOffset", QVariantMap{
+    { "x", propertyValue<double>(item, "contentX") },
+    { "y", propertyValue<double>(item, "contentY") },
+  });
+  // ed.insert("contentInset", QVariantMap{
+  // });
+  ed.insert("contentSize", QVariantMap{
+    { "width", propertyValue<double>(item, "contentWidth") },
+    { "height", propertyValue<double>(item, "contentHeight") },
+  });
+  ed.insert("layoutMeasurement", QVariantMap{
+    { "width", propertyValue<double>(item, "width") },
+    { "height", propertyValue<double>(item, "height") },
+  });
+  ed.insert("zoomScale", 1);
+  return ed;
 }
 
 void UbuntuScrollViewManager::configureView(QQuickItem* view) const
@@ -173,3 +259,5 @@ void UbuntuScrollViewManager::configureView(QQuickItem* view) const
   connect(view, SIGNAL(flickStarted()), SLOT(momentumScrollBegin()));
   connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
+
+#include "ubuntuscrollviewmanager.moc"
