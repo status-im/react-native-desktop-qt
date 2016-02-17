@@ -41,6 +41,7 @@ add_library(
   ubuntuscrollviewmanager.cpp
   ubuntunavigatormanager.cpp
   ubuntupagemanager.cpp
+  ubuntutextfieldmanager.cpp
   ../React/Layout/Layout.c
 )
 

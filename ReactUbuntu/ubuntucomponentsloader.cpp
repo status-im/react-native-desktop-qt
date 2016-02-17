@@ -19,7 +19,7 @@ const char* components_path = "/Ubuntu/Components/";
 
 QStringList blackList{
   "OptionSelectorDelegate", "Header", "UbuntuNumberAnimation", "Scrollbar",
-  "Page"
+  "Page", "TextField"
 };
 
 struct UbuntuComponent {

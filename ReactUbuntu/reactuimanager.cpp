@@ -41,7 +41,7 @@ void ReactUIManager::removeSubviewsFromContainerWithID(int containerReactTag)
 void ReactUIManager::measure
 (
  int reactTag,
- const ReactModuleInterface::ResponseBlock& callback
+ const ReactModuleInterface::ListArgumentBlock& callback
 )
 {
   qDebug() << __PRETTY_FUNCTION__;
@@ -159,6 +159,27 @@ void ReactUIManager::manageChildren
   }
 
   m_bridge->visualParent()->polish();
+}
+
+void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
+{
+  QQuickItem* item = m_views.value(reactTag);
+  if (item == nullptr) {
+    qCritical() << __PRETTY_FUNCTION__ << "Attempting to access unknown item";
+    return;
+  }
+
+  QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
+  Q_ASSERT(parent != nullptr);
+
+  int itemIndex = item->z();
+
+  manageChildren(ReactAttachedProperties::get(parent)->tag(),
+                  QList<int>(),
+                  QList<int>(),
+                  QList<int>{newReactTag},
+                  QList<int>{itemIndex},
+                  QList<int>{itemIndex});
 }
 
 // Reacts version of first responder

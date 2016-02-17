@@ -77,7 +77,7 @@ private:
     mp.insert(properties.begin(), properties.end());
 
     QString text;
-    for (auto c : item->childItems()) {
+    for (auto& c : item->childItems()) {
       ReactRawTextProperties* tp = ReactRawTextProperties::get(c, false);
       if (tp != nullptr) {
         text += tp->textWithProperties(QMap<QString, QVariant>(mp));
@@ -271,7 +271,7 @@ void ReactTextProperties::polish(QQuickItem* item)
     // apply text properties to all children
     ReactTextPropertiesPrivate::get(tp)->apply();
   } else {
-    for (auto c : item->childItems()) {
+    for (auto& c : item->childItems()) {
       polish(c);
     }
   }

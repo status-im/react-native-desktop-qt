@@ -534,7 +534,16 @@ var TextInput = React.createClass({
 
   _renderUbuntu: function()  {
     return (
-      <UbuntuTextField />
+      <UbuntuTextField
+        ref="input"
+        {...this.props}
+        onFocus={this._onFocus}
+        onBlur={this._onBlur}
+        onChange={this._onChange}
+        onSelectionChangeShouldSetResponder={() => true}
+        text={this._getText()}
+        mostRecentEventCount={this.state.mostRecentEventCount}
+      />
     )
   },
 
