@@ -25,6 +25,7 @@ var sharedBlacklist = [
   'Libraries/Relay/relay/tools/relayUnstableBatchedUpdates.js',
 ];
 
+// XXX: Modify
 var platformBlacklists = {
   web: [
     '.ios.js',

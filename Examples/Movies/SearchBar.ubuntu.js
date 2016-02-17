@@ -24,6 +24,9 @@ var {
   View,
 } = React;
 
+var ActivityIndicator = require('ActivityIndicator');
+
+
 var SearchBar = React.createClass({
   render: function() {
     return (
@@ -35,6 +38,10 @@ var SearchBar = React.createClass({
           placeholder="Search a movie..."
           onFocus={this.props.onFocus}
           style={styles.searchBarInput}
+        />
+        <ActivityIndicator
+          animating={this.props.isLoading}
+          style={styles.spinner}
         />
       </View>
     );
