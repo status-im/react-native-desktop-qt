@@ -24,6 +24,7 @@
 #include "ubuntuscrollviewmanager.h"
 #include "ubuntunavigatormanager.h"
 #include "ubuntupagemanager.h"
+#include "ubuntutextfieldmanager.h"
 #include "ubuntucomponentsloader.h"
 
 
@@ -63,6 +64,7 @@ public:
     modules << new UbuntuScrollViewManager; //XXX:
     modules << new UbuntuNavigatorManager;
     modules << new UbuntuPageManager;
+    modules << new UbuntuTextFieldManager;
     return modules;
   }
 };
@@ -288,12 +290,10 @@ void ReactBridge::processResult(const QJsonDocument& doc)
 
 void ReactBridge::applicationScriptDone()
 {
-  // XXX
-  QTimer::singleShot(200, [this]() {
+  QTimer::singleShot(0, [this]() {
       d_func()->executor->executeJSCall("BatchedBridge", "flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
           processResult(doc);
           Q_EMIT bridgeReady();
         });
     });
 }
-

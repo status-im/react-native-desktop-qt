@@ -30,8 +30,7 @@ public:
 
 void PagePropertyHandler::setTitle(const QString& title)
 {
-  QQmlProperty p(m_object, "title");
-  p.write(QVariant::fromValue(title));
+  QQmlProperty(m_object, "title").write(QVariant::fromValue(title));
 }
 
 void PagePropertyHandler::setQmlAnchors(bool qmlAnchors)

@@ -35,7 +35,7 @@ class ReactUIManager
                                   const QList<int>& addChildReactTags,
                                   const QList<int>& addAtIndices,
                                   const QList<int>& removeAtIndices);
-  // Q_INVOKABLE void replaceExistingNonRootView();
+  Q_INVOKABLE void replaceExistingNonRootView(int reactTag, int newReactTag);
   // Q_INVOKABLE void measureLayout();
   // Q_INVOKABLE void scrollTo();
   // Q_INVOKABLE void measureLayoutRelativeToParent();

@@ -36,10 +36,6 @@ var SearchBar = React.createClass({
           onFocus={this.props.onFocus}
           style={styles.searchBarInput}
         />
-        <ActivityIndicatorIOS
-          animating={this.props.isLoading}
-          style={styles.spinner}
-        />
       </View>
     );
   }
