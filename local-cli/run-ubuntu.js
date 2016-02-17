@@ -7,6 +7,7 @@
 
 'use strict';
 
+var path = require('path');
 var chalk = require('chalk');
 var child_process = require('child_process');
 var fs = require('fs');
@@ -19,30 +20,35 @@ function checkUbuntu() {
 }
 
 function buildAndRun() {
-  process.chdir('ubuntu');
+    process.chdir('ubuntu');
 
-  console.log(chalk.bold('Building the app...'));
-  try {
-    var cmd = 'cmake';
-    var cmdArgs = '.';
-    child_process.spawnSync('cmake', ['.'],
-                            {stdio: 'inherit'});
-   child_process.spawnSync('make', ['.'],
-                           {stdio: 'inherit'});
-   } catch (e) {
-    console.log(chalk.red('Could not build the app, see the error above.'));
-    console.log(e.stdout)
-    console.log(e.stderr)
-  }
+    console.log(chalk.bold('Building the app...'));
+    try {
+        child_process.spawnSync('sh',
+                                ['-c', "cmake . && make"],
+                                {stdio: 'inherit'});
+    } catch (e) {
+        console.log(chalk.red('Could not build the app, see the error above.'));
+        console.log(e.stdout)
+        console.log(e.stderr)
+        return;
+    }
+    
+    console.log(chalk.bold('Starting the app...'));
 
-  console.log(chalk.bold('Starting the app (local mode)...'));
-  try {
-      child_process.spawn('./ubuntu/run-app.sh', [],
-                          {stdio: 'inherit'});
-  } catch (e) {
-    console.log(chalk.red('Failed to start the app, see the logs'));
-    return;
-  }
+    try {
+        child_process.spawnSync('./run-app.sh', [],
+                                {stdio: 'inherit'});
+    } catch (e) {
+        console.log(chalk.red('Could not start the app, see the error above.'));
+        console.log(e.stdout)
+        console.log(e.stderr)
+        return;
+    }
+}
+
+function startServer() {
+
 }
 
 module.exports = function() {
