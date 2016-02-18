@@ -41,7 +41,7 @@ var SearchBar = React.createClass({
         />
         <ActivityIndicator
           animating={this.props.isLoading}
-          style={styles.spinner}
+          size="small"
         />
       </View>
     );
@@ -60,9 +60,6 @@ var styles = StyleSheet.create({
     fontSize: 15,
     flex: 1,
     height: 30,
-  },
-  spinner: {
-    width: 30,
   },
 });
 

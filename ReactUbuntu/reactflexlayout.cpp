@@ -163,20 +163,18 @@ public:
       p->cssNode->style.padding[CSS_BOTTOM] = p->padding[CSS_VERTICAL];
     }
   }
-  void setChildInfo(ReactFlexLayoutPrivate* p) {
+  void prepareLayout(ReactFlexLayoutPrivate* p) {
     p->cssNode->children_count = p->children.size();
     updateMargin(p);
     updatePadding(p);
 
     if (p->qmlAnchors) {
-      p->cssNode->style.position[CSS_TOP] = p->item->y();
-      p->cssNode->style.position[CSS_LEFT] = p->item->x();
       p->cssNode->style.dimensions[CSS_WIDTH] = p->item->width();
       p->cssNode->style.dimensions[CSS_HEIGHT] = p->item->height();
     }
 
     for (auto& c : p->children) {
-      setChildInfo(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
+      prepareLayout(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
     }
   }
   void setDirty(bool drty) {
@@ -210,13 +208,15 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << this;
     if (!dirty)
       return;
-    setChildInfo(this);
 
-    // qDebug() << __PRETTY_FUNCTION__ << "Before layoutNode";
+    prepareLayout(this);
+    // qDebug() << __PRETTY_FUNCTION__ << "After prepareLayout";
     // local_print_node(0);
+
     layoutNode(cssNode, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
     // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
     // local_print_node(0);
+
     applyLayout();
     // qDebug() << __PRETTY_FUNCTION__ << "After applyLayout";
     // local_print_node(0);
