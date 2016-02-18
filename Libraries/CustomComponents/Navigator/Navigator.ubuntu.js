@@ -30,7 +30,6 @@ var Page = React.createClass({
     return (
         <UbuntuPage
           title={this.props.title}
-          style={this.props.style}
           qmlAnchors={true}>
           {this.props.children}
         </UbuntuPage>

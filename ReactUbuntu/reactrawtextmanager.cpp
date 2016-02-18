@@ -88,4 +88,3 @@ QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
   return item;
 }
 
-#include "reactrawtextmanager.moc"

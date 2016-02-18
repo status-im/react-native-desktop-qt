@@ -533,10 +533,12 @@ var TextInput = React.createClass({
   },
 
   _renderUbuntu: function()  {
+    var { placeholder, ...props } = this.props;
     return (
       <UbuntuTextField
         ref="input"
-        {...this.props}
+        {...props}
+        placeholderText={placeholder}
         onFocus={this._onFocus}
         onBlur={this._onBlur}
         onChange={this._onChange}

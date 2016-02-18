@@ -14,10 +14,38 @@
 #include "reactevents.h"
 
 
+namespace {
+template<typename TP>
+TP propertyValue(QQuickItem* item, const QString& property)
+{
+  return QQmlProperty(item, property).read().value<TP>();
+}
+
+template<typename TP>
+void setPropertyValue(QQuickItem* item, const QString& property, const TP& value)
+{
+  QQmlProperty(item, property).write(QVariant::fromValue(value));
+}
+
+QVariantMap buildEventData(QQuickItem* item)
+{
+  static int eventCount = 0;
+
+  eventCount++; // XXX:
+
+  return QVariantMap{
+    { "text", propertyValue<QString>(item, "text") },
+    { "eventCount", eventCount },
+  };
+}
+}
+
+
 class TextFieldPropertyHandler : public ReactPropertyHandler {
   Q_OBJECT
   Q_PROPERTY(bool onFocus READ onFocus WRITE setOnFocus)
   Q_PROPERTY(bool onChange READ onChange WRITE setOnChange)
+  Q_PROPERTY(double fontSize READ fontSize WRITE setFontSize)
 public:
   TextFieldPropertyHandler(QObject* object)
     : ReactPropertyHandler(object) {
@@ -29,6 +57,9 @@ public:
   bool onChange() const;
   void setOnChange(bool onChanged);
   bool m_onChange;
+
+  double fontSize() const;
+  void setFontSize(double fontSize);
 };
 
 bool TextFieldPropertyHandler::onFocus() const
@@ -49,6 +80,16 @@ bool TextFieldPropertyHandler::onChange() const
 void TextFieldPropertyHandler::setOnChange(bool onChange)
 {
   m_onChange = onChange;
+}
+
+double TextFieldPropertyHandler::fontSize() const
+{
+  return propertyValue<double>(qobject_cast<QQuickItem*>(m_object), "font.pointSize");
+}
+
+void TextFieldPropertyHandler::setFontSize(double fontSize)
+{
+  setPropertyValue(qobject_cast<QQuickItem*>(m_object), "font.pointSize", fontSize);
 }
 
 
@@ -125,26 +166,6 @@ QQuickItem* UbuntuTextFieldManager::view(const QVariantMap& properties) const
   configureView(item);
 
   return item;
-}
-
-namespace {
-template<typename TP>
-TP propertyValue(QQuickItem* item, const QString& property)
-{
-  return QQmlProperty(item, property).read().value<TP>();
-}
-
-QVariantMap buildEventData(QQuickItem* item)
-{
-  static int eventCount = 0;
-
-  eventCount++; // XXX:
-
-  return QVariantMap{
-    { "text", propertyValue<QString>(item, "text") },
-    { "eventCount", eventCount },
-  };
-}
 }
 
 void UbuntuTextFieldManager::activeFocusChanged()
