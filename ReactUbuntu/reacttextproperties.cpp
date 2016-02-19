@@ -3,6 +3,9 @@
 
 #include <QQuickItem>
 
+#include <QDebug>
+
+
 #include "reacttextproperties.h"
 #include "reactrawtextproperties.h"
 #include "reactflexlayout.h"
@@ -36,8 +39,7 @@ public:
 
   void apply() {
     if (!dirty) return;
-    QString text = textWithProperties(item, property_map());
-    item->setProperty("text", text);
+    item->setProperty("text", textWithProperties(property_map()));
 
     ReactFlexLayout* fl = ReactFlexLayout::get(item);
     fl->setWidth(item->property("contentWidth").value<double>());
@@ -67,12 +69,7 @@ public:
     }
   }
 
-  static ReactTextPropertiesPrivate* get(ReactTextProperties* tp) {
-    return tp->d_func();
-  }
-
-private:
-  QString textWithProperties(QQuickItem* item, const property_map& properties) {
+  QString textWithProperties(const property_map& properties) {
     property_map mp = this->properties;
     mp.insert(properties.begin(), properties.end());
 
@@ -81,10 +78,15 @@ private:
       ReactRawTextProperties* tp = ReactRawTextProperties::get(c, false);
       if (tp != nullptr) {
         text += tp->textWithProperties(QMap<QString, QVariant>(mp));
+      } else {
+        text += ReactTextPropertiesPrivate::get(ReactTextProperties::get(c))->textWithProperties(mp);
       }
-      text += textWithProperties(c, mp);
     }
     return text;
+  }
+
+  static ReactTextPropertiesPrivate* get(ReactTextProperties* tp) {
+    return tp->d_func();
   }
 };
 
