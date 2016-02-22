@@ -48,3 +48,8 @@ node_modules
 
 # Qt/QML
 moc_*.cpp
+*_automoc.cpp
+*.moc
+
+# Emacs
+*~
