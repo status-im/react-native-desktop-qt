@@ -78,10 +78,7 @@ ReactBridge::ReactBridge(QObject* parent)
 {
   Q_D(ReactBridge);
 
-  d->ready = false;
-
-  d->executor = new ReactNetExecutor(this); // TODO: config/property
-  connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
+  setupExecutor();
 
   d->qmlEngine = nullptr;
   d->nam = nullptr;
@@ -91,6 +88,11 @@ ReactBridge::ReactBridge(QObject* parent)
 
 ReactBridge::~ReactBridge()
 {
+}
+
+void ReactBridge::setupExecutor() {
+  d->executor = new ReactNetExecutor(this); // TODO: config/property
+  connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
 }
 
 void ReactBridge::init()
