@@ -3,22 +3,31 @@
 
 #include <QString>
 #include <QUrl>
+#include <QScopedPointer>
 
 #include "reactitem.h"
 
 
 class ReactBridge;
 
+class ReactViewPrivate;
 class ReactView : public ReactItem
 {
   Q_OBJECT
+
+  Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
   Q_PROPERTY(QString moduleName READ moduleName WRITE setModuleName NOTIFY moduleNameChanged)
   Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
   Q_PROPERTY(QVariantMap properties READ properties WRITE setProperties NOTIFY propertiesChanged)
 
+  Q_DECLARE_PRIVATE(ReactView)
+
 public:
   ReactView(QQuickItem *parent = 0);
   ~ReactView();
+
+  bool liveReload() const;
+  void setLiveReload(bool liveReload);
 
   QString moduleName() const;
   void setModuleName(const QString& moduleName);
@@ -30,6 +39,7 @@ public:
   void setProperties(const QVariantMap& properties);
 
 Q_SIGNALS:
+  void liveReloadChanged();
   void moduleNameChanged();
   void codeLocationChanged();
   void propertiesChanged();
@@ -44,10 +54,7 @@ private:
   void mouseReleaseEvent(QMouseEvent* event) override;
   bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
 
-  QString m_moduleName;
-  QUrl m_codeLocation;
-  QVariantMap m_properties;
-  ReactBridge* m_bridge;
+  QScopedPointer<ReactViewPrivate> d_ptr;
 };
 
 #endif // REACTVIEW_H

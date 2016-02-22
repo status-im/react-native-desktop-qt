@@ -31,6 +31,7 @@
 class ReactBridgePrivate
 {
 public:
+  bool ready;
   ReactExecutor* executor;
   QQmlEngine* qmlEngine;
   QQuickItem* visualParent;
@@ -52,8 +53,9 @@ public:
   }
 
   QObjectList pluginModules() {
+    QObjectList modules;
     UbuntuComponentsLoader loader;
-    QObjectList modules = loader.availableModules();
+    modules << loader.availableModules();
     // for (QObject* o : QPluginLoader::staticInstances()) {
     //   ReactModuleLoader* ml = qobject_cast<ReactModuleLoader*>(o);
     //   if (o == nullptr)
@@ -76,6 +78,8 @@ ReactBridge::ReactBridge(QObject* parent)
 {
   Q_D(ReactBridge);
 
+  d->ready = false;
+
   d->executor = new ReactNetExecutor(this); // TODO: config/property
   connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
 
@@ -97,10 +101,31 @@ void ReactBridge::init()
   d->executor->init();
 
   initModules();
-
+  injectModules();
   loadSource();
 }
 
+void ReactBridge::reload()
+{
+  Q_D(ReactBridge);
+
+  setReady(false);
+
+  d->executor->deleteLater();
+  d->executor = new ReactNetExecutor(this);
+  connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
+  d->executor->init();
+
+  // d->uiManager->reset();
+  for (auto& md : d->modules) {
+    delete md;
+  }
+  d->modules.clear();
+
+  initModules();
+  injectModules();
+  loadSource();
+}
 
 void ReactBridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args)
 {
@@ -120,6 +145,21 @@ void ReactBridge::invokeAndProcess(const QString& module, const QString& method,
 void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
 {
   Q_UNUSED(sourceCode);
+}
+
+bool ReactBridge::ready() const
+{
+  return d_func()->ready;
+}
+
+void ReactBridge::setReady(bool ready)
+{
+  Q_D(ReactBridge);
+  if (d->ready == ready)
+    return;
+
+  d->ready = ready;
+  emit readyChanged();
 }
 
 QQuickItem* ReactBridge::visualParent() const
@@ -208,9 +248,6 @@ void ReactBridge::initModules()
 {
   Q_D(ReactBridge);
 
-  QVariantMap config;
-  QVariantMap moduleConfig;
-
   QObjectList modules;
   modules << d->internalModules();
   modules << d->pluginModules();
@@ -232,19 +269,26 @@ void ReactBridge::initModules()
       module->setBridge(this);
       ReactModuleData* moduleData = new ReactModuleData(o);
       d->modules.insert(moduleData->id(), moduleData);
-      qDebug() << "Added module" << moduleData->name() << moduleData->id();
-      moduleConfig.insert(moduleData->name(), moduleData->info());
     } else {
       qWarning() << "A module loader exported an invalid module";
     }
   }
+}
 
-  config.insert("remoteModuleConfig", moduleConfig);
+void ReactBridge::injectModules()
+{
+  Q_D(ReactBridge);
 
-  QJsonDocument doc = QJsonDocument::fromVariant(config);
-  qDebug() << doc.toJson();
+  QVariantMap moduleConfig;
 
-  d->executor->injectJson("__fbBatchedBridgeConfig", config);
+  for (auto& md : d->modules) {
+    qDebug() << "Injecting module" << md->name();
+    moduleConfig.insert(md->name(), md->info());
+  }
+
+  d->executor->injectJson("__fbBatchedBridgeConfig", QVariantMap{
+    { "remoteModuleConfig", moduleConfig }
+  });
 }
 
 void ReactBridge::processResult(const QJsonDocument& doc)
@@ -293,7 +337,7 @@ void ReactBridge::applicationScriptDone()
   QTimer::singleShot(0, [this]() {
       d_func()->executor->executeJSCall("BatchedBridge", "flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
           processResult(doc);
-          Q_EMIT bridgeReady();
+          setReady(true);
         });
     });
 }

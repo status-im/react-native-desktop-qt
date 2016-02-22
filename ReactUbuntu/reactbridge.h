@@ -16,6 +16,7 @@ class ReactBridgePrivate;
 class ReactBridge : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(bool ready READ ready WRITE setReady NOTIFY readyChanged);
   Q_PROPERTY(QQuickItem* visualParent READ visualParent WRITE setVisualParent)
   Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
   Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
@@ -32,10 +33,15 @@ public:
   ~ReactBridge();
 
   void init();
+  void reload();
 
   void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
   void invokeAndProcess(const QString& module, const QString& method, const QVariantList &args);
   void executeSourceCode(const QByteArray& sourceCode);
+
+  // XXX: maybe rename
+  bool ready() const;
+  void setReady(bool ready);
 
   QQuickItem* visualParent() const;
   void setVisualParent(QQuickItem* item);
@@ -53,7 +59,7 @@ public:
   ReactUIManager* uiManager() const;
 
 Q_SIGNALS:
-  void bridgeReady();
+  void readyChanged();
 
 private Q_SLOTS:
   void sourcesFinished();
@@ -62,6 +68,7 @@ private Q_SLOTS:
 private:
   void loadSource();
   void initModules();
+  void injectModules();
   void processResult(const QJsonDocument& document);
 
   QScopedPointer<ReactBridgePrivate> d_ptr;

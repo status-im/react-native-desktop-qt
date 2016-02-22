@@ -80,6 +80,8 @@ ReactModuleData::ReactModuleData(QObject* moduleImpl)
 
 ReactModuleData::~ReactModuleData()
 {
+  Q_D(ReactModuleData);
+  d->moduleImpl->deleteLater();
 }
 
 int ReactModuleData::id() const

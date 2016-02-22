@@ -56,6 +56,8 @@ public:
   ReactUIManager();
   ~ReactUIManager();
 
+  void reset();
+
   void setBridge(ReactBridge *bridge) override;
 
   QString moduleName() override;

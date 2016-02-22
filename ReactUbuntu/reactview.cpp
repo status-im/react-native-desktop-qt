@@ -58,95 +58,183 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QTouchEvent* event)
 }
 }
 
+class ReactViewPrivate : public QObject
+{
+  Q_OBJECT
+  Q_DECLARE_PUBLIC(ReactView)
+public:
+  bool liveReload;
+  QString moduleName;
+  QUrl codeLocation;
+  QVariantMap properties;
+  ReactBridge* bridge;
+  ReactView* q_ptr;
+
+  ReactViewPrivate(ReactView* q)
+    : q_ptr(q)
+    , liveReload(false)
+    , bridge(nullptr)
+    {}
+
+  void monitorChangeUrl() {
+    if (codeLocation.scheme() != "http") {
+      qWarning() << "Can only live reload when fetching from packager";
+      return;
+    }
+
+    QNetworkRequest request(codeLocation.resolved(QUrl("/onchange")));
+    QNetworkReply* reply = qmlEngine(q_ptr)->networkAccessManager()->get(request);
+    QObject::connect(reply, &QNetworkReply::finished, [=] {
+      reply->deleteLater();
+      if (reply->error() != QNetworkReply::NoError) {
+        qCritical() << __PRETTY_FUNCTION__ << "Error monitoring change url";
+        return;
+      }
+      if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 205) {
+        bridge->reload();
+      }
+      if (liveReload && bridge->ready()) {
+        monitorChangeUrl();
+      }
+    });
+  }
+
+private Q_SLOTS:
+  void liveReloadChanged() {
+    if (!liveReload)
+      return;
+    if (bridge != nullptr && bridge->ready())
+      monitorChangeUrl();
+  }
+};
+
 
 ReactView::ReactView(QQuickItem* parent)
   : ReactItem(parent)
-  , m_bridge(new ReactBridge(this))
+  , d_ptr(new ReactViewPrivate(this))
 {
+  Q_D(ReactView);
+
   setAcceptedMouseButtons(Qt::LeftButton);
   setFiltersChildMouseEvents(true);
-  connect(m_bridge, SIGNAL(bridgeReady()), SLOT(bridgeReady()));
+
+  d->bridge = new ReactBridge(this);
+  connect(d->bridge, SIGNAL(readyChanged()), SLOT(bridgeReady()));
+
+  connect(this, SIGNAL(liveReloadChanged()), d, SLOT(liveReloadChanged()));
 }
 
 ReactView::~ReactView()
 {
 }
 
+bool ReactView::liveReload() const
+{
+  return d_func()->liveReload;
+}
+
+void ReactView::setLiveReload(bool liveReload)
+{
+  Q_D(ReactView);
+  if (d->liveReload == liveReload)
+    return;
+
+  d->liveReload = liveReload;
+  emit liveReloadChanged();
+}
+
 QString ReactView::moduleName() const
 {
-  return m_moduleName;
+  return d_func()->moduleName;
 }
 
 void ReactView::setModuleName(const QString& moduleName)
 {
-  if (m_moduleName != moduleName) {
-    m_moduleName = moduleName;
+  Q_D(ReactView);
+  if (d->moduleName != moduleName) {
+    d->moduleName = moduleName;
     emit moduleNameChanged();
   }
 }
 
 QUrl ReactView::codeLocation() const
 {
-  return m_codeLocation;
+  return d_func()->codeLocation;
 }
 
 void ReactView::setCodeLocation(const QUrl& codeLocation)
 {
-  if (m_codeLocation != codeLocation) {
-    m_codeLocation = codeLocation;
+  Q_D(ReactView);
+  if (d->codeLocation != codeLocation) {
+    d->codeLocation = codeLocation;
     emit codeLocationChanged();
   }
 }
 
 QVariantMap ReactView::properties() const
 {
-  return m_properties;
+  return d_func()->properties;
 }
 
 void ReactView::setProperties(const QVariantMap& properties)
 {
-  m_properties = properties;
+  Q_D(ReactView);
+  d->properties = properties;
+  emit propertiesChanged();
 }
 
 void ReactView::bridgeReady()
 {
+  Q_D(ReactView);
+
+  if (!d->bridge->ready())
+    return;
+
   // XXX: should do the root view tag allocation internally
-  ReactAttachedProperties* properties = ReactAttachedProperties::get(this);
-  properties->setTag(m_bridge->uiManager()->allocateRootTag());
-  m_bridge->uiManager()->registerRootView(this);
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(this);
+  ap->setTag(d->bridge->uiManager()->allocateRootTag());
+  d->bridge->uiManager()->registerRootView(this);
 
   QVariantList args{
-    m_moduleName,
+    d->moduleName,
     QVariantMap{
-      { "rootTag", properties->tag() },
-      { "initialProps", m_properties }
+      { "rootTag", ap->tag() },
+      { "initialProps", d->properties }
     }
   };
 
-  m_bridge->enqueueJSCall("AppRegistry", "runApplication", args);
+  d->bridge->enqueueJSCall("AppRegistry", "runApplication", args);
+
+  if (d->liveReload) {
+    d->monitorChangeUrl();
+  }
 }
 
 void ReactView::componentComplete()
 {
+  Q_D(ReactView);
+
   QQuickItem::componentComplete();
 
   QTimer::singleShot(0, [=]() {
       // TODO: setQmlEngine && setNetworkAccessManager to be just setQmlEngine && then internal?
-      m_bridge->setQmlEngine(qmlEngine(this));
-      m_bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
-      m_bridge->setBundleUrl(m_codeLocation);
-      m_bridge->setVisualParent(this);
-      m_bridge->init();
+      d->bridge->setQmlEngine(qmlEngine(this));
+      d->bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
+      d->bridge->setBundleUrl(d->codeLocation);
+      d->bridge->setVisualParent(this);
+      d->bridge->init();
     });
 }
 
 void ReactView::mousePressEvent(QMouseEvent* event)
 {
+  Q_D(ReactView);
+
   QVariantMap e = makeReactTouchEvent(this, event);
   if (e.isEmpty())
     return;
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
+  d->bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
                           QVariantList{ normalizeInputEventName("touchStart"),
                                         QVariantList{e},
                                         QVariantList{0} });
@@ -156,23 +244,27 @@ void ReactView::mousePressEvent(QMouseEvent* event)
 // TODO: optimize this
 void ReactView::mouseMoveEvent(QMouseEvent* event)
 {
+  Q_D(ReactView);
+
   QVariantMap e = makeReactTouchEvent(this, event);
   if (e.isEmpty())
     return;
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
-                          QVariantList{ normalizeInputEventName("touchMove"),
-                              QVariantList{e},
-                              QVariantList{0} });
+  d->bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
+                           QVariantList{normalizeInputEventName("touchMove"),
+                                        QVariantList{e},
+                                        QVariantList{0}});
 }
 
 void ReactView::mouseReleaseEvent(QMouseEvent* event)
 {
+  Q_D(ReactView);
+
   QVariantMap e = makeReactTouchEvent(this, event);
   if (e.isEmpty())
     return;
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
+  d->bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
                           QVariantList{ normalizeInputEventName("touchEnd"),
                                         QVariantList{e},
                                         QVariantList{0} });
@@ -181,7 +273,8 @@ void ReactView::mouseReleaseEvent(QMouseEvent* event)
 
 bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  Q_D(ReactView);
+
   QVariantMap e = makeReactTouchEvent(item, static_cast<QMouseEvent*>(event));
   if (e.isEmpty())
     return false;
@@ -196,7 +289,7 @@ bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
   }
 
   QTimer::singleShot(0, [=]() {
-      m_bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
+      d->bridge->enqueueJSCall("RCTEventEmitter", "receiveTouches",
                               QVariantList{ normalizeInputEventName(eventName),
                                             QVariantList{e},
                                             QVariantList{0} });
@@ -205,3 +298,5 @@ bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
   event->setAccepted(true);
   return false;
 }
+
+#include "reactview.moc"
