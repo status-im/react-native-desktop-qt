@@ -9,6 +9,7 @@ Rectangle {
   ReactView {
     anchors.fill: parent
 
+    liveReload: true
     moduleName: "MoviesApp"
     codeLocation: "http://localhost:8081/Examples/Movies/MoviesApp.ubuntu.bundle?platform=ubuntu&dev=true"
   }

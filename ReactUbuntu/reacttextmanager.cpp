@@ -9,6 +9,7 @@
 #include "reacttextproperties.h"
 #include "reacttextmanager.h"
 #include "reactbridge.h"
+#include "reactflexlayout.h"
 
 
 ReactTextManager::ReactTextManager(QObject* parent)

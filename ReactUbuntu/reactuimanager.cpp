@@ -300,6 +300,16 @@ ReactUIManager::ReactUIManager()
 
 ReactUIManager::~ReactUIManager()
 {
+  // reset();
+}
+
+void ReactUIManager::reset()
+{
+  for (auto& v : m_views) {
+    v->setParentItem(nullptr);
+    v->deleteLater();
+  }
+  m_bridge->visualParent()->polish();
 }
 
 void ReactUIManager::setBridge(ReactBridge* bridge)
