@@ -55,6 +55,8 @@ public:
   QUrl bundleUrl() const;
   void setBundleUrl(const QUrl& bundleUrl);
 
+  // TODO eventDispatcher
+
   QList<ReactModuleData*> modules() const;
   ReactUIManager* uiManager() const;
 
@@ -70,6 +72,7 @@ private:
   void initModules();
   void injectModules();
   void processResult(const QJsonDocument& document);
+  void setupExecutor();
 
   QScopedPointer<ReactBridgePrivate> d_ptr;
 };
