@@ -609,6 +609,19 @@ void ReactFlexLayout::setPaddingBottom(double padding)
   setDirty(true);
 }
 
+double ReactFlexLayout::paddingRight() const
+{
+  return d_func()->padding[CSS_RIGHT];
+}
+
+void ReactFlexLayout::setPaddingRight(double padding)
+{
+  Q_D(ReactFlexLayout);
+  d->padding[CSS_RIGHT] = padding;
+  setDirty(true);
+}
+
+
 void ReactFlexLayout::setMargin(double margin)
 {
   Q_D(ReactFlexLayout);
