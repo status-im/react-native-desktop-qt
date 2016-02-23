@@ -91,6 +91,8 @@ ReactBridge::~ReactBridge()
 }
 
 void ReactBridge::setupExecutor() {
+  Q_D(ReactBridge);
+
   d->executor = new ReactNetExecutor(this); // TODO: config/property
   connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
 }
