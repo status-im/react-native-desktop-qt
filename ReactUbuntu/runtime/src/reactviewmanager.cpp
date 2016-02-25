@@ -114,6 +114,11 @@ void ViewPropertyHandler::setBorderColor(const QColor& borderColor)
   p.write(QVariant::fromValue(borderColor));
 }
 
+void ViewPropertyHandler::setBorderBottomColor(const QColor& borderBottomColor)
+{
+  // TODO; custom item
+}
+
 double ViewPropertyHandler::borderRadius() const
 {
   return m_object->property("radius").toDouble();
@@ -122,6 +127,16 @@ double ViewPropertyHandler::borderRadius() const
 void ViewPropertyHandler::setBorderRadius(double borderRadius)
 {
   m_object->setProperty("radius", borderRadius);
+}
+
+void ViewPropertyHandler::setBorderTopLeftRadius(double borderTopLeftRadius)
+{
+  // TODO; custom item
+}
+
+void ViewPropertyHandler::setBorderTopRightRadius(double borderTopLeftRadius)
+{
+  // TODO; custom item
 }
 
 double ViewPropertyHandler::borderWidth() const
@@ -136,6 +151,11 @@ void ViewPropertyHandler::setBorderWidth(double borderWidth)
   p.write(QVariant::fromValue(borderWidth));
 }
 
+void ViewPropertyHandler::setBorderBottomWidth(double borderWidth)
+{
+  // TOOD; custom item
+}
+
 double ViewPropertyHandler::opacity() const
 {
   return m_object->property("opacity").toDouble();
@@ -144,6 +164,11 @@ double ViewPropertyHandler::opacity() const
 void ViewPropertyHandler::setOpacity(double opacity)
 {
   m_object->setProperty("opacity", opacity);
+}
+
+void ViewPropertyHandler::setOverflow(const QString& overflow)
+{
+  m_object->setProperty("clip", overflow == "hidden");
 }
 
 
