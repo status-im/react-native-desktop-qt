@@ -596,7 +596,7 @@ if (Platform.OS === 'android') {
 } else if (Platform.OS === 'ios') {
   var RCTScrollView = requireNativeComponent('RCTScrollView', ScrollView);
 } else if (Platform.OS === 'ubuntu') {
-  var UbuntuScrollView = requireNativeComponent('RCTScrollView', ScrollView);
+  var UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
 }
 
 module.exports = ScrollView;

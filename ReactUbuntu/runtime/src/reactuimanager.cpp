@@ -182,6 +182,57 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
                   QList<int>{itemIndex});
 }
 
+void ReactUIManager::measureLayout
+(
+  int reactTag,
+  int ancestorReactTag,
+  const ReactModuleInterface::ListArgumentBlock& errorCallback,
+  const ReactModuleInterface::ListArgumentBlock& callback
+)
+{
+  QQuickItem* item = m_views.value(reactTag);
+  QQuickItem* ancestor = m_views.value(reactTag);
+  Q_ASSERT(item != nullptr && ancestor != nullptr);
+
+  int depth = 30; // max depth from ios
+  double width = item->width();
+  double height = item->height();
+  double x = 0;
+  double y = 0;
+
+  while (depth > 0 && item != ancestor) {
+    x += item->x();
+    y += item->y();
+    item = ReactFlexLayout::get(item)->parentItem();
+    --depth;
+  }
+
+  if (item != ancestor) {
+    callback(m_bridge, QVariantList{0, 0, 0, 0});
+  } else {
+    callback(m_bridge, QVariantList{x, y, width, height});
+  }
+}
+
+void ReactUIManager::measureLayoutRelativeToParent
+(
+  int reactTag,
+  const ReactModuleInterface::ListArgumentBlock& errorCallback,
+  const ReactModuleInterface::ListArgumentBlock& callback
+)
+{
+  QQuickItem* item = m_views.value(reactTag);
+  Q_ASSERT(item != nullptr);
+
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(
+    ReactFlexLayout::get(item)->parentItem());
+  if (ap == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "no parent item!";
+    return;
+  }
+  measureLayout(reactTag, ap->tag(), errorCallback, callback);
+}
+
 // Reacts version of first responder
 void ReactUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
 {

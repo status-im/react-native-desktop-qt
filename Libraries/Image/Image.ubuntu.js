@@ -15,6 +15,10 @@ var Image = React.createClass({
   propTypes: {
     source: PropTypes.shape({uri: PropTypes.string}),
     resizeMode: PropTypes.oneOf(['cover', 'contain', 'stretch']),
+    tintColor: PropTypes.string,
+    borderRadius: PropTypes.number,
+    borderWidth: PropTypes.number,
+    borderColor: PropTypes.string,
   },
 
   statics: {
@@ -26,8 +30,8 @@ var Image = React.createClass({
 
     return (
       <RCTImageView
+        { ...this.props }
         source={source.uri}
-        style={this.props.style}
         >
       </RCTImageView>
     );

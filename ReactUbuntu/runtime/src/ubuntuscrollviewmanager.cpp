@@ -113,6 +113,7 @@ static const char* component_qml =
 
 QQuickItem* UbuntuScrollViewManager::view(const QVariantMap& properties) const
 {
+  // qDebug() << __PRETTY_FUNCTION__ << properties;
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(component_qml, QUrl());
   if (!component.isReady())
@@ -131,6 +132,7 @@ QQuickItem* UbuntuScrollViewManager::view(const QVariantMap& properties) const
 
 void UbuntuScrollViewManager::scrollBeginDrag()
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
@@ -147,6 +149,7 @@ void UbuntuScrollViewManager::scrollBeginDrag()
 
 void UbuntuScrollViewManager::scrollEndDrag()
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
@@ -186,6 +189,7 @@ void UbuntuScrollViewManager::scroll()
 
 void UbuntuScrollViewManager::momentumScrollBegin()
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
@@ -204,6 +208,7 @@ void UbuntuScrollViewManager::momentumScrollBegin()
 
 void UbuntuScrollViewManager::momentumScrollEnd()
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
