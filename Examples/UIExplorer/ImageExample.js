@@ -146,6 +146,7 @@ exports.examples = [
       );
     },
   },
+  /*
   {
     title: 'Plain Static Image',
     description: 'Static assets should be placed in the source code tree, and ' +
@@ -161,6 +162,7 @@ exports.examples = [
       );
     },
   },
+  */
   {
     title: 'Image Loading Events',
     render: function() {
@@ -426,7 +428,6 @@ exports.examples = [
         />
       );
     },
-    platform: 'ios',
   },
   {
     title: 'Base64 image',

@@ -114,6 +114,21 @@ void ViewPropertyHandler::setBorderColor(const QColor& borderColor)
   p.write(QVariant::fromValue(borderColor));
 }
 
+void ViewPropertyHandler::setBorderLeftColor(const QColor& borderLeftColor)
+{
+  // TODO; custom item
+}
+
+void ViewPropertyHandler::setBorderRightColor(const QColor& borderRightColor)
+{
+  // TODO; custom item
+}
+
+void ViewPropertyHandler::setBorderTopColor(const QColor& borderTopColor)
+{
+  // TODO; custom item
+}
+
 void ViewPropertyHandler::setBorderBottomColor(const QColor& borderBottomColor)
 {
   // TODO; custom item
@@ -151,7 +166,22 @@ void ViewPropertyHandler::setBorderWidth(double borderWidth)
   p.write(QVariant::fromValue(borderWidth));
 }
 
+void ViewPropertyHandler::setBorderTopWidth(double borderTopWidth)
+{
+  // TOOD; custom item
+}
+
+void ViewPropertyHandler::setBorderRightWidth(double borderRightWidth)
+{
+  // TOOD; custom item
+}
+
 void ViewPropertyHandler::setBorderBottomWidth(double borderWidth)
+{
+  // TOOD; custom item
+}
+
+void ViewPropertyHandler::setBorderLeftWidth(double borderLeftWidth)
 {
   // TOOD; custom item
 }
