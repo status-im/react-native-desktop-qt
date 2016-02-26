@@ -19,7 +19,6 @@ ReactTiming::~ReactTiming()
 }
 
 void ReactTiming::setBridge(ReactBridge* bridge)
-
 {
   m_bridge = bridge;
 }

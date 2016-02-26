@@ -74,7 +74,7 @@ QString ReactRawTextProperties::textWithProperties(const QVariantMap& properties
       text += QString("font-weight:%1;").arg(value);
     }
   }
-  text += "\">" + d_func()->text + "</span>";
+  text += "\">" + d_func()->text.toHtmlEscaped() + "</span>";
   return text;
 }
 

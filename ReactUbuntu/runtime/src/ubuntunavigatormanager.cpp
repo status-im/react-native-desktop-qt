@@ -19,7 +19,8 @@ class NavigatorPropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(bool onBackButtonPress READ onBackButtonPress WRITE setOnBackButtonPress)
 public:
   NavigatorPropertyHandler(QObject* object)
-    : ReactPropertyHandler(object) {
+    : ReactPropertyHandler(object)
+    , m_backButtonPress(false) {
     }
   bool onBackButtonPress() const;
   void setOnBackButtonPress(bool backButtonPress);
