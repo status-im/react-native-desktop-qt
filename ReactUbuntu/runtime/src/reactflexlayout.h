@@ -12,6 +12,8 @@ class ReactFlexLayout : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(bool qmlAnchors READ qmlAnchors WRITE setQmlAnchors)
+  Q_PROPERTY(bool qmlImplicitWidth READ qmlImplicitWidth WRITE setQmlImplicitWidth)
+  Q_PROPERTY(bool qmlImplicitHeight READ qmlImplicitHeight WRITE setQmlImplicitHeight)
   Q_PROPERTY(bool dirty READ isDirty WRITE setDirty)
   Q_PROPERTY(double flex READ flex WRITE setFlex NOTIFY flexChanged)
   Q_PROPERTY(Direction direction READ direction WRITE setDirection NOTIFY directionChanged)
@@ -55,6 +57,12 @@ public:
 
   bool qmlAnchors() const;
   void setQmlAnchors(bool qmlAnchors);
+
+  bool qmlImplicitWidth() const;
+  void setQmlImplicitWidth(bool qmlImplicitWidth);
+
+  bool qmlImplicitHeight() const;
+  void setQmlImplicitHeight(bool qmlImplicitHeight);
 
   bool isDirty();
   void setDirty(bool dirty);
