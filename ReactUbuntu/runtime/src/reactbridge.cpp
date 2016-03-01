@@ -25,6 +25,7 @@
 #include "ubuntunavigatormanager.h"
 #include "ubuntupagemanager.h"
 #include "ubuntutextfieldmanager.h"
+#include "ubuntudatepickermanager.h"
 #include "ubuntucomponentsloader.h"
 
 
@@ -67,6 +68,7 @@ public:
     modules << new UbuntuNavigatorManager;
     modules << new UbuntuPageManager;
     modules << new UbuntuTextFieldManager;
+    modules << new UbuntuDatePickerManager;
     return modules;
   }
 };

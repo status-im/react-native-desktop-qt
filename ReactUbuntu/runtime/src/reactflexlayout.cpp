@@ -172,6 +172,12 @@ public:
       p->cssNode->style.dimensions[CSS_WIDTH] = p->item->width();
       p->cssNode->style.dimensions[CSS_HEIGHT] = p->item->height();
     }
+    if (p->qmlImplicitWidth) {
+      p->cssNode->style.dimensions[CSS_WIDTH] = QQmlProperty(p->item, "implictWidth").read().value<double>();
+    }
+    if (p->qmlImplicitHeight) {
+      p->cssNode->style.dimensions[CSS_HEIGHT] = QQmlProperty(p->item, "implictHeight").read().value<double>();
+    }
 
     for (auto& c : p->children) {
       prepareLayout(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
@@ -195,6 +201,14 @@ public:
     printf("%d:(%s(%p) - (%f,%f, %fx%f)\n",
           ReactAttachedProperties::get(item)->tag(),
           item->metaObject()->className(), (void*)item, item->x(), item->y(), item->width(), item->height());
+    if (qmlImplicitHeight || qmlImplicitWidth) {
+      for (int i = 0; i < tab; ++i)
+        printf(" ");
+      printf("item has using implicitWidth=%f, implictHeight=%f\n",
+             QQmlProperty(item, "implictWidth").read().value<double>(),
+             QQmlProperty(item, "implictHeight").read().value<double>());
+    }
+
     for (int i = 0; i < tab + 2; ++i)
       printf(" ");
     print_css_node(cssNode, (css_print_options_t)(CSS_PRINT_LAYOUT | CSS_PRINT_STYLE));
@@ -234,6 +248,8 @@ public:
     return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
   }
   bool qmlAnchors;
+  bool qmlImplicitWidth;
+  bool qmlImplicitHeight;
   bool dirty;
   float padding[CSS_PROP_COUNT];
   float margin[CSS_PROP_COUNT];
@@ -289,6 +305,8 @@ ReactFlexLayout::ReactFlexLayout(QObject* parent)
 {
   Q_D(ReactFlexLayout);
   d->qmlAnchors = false;
+  d->qmlImplicitWidth = false;
+  d->qmlImplicitHeight = false;
   d->dirty = false;
   for (int i = 0; i < CSS_PROP_COUNT; ++i) {
     d->margin[i] = CSS_UNDEFINED;
@@ -316,6 +334,32 @@ void ReactFlexLayout::setQmlAnchors(bool qmlAnchors)
   if (d->qmlAnchors == qmlAnchors)
     return;
   d->qmlAnchors = qmlAnchors;
+}
+
+bool ReactFlexLayout::qmlImplicitWidth() const
+{
+  return d_func()->qmlImplicitWidth;
+}
+
+void ReactFlexLayout::setQmlImplicitWidth(bool qmlImplicitWidth)
+{
+  Q_D(ReactFlexLayout);
+  if (d->qmlImplicitWidth == qmlImplicitWidth)
+    return;
+  d->qmlImplicitWidth = qmlImplicitWidth;
+}
+
+bool ReactFlexLayout::qmlImplicitHeight() const
+{
+  return d_func()->qmlImplicitHeight;
+}
+
+void ReactFlexLayout::setQmlImplicitHeight(bool qmlImplicitHeight)
+{
+  Q_D(ReactFlexLayout);
+  if (d->qmlImplicitHeight == qmlImplicitHeight)
+    return;
+  d->qmlImplicitHeight = qmlImplicitHeight;
 }
 
 bool ReactFlexLayout::isDirty()

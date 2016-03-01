@@ -59,6 +59,7 @@ add_library(
   ubuntunavigatormanager.cpp
   ubuntupagemanager.cpp
   ubuntutextfieldmanager.cpp
+  ubuntudatepickermanager.cpp
   ../../../React/Layout/Layout.c
 )
 
