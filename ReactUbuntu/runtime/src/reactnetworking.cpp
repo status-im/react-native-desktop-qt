@@ -75,7 +75,7 @@ void ReactNetworking::sendRequest(
   }
 }
 
-void ReactNetworking::cancelRequest(int request)
+void ReactNetworking::abortRequest(int request)
 {
   qDebug() << __PRETTY_FUNCTION__ << request;
 
