@@ -26,16 +26,16 @@ module.exports = yeoman.generators.NamedBase.extend({
       type: Boolean,
       defaults: false
     });
-    this.option('upgrade', {
-      desc: 'Specify an upgrade',
-      type: Boolean,
-      defaults: false
     this.option('skip-ubuntu', {
       desc: 'Skip generating Ubuntu files',
       type: Boolean,
       defaults: true
     });
-
+    this.option('upgrade', {
+      desc: 'Specify an upgrade',
+      type: Boolean,
+      defaults: false
+    });
     // this passes command line arguments down to the composed generators
     var args = {args: arguments[0], options: this.options};
     if (!this.options['skip-ios']) {
@@ -88,6 +88,13 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.fs.copyTpl(
         this.templatePath('index.android.js'),
         this.destinationPath('index.android.js'),
+        {name: this.name}
+      );
+    }
+    if (!this.options['skip-ubuntu']) {
+      this.fs.copyTpl(
+        this.templatePath('index.ubuntu.js'),
+        this.destinationPath('index.ubuntu.js'),
         {name: this.name}
       );
     }

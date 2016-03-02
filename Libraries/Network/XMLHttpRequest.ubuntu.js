@@ -38,7 +38,7 @@ class XMLHttpRequest extends XMLHttpRequestBase {
 
   abortImpl(): void {
     if (this._requestId) {
-      RCTNetworking.cancelRequest(this._requestId);
+      RCTNetworking.abortRequest(this._requestId);
       this._clearSubscriptions();
       this._requestId = null;
     }

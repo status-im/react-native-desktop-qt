@@ -30,7 +30,7 @@ private:
                               const QVariantMap& headers,
                               const QByteArray& data,
                               const ReactNetworking::Callback& callback);
-  Q_INVOKABLE void cancelRequest(int requestId);
+  Q_INVOKABLE void abortRequest(int requestId);
 
 public:
   ReactNetworking(QObject* parent = 0);

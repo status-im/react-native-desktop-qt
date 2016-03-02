@@ -16,7 +16,7 @@ module.exports = [
     required: true,
   }, {
     command: 'platform',
-    description: 'Either "ios" or "android"',
+    description: '"ios" or "android" or "ubuntu"',
     type: 'string',
   }, {
     command: 'transformer',

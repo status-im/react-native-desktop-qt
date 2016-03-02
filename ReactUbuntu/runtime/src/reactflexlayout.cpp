@@ -227,7 +227,7 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << "After prepareLayout";
     // local_print_node(0);
 
-    layoutNode(cssNode, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
+    layoutNode(cssNode, CSS_UNDEFINED, CSS_UNDEFINED, CSS_DIRECTION_INHERIT);
     // qDebug() << __PRETTY_FUNCTION__ << "After layoutNode";
     // local_print_node(0);
 

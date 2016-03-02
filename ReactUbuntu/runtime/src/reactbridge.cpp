@@ -285,11 +285,11 @@ void ReactBridge::injectModules()
 {
   Q_D(ReactBridge);
 
-  QVariantMap moduleConfig;
+  QVariantList moduleConfig;
 
   for (auto& md : d->modules) {
     qDebug() << "Injecting module" << md->name();
-    moduleConfig.insert(md->name(), md->info());
+    moduleConfig.push_back(QVariantList{md->name()});
   }
 
   d->executor->injectJson("__fbBatchedBridgeConfig", QVariantMap{

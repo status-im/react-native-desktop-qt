@@ -25,6 +25,7 @@ var path = require('path');
 var Promise = require('promise');
 var runAndroid = require('./runAndroid/runAndroid');
 var runIOS = require('./runIOS/runIOS');
+var runUbuntu = require('./runUbuntu/runUbuntu');
 var server = require('./server/server');
 var TerminalAdapter = require('yeoman-environment/lib/adapter.js');
 var yeoman = require('yeoman-environment');
@@ -47,6 +48,8 @@ var documentedCommands = {
   'android': [generateWrapper, 'generates an Android project for your app'],
   'run-android': [runAndroid, 'builds your app and starts it on a connected Android emulator or device'],
   'run-ios': [runIOS, 'builds your app and starts it on iOS simulator'],
+  'ubuntu': [generateUbuntu, 'generates an Ubuntu project for your app'],
+  'run-ubuntu': [runUbuntu, 'builds and starts your app'],
   'upgrade': [upgrade, 'upgrade your app\'s template files to the latest version; run this after ' +
                        'updating the react-native version in your package.json and running npm install']
 };
@@ -89,6 +92,16 @@ function run() {
 function generateWrapper(args, config) {
   return generate([
     '--platform', 'android',
+    '--project-path', process.cwd(),
+    '--project-name', JSON.parse(
+      fs.readFileSync('package.json', 'utf8')
+    ).name
+  ], config);
+}
+
+function generateUbuntu(args, arconfig) {
+  return generate([
+    '--platform', 'ubuntu',
     '--project-path', process.cwd(),
     '--project-name', JSON.parse(
       fs.readFileSync('package.json', 'utf8')
