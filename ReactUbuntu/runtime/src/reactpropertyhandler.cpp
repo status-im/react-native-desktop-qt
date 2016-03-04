@@ -4,8 +4,9 @@
 #include "reactvaluecoercion.h"
 
 
-ReactPropertyHandler::ReactPropertyHandler(QObject* object)
+ReactPropertyHandler::ReactPropertyHandler(QObject* object, bool exposeQmlProperties)
   : QObject(object)
+  , m_exposeQmlProperties(exposeQmlProperties)
   , m_cached(false)
   , m_object(object)
 {
@@ -42,7 +43,7 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
     // Extras get first shot
     if (it != m_extraProperties.end()) {
       it.value().write(this, reactCoerceValue(properties.value(key), it.value().userType()));
-    } else {
+    } else if (m_exposeQmlProperties) {
       it = m_coreProperties.find(key);
       if (it != m_coreProperties.end()) {
         it.value().write(m_object, reactCoerceValue(properties.value(key), it.value().userType()));
@@ -58,15 +59,15 @@ void ReactPropertyHandler::buildPropertyMap()
   }
 
   // Class properties on the actual object (core object)
-  {
-  const QMetaObject* metaObject = m_object->metaObject();
-  const int propertyCount = metaObject->propertyCount();
+  if (m_exposeQmlProperties) {
+    const QMetaObject* metaObject = m_object->metaObject();
+    const int propertyCount = metaObject->propertyCount();
 
-  for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
-    QMetaProperty p = metaObject->property(i);
-    if (p.isScriptable())
-      m_coreProperties.insert(p.name(), p);
-  }
+    for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
+      QMetaProperty p = metaObject->property(i);
+      if (p.isScriptable())
+        m_coreProperties.insert(p.name(), p);
+    }
   }
 
   // All properties on the handlers (extras)

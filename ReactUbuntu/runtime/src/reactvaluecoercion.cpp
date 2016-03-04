@@ -5,6 +5,7 @@
 #include <QDateTime>
 #include <QPointF>
 #include <QColor>
+#include <QString>
 
 #include <QDebug>
 
@@ -33,6 +34,34 @@ QMap<int, coerce_function> coerceFunctions
       QVariantList s = value.toList();
       QList<int> r;
       std::transform(s.begin(), s.end(), std::back_inserter(r), [](const QVariant& v) { return v.toInt(); });
+      return QVariant::fromValue(r);
+    }
+  },
+  {
+    qMetaTypeId<QList<QString>>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<QVariantList>());
+      QVariantList s = value.toList();
+      QList<QString> r;
+      std::transform(s.begin(), s.end(),
+                     std::back_inserter(r),
+                     [](const QVariant& v) {
+                       return v.toString();
+                     });
+      return QVariant::fromValue(r);
+    }
+  },
+  {
+    qMetaTypeId<QList<QList<QString>>>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<QVariantList>());
+      QVariantList s = value.toList();
+      QList<QList<QString>> r;
+      std::transform(s.begin(), s.end(),
+                     std::back_inserter(r),
+                     [](const QVariant& v) {
+                       return v.toStringList();
+                     });
       return QVariant::fromValue(r);
     }
   },

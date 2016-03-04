@@ -42,6 +42,8 @@ add_library(
   reactpipeexecutor.cpp
   reactnetworking.cpp
   reacttiming.cpp
+  reactappstate.cpp
+  reactasynclocalstorage.cpp
   reactitem.cpp
   reactview.cpp
   reactviewmanager.cpp

@@ -12,7 +12,7 @@ var server = net.createServer(function(sock) {
     var length = 0;
     var buffer = new Buffer(0);
 
-    var sandbox = { console: console };
+    var sandbox = { console: console, util: util };
     vm.createContext(sandbox);
 
     var internalEval = function(code) {

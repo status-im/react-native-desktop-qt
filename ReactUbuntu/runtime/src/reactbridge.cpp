@@ -15,6 +15,8 @@
 
 #include "reactnetworking.h"
 #include "reacttiming.h"
+#include "reactappstate.h"
+#include "reactasynclocalstorage.h"
 #include "reactviewmanager.h"
 #include "reactrawtextmanager.h"
 #include "reacttextmanager.h"
@@ -45,6 +47,8 @@ public:
   QObjectList internalModules() {
     return QObjectList {
       new ReactTiming,
+      new ReactAppState,
+      new ReactAsyncLocalStorage,
       new ReactNetworking,
       new ReactViewManager,
       new ReactRawTextManager,
@@ -285,11 +289,11 @@ void ReactBridge::injectModules()
 {
   Q_D(ReactBridge);
 
-  QVariantList moduleConfig;
+  QVariantMap moduleConfig;
 
   for (auto& md : d->modules) {
     qDebug() << "Injecting module" << md->name();
-    moduleConfig.push_back(QVariantList{md->name()});
+    moduleConfig.insert(md->name(), md->info());
   }
 
   d->executor->injectJson("__fbBatchedBridgeConfig", QVariantMap{

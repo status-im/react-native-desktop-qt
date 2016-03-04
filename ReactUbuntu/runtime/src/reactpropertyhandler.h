@@ -14,13 +14,14 @@ class ReactPropertyHandler : public QObject
   Q_OBJECT
 
 public:
-  ReactPropertyHandler(QObject* object);
+  ReactPropertyHandler(QObject* object, bool exposeQmlProperties = true);
   virtual ~ReactPropertyHandler();
 
   virtual QList<QMetaProperty> availableProperties();
   virtual void applyProperties(const QVariantMap& properties);
 
 protected:
+  bool m_exposeQmlProperties;
   bool m_cached;
   QObject* m_object;
   QMap<QString, QMetaProperty> m_coreProperties;
