@@ -544,7 +544,6 @@ var TextInput = React.createClass({
         onChange={this._onChange}
         onSelectionChangeShouldSetResponder={() => true}
         text={this._getText()}
-        mostRecentEventCount={this.state.mostRecentEventCount}
       />
     )
   },

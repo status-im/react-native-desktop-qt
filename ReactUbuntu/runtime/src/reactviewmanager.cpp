@@ -40,7 +40,7 @@ class ViewPropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(double shadowRadius READ shadowRadius WRITE setShadowRadius)
 public:
   ViewPropertyHandler(QObject* object)
-    : ReactPropertyHandler(object) {
+    : ReactPropertyHandler(object, false) {
   }
 
   QString backfaceVisibility() const;
