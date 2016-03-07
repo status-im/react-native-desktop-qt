@@ -30,15 +30,23 @@ var platformBlacklists = {
   web: [
     '.ios.js',
     '.android.js',
+    '.ubuntu.js',
   ],
   ios: [
     '.web.js',
     '.android.js',
+    '.ubuntu.js',
   ],
   android: [
     '.web.js',
     '.ios.js',
+    '.ubuntu.js',
   ],
+  ubuntu: [
+    '.web.js',
+    '.ios.js',
+    '.android.js',
+  ]
 };
 
 function escapeRegExp(pattern) {

@@ -41,7 +41,7 @@ class XMLHttpRequest extends XMLHttpRequestBase {
     }
     this.status = status;
     this.setResponseHeaders(responseHeaders || {});
-    this.responseText = responseText;
+    this.response = responseText;
     this.setReadyState(this.DONE);
   }
 }

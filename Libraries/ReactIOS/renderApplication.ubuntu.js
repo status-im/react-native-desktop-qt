@@ -8,7 +8,7 @@ var React = require('React');
 var View = require('View');
 var StyleSheet = require('StyleSheet');
 
-var invariant = require('invariant');
+var invariant = require('fbjs/lib/invariant');
 
 function renderApplication<D, P, S>(
   RootComponent: ReactClass<D, P, S>,

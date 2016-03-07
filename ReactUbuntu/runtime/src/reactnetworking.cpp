@@ -53,7 +53,7 @@ void ReactNetworking::sendRequest(
   const ReactNetworking::Callback& callback
 )
 {
-  qDebug() << __PRETTY_FUNCTION__ << method << url;
+  // qDebug() << __PRETTY_FUNCTION__ << method << url;
 
   QNetworkRequest request(url);
 
@@ -66,9 +66,13 @@ void ReactNetworking::sendRequest(
   if (method.compare("get", Qt::CaseInsensitive) == 0) {
     QNetworkReply* reply = m_nam->get(request);
     QObject::connect(reply, &QNetworkReply::finished, [=] {
+        QVariantMap rh;
+        for (auto& hp : reply->rawHeaderPairs()) {
+          rh.insert(hp.first, hp.second);
+        }
         callback(m_bridge,
                  reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt(),
-                 QVariantMap{},
+                 rh,
                  reply->readAll());
       });
     m_activeConnections[requestId] = reply;

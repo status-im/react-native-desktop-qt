@@ -13,7 +13,7 @@
 
 'use strict';
 
-var warning = require('warning');
+var warning = require('fbjs/lib/warning');
 
 function platformWarn() {
   warning(false, 'BackAndroid is not supported on this platform.');
