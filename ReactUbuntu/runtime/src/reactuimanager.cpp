@@ -84,6 +84,9 @@ void ReactUIManager::updateView
   Q_ASSERT(ReactAttachedProperties::get(item) != nullptr);
   ReactAttachedProperties::get(item)->applyProperties(properties);
 
+  Q_ASSERT(ReactFlexLayout::get(item) != nullptr);
+  ReactFlexLayout::get(item)->applyLayoutProperties(properties);
+
   m_bridge->visualParent()->polish();
 }
 

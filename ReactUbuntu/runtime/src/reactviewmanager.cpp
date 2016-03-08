@@ -92,6 +92,11 @@ public:
   void setShadowRadius(double shadowRadius);
 };
 
+void ViewPropertyHandler::setBackfaceVisibility(const QString& backfaceVisibility)
+{
+  // TODO:
+}
+
 QColor ViewPropertyHandler::backgroundColor() const
 {
   return m_object->property("color").value<QColor>();
@@ -199,6 +204,21 @@ void ViewPropertyHandler::setOpacity(double opacity)
 void ViewPropertyHandler::setOverflow(const QString& overflow)
 {
   m_object->setProperty("clip", overflow == "hidden");
+}
+
+void ViewPropertyHandler::setShadowColor(const QColor& color)
+{
+  // TODO:
+}
+
+void ViewPropertyHandler::setShadowOpacity(double shadowOpacity)
+{
+  // TODO:
+}
+
+void ViewPropertyHandler::setShadowRadius(double shadowRadius)
+{
+  // TODO:
 }
 
 

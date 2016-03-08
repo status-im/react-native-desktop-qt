@@ -10,7 +10,6 @@
 #include "reactpropertyhandler.h"
 #include "reactbridge.h"
 
-
 int ReactImageManager::m_id = 0;
 
 class ImagePropertyHandler : public ReactPropertyHandler {
@@ -150,6 +149,7 @@ static const char* component_qml =
 "\n"
 "Rectangle {\n"
 "  id: imageRect%1\n"
+"  color: 'transparent'\n"
 "  property alias backgroundColor: imageRect%1.color\n"
 "  property alias source: image%1.source\n"
 "  property alias resizeMode: image%1.fillMode\n"

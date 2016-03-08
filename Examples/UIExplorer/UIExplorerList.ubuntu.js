@@ -249,7 +249,7 @@ var APIExamples: Array<UIExplorerExample> = [
   */
   {
     key: 'XHRExample',
-    module: require('./XHRExample.ios'),
+    module: require('./XHRExample'),
   },
 ];
 

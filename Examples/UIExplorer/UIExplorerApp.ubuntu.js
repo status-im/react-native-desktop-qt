@@ -31,8 +31,7 @@ const {
 } = React;
 
 const {
-  AnimatedView: NavigationAnimatedView,
-  Card: NavigationCard,
+  CardStack: NavigationCardStack,
   Header: NavigationHeader,
   Reducer: NavigationReducer,
   RootContainer: NavigationRootContainer,
@@ -85,26 +84,29 @@ console.log('--- UIExplorerApp:_renderNavigation: returning - component');
         />
       );
     }
-console.log('--- UIExplorerApp:_renderNavigation: returning - UIExplorerExampleList');
+    const {stack} = navigationState;
     return (
-      <UIExplorerExampleList
-        list={UIExplorerList}
-        displayTitleRow={true}
+      <NavigationCardStack
+        navigationState={stack}
+        style={styles.container}
+        renderOverlay={this._renderOverlay}
+        renderScene={this._renderScene}
       />
     );
   }
 
-  _renderOverlay(props: NavigationStateRendererProps): ReactElement {
+  _renderOverlay(props: NavigationSceneRendererProps): ReactElement {
     return (
       <NavigationHeader
-        navigationState={props.navigationParentState}
-        position={props.position}
+        {...props}
+        key={'header_' + props.scene.navigationState.key}
         getTitle={UIExplorerStateTitleMap}
       />
     );
   }
 
-  _renderScene(state: Object): ?ReactElement {
+  _renderScene(props: NavigationSceneRendererProps): ?ReactElement {
+    const state = props.scene.navigationState;
     if (state.key === 'AppList') {
       return (
         <UIExplorerExampleList

@@ -120,7 +120,7 @@ QMap<int, coerce_function> coerceFunctions
     qMetaTypeId<QColor>(),
     [](const QVariant& value) {
       Q_ASSERT(value.canConvert<uint>());
-      return QVariant::fromValue(QColor(value.toUInt()));
+      return QVariant::fromValue(QColor::fromRgba(value.toUInt()));
     }
   }
 };
