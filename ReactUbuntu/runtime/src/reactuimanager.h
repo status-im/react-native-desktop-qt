@@ -56,6 +56,9 @@ class ReactUIManager
   Q_INVOKABLE void findSubviewIn(int reactTag,
                                  const QPointF& point,
                                  const ReactModuleInterface::ListArgumentBlock& callback);
+  Q_INVOKABLE void dispatchViewManagerCommand(int reactTag,
+                                              int commandID,
+                                              const QVariantList& commandArgs);
 
 public:
   ReactUIManager();

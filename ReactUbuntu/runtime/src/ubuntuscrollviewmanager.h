@@ -11,6 +11,11 @@ class UbuntuScrollViewManager : public ReactViewManager
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
+  Q_INVOKABLE void scrollTo(int reactTag,
+                            double offsetX,
+                            double offsetY,
+                            bool animated);
+
 public:
   UbuntuScrollViewManager(QObject* parent = 0);
   ~UbuntuScrollViewManager();

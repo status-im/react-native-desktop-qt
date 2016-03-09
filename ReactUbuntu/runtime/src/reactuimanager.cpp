@@ -12,6 +12,7 @@
 #include "reactbridge.h"
 #include "reactcomponentdata.h"
 #include "reactmoduledata.h"
+#include "reactmodulemethod.h"
 #include "reactflexlayout.h"
 #include "reactattachedproperties.h"
 #include "reactviewmanager.h"
@@ -346,6 +347,34 @@ void ReactUIManager::findSubviewIn
     });
 }
 
+void ReactUIManager::dispatchViewManagerCommand(
+  int reactTag,
+  int commandID,
+  const QVariantList& commandArgs
+) {
+  // qDebug() << __PRETTY_FUNCTION__ << reactTag << commandID << commandArgs;
+  QQuickItem* item = m_views.value(reactTag);
+  if (item == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
+    return;
+  }
+  QString moduleName = ReactAttachedProperties::get(item)->viewManager()->moduleName();
+  // XXX:
+  int mi = moduleName.indexOf("Manager");
+  if (mi != -1)
+    moduleName = moduleName.left(mi);
+  ReactComponentData* cd = m_componentData[moduleName];
+  if (cd == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "Could not find valid module information";
+    return;
+  }
+  ReactModuleMethod* mm = cd->method(commandID);
+  Q_ASSERT(mm != nullptr);
+  QVariantList args = QVariantList{reactTag};
+  args.append(commandArgs);
+  mm->invokeWithBridge(m_bridge, args);
+}
+
 
 ReactUIManager::ReactUIManager()
   : m_bridge(nullptr)
@@ -379,7 +408,7 @@ void ReactUIManager::setBridge(ReactBridge* bridge)
   for (ReactModuleData* data : m_bridge->modules()) {
     ReactViewManager* manager = data->viewManager();
     if (manager != nullptr) {
-      ReactComponentData* cd = new ReactComponentData(manager);
+      ReactComponentData* cd = new ReactComponentData(data);
       m_componentData.insert(cd->name(), cd);
     }
   }
@@ -409,6 +438,8 @@ QVariantMap ReactUIManager::constantsToExport()
     qDebug() << "Checking" << componentData->name();
 
     QVariantMap managerInfo;
+
+    managerInfo.insert("Manager", componentData->manager()->moduleName());
 
     QVariantMap config = componentData->viewConfig();
     if (!config.isEmpty()) {

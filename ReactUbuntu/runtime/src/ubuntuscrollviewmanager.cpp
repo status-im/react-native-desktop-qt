@@ -10,6 +10,7 @@
 #include "reactevents.h"
 #include "ubuntuscrollviewmanager.h"
 #include "reactbridge.h"
+#include "reactuimanager.h"
 #include "reactpropertyhandler.h"
 #include "reactevents.h"
 
@@ -36,6 +37,20 @@ bool ScrollViewPropertyHandler::onScroll() const
 void ScrollViewPropertyHandler::setOnScroll(bool onScroll)
 {
   m_onScroll = onScroll;
+}
+
+
+void UbuntuScrollViewManager::scrollTo(
+  int reactTag,
+  double offsetX,
+  double offsetY,
+  bool animated
+) {
+  QQuickItem* item = m_bridge->uiManager()->viewForTag(reactTag);
+  Q_ASSERT(item != nullptr);
+
+  QQmlProperty(item, "contentX").write(offsetX);
+  QQmlProperty(item, "contentY").write(offsetX);
 }
 
 

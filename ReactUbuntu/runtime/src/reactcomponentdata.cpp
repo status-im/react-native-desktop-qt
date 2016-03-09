@@ -7,14 +7,16 @@
 
 #include "reactevents.h"
 #include "reactcomponentdata.h"
+#include "reactmoduledata.h"
 #include "reactviewmanager.h"
 #include "reactattachedproperties.h"
 #include "reactpropertyhandler.h"
 
 
-ReactComponentData::ReactComponentData(ReactModuleInterface* moduleInteface)
-  : m_moduleInterface(moduleInteface)
+ReactComponentData::ReactComponentData(ReactModuleData* moduleData)
+  : m_moduleData(moduleData)
 {
+  m_moduleInterface = m_moduleData->viewManager();
 }
 
 ReactComponentData::~ReactComponentData()
@@ -123,4 +125,9 @@ QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& propertie
   rap->setPropertyHandler(m_moduleInterface->propertyHandler(view));
 
   return view;
+}
+
+ReactModuleMethod* ReactComponentData::method(int id) const
+{
+  return m_moduleData->method(id);
 }

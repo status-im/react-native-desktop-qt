@@ -5,15 +5,16 @@
 #include <QVariant>
 
 class QQuickItem;
-class ReactModuleInterface;
+class ReactModuleData;
 class ReactViewManager;
-class ReactPropertyHandler;
+class ReactModuleInterface;
+class ReactModuleMethod;
 
 
 class ReactComponentData
 {
 public:
-  ReactComponentData(ReactModuleInterface* moduleInteface);
+  ReactComponentData(ReactModuleData* moduleData);
   ~ReactComponentData();
 
   QString name() const;
@@ -23,7 +24,10 @@ public:
 
   QQuickItem* createView(int tag, const QVariantMap& properties);
 
+  ReactModuleMethod* method(int id) const;
+
 private:
+  ReactModuleData* m_moduleData;
   ReactModuleInterface* m_moduleInterface;
 };
 
