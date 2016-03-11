@@ -10,6 +10,7 @@
 #include "reactvaluecoercion.h"
 #include "reactflexlayout.h"
 #include "reactpropertyhandler.h"
+#include "reacttextproperties.h"
 
 
 class ViewPropertyHandler : public ReactPropertyHandler {
@@ -279,6 +280,11 @@ bool ReactViewManager::shouldLayout() const
 
 void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const
 {
+  // XXX: remove this
+  if ((ReactTextProperties::get(container, false) == nullptr) &&
+      (ReactTextProperties::get(child, false) != nullptr)) {
+    ReactTextProperties::get(child)->hookLayout();
+  }
   child->setParentItem(container);
   child->setZ(position);
 }
@@ -299,8 +305,6 @@ QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
     qCritical() << "Unable to construct Rectangle";
     return nullptr;
   }
-
-  // applyProperties(item, properties);
 
   return item;
 }

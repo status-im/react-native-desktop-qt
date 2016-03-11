@@ -31,6 +31,5 @@ void ReactItem::updatePolish()
   ReactFlexLayout::get(this)->setWidth(width());
   ReactFlexLayout::get(this)->setHeight(height());
 
-  ReactTextProperties::polish(this);
   ReactFlexLayout::polish(this);
 }

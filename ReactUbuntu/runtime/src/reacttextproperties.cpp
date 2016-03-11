@@ -37,14 +37,21 @@ public:
   property_map properties;
   QQuickItem* item;
 
-  void apply() {
-    if (!dirty) return;
-    item->setProperty("text", textWithProperties(property_map()));
-
+  void setupLayout() {
     ReactFlexLayout* fl = ReactFlexLayout::get(item);
-    fl->setWidth(item->property("contentWidth").value<double>());
-    fl->setHeight(item->property("contentHeight").value<double>());
-    dirty = false;
+    fl->setMeasureFunction([=](double width, double height) {
+      if (dirty) {
+        item->setProperty("text", textWithProperties(property_map()));
+        dirty = false;
+      }
+      double contentWidth = item->property("contentWidth").value<double>();
+      double sw = contentWidth == 0 ? width : qMin(contentWidth, width);
+
+      item->setWidth(sw);
+
+      return std::make_pair(float(sw),
+                            item->property("contentHeight").value<float>());
+    });
   }
 
   template<typename VT>
@@ -266,17 +273,9 @@ void ReactTextProperties::setDirty(bool dirty)
   d_func()->setDirty(dirty);
 }
 
-void ReactTextProperties::polish(QQuickItem* item)
+void ReactTextProperties::hookLayout()
 {
-  ReactTextProperties* tp = ReactTextProperties::get(item, false);
-  if (tp != nullptr) {
-    // apply text properties to all children
-    ReactTextPropertiesPrivate::get(tp)->apply();
-  } else {
-    for (auto& c : item->childItems()) {
-      polish(c);
-    }
-  }
+  d_func()->setupLayout();
 }
 
 ReactTextProperties* ReactTextProperties::get(QQuickItem* item, bool create)

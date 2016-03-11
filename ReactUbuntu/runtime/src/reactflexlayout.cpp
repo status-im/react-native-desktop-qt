@@ -235,6 +235,10 @@ public:
     // qDebug() << __PRETTY_FUNCTION__ << "After applyLayout";
     // local_print_node(0);
   }
+  void setMeasureFunction(const measure_function& measureFunction) {
+    this->measureFunction = measureFunction;
+    cssNode->measure = measureFunction ? measure : nullptr;
+  }
   static ReactFlexLayoutPrivate* get(ReactFlexLayout* rfl) {
     return rfl->d_func();
   }
@@ -247,6 +251,15 @@ public:
   static bool isDirty(void* context) {
     return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
   }
+  static css_dim_t measure(void* context, float width, float height) {
+    ReactFlexLayoutPrivate* p = static_cast<ReactFlexLayoutPrivate*>(context);
+    if (!p->measureFunction) {
+      qCritical() << "measure set without measure function?!";
+      return {};
+    }
+    flex_dimensions df = p->measureFunction(width, height);
+    return { float(df.first), float(df.second) };
+  }
   bool qmlAnchors;
   bool qmlImplicitWidth;
   bool qmlImplicitHeight;
@@ -257,6 +270,7 @@ public:
   QQuickItem* parentItem;
   QList<QQuickItem*> children;
   css_node_t* cssNode;
+  measure_function measureFunction;
   ReactFlexLayout* q_ptr;
 
 private:
@@ -746,6 +760,16 @@ void ReactFlexLayout::setMarginRight(double margin)
   Q_D(ReactFlexLayout);
   d->margin[CSS_RIGHT] = margin;
   setDirty(true);
+}
+
+measure_function ReactFlexLayout::measureFunction() const
+{
+  return d_func()->measureFunction;
+}
+
+void ReactFlexLayout::setMeasureFunction(const measure_function& measureFunction)
+{
+  d_func()->setMeasureFunction(measureFunction);
 }
 
 QQuickItem* ReactFlexLayout::parentItem() const

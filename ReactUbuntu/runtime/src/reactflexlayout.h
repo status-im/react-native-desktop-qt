@@ -1,11 +1,17 @@
 #ifndef REACTFLEXPROPERTIES_H
 #define REACTFLEXPROPERTIES_H
 
+#include <utility>
+#include <functional>
+
 #include <QObject>
 #include <QtQml>
 #include <QScopedPointer>
 
 // XXX: The enumeration values are in sync with those defined in the layout code
+
+typedef std::pair<double, double> flex_dimensions;
+typedef std::function<flex_dimensions (double width, double height)> measure_function;
 
 class ReactFlexLayoutPrivate;
 class ReactFlexLayout : public QObject
@@ -42,6 +48,8 @@ class ReactFlexLayout : public QObject
   Q_PROPERTY(double marginLeft READ marginLeft WRITE setMarginLeft)
   Q_PROPERTY(double marginBottom READ marginBottom WRITE setMarginBottom)
   Q_PROPERTY(double marginRight READ marginRight WRITE setMarginRight)
+
+  Q_PROPERTY(measure_function measureFunction READ measureFunction WRITE setMeasureFunction)
 
   Q_ENUMS(Direction)
   Q_ENUMS(Justify)
@@ -150,6 +158,9 @@ public:
 
   double marginRight() const;
   void setMarginRight(double margin);
+
+  measure_function measureFunction() const;
+  void setMeasureFunction(const measure_function& measureFunction);
 
   QQuickItem* parentItem() const;
   void setParentItem(QQuickItem* parentItem);

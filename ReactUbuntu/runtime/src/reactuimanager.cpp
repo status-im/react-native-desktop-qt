@@ -87,6 +87,8 @@ void ReactUIManager::updateView
 
   Q_ASSERT(ReactFlexLayout::get(item) != nullptr);
   ReactFlexLayout::get(item)->applyLayoutProperties(properties);
+  if (viewName == "RCTText")
+    ReactFlexLayout::get(item)->setDirty(true); // XXX: remove when text layout fixed
 
   m_bridge->visualParent()->polish();
 }

@@ -58,6 +58,7 @@ static const char* component_qml =
 "\n"
 "Text {\n"
 "  textFormat: Text.RichText\n"
+"  wrapMode: Text.WordWrap\n"
 "}\n";
 }
 
