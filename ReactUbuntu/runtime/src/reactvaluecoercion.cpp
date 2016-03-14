@@ -103,20 +103,6 @@ QMap<int, coerce_function> coerceFunctions
     }
   },
   {
-    qRegisterMetaType<ReactNetworking::Callback>(),
-    [](const QVariant& value) {
-      Q_ASSERT(value.canConvert<int>());
-      int callbackId = value.toInt();
-      ReactNetworking::Callback callback =
-        [callbackId](ReactBridge* bridge, int status, const QVariantMap& headers, const QByteArray& responseText) {
-          bridge->invokeAndProcess("BatchedBridge",
-                                   "invokeCallbackAndReturnFlushedQueue",
-                                   QVariantList{callbackId, QVariantList{status, headers, responseText}});
-        };
-      return QVariant::fromValue(callback);
-    }
-  },
-  {
     qMetaTypeId<QColor>(),
     [](const QVariant& value) {
       Q_ASSERT(value.canConvert<uint>());

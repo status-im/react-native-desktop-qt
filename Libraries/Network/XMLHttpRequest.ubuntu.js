@@ -30,19 +30,10 @@ class XMLHttpRequest extends XMLHttpRequestBase {
         method,
         url,
         headers,
-        data,
-        this.almostRight.bind(this)
+        data
       );
-  }
 
-  almostRight(status: number, responseHeaders: ?Object, responseText: string): void {
-    if (this._aborted) {
-      return;
-    }
-    this.status = status;
-    this.setResponseHeaders(responseHeaders || {});
-    this.response = responseText;
-    this.setReadyState(this.DONE);
+    this.didCreateRequest(this._ubuntuRequestId);
   }
 }
 

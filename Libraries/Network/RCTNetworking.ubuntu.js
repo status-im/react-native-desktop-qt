@@ -7,14 +7,13 @@ var RCTNetworkingNative = require('NativeModules').Networking;
 
 class RCTNetworking {
 
-  static sendRequest(requestId, method, url, headers, data, callback) {
+  static sendRequest(requestId, method, url, headers, data) {
     RCTNetworkingNative.sendRequest(
       requestId,
       method,
       url,
       headers,
-      data,
-      callback);
+      data);
   }
 
   static abortRequest(requestId) {

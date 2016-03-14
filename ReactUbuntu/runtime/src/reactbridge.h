@@ -5,11 +5,13 @@
 #include <QObject>
 #include <QScopedPointer>
 
+
 class QQuickItem;
 class QQmlEngine;
 class QNetworkAccessManager;
 class ReactModuleData;
 class ReactUIManager;
+class ReactEventDispatcher;
 
 
 class ReactBridgePrivate;
@@ -55,8 +57,7 @@ public:
   QUrl bundleUrl() const;
   void setBundleUrl(const QUrl& bundleUrl);
 
-  // TODO eventDispatcher
-
+  ReactEventDispatcher* eventDispatcher() const;
   QList<ReactModuleData*> modules() const;
   ReactUIManager* uiManager() const;
 

@@ -8,10 +8,8 @@
 
 #include "reactmoduleinterface.h"
 
-class QNetworkAccessManager;
-class QNetworkReply;
 
-
+class ReactNetworkingPrivate;
 class ReactNetworking
   : public QObject
   , public ReactModuleInterface
@@ -20,17 +18,14 @@ class ReactNetworking
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
-public:
-  typedef std::function<void (ReactBridge*, int requestId, const QVariantMap& headers, const QByteArray& responseText)> Callback;
-
-private:
   Q_INVOKABLE void sendRequest(int requestId,
-                              const QString& method,
-                              const QUrl& url,
-                              const QVariantMap& headers,
-                              const QByteArray& data,
-                              const ReactNetworking::Callback& callback);
+                               const QString& method,
+                               const QUrl& url,
+                               const QVariantMap& headers,
+                               const QByteArray& data);
   Q_INVOKABLE void abortRequest(int requestId);
+
+  Q_DECLARE_PRIVATE(ReactNetworking);
 
 public:
   ReactNetworking(QObject* parent = 0);
@@ -45,15 +40,8 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
-private Q_SLOTS:
-  void requestFinished();
-
 private:
-  ReactBridge* m_bridge;
-  QNetworkAccessManager* m_nam;
-  QMap<int, QNetworkReply*> m_activeConnections;
+  QScopedPointer<ReactNetworkingPrivate> d_ptr;
 };
-
-Q_DECLARE_METATYPE(ReactNetworking::Callback);
 
 #endif // REACTNETWORKING_H

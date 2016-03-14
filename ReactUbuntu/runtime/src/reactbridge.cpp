@@ -13,6 +13,7 @@
 #include "reactmoduledata.h"
 #include "reactmodulemethod.h"
 
+#include "reacteventdispatcher.h"
 #include "reactnetworking.h"
 #include "reacttiming.h"
 #include "reactappstate.h"
@@ -41,6 +42,7 @@ public:
   QNetworkAccessManager* nam;
   ReactUIManager* uiManager;
   ReactSourceCode* sourceCode;
+  ReactEventDispatcher* eventDispatcher;
   QUrl bundleUrl;
   QMap<int, ReactModuleData*> modules;
 
@@ -90,6 +92,7 @@ ReactBridge::ReactBridge(QObject* parent)
   d->nam = nullptr;
   d->visualParent = nullptr;
   d->uiManager = nullptr;
+  d->eventDispatcher = new ReactEventDispatcher(this);
 }
 
 ReactBridge::~ReactBridge()
@@ -106,7 +109,6 @@ void ReactBridge::setupExecutor() {
 void ReactBridge::init()
 {
   Q_D(ReactBridge);
-  qDebug() << __func__;
 
   d->executor->init();
 
@@ -222,6 +224,11 @@ void ReactBridge::setBundleUrl(const QUrl& bundleUrl)
   if (d->bundleUrl == bundleUrl)
     return;
   d->bundleUrl = bundleUrl;
+}
+
+ReactEventDispatcher* ReactBridge::eventDispatcher() const
+{
+  return d_func()->eventDispatcher;
 }
 
 QList<ReactModuleData*> ReactBridge::modules() const

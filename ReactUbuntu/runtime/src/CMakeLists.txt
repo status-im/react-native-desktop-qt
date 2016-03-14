@@ -31,6 +31,7 @@ add_library(
   reactplugin.cpp
   reactvaluecoercion.cpp
   reactbridge.cpp
+  reacteventdispatcher.cpp
   reactevents.cpp
   reactsourcecode.cpp
   reactcomponentdata.cpp
