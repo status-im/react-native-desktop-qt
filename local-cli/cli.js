@@ -99,7 +99,7 @@ function generateWrapper(args, config) {
   ], config);
 }
 
-function generateUbuntu(args, arconfig) {
+function generateUbuntu(args, config) {
   return generate([
     '--platform', 'ubuntu',
     '--project-path', process.cwd(),

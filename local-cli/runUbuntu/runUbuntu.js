@@ -11,12 +11,13 @@ const path = require('path');
 const chalk = require('chalk');
 const child_process = require('child_process');
 const fs = require('fs');
+const parseCommandLine = require('../util/parseCommandLine');
 const isPackagerRunning = require('../util/isPackagerRunning');
 const Promise = require('promise');
 
 function runUbuntu(argv, config) {
   return new Promise((resolve, reject) => {
-    _runUbuntu(argv, comfig, resolve, reject);
+    _runUbuntu(argv, config, resolve, reject);
   });
 }
 
@@ -28,7 +29,7 @@ function _runUbuntu(argv, config, resolve, reject) {
   }], argv);
   args.root = args.root || '';
 
-  if (!checkAndroid(args)) {
+  if (!checkUbuntu(args)) {
     console.log(chalk.red('Ubuntu project not found. Maybe run react-native ubuntu first?'));
     return;
   }
@@ -48,7 +49,7 @@ function _runUbuntu(argv, config, resolve, reject) {
 }
 
 function checkUbuntu(args) {
-  return fs.existsSync(path.join(args.root, 'ubuntu/CMakeLists.txt')) && 
+  return fs.existsSync(path.join(args.root, 'ubuntu/CMakeLists.txt')) &&
          process.platform.startsWith('linux');
 }
 
@@ -66,9 +67,8 @@ function buildAndRun(args, reject) {
       console.log(e.stderr)
       return;
   }
-    
-  console.log(chalk.bold('Starting the app...'));
 
+  console.log(chalk.bold('Starting the app...'));
   try {
       child_process.spawnSync('./run-app.sh', [],
                               {stdio: 'inherit'});
@@ -78,6 +78,11 @@ function buildAndRun(args, reject) {
     console.log(e.stderr)
     reject();
   }
+}
+
+function startServerInNewWindow() {
+  const packagerPath = path.resolve(__dirname, '..', '..', 'packager', 'packager.sh');
+  child_process.spawn('gnome-terminal',['-e', packagerPath],{detached: true});
 }
 
 module.exports = runUbuntu;
