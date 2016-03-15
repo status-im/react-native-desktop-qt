@@ -141,17 +141,16 @@ void ReactBridge::reload()
 
 void ReactBridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args)
 {
-  d_func()->executor->executeJSCall("BatchedBridge",
-                                    "callFunctionReturnFlushedQueue",
+  d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
                                     QVariantList{module, method, args},
                                     [=](const QJsonDocument& doc) {
                                       processResult(doc);
                                     });
 }
 
-void ReactBridge::invokeAndProcess(const QString& module, const QString& method, const QVariantList &args)
+void ReactBridge::invokeAndProcess(const QString& method, const QVariantList &args)
 {
-  d_func()->executor->executeJSCall(module, method, args, [=](const QJsonDocument& doc) { processResult(doc); });
+  d_func()->executor->executeJSCall(method, args, [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
@@ -352,7 +351,7 @@ void ReactBridge::processResult(const QJsonDocument& doc)
 void ReactBridge::applicationScriptDone()
 {
   QTimer::singleShot(0, [this]() {
-      d_func()->executor->executeJSCall("BatchedBridge", "flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
+      d_func()->executor->executeJSCall("flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
           processResult(doc);
           setReady(true);
         });

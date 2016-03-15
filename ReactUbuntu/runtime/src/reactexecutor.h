@@ -20,8 +20,7 @@ public:
 
   virtual void injectJson(const QString& name, const QVariant& data) = 0;
   virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) = 0;
-  virtual void executeJSCall(const QString& module,
-                             const QString& method,
+  virtual void executeJSCall(const QString& method,
                              const QVariantList& args = QVariantList(),
                              const ExecuteCallback& callback = ExecuteCallback()
                             ) = 0;

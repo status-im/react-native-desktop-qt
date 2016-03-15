@@ -21,8 +21,7 @@ public:
 
   void injectJson(const QString& name, const QVariant& data) override;
   void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
-  void executeJSCall(const QString& module,
-                     const QString& method,
+  void executeJSCall(const QString& method,
                      const QVariantList& args = QVariantList(),
                      const ExecuteCallback& callback = ExecuteCallback()
                      ) override;

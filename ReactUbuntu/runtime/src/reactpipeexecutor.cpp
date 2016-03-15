@@ -67,7 +67,6 @@ void ReactPipeExecutor::executeApplicationScript(const QByteArray& script, const
 
 void ReactPipeExecutor::executeJSCall
 (
- const QString& module,
  const QString& method,
  const QVariantList& args,
  const ExecuteCallback& callback
@@ -93,7 +92,7 @@ void ReactPipeExecutor::executeJSCall
 
 
   sendRequest(
-              QByteArray("require(\"") + module.toLocal8Bit() + "\")." +
+              QByteArray("__fbBatchedBridge.") +
               method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");"
               );
 

@@ -72,8 +72,7 @@ QMap<int, coerce_function> coerceFunctions
       int callbackId = value.toInt();
       ReactModuleInterface::ResponseBlock block =
         [callbackId](ReactBridge* bridge, const QVariantList& args) {
-          bridge->invokeAndProcess("BatchedBridge",
-                                   "invokeCallbackAndReturnFlushedQueue",
+          bridge->invokeAndProcess("invokeCallbackAndReturnFlushedQueue",
                                    QVariantList{ callbackId, args });
         };
       return QVariant::fromValue(block);
@@ -86,8 +85,7 @@ QMap<int, coerce_function> coerceFunctions
       int callbackId = value.toInt();
       ReactModuleInterface::ErrorBlock block =
         [callbackId](ReactBridge* bridge, const QVariantMap& error) {
-          bridge->invokeAndProcess("BatchedBridge",
-                                   "invokeCallbackAndReturnFlushedQueue",
+          bridge->invokeAndProcess("invokeCallbackAndReturnFlushedQueue",
                                    QVariantList{ callbackId, error });
         };
       return QVariant::fromValue(block);

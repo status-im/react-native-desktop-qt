@@ -51,14 +51,11 @@ void ReactNetExecutor::executeApplicationScript(const QByteArray& script, const 
   Q_EMIT applicationScriptDone();
 }
 
-void ReactNetExecutor::executeJSCall
-(
-    const QString& module,
+void ReactNetExecutor::executeJSCall (
     const QString& method,
     const QVariantList& args,
     const ExecuteCallback& callback
-)
-{
+) {
   // qDebug() << __func__ << "method=" << method << "args=" << args;
 
   m_socket->waitForConnected();  // TODO:
@@ -74,7 +71,7 @@ void ReactNetExecutor::executeJSCall
   }
 
   sendRequest(
-        QByteArray("require(\"") + module.toLocal8Bit() + "\")." +
+        QByteArray("__fbBatchedBridge.") +
         method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");"
       );
 

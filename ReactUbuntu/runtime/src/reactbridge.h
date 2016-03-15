@@ -38,7 +38,7 @@ public:
   void reload();
 
   void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
-  void invokeAndProcess(const QString& module, const QString& method, const QVariantList &args);
+  void invokeAndProcess(const QString& method, const QVariantList &args);
   void executeSourceCode(const QByteArray& sourceCode);
 
   // XXX: maybe rename
