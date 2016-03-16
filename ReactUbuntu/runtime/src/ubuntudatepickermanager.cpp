@@ -161,13 +161,14 @@ QStringList UbuntuDatePickerManager::customBubblingEventTypes()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import Ubuntu.Components.Pickers 1.0\n"
-"\n"
-"DatePicker {\n"
-"  id: datepicker%1\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import Ubuntu.Components.Pickers 1.0
+
+DatePicker {
+  id: datepicker%1
+}
+)COMPONENT";
 }
 
 QQuickItem* UbuntuDatePickerManager::view(const QVariantMap& properties) const

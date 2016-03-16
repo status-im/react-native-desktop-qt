@@ -120,38 +120,39 @@ QStringList UbuntuNavigatorManager::customBubblingEventTypes()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import Ubuntu.Components 1.2\n"
-"\n"
-"MainView {\n"
-"  id: mainView%1\n"
-"  property int numberPages: 0\n"
-"  signal backTriggered();\n"
-"  Component {\n"
-"    id: pageBackAction%1\n"
-"    Action {\n"
-"      iconName: mainView%1.numberPages > 1 ? \"back\" : \"\"\n"
-"    }\n"
-"  }\n"
-"  PageStack {\n"
-"    id: pageStack%1\n"
-"    anchors.fill: parent\n"
-"  }\n"
-"  function push(item) {\n"
-"    item.head.backAction = pageBackAction%1.createObject(item);\n"
-"    item.head.backAction.onTriggered.connect(backTriggered);\n"
-"    pageStack%1.push(item);\n"
-"    mainView%1.numberPages += 1;\n"
-"  }\n"
-"  function pop() {\n"
-"    pageStack%1.pop();\n"
-"    mainView%1.numberPages -= 1;\n"
-"  }\n"
-"  function clear() {\n"
-"    pageStack%1.clear();\n"
-"  }\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import Ubuntu.Components 1.2
+
+MainView {
+  id: mainView%1
+  property int numberPages: 0
+  signal backTriggered();
+  Component {
+    id: pageBackAction%1
+    Action {
+      iconName: mainView%1.numberPages > 1 ? "back" : ""
+    }
+  }
+  PageStack {
+    id: pageStack%1
+    anchors.fill: parent
+  }
+  function push(item) {
+    item.head.backAction = pageBackAction%1.createObject(item);
+    item.head.backAction.onTriggered.connect(backTriggered);
+    pageStack%1.push(item);
+    mainView%1.numberPages += 1;
+  }
+  function pop() {
+    pageStack%1.pop();
+    mainView%1.numberPages -= 1;
+  }
+  function clear() {
+    pageStack%1.clear();
+  }
+}
+)COMPONENT";
 }
 
 QQuickItem* UbuntuNavigatorManager::view(const QVariantMap& properties) const

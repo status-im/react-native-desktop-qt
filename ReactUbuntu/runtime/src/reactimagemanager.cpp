@@ -143,43 +143,44 @@ QVariantMap ReactImageManager::constantsToExport()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import QtGraphicalEffects 1.0\n"
-"\n"
-"Rectangle {\n"
-"  id: imageRect%1\n"
-"  color: 'transparent'\n"
-"  property alias backgroundColor: imageRect%1.color\n"
-"  property alias source: image%1.source\n"
-"  property alias resizeMode: image%1.fillMode\n"
-"  property alias tintColor: colorOverlay%1.color\n"
-"  property real borderRadius: 0\n"
-"  onTintColorChanged: {\n"
-"    image%1.visible = false\n"
-"    colorOverlay%1.visible = true\n"
-"  }\n"
-"  AnimatedImage {\n"
-"    id: image%1\n"
-"    visible: true\n"
-"    anchors.fill: parent\n"
-"    playing: true\n"
-"    layer.enabled: imageRect%1.borderRadius > 0\n"
-"    layer.effect: OpacityMask {\n"
-"      maskSource: Rectangle {\n"
-"        width: image%1.width\n"
-"        height: image%1.height\n"
-"        radius: imageRect%1.borderRadius\n"
-"      }\n"
-"    }\n"
-"  }\n"
-"  ColorOverlay {\n"
-"    visible: false\n"
-"    anchors.fill: image%1\n"
-"    id: colorOverlay%1\n"
-"    source: image%1\n"
-"  }\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import QtGraphicalEffects 1.0
+
+Rectangle {
+  id: imageRect%1
+  color: 'transparent'
+  property alias backgroundColor: imageRect%1.color
+  property alias source: image%1.source
+  property alias resizeMode: image%1.fillMode
+  property alias tintColor: colorOverlay%1.color
+  property real borderRadius: 0
+  onTintColorChanged: {
+    image%1.visible = false
+    colorOverlay%1.visible = true
+  }
+  AnimatedImage {
+    id: image%1
+    visible: true
+    anchors.fill: parent
+    playing: true
+    layer.enabled: imageRect%1.borderRadius > 0
+    layer.effect: OpacityMask {
+      maskSource: Rectangle {
+        width: image%1.width
+        height: image%1.height
+        radius: imageRect%1.borderRadius
+      }
+    }
+  }
+  ColorOverlay {
+    visible: false
+    anchors.fill: image%1
+    id: colorOverlay%1
+    source: image%1
+  }
+}
+)COMPONENT";
 }
 
 QQuickItem* ReactImageManager::view(const QVariantMap& properties) const

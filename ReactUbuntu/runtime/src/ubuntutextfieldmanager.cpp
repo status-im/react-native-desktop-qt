@@ -140,12 +140,13 @@ QStringList UbuntuTextFieldManager::customDirectEventTypes()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import Ubuntu.Components 1.2\n"
-"\n"
-"TextField {\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import Ubuntu.Components 1.2
+
+TextField {
+}
+)COMPONENT";
 }
 
 QQuickItem* UbuntuTextFieldManager::view(const QVariantMap& properties) const

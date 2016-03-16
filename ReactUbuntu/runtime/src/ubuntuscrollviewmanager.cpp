@@ -111,19 +111,20 @@ void UbuntuScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* c
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import Ubuntu.Components 1.2\n"
-"\n"
-"Flickable {\n"
-"  id: flikka\n"
-"  clip: true\n"
-"  contentWidth: contentItem.childrenRect.width\n"
-"  contentHeight: contentItem.childrenRect.height\n"
-// "  Scrollbar {\n"
-// "    flickableItem: flikka\n"
-// "  }\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import Ubuntu.Components 1.2
+
+Flickable {
+  id: flikka
+  clip: true
+  contentWidth: contentItem.childrenRect.width
+  contentHeight: contentItem.childrenRect.height
+//   Scrollbar {
+//     flickableItem: flikka
+//   }
+}
+)COMPONENT";
 }
 
 QQuickItem* UbuntuScrollViewManager::view(const QVariantMap& properties) const

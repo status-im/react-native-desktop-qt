@@ -81,14 +81,15 @@ QVariantMap UbuntuPageManager::constantsToExport()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"import Ubuntu.Components 1.2\n"
-"\n"
-"Page {\n"
-"  id: page%1\n"
-"  visible: false\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+import Ubuntu.Components 1.2
+
+Page {
+  id: page%1
+  visible: false
+}
+)COMPONENT";
 }
 
 QQuickItem* UbuntuPageManager::view(const QVariantMap& properties) const

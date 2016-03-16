@@ -53,13 +53,14 @@ QVariantMap ReactTextManager::constantsToExport()
 }
 
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"\n"
-"Text {\n"
-"  textFormat: Text.RichText\n"
-"  wrapMode: Text.WordWrap\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+
+Text {
+  textFormat: Text.RichText
+  wrapMode: Text.WordWrap
+}
+)COMPONENT";
 }
 
 bool ReactTextManager::shouldLayout() const

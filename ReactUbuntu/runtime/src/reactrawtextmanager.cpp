@@ -59,12 +59,13 @@ bool ReactRawTextManager::shouldLayout() const
 
 // TODO: this is a virtual node, not a real text node
 namespace {
-static const char* component_qml =
-"import QtQuick 2.4\n"
-"\n"
-"Text {\n"
-"  visible: false\n"
-"}\n";
+static const char* component_qml = R"COMPONENT(
+import QtQuick 2.4
+
+Text {
+  visible: false
+}
+)COMPONENT";
 }
 
 QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
