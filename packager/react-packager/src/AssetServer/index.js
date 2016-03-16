@@ -147,7 +147,7 @@ class AssetServer {
   }
 
   _buildAssetMap(dir, files) {
-    const assets = files.map(getAssetDataFromName);
+    const assets = files.map((name) => getAssetDataFromName(name));
     const map = Object.create(null);
     assets.forEach(function(asset, i) {
       const file = files[i];
