@@ -11,8 +11,6 @@ class ReactNetExecutor : public ReactExecutor
 {
   Q_OBJECT
 
-  typedef std::function<void(const QJsonDocument&)> ExecuteCallback;
-
 public:
   ReactNetExecutor(QObject* parent);
   ~ReactNetExecutor();
