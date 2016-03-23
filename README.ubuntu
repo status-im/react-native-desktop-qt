@@ -1,0 +1,79 @@
+
+# React Native Ubuntu
+
+## Dependencies
+
+- TODO: (Qt, CMake, node)
+
+## Sinopia
+- follow the Sinopia install instructions from ./react-native-cli/README.md
+  - If building in tree, it is not necessary to publish react-native & react-native-cli
+- add node-haste to the packages section of Sinopia's config
+```
+    packages:
+      'node-haste':
+        allow_access: $all
+        allow_publish: $all
+```
+- clone and publish the modified node-haste repo;
+```
+$ git clone https://github.com/justinmcp/node-haste
+$ cd node-haste; npm publish
+```
+
+## Install node dependencies
+
+```
+$ cd react-native
+$ npm install
+```
+
+## "In tree" usage
+
+This is best when working on RN. There are example applications in ./Examples that can be used for testing.
+
+1) Build RN Ubuntu
+
+```
+$ mkdir build; cd build; cmake .. && make
+```
+
+2) Open an extra terminal window in react-native and run the RN packager
+
+```
+$(react-native) $ npm start
+```
+
+3) Run examples
+The examples all follow a similar template, e.g to run the TicTacToe app
+```
+$(buildir) $ ./Examples/TicTacToe/run-example.sh
+```
+
+to run the 2048 app
+```
+$(buildir) $ ./Examples/2048/run-example.sh
+```
+
+## CLI usage
+
+This method is best for creating a new RN application.
+
+1) Ensure react-native & react-native-cli have been published as per the instructions in ./react-native-cli/README.md
+
+2) Open an extra terminal window in react-native and run the RN packager
+
+```
+$(react-native) $ npm start
+```
+
+3) Create, build and run the application
+
+```
+$ react-native init AwesomeProject
+$ cd AwesomeProject
+$ react-native ubuntu
+$ cd ubuntu; cmake . && make
+$ ./run-app.sh
+```
+
