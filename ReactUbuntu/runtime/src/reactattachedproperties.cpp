@@ -18,6 +18,7 @@ public:
   QQuickItem* item;
 };
 
+
 ReactAttachedProperties::ReactAttachedProperties(QObject* parent)
   : QObject(parent)
   , d_ptr(new ReactAttachedPropertiesPrivate)
@@ -26,7 +27,7 @@ ReactAttachedProperties::ReactAttachedProperties(QObject* parent)
   d->viewManager = nullptr;
   d->item = qobject_cast<QQuickItem*>(parent);
   if (d->item == nullptr) {
-    qCritical() << "Flex layout only applies to visual items";
+    qCritical() << "ReactAttachedProperties is for use with visual items";
   }
 }
 

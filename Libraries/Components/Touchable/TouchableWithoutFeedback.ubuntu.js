@@ -121,22 +121,19 @@ var TouchableWithoutFeedback = React.createClass({
 
   render: function(): ReactElement {
     // Note(avik): remove dynamic typecast once Flow has been upgraded
-    return (
-      <ReactTouchableManager />
-    );
-    // return (React: any).cloneElement(onlyChild(this.props.children), {
-    //   accessible: this.props.accessible !== false,
-    //   accessibilityComponentType: this.props.accessibilityComponentType,
-    //   accessibilityTraits: this.props.accessibilityTraits,
-    //   testID: this.props.testID,
-    //   onLayout: this.props.onLayout,
-    //   onStartShouldSetResponder: this.touchableHandleStartShouldSetResponder,
-    //   onResponderTerminationRequest: this.touchableHandleResponderTerminationRequest,
-    //   onResponderGrant: this.touchableHandleResponderGrant,
-    //   onResponderMove: this.touchableHandleResponderMove,
-    //   onResponderRelease: this.touchableHandleResponderRelease,
-    //   onResponderTerminate: this.touchableHandleResponderTerminate
-    // });
+    return (React: any).cloneElement(onlyChild(this.props.children), {
+      accessible: this.props.accessible !== false,
+      accessibilityComponentType: this.props.accessibilityComponentType,
+      accessibilityTraits: this.props.accessibilityTraits,
+      testID: this.props.testID,
+      onLayout: this.props.onLayout,
+      onStartShouldSetResponder: this.touchableHandleStartShouldSetResponder,
+      onResponderTerminationRequest: this.touchableHandleResponderTerminationRequest,
+      onResponderGrant: this.touchableHandleResponderGrant,
+      onResponderMove: this.touchableHandleResponderMove,
+      onResponderRelease: this.touchableHandleResponderRelease,
+      onResponderTerminate: this.touchableHandleResponderTerminate
+    });
   }
 });
 
