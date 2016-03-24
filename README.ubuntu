@@ -18,7 +18,7 @@
 - clone and publish the modified node-haste repo;
 ```
 $ git clone https://github.com/justinmcp/node-haste
-$ cd node-haste; npm publish
+$ cd node-haste; npm install; npm publish --force
 ```
 
 ## Install node dependencies
