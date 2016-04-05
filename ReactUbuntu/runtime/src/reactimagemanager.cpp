@@ -146,15 +146,14 @@ namespace {
 static const char* component_qml = R"COMPONENT(
 import QtQuick 2.4
 import QtGraphicalEffects 1.0
+import React 0.1 as React
 
-Rectangle {
+React.Item {
   id: imageRect%1
-  color: 'transparent'
-  property alias backgroundColor: imageRect%1.color
+  backgroundColor: 'transparent'
   property alias source: image%1.source
   property alias resizeMode: image%1.fillMode
   property alias tintColor: colorOverlay%1.color
-  property real borderRadius: 0
   onTintColorChanged: {
     image%1.visible = false
     colorOverlay%1.visible = true
