@@ -183,15 +183,15 @@ public:
       prepareLayout(ReactFlexLayoutPrivate::get(ReactFlexLayout::get(c)));
     }
   }
-  void setDirty(bool drty) {
-    // qDebug() << __PRETTY_FUNCTION__ << this << "old" << dirty << "new" << drty;
-    dirty = drty;
+  void setDirty(bool dirty) {
+    // qDebug() << __PRETTY_FUNCTION__ << this << "old" << dirty << "new" << dirty;
+    this->dirty = dirty;
     if (!dirty)
       return; // dont reset parent
     if (parentItem != nullptr) {
       ReactFlexLayout* pl = ReactFlexLayout::get(parentItem, false);
       if (pl != nullptr)
-        pl->setDirty(drty);
+        pl->setDirty(dirty);
     }
   }
   void local_print_node(int tab) {

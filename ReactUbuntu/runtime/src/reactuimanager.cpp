@@ -85,10 +85,22 @@ void ReactUIManager::updateView
   Q_ASSERT(ReactAttachedProperties::get(item) != nullptr);
   ReactAttachedProperties::get(item)->applyProperties(properties);
 
-  Q_ASSERT(ReactFlexLayout::get(item) != nullptr);
-  ReactFlexLayout::get(item)->applyLayoutProperties(properties);
-  if (viewName == "RCTText")
-    ReactFlexLayout::get(item)->setDirty(true); // XXX: remove when text layout fixed
+  ReactFlexLayout* fl = ReactFlexLayout::get(item, false);
+  if (fl != nullptr) {
+    fl->applyLayoutProperties(properties);
+  }
+
+  // We can get updates on views which are not in the layout hierarchy (rawtext)
+  // But we still trigger a layout through its closest visual parent
+  while (fl == nullptr) {
+    QQuickItem *pi = item->parentItem();
+    if (pi == nullptr)
+      break;
+    fl = ReactFlexLayout::get(pi, false);
+    if (fl != nullptr) {
+      fl->setDirty(true);
+    }
+  }
 
   m_bridge->visualParent()->polish();
 }
@@ -116,7 +128,6 @@ void ReactUIManager::manageChildren
   if (!removeAtIndices.isEmpty()) {
     // removeAtIndices get unpluged and erased
     QList<QQuickItem*> removed = rfl->removeChildren(removeAtIndices);
-
     for (QQuickItem* child : removed) {
       // remove from visual hierarchy
       child->setParent(0);
@@ -284,21 +295,24 @@ void ReactUIManager::createView
     return;
   }
 
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(item);
+
   // TODO: move to createView?
   if (!props.isEmpty()) {
-    ReactAttachedProperties* rap = ReactAttachedProperties::get(item);
-    rap->applyProperties(props);
+    ap->applyProperties(props);
   }
 
   // Layout properties
-  ReactFlexLayout* layout = ReactFlexLayout::get(item);
-  layout->applyLayoutProperties(props);
+  if (ap->shouldLayout()) {
+    ReactFlexLayout* fl = ReactFlexLayout::get(item);
+    fl->applyLayoutProperties(props);
 
-  // At creation properties have been applied which can lead to the new item's
-  // layout being marked as dirty - but we want to be able to mark items being
-  // positioned in the visual hierarchy as dirty, so force a reset until that
-  // time.
-  layout->setDirty(false);
+    // At creation properties have been applied which can lead to the new item's
+    // layout being marked as dirty - but we want to be able to mark items being
+    // positioned in the visual hierarchy as dirty, so force a reset until that
+    // time.
+    fl->setDirty(false);
+  }
 
   m_views.insert(reactTag, item);
 
@@ -401,7 +415,7 @@ void ReactUIManager::reset()
 
 void ReactUIManager::setBridge(ReactBridge* bridge)
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
   if (m_bridge != nullptr) {
     qCritical() << "Bridge already set, UIManager already initialised?";
     return;

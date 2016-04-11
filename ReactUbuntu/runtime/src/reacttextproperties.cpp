@@ -5,7 +5,6 @@
 
 #include <QDebug>
 
-
 #include "reacttextproperties.h"
 #include "reactrawtextproperties.h"
 #include "reactflexlayout.h"
@@ -68,12 +67,13 @@ public:
     setDirty(true);
   }
 
-  void setDirty(bool drty) {
-    dirty = drty;
+  void setDirty(bool dirty) {
+    this->dirty = dirty;
     ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
     if (tp != nullptr) {
-      tp->setDirty(drty);
+      tp->setDirty(dirty);
     }
+    ReactFlexLayout::get(item)->setDirty(dirty);
   }
 
   QString textWithProperties(const property_map& properties) {
