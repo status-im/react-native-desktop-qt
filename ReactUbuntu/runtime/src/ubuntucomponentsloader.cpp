@@ -87,7 +87,6 @@ QObjectList UbuntuComponentsLoader::availableModules()
   }
 
   for (const UbuntuComponent& e : findComponents(&qmlFile)) {
-    qDebug() << "adding ubuntu module" << e.name << e.version;
     modules << new UbuntuComponentModule(e.name, e.version, basePath + e.path);
   }
 

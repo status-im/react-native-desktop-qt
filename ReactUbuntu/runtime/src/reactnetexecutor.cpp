@@ -31,18 +31,16 @@ void ReactNetExecutor::init()
 
 void ReactNetExecutor::injectJson(const QString& name, const QVariant& data)
 {
-  qDebug() << __func__ << "name=" << name; // << "json=" << data;
+  // qDebug() << __func__ << "name=" << name; // << "json=" << data;
 
   QJsonDocument doc = QJsonDocument::fromVariant(data);
-
+  // qDebug() << __func__ << "doc=" << doc.toJson(QJsonDocument::Indented);
   sendRequest(name.toLocal8Bit() + "=" + doc.toJson(QJsonDocument::Compact));
   handleResponse();
 }
 
 void ReactNetExecutor::executeApplicationScript(const QByteArray& script, const QUrl& /*sourceUrl*/)
 {
-  qDebug() << __func__;
-
   // Size is a problem?
   sendRequest(script);
 

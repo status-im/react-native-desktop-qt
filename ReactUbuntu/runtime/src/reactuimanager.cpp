@@ -24,7 +24,7 @@ int ReactUIManager::m_nextRootTag = 1;
 
 void ReactUIManager::removeSubviewsFromContainerWithID(int containerReactTag)
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 
   QQuickItem* item = m_views.value(containerReactTag);
   if (item == nullptr) {
@@ -45,7 +45,7 @@ void ReactUIManager::measure
  const ReactModuleInterface::ListArgumentBlock& callback
 )
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 
   QQuickItem* item = m_views.value(reactTag);
   if (item == nullptr) {
@@ -103,7 +103,7 @@ void ReactUIManager::manageChildren
   const QList<int>& removeAtIndices
 )
 {
-  qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags << addAtIndices << removeAtIndices;
+  // qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags << addAtIndices << removeAtIndices;
 
   QQuickItem* container = m_views[containerReactTag];
   if (container == nullptr) {
@@ -245,12 +245,12 @@ void ReactUIManager::setJSResponder(int reactTag, bool blockNativeResponder)
   Q_UNUSED(reactTag);
   Q_UNUSED(blockNativeResponder);
 
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 }
 
 void ReactUIManager::clearJSResponder()
 {
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 }
 
 // in iOS, resign first responder (actual)
@@ -258,7 +258,7 @@ void ReactUIManager::blur(int reactTag)
 {
   Q_UNUSED(reactTag);
 
-  qDebug() << __PRETTY_FUNCTION__;
+  // qDebug() << __PRETTY_FUNCTION__;
 }
 
 void ReactUIManager::createView
@@ -271,7 +271,7 @@ void ReactUIManager::createView
 {
   Q_UNUSED(rootTag);
 
-  qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag << props;
+  // qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag << props;
   ReactComponentData* cd = m_componentData.value(viewName);
   if (cd == nullptr) {
     qCritical() << "Attempt to create unknown view of type" << viewName;
@@ -301,6 +301,8 @@ void ReactUIManager::createView
   layout->setDirty(false);
 
   m_views.insert(reactTag, item);
+
+  // qDebug() << __PRETTY_FUNCTION__ << "end";
 }
 
 void ReactUIManager::findSubviewIn
@@ -437,7 +439,7 @@ QVariantMap ReactUIManager::constantsToExport()
   QVariantMap bubblingEvents;
 
   for (const ReactComponentData* componentData : m_componentData) {
-    qDebug() << "Checking" << componentData->name();
+    // qDebug() << "Checking" << componentData->name();
 
     QVariantMap managerInfo;
 

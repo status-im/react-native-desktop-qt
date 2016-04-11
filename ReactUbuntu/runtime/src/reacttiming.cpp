@@ -49,7 +49,7 @@ QVariantMap ReactTiming::constantsToExport()
  Making the resolution of the timer in line with screen refresh. (60hz?)
 
  It attempts to compensate for request latency, by passing the time the request
- was scheduled, synchronised clocks, oh my.
+ was scheduled.
 
  - if the duration is 0 and it does not repeat, a callback is enqueud
    immediately, and this method returns

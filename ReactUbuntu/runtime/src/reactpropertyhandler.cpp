@@ -24,7 +24,7 @@ QList<QMetaProperty> ReactPropertyHandler::availableProperties()
 
 void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
 {
-  qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
+  // qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
   buildPropertyMap();
 
   /*

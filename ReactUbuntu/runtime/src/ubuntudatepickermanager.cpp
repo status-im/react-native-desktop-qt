@@ -194,7 +194,6 @@ QQuickItem* UbuntuDatePickerManager::view(const QVariantMap& properties) const
 
 void UbuntuDatePickerManager::onDateChanged()
 {
-  qDebug() << __PRETTY_FUNCTION__;
   ReactAttachedProperties* ap = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(sender()));
   if (ap == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";

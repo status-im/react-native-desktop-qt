@@ -35,7 +35,6 @@ ReactViewManager* ReactViewManager::viewManager()
 
 ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
 {
-  // return new ViewPropertyHandler(object);
   return new ReactPropertyHandler(object);
 }
 
@@ -91,8 +90,6 @@ React.Item {
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__;
-
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(component_qml, QUrl());
   if (!component.isReady())

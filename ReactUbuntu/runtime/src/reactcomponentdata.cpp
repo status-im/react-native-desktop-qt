@@ -56,7 +56,7 @@ QList<QMetaProperty> findProperties(QObject* object)
 
 QVariantMap ReactComponentData::viewConfig() const
 {
-  qDebug() << __PRETTY_FUNCTION__ << name();
+  // qDebug() << __PRETTY_FUNCTION__ << name();
 
   QVariantMap rc;
 

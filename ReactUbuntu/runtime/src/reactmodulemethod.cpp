@@ -55,7 +55,6 @@ void ReactModuleMethod::invokeWithBridge(ReactBridge* bridge, const QVariantList
     }
   }
 
-  // come on, why after all this time, is there no dynamic invoke?
   switch (argsm.size()) {
   case 0:
     m_metaMethod.invoke(target, Qt::DirectConnection);

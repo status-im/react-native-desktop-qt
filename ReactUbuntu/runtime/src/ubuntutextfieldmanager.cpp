@@ -151,8 +151,6 @@ TextField {
 
 QQuickItem* UbuntuTextFieldManager::view(const QVariantMap& properties) const
 {
-  qDebug() << __PRETTY_FUNCTION__ << properties;
-
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(component_qml, QUrl());
   if (!component.isReady())
@@ -194,7 +192,6 @@ void UbuntuTextFieldManager::activeFocusChanged()
 
 void UbuntuTextFieldManager::textChanged()
 {
-  qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
 
@@ -209,7 +206,6 @@ void UbuntuTextFieldManager::textChanged()
     return;
   }
   if (ph->onChange()) {
-    qDebug() << __PRETTY_FUNCTION__ << "sending message";
     m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                             QVariantList{ap->tag(),
                                          normalizeInputEventName("onChange"),
