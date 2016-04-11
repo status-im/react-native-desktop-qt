@@ -63,7 +63,7 @@ QVariantMap ReactComponentData::viewConfig() const
   // Create a temporary view to inspect, oh well
   QQuickItem* view = m_moduleInterface->viewManager()->view();
   if (view == nullptr) {
-    qDebug() << name() << "has no view for inspecting!";
+    qWarning() << name() << "has no view for inspecting!";
     return rc;
   }
   view->deleteLater();
