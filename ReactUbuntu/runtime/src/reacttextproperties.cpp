@@ -67,6 +67,29 @@ public:
     setDirty(true);
   }
 
+  QString textAlign() const {
+    QQmlProperty p(item, "horizontalAlignment");
+    switch (p.read().toInt()) {
+    case Qt::AlignLeft: return "left";
+    case Qt::AlignRight: return "right";
+    case Qt::AlignHCenter: return "center";
+    case Qt::AlignJustify: return "justify";
+    }
+  }
+
+  void setTextAlign(const QString& textAlign) {
+    QQmlProperty p(item, "horizontalAlignment");
+    if (textAlign == "left") {
+      p.write(Qt::AlignLeft);
+    } else if (textAlign == "right") {
+      p.write(Qt::AlignRight);
+    } else if (textAlign == "center") {
+      p.write(Qt::AlignHCenter);
+    } else if (textAlign == "justify") {
+      p.write(Qt::AlignJustify);
+    }
+  }
+
   void setDirty(bool dirty) {
     this->dirty = dirty;
     ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
@@ -208,12 +231,12 @@ void ReactTextProperties::setLineHeight(double lineHeight)
 
 QString ReactTextProperties::textAlign() const
 {
-  return d_func()->value<QString>(k_text_align);
+  return d_func()->textAlign();
 }
 
 void ReactTextProperties::setTextAlign(const QString& textAlign)
 {
-  d_func()->setValue(k_text_align, textAlign);
+  d_func()->setTextAlign(textAlign);
 }
 
 QString ReactTextProperties::textDecorationLine() const

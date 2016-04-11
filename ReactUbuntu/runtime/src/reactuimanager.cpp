@@ -74,7 +74,7 @@ void ReactUIManager::updateView
   const QVariantMap& properties
 )
 {
-  qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << properties;
+  // qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << properties;
 
   QQuickItem* item = m_views.value(reactTag);
   if (item == nullptr) {
@@ -99,6 +99,7 @@ void ReactUIManager::updateView
     fl = ReactFlexLayout::get(pi, false);
     if (fl != nullptr) {
       fl->setDirty(true);
+      break;
     }
   }
 
