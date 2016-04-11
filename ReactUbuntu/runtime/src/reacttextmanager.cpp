@@ -83,7 +83,7 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
     return nullptr;
   }
 
-  // item->setEnabled(false);
+  item->setEnabled(false);
 
   return item;
 }

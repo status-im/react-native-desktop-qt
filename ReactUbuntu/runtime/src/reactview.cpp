@@ -31,14 +31,13 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event)
     local = target->mapToItem(next, local);
   }
 
-  // XXX: should climb back up to a matching react target?
-  ReactAttachedProperties* properties = ReactAttachedProperties::get(target, false);
-  if (properties == nullptr) {
-    qDebug() << __PRETTY_FUNCTION__ << "target was not a reactItem";
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(target, false);
+  if (ap == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
     return e;
   }
 
-  e.insert("target", properties->tag());
+  e.insert("target", ap->tag());
   e.insert("identifier", 1);
   e.insert("touches", QVariant());
   e.insert("changedTouches", QVariant());
@@ -63,17 +62,15 @@ class ReactViewPrivate : public QObject
   Q_OBJECT
   Q_DECLARE_PUBLIC(ReactView)
 public:
-  bool liveReload;
+  bool liveReload = false;
   QString moduleName;
   QUrl codeLocation;
   QVariantMap properties;
-  ReactBridge* bridge;
+  ReactBridge* bridge = nullptr;
   ReactView* q_ptr;
 
   ReactViewPrivate(ReactView* q)
     : q_ptr(q)
-    , liveReload(false)
-    , bridge(nullptr)
     {}
 
   void monitorChangeUrl() {
@@ -228,6 +225,7 @@ void ReactView::componentComplete()
 
 void ReactView::mousePressEvent(QMouseEvent* event)
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   Q_D(ReactView);
 
   QVariantMap e = makeReactTouchEvent(this, event);
@@ -258,6 +256,7 @@ void ReactView::mouseMoveEvent(QMouseEvent* event)
 
 void ReactView::mouseReleaseEvent(QMouseEvent* event)
 {
+  // qDebug() << __PRETTY_FUNCTION__;
   Q_D(ReactView);
 
   QVariantMap e = makeReactTouchEvent(this, event);
@@ -273,7 +272,18 @@ void ReactView::mouseReleaseEvent(QMouseEvent* event)
 
 bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event)
 {
+  // qDebug() << __PRETTY_FUNCTION__ << item << event;
   Q_D(ReactView);
+
+  switch (event->type()) {
+  // case QEvent::MouseButtonDblClick:
+  case QEvent::MouseButtonPress:
+  case QEvent::MouseButtonRelease:
+  case QEvent::MouseMove:
+    break;
+  default:
+    return false;
+  }
 
   QVariantMap e = makeReactTouchEvent(item, static_cast<QMouseEvent*>(event));
   if (e.isEmpty())
