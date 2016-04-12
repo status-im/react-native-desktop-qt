@@ -3,7 +3,12 @@
 
 ## Dependencies
 
-- TODO: (Qt, CMake, node)
+CMake, Qt.
+```
+sudo apt-get install cmake qt5-default qtdeclarative5-dev
+```
+
+- TODO: node
 
 ## Sinopia
 - follow the Sinopia install instructions from ./react-native-cli/README.md

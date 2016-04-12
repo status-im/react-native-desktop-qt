@@ -210,6 +210,7 @@ void ReactImageManager::statusChanged()
 
 void ReactImageManager::configureView(QQuickItem* view) const
 {
+  view->setEnabled(false);
   connect(view, SIGNAL(statusChanged(QQuickImageBase::Status)), SLOT(statusChanged()));
 }
 
