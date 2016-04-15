@@ -25,9 +25,8 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 
-add_library(
-  react-native MODULE
-
+set(
+  SRC
   reactplugin.cpp
   reactvaluecoercion.cpp
   reactbridge.cpp
@@ -66,14 +65,25 @@ add_library(
   ../../../React/Layout/Layout.c
 )
 
+if(DEFINED REACT_BUILD_STATIC_LIB)
+add_library(
+  react-native STATIC
+  ${SRC}
+)
+else()
+add_library(
+  react-native MODULE
+  ${SRC}
+)
 set_target_properties(
   react-native
   PROPERTIES LIBRARY_OUTPUT_DIRECTORY React
- )
+)
+endif()
 
 qt5_use_modules(react-native Core Qml Quick)
 
 add_custom_target(
   copy-qmldir ALL
   COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
- )
+)
