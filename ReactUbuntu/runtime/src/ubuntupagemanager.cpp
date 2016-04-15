@@ -28,9 +28,19 @@ public:
   void setQmlAnchors(bool qmlAnchors);
 };
 
+QString PagePropertyHandler::title() const
+{
+  QQmlProperty(m_object, "title").read().value<QString>();
+}
+
 void PagePropertyHandler::setTitle(const QString& title)
 {
   QQmlProperty(m_object, "title").write(QVariant::fromValue(title));
+}
+
+bool PagePropertyHandler::qmlAnchors() const
+{
+  return ReactFlexLayout::get(qobject_cast<QQuickItem*>(m_object))->qmlAnchors();
 }
 
 void PagePropertyHandler::setQmlAnchors(bool qmlAnchors)

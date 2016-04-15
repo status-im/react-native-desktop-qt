@@ -52,18 +52,18 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'NavigatorExample',
     module: require('./Navigator/NavigatorExample'),
   },
-  {
-    key: 'NavigatorIOSColorsExample',
-    module: require('./NavigatorIOSColorsExample'),
-  },
-  {
-    key: 'NavigatorIOSExample',
-    module: require('./NavigatorIOSExample'),
-  },
-  {
-    key: 'PickerIOSExample',
-    module: require('./PickerIOSExample'),
-  },
+  // {
+  //   key: 'NavigatorIOSColorsExample',
+  //   module: require('./NavigatorIOSColorsExample'),
+  // },
+  // {
+  //   key: 'NavigatorIOSExample',
+  //   module: require('./NavigatorIOSExample'),
+  // },
+  // {
+  //   key: 'PickerIOSExample',
+  //   module: require('./PickerIOSExample'),
+  // },
   {
     key: 'ProgressViewIOSExample',
     module: require('./ProgressViewIOSExample'),
@@ -92,10 +92,10 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'SwitchExample',
     module: require('./SwitchExample'),
   },
-  {
-    key: 'TabBarIOSExample',
-    module: require('./TabBarIOSExample'),
-  },
+  // {
+  //   key: 'TabBarIOSExample',
+  //   module: require('./TabBarIOSExample'),
+  // },
   {
     key: 'TextExample',
     module: require('./TextExample.ios'),
@@ -123,22 +123,22 @@ var ComponentExamples: Array<UIExplorerExample> = [
 ];
 
 var APIExamples: Array<UIExplorerExample> = [
-  {
-    key: 'AccessibilityIOSExample',
-    module: require('./AccessibilityIOSExample'),
-  },
-  {
-    key: 'ActionSheetIOSExample',
-    module: require('./ActionSheetIOSExample'),
-  },
-  {
-    key: 'AdSupportIOSExample',
-    module: require('./AdSupportIOSExample'),
-  },
-  {
-    key: 'AlertIOSExample',
-    module: require('./AlertIOSExample'),
-  },
+  // {
+  //   key: 'AccessibilityIOSExample',
+  //   module: require('./AccessibilityIOSExample'),
+  // },
+  // {
+  //   key: 'ActionSheetIOSExample',
+  //   module: require('./ActionSheetIOSExample'),
+  // },
+  // {
+  //   key: 'AdSupportIOSExample',
+  //   module: require('./AdSupportIOSExample'),
+  // },
+  // {
+  //   key: 'AlertIOSExample',
+  //   module: require('./AlertIOSExample'),
+  // },
   {
     key: 'AnimatedExample',
     module: require('./AnimatedExample'),
@@ -147,10 +147,10 @@ var APIExamples: Array<UIExplorerExample> = [
     key: 'AnExApp',
     module: require('./AnimatedGratuitousApp/AnExApp'),
   },
-  {
-    key: 'AppStateIOSExample',
-    module: require('./AppStateIOSExample'),
-  },
+  // {
+  //   key: 'AppStateIOSExample',
+  //   module: require('./AppStateIOSExample'),
+  // },
   {
     key: 'AppStateExample',
     module: require('./AppStateExample'),

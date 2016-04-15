@@ -72,14 +72,29 @@ void DatePickerPropertyHandler::setOnChange(bool onChange)
   m_onChange = onChange;
 }
 
+QDateTime DatePickerPropertyHandler::maximumDate() const
+{
+  return QQmlProperty(m_object, "maximum").read().value<QDateTime>();
+}
+
 void DatePickerPropertyHandler::setMaximumDate(const QDateTime& maximumDate)
 {
   QQmlProperty(m_object, "maximum").write(maximumDate);
 }
 
+QDateTime DatePickerPropertyHandler::minimumDate() const
+{
+  return QQmlProperty(m_object, "minimum").read().value<QDateTime>();
+}
+
 void DatePickerPropertyHandler::setMinimumDate(const QDateTime& minimumDate)
 {
   QQmlProperty(m_object, "minimum").write(minimumDate);
+}
+
+QString DatePickerPropertyHandler::mode() const
+{
+  return QString();
 }
 
 void DatePickerPropertyHandler::setMode(const QString& mode)
@@ -93,9 +108,19 @@ void DatePickerPropertyHandler::setMode(const QString& mode)
   }
 }
 
+int DatePickerPropertyHandler::minuteInterval() const
+{
+  return int();
+}
+
 void DatePickerPropertyHandler::setMinuteInterval(int minimumInterval)
 {
   // XXX: not supported
+}
+
+int DatePickerPropertyHandler::timeZoneOffsetInMinutes() const
+{
+  return int();
 }
 
 void DatePickerPropertyHandler::setTimeZoneOffsetInMinutes(int timeZoneOffsetInMinutes)
@@ -103,9 +128,19 @@ void DatePickerPropertyHandler::setTimeZoneOffsetInMinutes(int timeZoneOffsetInM
   // TODO: locale
 }
 
+bool DatePickerPropertyHandler::qmlImplicitWidth() const
+{
+  ReactFlexLayout::get(qobject_cast<QQuickItem*>(m_object))->qmlImplicitWidth();
+}
+
 void DatePickerPropertyHandler::setQmlImplicitWidth(bool qmlImplicitWidth)
 {
   ReactFlexLayout::get(qobject_cast<QQuickItem*>(m_object))->setQmlImplicitWidth(qmlImplicitWidth);
+}
+
+bool DatePickerPropertyHandler::qmlImplicitHeight() const
+{
+  ReactFlexLayout::get(qobject_cast<QQuickItem*>(m_object))->qmlImplicitHeight();
 }
 
 void DatePickerPropertyHandler::setQmlImplicitHeight(bool qmlImplicitHeight)

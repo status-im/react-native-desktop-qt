@@ -14,35 +14,48 @@ int ReactImageManager::m_id = 0;
 
 class ImagePropertyHandler : public ReactPropertyHandler {
   Q_OBJECT
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
   Q_PROPERTY(QString resizeMode READ resizeMode WRITE setResizeMode)
-  Q_PROPERTY(QUrl source READ source WRITE setSource)
+  Q_PROPERTY(QString backfaceVisibility READ backfaceVisibility WRITE setBackfaceVisibility)
+  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
+  Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
+  Q_PROPERTY(double borderWidth READ borderWidth WRITE setBorderWidth)
+  Q_PROPERTY(double borderRadius READ borderRadius WRITE setBorderRadius)
+  Q_PROPERTY(QString overflow READ overflow WRITE setOverflow)
   Q_PROPERTY(QColor tintColor READ tintColor WRITE setTintColor)
   Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
-  Q_PROPERTY(double borderRadius READ borderRadius WRITE setBorderRadius)
-  Q_PROPERTY(double borderWidth READ borderWidth WRITE setBorderWidth)
-  Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
+  Q_PROPERTY(QUrl source READ source WRITE setSource)
+
 public:
   enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
   ImagePropertyHandler(QObject* object)
     : ReactPropertyHandler(object) {
-    } QColor backgroundColor() const;
-  void setBackgroundColor(const QColor& backgroundColor);
+    }
   QString resizeMode() const;
   void setResizeMode(const QString& resizeMode);
-  QUrl source() const;
-  void setSource(const QUrl& source);
+  QString backfaceVisibility() const;
+  void setBackfaceVisibility(const QString& backfaceVisibility);
+  QColor backgroundColor() const;
+  void setBackgroundColor(const QColor& backgroundColor);
   QColor tintColor() const;
   void setTintColor(const QColor& tintColor);
   double opacity() const;
   void setOpacity(double opacity);
-  double borderRadius();
-  void setBorderRadius(double borderRadius);
-  double borderWidth();
+  double borderWidth() const;
   void setBorderWidth(double borderWidth);
-  QColor borderColor();
+  double borderRadius() const;
+  void setBorderRadius(double borderRadius);
+  QString overflow() const;
+  void setOverflow(const QString& overdlow);
+  QColor borderColor() const;
   void setBorderColor(const QColor& borderColor);
+  QUrl source() const;
+  void setSource(const QUrl& source);
 };
+
+QColor ImagePropertyHandler::backgroundColor() const
+{
+  m_object->property("backgroundColor").value<QColor>();
+}
 
 void ImagePropertyHandler::setBackgroundColor(const QColor& backgroundColor)
 {
@@ -72,9 +85,28 @@ void ImagePropertyHandler::setResizeMode(const QString& resizeMode)
   }
 }
 
+QString ImagePropertyHandler::backfaceVisibility() const
+{
+  return QString();
+}
+
+void ImagePropertyHandler::setBackfaceVisibility(const QString& backfaceVisibility)
+{
+}
+
+QUrl ImagePropertyHandler::source() const
+{
+  return QUrl();
+}
+
 void ImagePropertyHandler::setSource(const QUrl& source)
 {
   m_object->setProperty("source", source);
+}
+
+QColor ImagePropertyHandler::tintColor() const
+{
+  return m_object->property("tintColor").value<QColor>();
 }
 
 void ImagePropertyHandler::setTintColor(const QColor& tintColor)
@@ -82,9 +114,19 @@ void ImagePropertyHandler::setTintColor(const QColor& tintColor)
   m_object->setProperty("tintColor", tintColor);
 }
 
+double ImagePropertyHandler::opacity() const
+{
+  return m_object->property("opacity").value<double>();
+}
+
 void ImagePropertyHandler::setOpacity(double opacity)
 {
   m_object->setProperty("opacity", opacity);
+}
+
+double ImagePropertyHandler::borderRadius() const
+{
+  return m_object->property("borderRadius").value<double>();
 }
 
 void ImagePropertyHandler::setBorderRadius(double borderRadius)
@@ -92,9 +134,30 @@ void ImagePropertyHandler::setBorderRadius(double borderRadius)
   m_object->setProperty("borderRadius", borderRadius);
 }
 
+QString ImagePropertyHandler::overflow() const
+{
+  return QString();
+}
+
+void ImagePropertyHandler::setOverflow(const QString& overflow)
+{
+  const bool clip = overflow == "hidden";
+  m_object->setProperty("clip", clip);
+}
+
+double ImagePropertyHandler::borderWidth() const
+{
+  return m_object->property("borderWidth").value<double>();
+}
+
 void ImagePropertyHandler::setBorderWidth(double borderWidth)
 {
   QQmlProperty(m_object, "border.width").write(borderWidth);
+}
+
+QColor ImagePropertyHandler::borderColor() const
+{
+  return m_object->property("borderColor").value<QColor>();
 }
 
 void ImagePropertyHandler::setBorderColor(const QColor& borderColor)

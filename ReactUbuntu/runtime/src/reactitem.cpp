@@ -31,34 +31,22 @@ class ReactItemPrivate
 {
   Q_DECLARE_PUBLIC(ReactItem)
 public:
-  bool customBorderColors;
-  bool customBorderWidths;
-  bool customBorderRadius;
-  QColor borderColor;
+  bool customBorderColors = false;
+  bool customBorderWidths = false;
+  bool customBorderRadius = false;
+  QColor borderColor = Qt::black;
   QColor borderColors[4];
-  double borderRadius;
-  double borderRadiuses[4];
-  double borderWidth;
-  double borderWidths[4];
-  Qt::PenStyle borderStyle;
+  double borderRadius = 0;
+  double borderRadiuses[4] = { 0, };
+  double borderWidth = 0;
+  double borderWidths[4] = { 0, };
+  Qt::PenStyle borderStyle = Qt::SolidLine;
   QRectF outerRects[4];
   QRectF innerRects[4];
 
   ReactItemPrivate(ReactItem* q)
     : q_ptr(q)
   {
-    customBorderColors = false;
-    customBorderWidths = false;
-    customBorderRadius = false;
-    borderColor = Qt::black;
-    borderWidth = 0;
-    borderRadius = 0;
-    borderStyle = Qt::SolidLine;
-
-    for (int i = 0; i < 4; ++i) {
-      borderWidths[i] = 0;
-      borderRadiuses[i] = 0;
-    }
   }
 
   void calculateCornerRects(const QRectF& otr, const QRectF& inr) {

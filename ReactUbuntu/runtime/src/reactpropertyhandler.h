@@ -22,7 +22,7 @@ public:
 
 protected:
   bool m_exposeQmlProperties;
-  bool m_cached;
+  bool m_cached = false;
   QObject* m_object;
   QMap<QString, QMetaProperty> m_coreProperties;
   QMap<QString, QMetaProperty> m_extraProperties;

@@ -7,7 +7,6 @@
 ReactPropertyHandler::ReactPropertyHandler(QObject* object, bool exposeQmlProperties)
   : QObject(object)
   , m_exposeQmlProperties(exposeQmlProperties)
-  , m_cached(false)
   , m_object(object)
 {
 }
