@@ -10,10 +10,10 @@ class ReactAttachedPropertiesPrivate
 {
 public:
   ReactAttachedPropertiesPrivate()
-    : tag(-1) {}
-  int tag;
+    {}
+  int tag = -1;
   bool shouldLayout;
-  ReactViewManager* viewManager;
+  ReactViewManager* viewManager = nullptr;
   ReactPropertyHandler* propertyHandler;
   QQuickItem* item;
 };
@@ -24,7 +24,6 @@ ReactAttachedProperties::ReactAttachedProperties(QObject* parent)
   , d_ptr(new ReactAttachedPropertiesPrivate)
 {
   Q_D(ReactAttachedProperties);
-  d->viewManager = nullptr;
   d->item = qobject_cast<QQuickItem*>(parent);
   if (d->item == nullptr) {
     qCritical() << "ReactAttachedProperties is for use with visual items";

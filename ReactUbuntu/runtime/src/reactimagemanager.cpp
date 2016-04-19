@@ -152,7 +152,7 @@ double ImagePropertyHandler::borderWidth() const
 
 void ImagePropertyHandler::setBorderWidth(double borderWidth)
 {
-  QQmlProperty(m_object, "border.width").write(borderWidth);
+  QQmlProperty(m_object, "borderWidth").write(borderWidth);
 }
 
 QColor ImagePropertyHandler::borderColor() const
@@ -162,7 +162,7 @@ QColor ImagePropertyHandler::borderColor() const
 
 void ImagePropertyHandler::setBorderColor(const QColor& borderColor)
 {
-  QQmlProperty(m_object, "border.color").write(borderColor);
+  QQmlProperty(m_object, "borderColor").write(borderColor);
 }
 
 

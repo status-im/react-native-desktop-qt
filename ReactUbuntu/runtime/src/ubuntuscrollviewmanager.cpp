@@ -50,7 +50,7 @@ void UbuntuScrollViewManager::scrollTo(
   Q_ASSERT(item != nullptr);
 
   QQmlProperty(item, "contentX").write(offsetX);
-  QQmlProperty(item, "contentY").write(offsetX);
+  QQmlProperty(item, "contentY").write(offsetY);
 }
 
 
