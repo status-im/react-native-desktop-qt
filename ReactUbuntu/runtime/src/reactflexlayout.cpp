@@ -6,6 +6,8 @@ extern "C" {
 
 #include "reactflexlayout.h"
 #include "reactattachedproperties.h"
+#include "reactvaluecoercion.h"
+
 
 namespace {
 static QMap<QString, ReactFlexLayout::Direction> directions{
@@ -33,67 +35,70 @@ static QMap<QString, ReactFlexLayout::Wrap> wraps{
   { "wrap", ReactFlexLayout::WrapYes },
   { "nowrap", ReactFlexLayout::WrapNo }
 };
+}
 
-// TODO: move to property application code like ReactPropertyHandler
-void applyFlexProperties(ReactFlexLayout* flex, const QVariantMap& properties)
-{
-  for (const QString& key : properties.keys()) {
-    if (key == "flex") {
-      flex->setFlex(properties.value(key).toDouble());
-    } else if (key == "flexDirection") {
-      flex->setDirection(directions[properties.value(key).toString()]);
-    } else if (key == "alignItems") {
-      flex->setItemAlignment(alignments[properties.value(key).toString()]);
-    } else if (key == "justifyContent") {
-      flex->setJustify(justifys[properties.value(key).toString()]);
-    } else if (key == "position") {
-      flex->setPosition(positions[properties.value(key).toString()]);
-    } else if (key == "flexWrap") {
-      flex->setWrap(wraps[properties.value(key).toString()]);
-    } else if (key == "top") {
-      flex->setTop(properties.value(key).toDouble());
-    } else if (key == "right") {
-      flex->setRight(properties.value(key).toDouble());
-    } else if (key == "bottom") {
-      flex->setBottom(properties.value(key).toDouble());
-    } else if (key == "left") {
-      flex->setLeft(properties.value(key).toDouble());
-    } else if (key == "width") {
-      flex->setWidth(properties.value(key).toDouble());
-    } else if (key == "height") {
-      flex->setHeight(properties.value(key).toDouble());
-    } else if (key == "padding") {
-      flex->setPadding(properties.value(key).toDouble());
-    } else if (key == "paddingLeft") {
-      flex->setPaddingLeft(properties.value(key).toDouble());
-    } else if (key == "paddingTop") {
-      flex->setPaddingTop(properties.value(key).toDouble());
-    } else if (key == "paddingRight") {
-      flex->setPaddingRight(properties.value(key).toDouble());
-    } else if (key == "paddingBottom") {
-      flex->setPaddingBottom(properties.value(key).toDouble());
-    } else if (key == "paddingHorizontal") {
-      flex->setPaddingHorizontal(properties.value(key).toDouble());
-    } else if (key == "paddingVertical") {
-      flex->setPaddingVertical(properties.value(key).toDouble());
-    } else if (key == "margin") {
-      flex->setMargin(properties.value(key).toDouble());
-    } else if (key == "marginLeft") {
-      flex->setMarginLeft(properties.value(key).toDouble());
-    } else if (key == "marginTop") {
-      flex->setMarginTop(properties.value(key).toDouble());
-    } else if (key == "marginRight") {
-      flex->setMarginRight(properties.value(key).toDouble());
-    } else if (key == "marginBottom") {
-      flex->setMarginBottom(properties.value(key).toDouble());
-    } else if (key == "marginHorizontal") {
-      flex->setMarginHorizontal(properties.value(key).toDouble());
-    } else if (key == "marginVertical") {
-      flex->setMarginVertical(properties.value(key).toDouble());
+class FlexPropertyHandler {
+public:
+  FlexPropertyHandler() {
+    const QMetaObject& metaObject = ReactFlexLayout::staticMetaObject;
+    const int propertyCount = metaObject.propertyCount();
+
+    for (int i = metaObject.propertyOffset(); i < propertyCount; ++i) {
+      QMetaProperty p = metaObject.property(i);
+      m_properties.insert(p.name(), p);
     }
   }
-}
-}
+
+  void applyProperties(ReactFlexLayout* fl, const QVariantMap& properties) {
+    for (auto it = properties.constBegin(); it != properties.constEnd(); ++it) {
+      QMap<QString, QMetaProperty>::iterator pi = m_properties.find(it.key());
+      if (pi != m_properties.end()) {
+        pi.value().write(fl, reactCoerceValue(it.value(), pi.value().userType(), &m_coercions));
+      }
+    }
+  }
+
+  QMap<int, coerce_function> m_coercions{
+    {
+      qMetaTypeId<ReactFlexLayout::Direction>(),
+      [](const QVariant& value) {
+        Q_ASSERT(value.canConvert<QString>());
+        return directions[value.toString()];
+      }
+    },
+    {
+      qMetaTypeId<ReactFlexLayout::Alignment>(),
+      [](const QVariant& value) {
+        Q_ASSERT(value.canConvert<QString>());
+        return alignments[value.toString()];
+      }
+    },
+    {
+      qMetaTypeId<ReactFlexLayout::Justify>(),
+      [](const QVariant& value) {
+        Q_ASSERT(value.canConvert<QString>());
+        return justifys[value.toString()];
+      }
+    },
+    {
+      qMetaTypeId<ReactFlexLayout::Position>(),
+      [](const QVariant& value) {
+        Q_ASSERT(value.canConvert<QString>());
+        return positions[value.toString()];
+      }
+    },
+    {
+      qMetaTypeId<ReactFlexLayout::Wrap>(),
+      [](const QVariant& value) {
+        Q_ASSERT(value.canConvert<QString>());
+        return wraps[value.toString()];
+      }
+    },
+  };
+
+  QMap<QString, QMetaProperty> m_properties;
+};
+Q_GLOBAL_STATIC(FlexPropertyHandler, flexPropertyHandler);
 
 
 QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p);
@@ -405,12 +410,12 @@ void ReactFlexLayout::setFlex(double flex)
   Q_EMIT flexChanged();
 }
 
-ReactFlexLayout::Direction ReactFlexLayout::direction() const
+ReactFlexLayout::Direction ReactFlexLayout::flexDirection() const
 {
   return (ReactFlexLayout::Direction)d_func()->cssNode->style.flex_direction;
 }
 
-void ReactFlexLayout::setDirection(Direction direction)
+void ReactFlexLayout::setFlexDirection(Direction direction)
 {
   Q_D(ReactFlexLayout);
   if (d->cssNode->style.flex_direction == (css_flex_direction_t)direction)
@@ -418,15 +423,15 @@ void ReactFlexLayout::setDirection(Direction direction)
 
   d->cssNode->style.flex_direction = (css_flex_direction_t)direction;
   setDirty(true);
-  Q_EMIT directionChanged();
+  Q_EMIT flexDirectionChanged();
 }
 
-ReactFlexLayout::Justify ReactFlexLayout::justify() const
+ReactFlexLayout::Justify ReactFlexLayout::justifyContent() const
 {
   return (ReactFlexLayout::Justify)d_func()->cssNode->style.justify_content;
 }
 
-void ReactFlexLayout::setJustify(Justify justify)
+void ReactFlexLayout::setJustifyContent(Justify justify)
 {
   Q_D(ReactFlexLayout);
   if (d->cssNode->style.justify_content == (css_justify_t)justify)
@@ -434,7 +439,7 @@ void ReactFlexLayout::setJustify(Justify justify)
 
   d->cssNode->style.justify_content = (css_justify_t)justify;
   setDirty(true);
-  Q_EMIT justifyChanged();
+  Q_EMIT justifyContentChanged();
 }
 
 ReactFlexLayout::Alignment ReactFlexLayout::selfAlignment() const
@@ -453,12 +458,12 @@ void ReactFlexLayout::setSelfAlignment(Alignment alignment)
   Q_EMIT selfAlignmentChanged();
 }
 
-ReactFlexLayout::Alignment ReactFlexLayout::itemAlignment() const
+ReactFlexLayout::Alignment ReactFlexLayout::alignItems() const
 {
   return (ReactFlexLayout::Alignment)d_func()->cssNode->style.align_items;
 }
 
-void ReactFlexLayout::setItemAlignment(Alignment alignment)
+void ReactFlexLayout::setAlignItems(Alignment alignment)
 {
   Q_D(ReactFlexLayout);
   if (d->cssNode->style.align_items == (css_align_t)alignment)
@@ -466,7 +471,7 @@ void ReactFlexLayout::setItemAlignment(Alignment alignment)
 
   d->cssNode->style.align_items = (css_align_t)alignment;
   setDirty(true);
-  Q_EMIT itemAlignmentChanged();
+  Q_EMIT alignItemsChanged();
 }
 
 ReactFlexLayout::Position ReactFlexLayout::position() const
@@ -597,6 +602,11 @@ void ReactFlexLayout::setHeight(double height)
   Q_EMIT heightChanged();
 }
 
+double ReactFlexLayout::padding() const
+{
+  return d_func()->cssNode->style.padding[CSS_TOP]; // XXX:
+}
+
 void ReactFlexLayout::setPadding(double padding)
 {
   Q_D(ReactFlexLayout);
@@ -679,7 +689,10 @@ void ReactFlexLayout::setPaddingRight(double padding)
   setDirty(true);
 }
 
-
+double ReactFlexLayout::margin() const
+{
+  return d_func()->cssNode->style.margin[CSS_TOP]; // XXX:
+}
 void ReactFlexLayout::setMargin(double margin)
 {
   Q_D(ReactFlexLayout);
@@ -812,7 +825,7 @@ QList<QQuickItem*> ReactFlexLayout::removeChildren(const QList<int>& children)
 
 void ReactFlexLayout::applyLayoutProperties(const QVariantMap& properties)
 {
-  applyFlexProperties(this, properties);
+  flexPropertyHandler()->applyProperties(this, properties);
 }
 
 void ReactFlexLayout::polish(QQuickItem* item)

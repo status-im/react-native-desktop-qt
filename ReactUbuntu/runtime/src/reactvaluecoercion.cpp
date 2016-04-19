@@ -15,8 +15,6 @@
 #include "reactnetworking.h"
 
 
-typedef std::function<QVariant (const QVariant&)> coerce_function;
-
 // XXX: should have some way for modules to add these
 QMap<int, coerce_function> coerceFunctions
 {
@@ -110,7 +108,7 @@ QMap<int, coerce_function> coerceFunctions
 };
 
 
-QVariant reactCoerceValue(const QVariant& data, int parameterType)
+QVariant reactCoerceValue(const QVariant& data, int parameterType, const coerce_map* userCoercions)
 {
   if (!data.isValid() || data.isNull()) {
     return QVariant(parameterType, QMetaType::create(parameterType));
@@ -120,16 +118,25 @@ QVariant reactCoerceValue(const QVariant& data, int parameterType)
     return data;
   }
 
+  coerce_function coerceFunction;
+
+  // User supplied coercions first
+  if (userCoercions != nullptr)
+    coerceFunction = userCoercions->value(parameterType);
+
+  // RN coercion functions
+  if (!coerceFunction)
+    coerceFunction = coerceFunctions.value(parameterType);
+
+  if (coerceFunction)
+    return coerceFunction(data);
+
+  // QVariant coercions
   if (data.canConvert(parameterType)) {
     QVariant converted = data;
     converted.convert(parameterType);
     return converted;
   }
 
-  coerce_function coerceFunction = coerceFunctions.value(parameterType);
-  if (!coerceFunction) {
-    return QVariant(); // Failure case; an invalid QVariant
-  }
-
-  return coerceFunction(data);
+  return QVariant(); // Failure case; an invalid QVariant
 }
