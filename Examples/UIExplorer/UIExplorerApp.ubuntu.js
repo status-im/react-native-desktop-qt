@@ -56,7 +56,6 @@ class UIExplorerApp extends React.Component {
   }
 
   render() {
-console.log('--- UIExplorerApp:render');
     return (
       <NavigationRootContainer
         persistenceKey="UIExplorerState"
@@ -68,13 +67,10 @@ console.log('--- UIExplorerApp:render');
   }
 
   _renderNavigation(navigationState: UIExplorerNavigationState, onNavigate: Function) {
-console.log('--- UIExplorerApp:_renderNavigation: navigationState=' + util.inspect(navigationState));
     if (!navigationState) {
-console.log('--- UIExplorerApp:_renderNavigation: returning - null state');
       return null;
     }
     if (navigationState.externalExample) {
-console.log('--- UIExplorerApp:_renderNavigation: returning - component');
       var Component = UIExplorerList.Modules[navigationState.externalExample];
       return (
         <Component
