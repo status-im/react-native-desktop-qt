@@ -298,7 +298,7 @@ void ReactBridge::injectModules()
   QVariantMap moduleConfig;
 
   for (auto& md : d->modules) {
-    qDebug() << "Injecting module" << md->name();
+//    qDebug() << "Injecting module" << md->name();
     moduleConfig.insert(md->name(), md->info());
   }
 
