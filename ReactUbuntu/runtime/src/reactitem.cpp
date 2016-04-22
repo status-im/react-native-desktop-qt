@@ -34,6 +34,7 @@ public:
   bool customBorderColors = false;
   bool customBorderWidths = false;
   bool customBorderRadius = false;
+  QColor backgroundColor;
   QColor borderColor = Qt::black;
   QColor borderColors[4];
   double borderRadius = 0;
@@ -89,14 +90,16 @@ void ReactItem::setBackfaceVisibility(const QString& backfaceVisibility)
 
 QColor ReactItem::backgroundColor() const
 {
-  return fillColor();
+  return d_func()->backgroundColor;
 }
 
 void ReactItem::setBackgroundColor(const QColor& backgroundColor)
 {
-  if (fillColor() == backgroundColor)
+  Q_D(ReactItem);
+  if (d->backgroundColor == backgroundColor)
     return;
-  setFillColor(backgroundColor);
+  d->backgroundColor = backgroundColor;
+  update();
   Q_EMIT backgroundColorChanged();
 }
 
@@ -438,7 +441,7 @@ void ReactItem::paint(QPainter* painter)
 
   QRectF area(QPointF(0, 0), QSizeF(width(), height()));
 
-  // TODO; support variant widhts with variant radii
+  // TODO; support variant widths with variant radii
   QRectF border = area.adjusted(d->borderWidths[3], d->borderWidths[0],
                                 -d->borderWidths[1], -d->borderWidths[2]);
 
@@ -449,9 +452,15 @@ void ReactItem::paint(QPainter* painter)
         path.addRect(area);
         path.addRect(border);
         painter->fillPath(path, d->borderColor);
+        if (d->backgroundColor.isValid() && d->backgroundColor.alpha() != 0) {
+          QPainterPath ap;
+          ap.addRect(area);
+          painter->fillPath(ap.subtracted(path), d->backgroundColor);
+        }
       } else {
         d->calculateCornerRects(area, border);
         QPainterPath path;
+        // TODO: background
 
         // top
         if (d->borderRadiuses[0] > 0) {
@@ -564,13 +573,27 @@ void ReactItem::paint(QPainter* painter)
         path.closeSubpath();
         painter->fillPath(path, d->borderColors[3]);
       }
-    } else {
-      QPen pen(d->borderStyle);
-      pen.setColor(d->borderColor);
-      pen.setWidthF(d->borderWidth);
-      pen.setJoinStyle(Qt::MiterJoin);
-      painter->setPen(pen);
-      painter->drawRoundedRect(border, d->borderRadius, d->borderRadius);
+    }
+    else {
+      QPainterPath path;
+      path.addRoundedRect(border, d->borderRadius, d->borderRadius);
+      if (d->backgroundColor.isValid() && d->backgroundColor.alpha() != 0) {
+        painter->fillPath(path, d->backgroundColor);
+      }
+      if (d->borderColor.alpha() != 0) {
+        QPen pen(d->borderStyle);
+        pen.setColor(d->borderColor);
+        pen.setWidthF(d->borderWidth);
+        pen.setJoinStyle(Qt::MiterJoin);
+        painter->setPen(pen);
+        painter->drawPath(path);
+      }
+    }
+  } else {
+    if (d->backgroundColor.isValid() && d->backgroundColor.alpha() != 0) {
+      QPainterPath path;
+      path.addRoundedRect(area, d->borderRadius, d->borderRadius);
+      painter->fillPath(path, d->backgroundColor);
     }
   }
 }
