@@ -12,6 +12,8 @@
 #include "reactflexlayout.h"
 
 
+int ReactTextManager::m_id = 0;
+
 ReactTextManager::ReactTextManager(QObject* parent)
   : ReactRawTextManager(parent)
 {
@@ -75,15 +77,13 @@ QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(componentString.toLocal8Bit(), QUrl());
   if (!component.isReady())
-    qCritical() << "Component for RCTTextManager not ready";
+    qCritical() << "Component for RCTTextManager not ready" << component.errors();
 
   QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
   if (item == nullptr) {
     qCritical() << "Unable to create component for RCTTextManager";
     return nullptr;
   }
-
-  item->setEnabled(false);
 
   return item;
 }
