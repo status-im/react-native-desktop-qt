@@ -40,11 +40,17 @@ public:
     ReactFlexLayout* fl = ReactFlexLayout::get(item);
     fl->setMeasureFunction([=](double width, double height) {
       if (dirty) {
-        item->setProperty("text", textWithProperties(property_map()));
+        QString ts = textWithProperties(property_map());
+        item->setProperty("text", ts);
         dirty = false;
       }
       double contentWidth = item->property("contentWidth").value<double>();
-      double sw = contentWidth == 0 ? width : qMin(contentWidth, width);
+      double sw = 0;
+      if (isnan(width)) {
+        sw = contentWidth;
+      } else {
+        sw = contentWidth == 0 ? width : qMin(contentWidth, width);
+      }
 
       item->setWidth(sw);
 
