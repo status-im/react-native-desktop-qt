@@ -74,8 +74,6 @@ QString ReactRawTextProperties::textWithProperties(const QVariantMap& properties
       text += QString("font-weight:%1;").arg(value);
     } else if (key == "textDecorationLine") {
       text += QString("text-decoration:%1;").arg(value);
-    } else if (key == "textAlign") {
-      text += QString("align:%1;").arg(value);
     }
   }
   text += "\">" + d_func()->text.toHtmlEscaped() + "</span>";
