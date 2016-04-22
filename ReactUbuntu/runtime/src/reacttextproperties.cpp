@@ -46,7 +46,7 @@ public:
       }
       double contentWidth = item->property("contentWidth").value<double>();
       double sw = 0;
-      if (isnan(width)) {
+      if (std::isnan(width)) {
         sw = contentWidth;
       } else {
         sw = contentWidth == 0 ? width : qMin(contentWidth, width);
