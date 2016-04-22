@@ -12,8 +12,6 @@
 #include "reactflexlayout.h"
 
 
-int ReactTextManager::m_id = 0;
-
 ReactTextManager::ReactTextManager(QObject* parent)
   : ReactRawTextManager(parent)
 {
