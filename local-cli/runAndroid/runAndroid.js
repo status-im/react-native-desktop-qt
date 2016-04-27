@@ -120,7 +120,7 @@ function buildAndRun(args, reject) {
       : 'adb';
 
     const devices = adb.getDevices();
-    
+
     if (devices && devices.length > 0) {
       devices.forEach((device) => {
 
@@ -130,8 +130,8 @@ function buildAndRun(args, reject) {
           `Starting the app on ${device} (${adbPath} ${adbArgs.join(' ')})...`
         ));
 
-        child_process.spawnSync(adbPath, adbArgs, {stdio: 'inherit'});  
-      }); 
+        child_process.spawnSync(adbPath, adbArgs, {stdio: 'inherit'});
+      });
     } else {
       // If we cannot execute based on adb devices output, fall back to
       // shell am start
@@ -173,7 +173,7 @@ function startServerInNewWindow() {
     if (yargV.open){
       return child_process.spawn(yargV.open,['-e', 'sh', launchPackagerScript], {detached: true});
     }
-    return child_process.spawn('xterm',['-e', 'sh', launchPackagerScript],{detached: true});
+    return child_process.spawn('sh', [launchPackagerScript],{detached: true});
 
   } else if (/^win/.test(process.platform)) {
     console.log(chalk.yellow('Starting the packager in a new window ' +

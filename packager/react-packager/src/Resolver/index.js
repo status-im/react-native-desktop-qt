@@ -107,7 +107,7 @@ class Resolver {
       cache: opts.cache,
       shouldThrowOnUnresolvedErrors: (_, platform) => platform === 'ios',
       transformCode: opts.transformCode,
-      assetDependencies: ['AssetRegistry'],
+      assetDependencies: ['react-native/Libraries/Image/AssetRegistry'],
     });
 
     this._getModuleId = options.getModuleId;
@@ -120,8 +120,8 @@ class Resolver {
     });
   }
 
-  getShallowDependencies(entryFile) {
-    return this._depGraph.getShallowDependencies(entryFile);
+  getShallowDependencies(entryFile, transformOptions) {
+    return this._depGraph.getShallowDependencies(entryFile, transformOptions);
   }
 
   stat(filePath) {
@@ -177,6 +177,7 @@ class Resolver {
       path.join(__dirname, 'polyfills/polyfills.js'),
       path.join(__dirname, 'polyfills/console.js'),
       path.join(__dirname, 'polyfills/error-guard.js'),
+      path.join(__dirname, 'polyfills/Number.es6.js'),
       path.join(__dirname, 'polyfills/String.prototype.es6.js'),
       path.join(__dirname, 'polyfills/Array.prototype.es6.js'),
       path.join(__dirname, 'polyfills/Array.es6.js'),

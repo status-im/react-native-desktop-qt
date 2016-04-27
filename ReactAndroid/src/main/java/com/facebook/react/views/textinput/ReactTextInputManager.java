@@ -209,6 +209,20 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
     }
   }
 
+  @ReactProp(name = "selectTextOnFocus", defaultBoolean = false)
+  public void setSelectTextOnFocus(ReactEditText view, boolean selectTextOnFocus) {
+    view.setSelectAllOnFocus(selectTextOnFocus);
+  }
+
+  @ReactProp(name = ViewProps.COLOR, customType = "Color")
+  public void setColor(ReactEditText view, @Nullable Integer color) {
+    if (color == null) {
+      view.setTextColor(DefaultStyleValuesUtil.getDefaultTextColor(view.getContext()));
+    } else {
+      view.setTextColor(color);
+    }
+  }
+
   @ReactProp(name = "underlineColorAndroid", customType = "Color")
   public void setUnderlineColor(ReactEditText view, @Nullable Integer underlineColor) {
     if (underlineColor == null) {
@@ -228,6 +242,9 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
       view.setGravityHorizontal(Gravity.RIGHT);
     } else if ("center".equals(textAlign)) {
       view.setGravityHorizontal(Gravity.CENTER_HORIZONTAL);
+    } else if ("justify".equals(textAlign)) {
+      // Fallback gracefully for cross-platform compat instead of error
+      view.setGravityHorizontal(Gravity.LEFT);
     } else {
       throw new JSApplicationIllegalArgumentException("Invalid textAlign: " + textAlign);
     }

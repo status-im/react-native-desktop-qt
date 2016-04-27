@@ -184,12 +184,6 @@ function setUpProcessEnv() {
   }
 }
 
-function setUpNumber() {
-  polyfillIfNeeded('EPSILON', Math.pow(2, -52), Number);
-  polyfillIfNeeded('MAX_SAFE_INTEGER', Math.pow(2, 53) - 1, Number);
-  polyfillIfNeeded('MIN_SAFE_INTEGER', -(Math.pow(2, 53) - 1), Number);
-}
-
 function setUpDevTools() {
   // not when debugging in chrome
   if (__DEV__) { // TODO(9123099) Strip `__DEV__ &&`
@@ -212,7 +206,6 @@ setUpMapAndSet();
 setUpProduct();
 setUpWebSockets();
 setUpProfile();
-setUpNumber();
 setUpDevTools();
 
 // Just to make sure the JS gets packaged up. Wait until the JS environment has
@@ -221,6 +214,7 @@ if (__DEV__) {
   require('RCTDebugComponentOwnership');
 }
 require('RCTDeviceEventEmitter');
+require('RCTNativeAppEventEmitter');
 require('PerformanceLogger');
 
 if (__DEV__) {
