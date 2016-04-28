@@ -4,12 +4,13 @@
  */
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var ReactNative = require('react-native');
 var {
   AppRegistry,
   Navigator,
   StyleSheet,
-} = React;
+} = ReactNative;
 
 var MovieScreen = require('./MovieScreen');
 var SearchScreen = require('./SearchScreen');

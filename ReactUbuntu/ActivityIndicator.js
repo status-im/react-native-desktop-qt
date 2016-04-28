@@ -7,14 +7,15 @@
 
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var ReactNative = require('react-native');
 var PropTypes = require('ReactPropTypes');
 var requireNativeComponent = require('requireNativeComponent');
 
 var {
   View,
   StyleSheet,
-} = React;
+} = ReactNative;
 
 
 var UbuntuActivityIndicator = requireNativeComponent('UbuntuActivityIndicator', null);

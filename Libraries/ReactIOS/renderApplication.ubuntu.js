@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('React');
+var ReactNative = require('react-native');
 var View = require('View');
 var StyleSheet = require('StyleSheet');
 
@@ -20,7 +21,7 @@ function renderApplication<D, P, S>(
     'Expect to have a valid rootTag, instead got ', rootTag
   );
 
-  React.render(
+  ReactNative.render(
     <View style={styles.appContainer} rootTag={rootTag}>
       <RootComponent
         {...initialProps}
