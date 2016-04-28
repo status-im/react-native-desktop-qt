@@ -10,8 +10,17 @@
 
 // XXX: The enumeration values are in sync with those defined in the layout code
 
+enum FlexMeasureMode {
+  MeasureMode_Undefined = 0,
+  MeasureMode_Exactly,
+  MeasureMode_AtMost
+};
+
 typedef std::pair<double, double> flex_dimensions;
-typedef std::function<flex_dimensions (double width, double height)> measure_function;
+typedef std::function<flex_dimensions (double width,
+                                       FlexMeasureMode widthMode,
+                                       double height,
+                                       FlexMeasureMode heightMode)> measure_function;
 
 class ReactFlexLayoutPrivate;
 class ReactFlexLayout : public QObject

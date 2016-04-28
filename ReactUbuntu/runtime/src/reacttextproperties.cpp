@@ -38,7 +38,7 @@ public:
 
   void setupLayout() {
     ReactFlexLayout* fl = ReactFlexLayout::get(item);
-    fl->setMeasureFunction([=](double width, double height) {
+    fl->setMeasureFunction([=](double width, FlexMeasureMode widthMode, double height, FlexMeasureMode heightMode) {
       if (dirty) {
         QString ts = textWithProperties(property_map());
         item->setProperty("text", ts);

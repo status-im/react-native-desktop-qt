@@ -256,13 +256,13 @@ public:
   static bool isDirty(void* context) {
     return static_cast<ReactFlexLayoutPrivate*>(context)->dirty;
   }
-  static css_dim_t measure(void* context, float width, float height) {
+  static css_dim_t measure(void* context, float width, css_measure_mode_t widthMode, float height, css_measure_mode_t heightMode) {
     ReactFlexLayoutPrivate* p = static_cast<ReactFlexLayoutPrivate*>(context);
     if (!p->measureFunction) {
       qCritical() << "measure set without measure function?!";
       return {};
     }
-    flex_dimensions df = p->measureFunction(width, height);
+    flex_dimensions df = p->measureFunction(width, FlexMeasureMode(widthMode), height, FlexMeasureMode(heightMode));
     return { float(df.first), float(df.second) };
   }
   bool qmlAnchors;
