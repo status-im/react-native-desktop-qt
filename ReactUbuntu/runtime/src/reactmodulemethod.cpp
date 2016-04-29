@@ -22,6 +22,15 @@ QString ReactModuleMethod::name() const
   return m_metaMethod.name();
 }
 
+QString ReactModuleMethod::type() const
+{
+  QByteArray tag(m_metaMethod.tag());
+  if (tag == "REACT_PROMISE")
+    return "remoteAsync";
+
+  return "remote";
+}
+
 // meh
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())
 

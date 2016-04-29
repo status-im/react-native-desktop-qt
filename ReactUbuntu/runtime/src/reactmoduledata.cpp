@@ -106,9 +106,8 @@ QVariant ReactModuleData::info() const
 
   QVariantMap methodConfig;
   for (int i = 0; i < d->methods.size(); ++i) {
-    // TODO: method type
-    //    @"type": method.functionType == RCTFunctionTypePromise ? @"remoteAsync" : @"remote",
-    methodConfig.insert(d->methods.at(i)->name(), QVariantMap{ {"methodID", i} });
+    methodConfig.insert(d->methods.at(i)->name(),
+                        QVariantMap{{"methodID", i}, {"type", d->methods.at(i)->type()}});
   }
   config.insert("methods", methodConfig);
 

@@ -19,6 +19,7 @@ public:
   ~ReactModuleMethod();
 
   QString name() const;
+  QString type() const;
 
   void invokeWithBridge(ReactBridge* bridge, const QVariantList& args);
 

@@ -12,6 +12,10 @@ class ReactPropertyHandler;
 class ReactModuleMethod;
 
 
+#ifndef Q_MOC_RUN
+#define REACT_PROMISE
+#endif
+
 class ReactModuleInterface
 {
 public:
