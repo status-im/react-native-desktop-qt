@@ -26,6 +26,20 @@ function _runUbuntu(argv, config, resolve, reject) {
     command: 'root',
     type: 'string',
     description: 'Override the root directory for the ubuntu build (which contains the ubuntu directory)',
+  }, {
+    command: 'live-reload',
+    description: 'Start with live reloading enabled',
+    default: false
+  }, {
+    command: 'host',
+    type: 'string',
+    description: 'Set packager host',
+    default: 'localhost'
+  }, {
+    command: 'port',
+    type: 'string',
+    description: 'Set packager port',
+    default: '8081'
   }], argv);
   args.root = args.root || '';
 
@@ -70,7 +84,14 @@ function buildAndRun(args, reject) {
 
   console.log(chalk.bold('Starting the app...'));
   try {
-      child_process.spawnSync('./run-app.sh', [],
+      var appArgs = [];
+      if (args['live-reload'])
+        appArgs.push('--live-reload');
+      if (args['host'])
+        appArgs.push('--host=' + args['host']);
+      if (args['port'])
+        appArgs.push('--port=' + args['port']);
+      child_process.spawnSync('./run-app.sh', appArgs,
                               {stdio: 'inherit'});
   } catch (e) {
     console.log(chalk.red('Could not start the app, see the error above.'));

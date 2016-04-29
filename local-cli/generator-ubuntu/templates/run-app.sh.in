@@ -1,5 +1,5 @@
 #!/bin/bash
 
 (node ${CMAKE_SOURCE_DIR}/../node_modules/react-native/ubuntu-server.js 2>&1 > /dev/null) &
-${CMAKE_BINARY_DIR}/bin/${APP_NAME}
+${CMAKE_BINARY_DIR}/bin/${APP_NAME} $*
 
