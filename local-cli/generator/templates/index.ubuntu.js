@@ -1,19 +1,19 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
+ * @flow
  */
-'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'react';
+import {
   AppRegistry,
   StyleSheet,
   Text,
-  View,
-} = React;
+  View
+} from 'react-native';
 
-var <%= name %> = React.createClass({
-  render: function() {
+class <%= name %> extends Component {
+  render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -22,15 +22,12 @@ var <%= name %> = React.createClass({
         <Text style={styles.instructions}>
           To get started, edit index.ubuntu.js
         </Text>
-        <Text style={styles.instructions}>
-          Press menu button for dev menu
-        </Text>
       </View>
     );
   }
-});
+}
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -50,3 +47,4 @@ var styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('<%= name %>', () => <%= name %>);
+
