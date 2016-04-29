@@ -6,6 +6,7 @@
 var React = require('React');
 var PropTypes = React.PropTypes;
 
+var NativeModules = require('NativeModules');
 var ImageResizeMode = require('ImageResizeMode');
 var ImageStylePropTypes = require('ImageStylePropTypes');
 var StyleSheetPropType = require('StyleSheetPropType');
@@ -15,6 +16,10 @@ var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
 var requireNativeComponent = require('requireNativeComponent');
 var resolveAssetSource = require('resolveAssetSource');
 
+var {
+  ImageLoader,
+} = NativeModules;
+
 var Image = React.createClass({
   propTypes: {
     style: StyleSheetPropType(ImageStylePropTypes),
@@ -23,6 +28,9 @@ var Image = React.createClass({
 
   statics: {
     resizeMode: ImageResizeMode,
+    prefetch(url: string) {
+      return ImageLoader.prefetchImage(url);
+    },
   },
 
   mixins: [NativeMethodsMixin],

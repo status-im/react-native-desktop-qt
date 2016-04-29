@@ -50,6 +50,7 @@ set(
   reactrawtextmanager.cpp
   reacttextmanager.cpp
   reactimagemanager.cpp
+  reactimageloader.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
   reacttextproperties.cpp

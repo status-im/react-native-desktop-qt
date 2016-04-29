@@ -1,9 +1,12 @@
 
+#include <QStandardPaths>
 #include <QMap>
 #include <QPluginLoader>
 #include <QJsonDocument>
 #include <QQuickItem>
 #include <QTimer>
+#include <QNetworkAccessManager>
+#include <QNetworkDiskCache>
 
 #include "reactbridge.h"
 #include "reactsourcecode.h"
@@ -23,6 +26,7 @@
 #include "reacttextmanager.h"
 #include "reactimagemanager.h"
 #include "reactuimanager.h"
+#include "reactimageloader.h"
 
 #include "ubuntuscrollviewmanager.h"
 #include "ubuntunavigatormanager.h"
@@ -35,14 +39,15 @@
 class ReactBridgePrivate
 {
 public:
-  bool ready;
-  ReactExecutor* executor;
-  QQmlEngine* qmlEngine;
-  QQuickItem* visualParent;
-  QNetworkAccessManager* nam;
-  ReactUIManager* uiManager;
-  ReactSourceCode* sourceCode;
-  ReactEventDispatcher* eventDispatcher;
+  bool ready = false;
+  ReactExecutor* executor = nullptr;
+  QQmlEngine* qmlEngine = nullptr;
+  QQuickItem* visualParent = nullptr;
+  QNetworkAccessManager* nam = nullptr;
+  ReactUIManager* uiManager = nullptr;
+  ReactImageLoader* imageLoader = nullptr;
+  ReactSourceCode* sourceCode = nullptr;
+  ReactEventDispatcher* eventDispatcher = nullptr;
   QUrl bundleUrl;
   QMap<int, ReactModuleData*> modules;
 
@@ -88,10 +93,6 @@ ReactBridge::ReactBridge(QObject* parent)
 
   setupExecutor();
 
-  d->qmlEngine = nullptr;
-  d->nam = nullptr;
-  d->visualParent = nullptr;
-  d->uiManager = nullptr;
   d->eventDispatcher = new ReactEventDispatcher(this);
 }
 
@@ -210,6 +211,13 @@ void ReactBridge::setNetworkAccessManager(QNetworkAccessManager* nam)
   if (d->nam == nam)
     return;
   d->nam = nam;
+
+  if (d->nam->cache() == nullptr) {
+    // TODO: cache size
+    auto cache = new QNetworkDiskCache(d->nam);
+    cache->setCacheDirectory(QStandardPaths::writableLocation(QStandardPaths::CacheLocation));
+    d->nam->setCache(cache);
+  }
 }
 
 QUrl ReactBridge::bundleUrl() const
@@ -238,6 +246,11 @@ QList<ReactModuleData*> ReactBridge::modules() const
 ReactUIManager* ReactBridge::uiManager() const
 {
   return d_func()->uiManager;
+}
+
+ReactImageLoader* ReactBridge::imageLoader() const
+{
+  return d_func()->imageLoader;
 }
 
 void ReactBridge::sourcesFinished()
@@ -271,6 +284,8 @@ void ReactBridge::initModules()
   // Special cases // TODO:
   d->sourceCode = new ReactSourceCode;
   modules << d->sourceCode;
+  d->imageLoader = new ReactImageLoader;
+  modules << d->imageLoader;
   d->uiManager = new ReactUIManager; // XXX: this needs to be at end, FIXME:
   modules << d->uiManager;
 

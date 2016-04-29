@@ -11,6 +11,7 @@ class QQmlEngine;
 class QNetworkAccessManager;
 class ReactModuleData;
 class ReactUIManager;
+class ReactImageLoader;
 class ReactEventDispatcher;
 
 
@@ -25,6 +26,7 @@ class ReactBridge : public QObject
   Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
   Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
   Q_PROPERTY(ReactUIManager* uiManager READ uiManager)
+  Q_PROPERTY(ReactImageLoader* imageLoader READ imageLoader)
 
   enum Fields { FieldRequestModuleIDs, FieldMethodIDs, FieldParams };
 
@@ -60,6 +62,7 @@ public:
   ReactEventDispatcher* eventDispatcher() const;
   QList<ReactModuleData*> modules() const;
   ReactUIManager* uiManager() const;
+  ReactImageLoader* imageLoader() const;
 
 Q_SIGNALS:
   void readyChanged();
