@@ -12,10 +12,12 @@ export type UIExplorerExample = {
 };
 
 var ComponentExamples: Array<UIExplorerExample> = [
+  /*
   {
     key: 'ActivityIndicatorIOSExample',
     module: require('./ActivityIndicatorIOSExample'),
   },
+  */
   {
     key: 'DatePickerIOSExample',
     module: require('./DatePickerIOSExample'),
@@ -40,6 +42,7 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'ListViewPagingExample',
     module: require('./ListViewPagingExample'),
   },
+  /*
   {
     key: 'MapViewExample',
     module: require('./MapViewExample'),
@@ -48,6 +51,7 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'ModalExample',
     module: require('./ModalExample'),
   },
+  */
   {
     key: 'NavigatorExample',
     module: require('./Navigator/NavigatorExample'),
@@ -84,6 +88,7 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'SliderIOSExample',
     module: require('./SliderIOSExample'),
   },
+  /*
   {
     key: 'StatusBarExample',
     module: require('./StatusBarExample'),
@@ -92,6 +97,7 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'SwitchExample',
     module: require('./SwitchExample'),
   },
+  */
   // {
   //   key: 'TabBarIOSExample',
   //   module: require('./TabBarIOSExample'),
@@ -197,6 +203,7 @@ var APIExamples: Array<UIExplorerExample> = [
     module: require('./LinkingExample'),
   },
   */
+  /*
   {
     key: 'NavigationExperimentalExample',
     module: require('./NavigationExperimental/NavigationExperimentalExample'),
@@ -205,6 +212,7 @@ var APIExamples: Array<UIExplorerExample> = [
     key: 'NavigationExperimentalLegacyNavigatorExample',
     module: require('./NavigationExperimental/LegacyNavigator/LegacyNavigatorExample'),
   },
+  */
   {
     key: 'NetInfoExample',
     module: require('./NetInfoExample'),
@@ -229,10 +237,12 @@ var APIExamples: Array<UIExplorerExample> = [
     key: 'SnapshotExample',
     module: require('./SnapshotExample'),
   },
+  /*
   {
     key: 'StatusBarIOSExample',
     module: require('./StatusBarIOSExample'),
   },
+  */
   {
     key: 'TimerExample',
     module: require('./TimerExample'),
