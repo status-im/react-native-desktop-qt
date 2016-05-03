@@ -15,7 +15,8 @@
  */
 'use strict';
 
-var React = require('react-native');
+var React = require('react');
+var ReactNative = require('react-native');
 var {
   PixelRatio,
   StyleSheet,
@@ -23,7 +24,7 @@ var {
   TextInput,
   TouchableHighlight,
   View,
-} = React;
+} = ReactNative;
 
 // TODO t7093728 This is a simlified XHRExample.ios.js.
 // Once we have Camera roll, Toast, Intent (for opening URLs)

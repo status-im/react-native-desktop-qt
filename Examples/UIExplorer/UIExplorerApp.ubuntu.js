@@ -16,7 +16,8 @@
  */
 'use strict';
 
-const React = require('react-native');
+const React = require('react');
+const ReactNative = require('react-native');
 const UIExplorerActions = require('./UIExplorerActions');
 const UIExplorerList = require('./UIExplorerList.ubuntu');
 const UIExplorerExampleList = require('./UIExplorerExampleList');
@@ -28,7 +29,7 @@ const {
   NavigationExperimental,
   StyleSheet,
   View,
-} = React;
+} = ReactNative;
 
 const {
   CardStack: NavigationCardStack,
