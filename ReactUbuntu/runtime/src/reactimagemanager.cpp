@@ -27,8 +27,9 @@ class ImagePropertyHandler : public ReactPropertyHandler {
 
 public:
   enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
-  ImagePropertyHandler(QObject* object)
-    : ReactPropertyHandler(object) {
+  ImagePropertyHandler(QObject* object, ReactBridge* bridge)
+    : ReactPropertyHandler(object)
+    , m_bridge(bridge) {
     }
   QString resizeMode() const;
   void setResizeMode(const QString& resizeMode);
@@ -50,6 +51,8 @@ public:
   void setBorderColor(const QColor& borderColor);
   QUrl source() const;
   void setSource(const QUrl& source);
+private:
+  ReactBridge* m_bridge;
 };
 
 QColor ImagePropertyHandler::backgroundColor() const
@@ -101,7 +104,7 @@ QUrl ImagePropertyHandler::source() const
 
 void ImagePropertyHandler::setSource(const QUrl& source)
 {
-  m_object->setProperty("source", source);
+  m_object->setProperty("source", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
 }
 
 QColor ImagePropertyHandler::tintColor() const
@@ -187,7 +190,7 @@ ReactViewManager* ReactImageManager::viewManager()
 
 ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
 {
-  return new ImagePropertyHandler(object);
+  return new ImagePropertyHandler(object, m_bridge);
 }
 
 QString ReactImageManager::moduleName()
