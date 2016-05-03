@@ -9,6 +9,8 @@
 #include "reactimagemanager.h"
 #include "reactpropertyhandler.h"
 #include "reactbridge.h"
+#include "reactevents.h"
+#include "reactimageloader.h"
 
 int ReactImageManager::m_id = 0;
 
