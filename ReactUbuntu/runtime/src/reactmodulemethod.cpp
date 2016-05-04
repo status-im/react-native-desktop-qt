@@ -24,11 +24,8 @@ QString ReactModuleMethod::name() const
 
 QString ReactModuleMethod::type() const
 {
-  QByteArray tag(m_metaMethod.tag());
-  if (tag == "REACT_PROMISE")
-    return "remoteAsync";
-
-  return "remote";
+  return QByteArray(m_metaMethod.tag()) == "REACT_PROMISE"
+              ? "remoteAsync" : "remote";
 }
 
 // meh

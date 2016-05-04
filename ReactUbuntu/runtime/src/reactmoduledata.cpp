@@ -109,7 +109,8 @@ QVariant ReactModuleData::info() const
     methodConfig.insert(d->methods.at(i)->name(),
                         QVariantMap{{"methodID", i}, {"type", d->methods.at(i)->type()}});
   }
-  config.insert("methods", methodConfig);
+  if (!methodConfig.isEmpty())
+    config.insert("methods", methodConfig);
 
   return config;
 }

@@ -78,7 +78,7 @@ void ReactUIManager::updateView
 
   QQuickItem* item = m_views.value(reactTag);
   if (item == nullptr) {
-    qWarning() << "Attempting to update properties on unknown view";
+    qWarning() << "Attempting to update properties on unknown view; reactTag=" << reactTag << "viewName=" << viewName;
     return;
   }
 
