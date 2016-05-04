@@ -28,9 +28,6 @@ public:
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
-private Q_SLOTS:
-  void statusChanged();
-
 private:
   void configureView(QQuickItem* view) const;
 
