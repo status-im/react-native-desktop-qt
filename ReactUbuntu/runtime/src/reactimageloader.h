@@ -23,6 +23,9 @@ class ReactImageLoader
   Q_DECLARE_PRIVATE(ReactImageLoader)
 
 public:
+  enum Event { Event_LoadStart, Event_Progress, Event_Error, Event_Load, Event_LoadEnd };
+  typedef std::function<void(Event, const QVariantMap&)> LoadEventCallback;
+
   ReactImageLoader(QObject* parent = 0);
   ~ReactImageLoader();
 
@@ -33,6 +36,7 @@ public:
   QVariantMap constantsToExport() override;
 
   QUrl provideUriFromSourceUrl(const QUrl& source);
+  void loadImage(const QUrl& source, const LoadEventCallback& ec = LoadEventCallback());
 
 private:
   QScopedPointer<ReactImageLoaderPrivate> d_ptr;

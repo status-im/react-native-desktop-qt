@@ -1,4 +1,6 @@
 
+#include <memory>
+
 #include <QMap>
 #include <QCryptographicHash>
 #include <QNetworkRequest>
@@ -10,12 +12,32 @@
 #include "reactbridge.h"
 
 
-class ReactImageLoaderPrivate : public QQuickImageProvider {
+class ReactImageLoaderPrivate {
 public:
-  ReactImageLoaderPrivate():QQuickImageProvider(QQuickImageProvider::Image)
-  {}
+  class ImageProvider : public QQuickImageProvider {
+  public:
+    ImageProvider(ReactImageLoaderPrivate* priv):QQuickImageProvider(QQuickImageProvider::Image), p(priv) {}
+    QImage requestImage(const QString& id,  QSize* size, const QSize& requestedSize) override {
+      auto cache = qobject_cast<QNetworkDiskCache*>(p->bridge->networkAccessManager()->cache());
+      auto idev = cache->data(p->cacheIds.key(id.toLocal8Bit()));
+      if (idev == nullptr) {
+        qWarning() << __PRETTY_FUNCTION__ << "Could not obtain cache entry for" << id;
+        return QImage();
+      }
+      idev->deleteLater();
+      QImage image = QImage::fromData(idev->readAll());
+      if (size != nullptr)
+        *size = image.size();
+      return image;
+    }
+    ReactImageLoaderPrivate* p = nullptr;
+  };
+
+  ReactImageLoaderPrivate() {
+    provider = new ImageProvider(this);
+  }
   void markCached(const QUrl& source) {
-    cacheIds.insert(source, QCryptographicHash::hash(source.toEncoded(), QCryptographicHash::Sha1));
+    cacheIds.insert(source, QCryptographicHash::hash(source.toEncoded(), QCryptographicHash::Sha1).toBase64());
   }
   bool isCached(const QUrl& source) {
     return cacheIds.contains(source);
@@ -23,23 +45,45 @@ public:
   QUrl cachedUrl(const QUrl& source) {
     return QUrl("image://react/" + cacheIds.value(source));
   }
-  QImage requestImage(const QString& id,  QSize* size, const QSize& requestedSize) {
-    qDebug() << __PRETTY_FUNCTION__ << id;
-    auto cache = qobject_cast<QNetworkDiskCache*>(bridge->networkAccessManager()->cache());
-    auto idev = cache->data(cacheIds.key(id.toLocal8Bit()));
-    if (idev == nullptr) {
-      qWarning() << __PRETTY_FUNCTION__ << "Could not obtain cache entry for" << id;
-      return QImage();
+  void fetchImage(const QUrl& source, const ReactImageLoader::LoadEventCallback& ec) {
+    auto data = std::make_shared<QVariantMap>(QVariantMap{});
+
+    // XXX: images downloading already
+    if (isCached(source)) {
+      // TODO: need to cycle through events?
+      ec(ReactImageLoader::Event_LoadStart, *data);
+      ec(ReactImageLoader::Event_Load, *data);
+      ec(ReactImageLoader::Event_LoadEnd, *data);
+      return;
     }
-    idev->deleteLater();
-    QImage image = QImage::fromData(idev->readAll());
-    if (size != nullptr)
-      *size = image.size();
-    qDebug() << __PRETTY_FUNCTION__ << image;;
-    return image;
+
+    QNetworkRequest request(source);
+    request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+    auto reply = bridge->networkAccessManager()->get(request);
+
+    ec(ReactImageLoader::Event_LoadStart, *data);
+
+    QObject::connect(reply, &QNetworkReply::downloadProgress, [=](qint64 bytesReceived, qint64 bytesTotal) {
+        data->insert("loaded", bytesReceived);
+        data->insert("total", bytesTotal);
+        ec(ReactImageLoader::Event_Progress, *data);
+      });
+    QObject::connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [=](QNetworkReply::NetworkError code){
+        data->insert("error", reply->errorString());
+        ec(ReactImageLoader::Event_Error, *data);
+      });
+    QObject::connect(reply, &QNetworkReply::finished, [=]() {
+        reply->deleteLater();
+        if (reply->error() == QNetworkReply::NoError) {
+          markCached(source);
+          ec(ReactImageLoader::Event_Load, *data);
+        }
+        ec(ReactImageLoader::Event_LoadEnd, *data);
+      });
   }
   QMap<QUrl, QByteArray> cacheIds;
   ReactBridge* bridge = nullptr;
+  ImageProvider* provider = nullptr;
 };
 
 
@@ -49,19 +93,14 @@ void ReactImageLoader::prefetchImage(
   const ReactModuleInterface::ListArgumentBlock& reject
 ) {
   Q_D(ReactImageLoader);
-
-  QNetworkRequest request(url);
-  request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferNetwork);
-  QNetworkReply* reply = d->bridge->networkAccessManager()->get(request);
-  connect(reply, &QNetworkReply::finished, [=]() {
-      reply->deleteLater();
-      if (reply->error() != QNetworkReply::NoError) {
-        reject(d->bridge, QVariantList{QVariantMap{{"code", reply->errorString()}}});
-        return;
-      }
-      d->markCached(url);
-      resolve(d->bridge, QVariantList{true});
-    });
+  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+    if (event == Event_LoadEnd) {
+      if (data.contains("error"))
+        reject(d->bridge, QVariantList{data});
+      else
+        resolve(d->bridge, QVariantList{true});
+    }
+  });
 }
 
 
@@ -79,7 +118,7 @@ void ReactImageLoader::setBridge(ReactBridge* bridge)
 {
   Q_D(ReactImageLoader);
   d->bridge = bridge;
-  d->bridge->qmlEngine()->addImageProvider("react", d);
+  d->bridge->qmlEngine()->addImageProvider("react", d->provider);
 }
 
 QString ReactImageLoader::moduleName()
@@ -103,5 +142,13 @@ QUrl ReactImageLoader::provideUriFromSourceUrl(const QUrl& source)
   if (d->isCached(source))
     return d->cachedUrl(source);
 
+  // Fallback XXX:
   return source;
+}
+
+void ReactImageLoader::loadImage(
+  const QUrl& source,
+  const LoadEventCallback& loadEventCallback
+) {
+  d_func()->fetchImage(source, loadEventCallback);
 }

@@ -24,6 +24,8 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  QStringList customDirectEventTypes() override;
+
   QQuickItem* view(const QVariantMap& properties) const override;
 
 private Q_SLOTS:

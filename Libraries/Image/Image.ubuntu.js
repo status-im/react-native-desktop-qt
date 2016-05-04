@@ -24,6 +24,11 @@ var Image = React.createClass({
   propTypes: {
     style: StyleSheetPropType(ImageStylePropTypes),
     source: PropTypes.shape({uri: PropTypes.string}),
+    onLoadStart: PropTypes.func,
+    onProgress: PropTypes.func,
+    onError: PropTypes.func,
+    onLoad: PropTypes.func,
+    onLoadEnd: PropTypes.func,
   },
 
   statics: {

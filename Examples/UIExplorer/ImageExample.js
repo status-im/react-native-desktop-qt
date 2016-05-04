@@ -470,6 +470,7 @@ exports.examples = [
       );
     },
   },
+  /*
   {
     title: 'Animated GIF',
     render: function() {
@@ -481,6 +482,7 @@ exports.examples = [
       );
     },
   },
+  */
   {
     title: 'Base64 image',
     render: function() {
