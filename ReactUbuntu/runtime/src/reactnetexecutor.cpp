@@ -14,7 +14,10 @@ ReactNetExecutor::ReactNetExecutor(QObject* parent)
   : ReactExecutor(parent)
   , m_socket(new QTcpSocket(this))
 {
-  m_socket->connectToHost("localhost", 5000);
+  QString serverHost = qgetenv("REACT_SERVER_HOST");
+  if (serverHost.isEmpty())
+    serverHost = "localhost";
+  m_socket->connectToHost(serverHost, 5000);
   //  connect(m_socket, SIGNAL(connected()), SLOT(connected()));
   //  connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
   connect(m_socket, SIGNAL(readyRead()), SLOT(readReply()));

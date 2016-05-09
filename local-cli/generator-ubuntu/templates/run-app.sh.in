@@ -1,5 +1,27 @@
 #!/bin/bash
 
+args=""
+ondevice=0
+
+for arg in "$@"
+do
+  if [ $arg == "--on-device" ]
+  then
+    ondevice=1
+  else
+    args=$args" $arg"
+  fi 
+done
+
 (node ${CMAKE_SOURCE_DIR}/../node_modules/react-native/ubuntu-server.js 2>&1 > /dev/null) &
-${CMAKE_BINARY_DIR}/bin/${APP_NAME} $*
+
+if [[ $ondevice = 1 ]]
+then
+  react_host=`hostname -I`
+  adb push ${CMAKE_BINARY_DIR}/bin/${APP_NAME} /home/phablet 
+#  adb reverse --no-rebind tcp:8081 tcp:8081
+  adb shell REACT_SERVER_HOST=$react_host /home/phablet/${APP_NAME} --host $react_host $args -- --desktop_file_hint=/usr/share/applications/webbrowser-app.desktop
+else
+  ${CMAKE_BINARY_DIR}/bin/${APP_NAME} $args
+fi
 
