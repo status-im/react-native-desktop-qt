@@ -41,6 +41,11 @@ module.exports = yeoman.generators.NamedBase.extend({
       templateParams
     );
     this.fs.copyTpl(
+      this.templatePath('build.sh'),
+      this.destinationPath(path.join('ubuntu', 'build.sh')),
+      templateParams
+    );
+    this.fs.copyTpl(
       this.templatePath('run-app.sh.in'),
       this.destinationPath(path.join('ubuntu', 'run-app.sh.in')),
       templateParams
