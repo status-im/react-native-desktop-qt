@@ -1,84 +1,185 @@
+g
 
 # React Native Ubuntu
 
-## Dependencies
+## Introduction
 
-CMake, Qt.
+### Prerequisites
+
+You should have an Ubuntu 16.04 (Xenial Xerus) installation.
+
+If you are going to be developing on a device:
+ - You must have a device with Ubuntu Touch installed, see [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/) for more details.
+ - Your device must be on the same local network as your development machine.
+
+You should have some familiarity with developing on Ubuntu platforms.
+
+## Setup
+
+Before we can go further, git and node, and node's package manager must be installed.
+
 ```
-sudo apt-get install cmake qt5-default qtdeclarative5-dev
+sudo apt-get install -y git nodejs-legacy npm
 ```
 
-- TODO: node
+### Setup React Native
 
-## Sinopia
-- follow the Sinopia install instructions from ./react-native-cli/README.md
-  - If building in tree, it is not necessary to publish react-native & react-native-cli
-- add node-haste to the packages section of Sinopia's config
+To start working on a React Native application, the React Native packages for ubuntu need to be published to a local package repository.
+
+Download the port for Ubuntu.
+```
+~$ mkdir src; cd src
+~/src$ git clone https://git.launchpad.net/reactnative-ubuntu -b ubuntu
+```
+And then follow the instruction in ~/src/reactnative-ubuntu/react-native-cli/README.md
+
+Roughly they are -
+```
+~/src$ sudo npm install -g sinopia
+~/src$ (edit sinopia config for react)
+~/src$ sinopia&
+~/src$ npm set registry http://localhost:4873/
+~/src$ npm adduser --registry http://localhost:4873/
+~/src$ cd reactnative-ubuntu/react-native-cli; npm publish —force
+~/src/reactnative-ubuntu/react-native-cli$ cd ..; npm publish —force
+```
+
+### Setup node-haste
+
+Some changes to node-haste are required to detect the Ubuntu platform. Clone the patched repo and publish to the local package repository.
+```
+~/src$ git clone https://github.com/justinmcp/node-haste
+~/src$ cd node-haste; npm install
+~/src/node-haste$ (add node-haste to sinopia config - see below)
+~/src/node-haste$ npm publish —force
+```
+
+node-haste should be added to the packages section of the Sinopia config file
 ```
     packages:
       'node-haste':
         allow_access: $all
         allow_publish: $all
 ```
-- clone and publish the modified node-haste repo;
-```
-$ git clone https://github.com/justinmcp/node-haste
-$ cd node-haste; npm install; npm publish --force
-```
 
-## Install node dependencies
+### Install React Native CLI
 
+The last step in preparing for creating our application to install the the cli tools from the local package repository.
 ```
-$ cd react-native
-$ npm install
+~$ sudo npm install -g react-native-cli
 ```
 
-## "In tree" usage
+## Creating a new React Native application
 
-This is best when working on RN. There are example applications in ./Examples that can be used for testing.
-
-1) Build RN Ubuntu
+Now that React Native has been installed we can get started making an application.
 
 ```
-$ mkdir build; cd build; cmake .. && make
+~$ cd ~/src
+~/src$ react-native init AwesomeProject
+~/src$ cd AwesomeProject
+~/src/AwesomeProject$ react-native ubuntu
+~/src/AwesomeProject$ cd ubuntu
 ```
 
-2) Open an extra terminal window in react-native and run the RN packager
+That's it, the skeleton of an application is in place. You can edit ~/src/AwesomeProject/index.ubuntu.js to start developing.
+
+
+### Targeting a device
+
+#### Dependencies
+
+Usually we would want to be installing the ubuntu-sdk, which can be done directly, but since this is still in preview, we will just install a raw build environment. The build environment is a chroot provided by the hardworking sdk team, but is not part of the general distribution. We will need to add the sdk team's repository first.
 
 ```
-$(react-native) $ npm start
+~$ sudo add-apt-repository -y ppa:ubuntu-sdk-team/ppa
+~$ sudo apt-get update && sudo apt-get upgrade -y
 ```
 
-3) Run examples
+Then we can install all necessary packages.
+```
+~$ sudo apt-get install -y adb click-dev ubuntu-sdk-api-15.04-armhf
+```
+
+#### Building
+
+To build for the device, run the build script through the chroot build environment.
+```
+~/src/AwesomeProject/ubuntu$ click chroot -a armhf -f ubuntu-sdk-15.04 -n click run ./build.sh
+```
+
+#### Running
+
+Make sure that the device can be connected to via adb. The device will need to have developer mode enabled, instruction on these topics can be found on the [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/).
+
+In a separate shell, start the React Native packager.
+```
+~/src/AwesomeProject$ npm start
+```
+
+Then it is all good to go. Live reload can be activated by passing the --live-reload flag.
+```
+~/src/AwesomeProject/ubuntu$ ./run-app.sh —on-device —live-reload
+```
+
+### Targeting a desktop
+
+#### Dependencies
+
+```
+~$ sudo apt-get install -y cmake qt5-default qtdeclarative5-dev
+```
+
+#### Building
+
+Run the build script.
+```
+~/src/AwesomeProject/ubuntu$ ./build.sh
+```
+
+#### Running
+
+In a separate shell, start the React Native packager.
+```
+~/src/AwesomeProject$ npm start
+```
+
+Then it is all good to go. Live reload can be activated by passing the --live-reload flag.
+```
+~/src/AwesomeProject/ubuntu$ ./run-app.sh —live-reload
+```
+
+## Developing React Native Ubuntu
+
+If you would like to contribute, or just want a short cut to trying some React Native examples, you can build React Native directly.
+
+#### Dependencies
+
+```
+~$ sudo apt-get install -y cmake qt5-default qtdeclarative5-dev
+~/src/reactnative-ubuntu$ npm install
+```
+
+*Note*; you do not need need to add react-native and react-native-cli to the local repository if you are building this way, but you must add node-haste, as per the instructions above.
+
+#### Building
+
+```
+~/src/reactnative-ubuntu$ mkdir build; cd build; cmake .. && make
+```
+
+#### Running
+
+In a separate shell, start the React Native packager.
+```
+~/src/reactnative-ubuntu$ npm start
+```
+
 The examples all follow a similar template, e.g to run the TicTacToe app
 ```
-$(buildir) $ ./Examples/TicTacToe/run-example.sh
+~/src/reactnative-ubuntu$ ./build/Examples/TicTacToe/run-example.sh
 ```
-
-to run the 2048 app
+To run the 2048 app
 ```
-$(buildir) $ ./Examples/2048/run-example.sh
-```
-
-## CLI usage
-
-This method is best for creating a new RN application.
-
-1) Ensure react-native & react-native-cli have been published as per the instructions in ./react-native-cli/README.md
-
-2) Open an extra terminal window in react-native and run the RN packager
-
-```
-$(react-native) $ npm start
-```
-
-3) Create, build and run the application
-
-```
-$ react-native init AwesomeProject
-$ cd AwesomeProject
-$ react-native ubuntu
-$ cd ubuntu; cmake . && make
-$ ./run-app.sh
+~/src/reactnative-ubuntu$ ./build/Examples/2048/run-example.sh
 ```
 
