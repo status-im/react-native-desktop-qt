@@ -26,13 +26,11 @@ function saveAssets(
     return Promise.resolve();
   }
 
-  const getAssetDestPath = (platform) => {
-    switch (platform) {
-        case 'android': return getAssetDestPathAndroid; break;
-        case 'ubuntu': return getAssetDestPathUbuntu; break;
-        case 'ioś':
-        default: return getAssetDestPathIOS; break;
-    }};
+  const getAssetDestPath = {
+      'android': getAssetDestPathAndroid,
+      'ubuntu': getAssetDestPathUbuntu,
+      'ios': getAssetDestPathIOS
+    }[platform];
 
   const filesToCopy = Object.create(null); // Map src -> dest
   assets

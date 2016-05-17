@@ -27,6 +27,7 @@ var Promise = require('promise');
 var runAndroid = require('./runAndroid/runAndroid');
 var runIOS = require('./runIOS/runIOS');
 var runUbuntu = require('./runUbuntu/runUbuntu');
+var packageUbuntu = require('./packageUbuntu/packageUbuntu');
 var server = require('./server/server');
 var TerminalAdapter = require('yeoman-environment/lib/adapter.js');
 var yeoman = require('yeoman-environment');
@@ -51,6 +52,7 @@ var documentedCommands = {
   'run-ios': [runIOS, 'builds your app and starts it on iOS simulator'],
   'ubuntu': [generateUbuntu, 'generates an Ubuntu project for your app'],
   'run-ubuntu': [runUbuntu, 'builds and starts your app'],
+  'package-ubuntu': [packageUbuntu, 'create a click package for installation on Ubuntu Touch'],
   'upgrade': [upgrade, 'upgrade your app\'s template files to the latest version; run this after ' +
                        'updating the react-native version in your package.json and running npm install']
 };

@@ -1,4 +1,5 @@
 
+#include <QUrl>
 #include <QGuiApplication>
 #include <QCommandLineParser>
 #include <QQuickView>
@@ -15,10 +16,11 @@
 class ReactNativeProperties : public QObject {
   Q_OBJECT
   Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
-  Q_PROPERTY(QString packagerHost READ packagerHost WRITE setPackagerHost NOTIFY packagerHostChanged)
-  Q_PROPERTY(QString packagerPort READ packagerPort WRITE setPackagerPort NOTIFY packagerPortChanged)
+  Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
 public:
-  ReactNativeProperties(QObject* parent = 0):QObject(parent) {}
+  ReactNativeProperties(QObject* parent = 0): QObject(parent) {
+    m_codeLocation = m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort);
+  }
   bool liveReload() const {
     return m_liveReload;
   }
@@ -28,6 +30,15 @@ public:
     m_liveReload = liveReload;
     Q_EMIT liveReloadChanged();
   }
+  QUrl codeLocation() const {
+    return m_codeLocation;
+  }
+  void setCodeLocation(const QUrl& codeLocation) {
+    if (m_codeLocation == codeLocation)
+      return;
+    m_codeLocation = codeLocation;
+    Q_EMIT codeLocationChanged();
+  }
   QString packagerHost() const {
     return m_packagerHost;
   }
@@ -35,7 +46,7 @@ public:
     if (m_packagerHost == packagerHost)
       return;
     m_packagerHost = packagerHost;
-    Q_EMIT packagerHostChanged();
+    setCodeLocation(m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort));
   }
   QString packagerPort() const {
     return m_packagerPort;
@@ -44,16 +55,35 @@ public:
     if (m_packagerPort == packagerPort)
       return;
     m_packagerPort = packagerPort;
-    Q_EMIT packagerPortChanged();
+    setCodeLocation(m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort));
+  }
+  void setLocalSource(const QString& source) {
+    if (m_localSource == source)
+      return;
+
+    // overrides packager*
+    if (source.startsWith("file:")) {
+      setCodeLocation(source);
+    } else {
+      QFileInfo fi(source);
+      if (!fi.exists()) {
+        qWarning() << "Attempt to set non-existent local source file";
+        return;
+      }
+      setCodeLocation(QUrl::fromLocalFile(fi.absoluteFilePath()));
+      setLiveReload(false);
+    }
   }
 Q_SIGNALS:
   void liveReloadChanged();
-  void packagerHostChanged();
-  void packagerPortChanged();
+  void codeLocationChanged();
 private:
   bool m_liveReload = false;
   QString m_packagerHost = "localhost";
   QString m_packagerPort = "8081";
+  QString m_localSource;
+  QString m_packagerTemplate = "http://%1:%2/index.ubuntu.bundle?platform=ubuntu&dev=true";
+  QUrl m_codeLocation;
 };
 
 void registerTypes()
@@ -81,6 +111,7 @@ int main(int argc, char** argv)
     {{"R", "live-reload"}, "Enable live reload."},
     {{"H", "host"}, "Set packager host address.", rnp->packagerHost()},
     {{"P", "port"}, "Set packager port number.", rnp->packagerPort()},
+    {{"L", "local"}, "Set path to the local packaged source", "not set"},
   });
   p.process(app);
   rnp->setLiveReload(p.isSet("live-reload"));
@@ -88,6 +119,8 @@ int main(int argc, char** argv)
     rnp->setPackagerHost(p.value("host"));
   if (p.isSet("port"))
     rnp->setPackagerPort(p.value("port"));
+  if (p.isSet("local"))
+    rnp->setLocalSource(p.value("local"));
 
   view.rootContext()->setContextProperty("ReactNativeProperties", rnp);
   view.setSource(QUrl("qrc:///main.qml"));

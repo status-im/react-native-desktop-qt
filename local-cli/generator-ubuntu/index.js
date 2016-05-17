@@ -33,7 +33,8 @@ module.exports = yeoman.generators.NamedBase.extend({
   writing: function() {
     var templateParams = {
       package: this.options.package,
-      name: this.name
+      name: this.name,
+      lowerCaseName: this.name.toLowerCase()
     };
     this.fs.copyTpl(
       this.templatePath('CMakeLists.txt'),
@@ -49,6 +50,24 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.templatePath('run-app.sh.in'),
       this.destinationPath(path.join('ubuntu', 'run-app.sh.in')),
       templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('click/manifest.json'),
+      this.destinationPath(path.join('ubuntu', 'click', 'manifest.json')),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('click/desktop'),
+      this.destinationPath(path.join('ubuntu', 'click', this.name + '.desktop')),
+      templateParams
+    );
+    this.fs.copy(
+      this.templatePath('click/apparmor'),
+      this.destinationPath(path.join('ubuntu', 'click', this.name + '.apparmor'))
+    );
+    this.fs.copy(
+      this.templatePath('click/icon.png'),
+      this.destinationPath(path.join('ubuntu', 'click', 'share', 'icons', this.name + '.png'))
     );
   },
 

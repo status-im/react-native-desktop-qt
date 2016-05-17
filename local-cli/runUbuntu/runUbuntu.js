@@ -33,13 +33,16 @@ function _runUbuntu(argv, config, resolve, reject) {
   }, {
     command: 'host',
     type: 'string',
-    description: 'Set packager host',
-    default: 'localhost'
+    description: 'Set packager host'
   }, {
     command: 'port',
     type: 'string',
-    description: 'Set packager port',
-    default: '8081'
+    description: 'Set packager port'
+  }, {
+    command: 'arch',
+    type: 'string',
+    description: 'Set build architecture',
+    default: process.arch
   }], argv);
   args.root = args.root || '';
 
@@ -72,9 +75,15 @@ function buildAndRun(args, reject) {
 
   console.log(chalk.bold('Building the app...'));
   try {
-      child_process.spawnSync('sh',
-                              ['-c', "cmake . && make"],
+    if (args['arch'].startsWith('arm')) {
+      child_process.spawnSync('click',
+                              'chroot -a armhf -f ubuntu-sdk-15.04 -n click run ./build.sh'.split(' '),
+                              {stdio: 'inherit'})
+    } else {
+      child_process.spawnSync('./build.sh',
+                              [],
                               {stdio: 'inherit'});
+    }
   } catch (e) {
       console.log(chalk.red('Could not build the app, see the error above.'));
       console.log(e.stdout)
@@ -91,6 +100,8 @@ function buildAndRun(args, reject) {
         appArgs.push('--host=' + args['host']);
       if (args['port'])
         appArgs.push('--port=' + args['port']);
+      if (args['arch'].startsWith('arm'))
+        appArgs.push('--on-device');
       child_process.spawnSync('./run-app.sh', appArgs,
                               {stdio: 'inherit'});
   } catch (e) {

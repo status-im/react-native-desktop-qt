@@ -11,16 +11,7 @@
 const path = require('path');
 
 function getAssetDestPathUbuntu(asset, scale) {
-  var suffix = 'generic';
-  const ubuntuFolder = 'drawable-' + suffix;
-  // TODO: reuse this logic from https://fburl.com/151101135
-  const fileName = (asset.httpServerLocation.substr(1) + '/' + asset.name)
-    .toLowerCase()
-    .replace(/\//g, '_')           // Encode folder structure in file name
-    .replace(/([^a-z0-9_])/g, '')  // Remove illegal chars
-    .replace(/^assets_/, '');      // Remove "assets_" prefix
-
-  return path.join(ubuntuFolder, fileName + '.' + asset.type);
+  return path.join('share', asset.httpServerLocation.substr(1), asset.name + '.' + asset.type);
 }
 
 module.exports = getAssetDestPathUbuntu;
