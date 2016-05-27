@@ -54,6 +54,12 @@ type ConnectivityStateAndroid = $Enum<{
   UNKNOWN: string;
 }>;
 
+type NetworkAccessibility = $Enum<{
+  UnknownAccessibility: string;
+  NotAccessible: string;
+  Accessible: string;
+}>;
+
 
 const _subscriptions = new Map();
 
@@ -70,6 +76,12 @@ if (Platform.OS === 'ios') {
     ): bool {
     return connectionType !== 'NONE' && connectionType !== 'UNKNOWN';
   };
+} else if (Platform.OS === 'ubuntu') {
+  _isConnected = function(
+    networkAccessibility: NetworkAccessibility
+  ): bool {
+    return networkAccessibility === 'Accessible';
+  }
 }
 
 const _isConnectedSubscriptions = new Map();

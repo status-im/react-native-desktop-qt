@@ -41,6 +41,7 @@ set(
   reactnetexecutor.cpp
   reactpipeexecutor.cpp
   reactnetworking.cpp
+  reactnetinfo.cpp
   reacttiming.cpp
   reactappstate.cpp
   reactasynclocalstorage.cpp

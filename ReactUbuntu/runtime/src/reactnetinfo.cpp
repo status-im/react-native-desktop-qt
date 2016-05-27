@@ -1,0 +1,76 @@
+
+#include <QNetworkAccessManager>
+
+#include "reactnetinfo.h"
+#include "reactbridge.h"
+#include "reacteventdispatcher.h"
+
+
+namespace {
+static QMap<QNetworkAccessManager::NetworkAccessibility, QString> accessibleName{
+  { QNetworkAccessManager::UnknownAccessibility, "UnknownAccessibility" },
+  { QNetworkAccessManager::NotAccessible, "NotAccessible" },
+  { QNetworkAccessManager::Accessible, "Accessible" }
+};
+}
+
+class ReactNetInfoPrivate {
+public:
+  void monitorNetworkAccess() {
+    qDebug() << __PRETTY_FUNCTION__;
+    QObject::connect(bridge->networkAccessManager(), &QNetworkAccessManager::networkAccessibleChanged, [=](QNetworkAccessManager::NetworkAccessibility accessible) {
+        qDebug() << __PRETTY_FUNCTION__ << accessible;
+        bridge->eventDispatcher()->sendDeviceEvent("networkStatusDidChange", QVariantList{
+              QVariantMap{{"network_info", accessibleName.value(accessible)}}
+          });
+      });
+  }
+
+  ReactBridge* bridge = nullptr;
+};
+
+
+void ReactNetInfo::getCurrentConnectivity(
+  const ReactModuleInterface::ListArgumentBlock& resolve,
+  const ReactModuleInterface::ListArgumentBlock& reject
+) {
+  Q_UNUSED(reject);
+  Q_D(ReactNetInfo);
+  qDebug() << __PRETTY_FUNCTION__ << accessibleName.value(d->bridge->networkAccessManager()->networkAccessible());
+  resolve(d->bridge, QVariantList{
+                        QVariantMap{{"network_info",
+                                    accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}
+                    });
+}
+
+ReactNetInfo::ReactNetInfo(QObject* parent)
+  : QObject(parent)
+  , d_ptr(new ReactNetInfoPrivate)
+{
+}
+
+ReactNetInfo::~ReactNetInfo()
+{
+}
+
+void ReactNetInfo::setBridge(ReactBridge* bridge)
+{
+  Q_D(ReactNetInfo);
+  d->bridge = bridge;
+  d->monitorNetworkAccess();
+}
+
+QString ReactNetInfo::moduleName()
+{
+  return "RCTNetInfo";
+}
+
+QList<ReactModuleMethod*> ReactNetInfo::methodsToExport()
+{
+  return QList<ReactModuleMethod*>{};
+}
+
+QVariantMap ReactNetInfo::constantsToExport()
+{
+  return QVariantMap{};
+}

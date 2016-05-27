@@ -18,6 +18,7 @@
 
 #include "reacteventdispatcher.h"
 #include "reactnetworking.h"
+#include "reactnetinfo.h"
 #include "reacttiming.h"
 #include "reactappstate.h"
 #include "reactasynclocalstorage.h"
@@ -57,6 +58,7 @@ public:
       new ReactAppState,
       new ReactAsyncLocalStorage,
       new ReactNetworking,
+      new ReactNetInfo,
       new ReactViewManager,
       new ReactRawTextManager,
       new ReactTextManager,
