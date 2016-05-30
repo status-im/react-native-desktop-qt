@@ -73,6 +73,12 @@ class ReactUIManager
                                               int commandID,
                                               const QVariantList& commandArgs);
 
+  Q_INVOKABLE REACT_PROMISE
+    void takeSnapshot(const QString& target,
+                      const QVariantMap& options,
+                      const ReactModuleInterface::ListArgumentBlock& resolve,
+                      const ReactModuleInterface::ListArgumentBlock& reject);
+
 public:
   ReactUIManager();
   ~ReactUIManager();

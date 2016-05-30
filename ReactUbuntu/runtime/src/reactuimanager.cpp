@@ -18,6 +18,8 @@
 #include <QMetaMethod>
 #include <QJsonDocument>
 #include <QQuickItem>
+#include <QQuickItemGrabResult>
+#include <QQuickWindow>
 
 #include <QDebug>
 
@@ -404,6 +406,61 @@ void ReactUIManager::dispatchViewManagerCommand(
   QVariantList args = QVariantList{reactTag};
   args.append(commandArgs);
   mm->invokeWithBridge(m_bridge, args);
+}
+
+void ReactUIManager::takeSnapshot(
+  const QString& target,
+  const QVariantMap& options,
+  const ReactModuleInterface::ListArgumentBlock& resolve,
+  const ReactModuleInterface::ListArgumentBlock& reject
+) {
+  // qDebug() << __PRETTY_FUNCTION__ << target << options;
+  QString imageFormat = options.value("format").toString();
+  if (imageFormat.isEmpty()) {
+    imageFormat = "png";
+  }
+  QSize imageSize;
+  if (options.contains("width") && options.contains("height")) {
+    imageSize = QSize(options.value("width").toInt(), options.value("height").toInt());
+  }
+  int quality = 100;
+  if (options.contains("quality")) {
+    quality = options.value("quality").toDouble() * 100;
+  }
+
+  auto callback = [=](const QImage& image) {
+    QTemporaryFile* imageFile = new QTemporaryFile(m_bridge);
+    imageFile->setFileTemplate(QStandardPaths::writableLocation(QStandardPaths::TempLocation) +
+                                QString("/XXXXXX.") + imageFormat);
+    if (imageFile->open()) {
+      QImage saveImage = image;
+      if (imageSize.isValid())
+        saveImage = image.scaled(imageSize);
+
+      if (saveImage.save(imageFile, imageFormat.toLocal8Bit().constData(), quality)) {
+        resolve(m_bridge, QVariantList{
+            QUrl::fromLocalFile(imageFile->fileName())
+          });
+        return;
+      }
+    }
+
+    reject(m_bridge, QVariantList{ QVariantMap{{"error", "Unable to save image to file"}}});
+  };
+
+  if (target == "window") {
+    callback(m_bridge->visualParent()->window()->grabWindow());
+  } else {
+    QQuickItem* item = m_views.value(target.toInt());
+    if (item == nullptr) {
+      reject(m_bridge, QVariantList{ QVariantMap{{"error", "Could not find view"}}});
+      return;
+    }
+    QSharedPointer<QQuickItemGrabResult> grabResult = item->grabToImage(imageSize);
+    connect(grabResult.data(), &QQuickItemGrabResult::ready, [=] {
+        callback(grabResult->image());
+      });
+  }
 }
 
 
