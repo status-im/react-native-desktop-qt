@@ -79,14 +79,15 @@ public:
         data->insert("total", bytesTotal);
         ec(ReactImageLoader::Event_Progress, *data);
       });
-    QObject::connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [=](QNetworkReply::NetworkError code){
+    QObject::connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [=](QNetworkReply::NetworkError code) {
         data->insert("error", reply->errorString());
         ec(ReactImageLoader::Event_Error, *data);
       });
     QObject::connect(reply, &QNetworkReply::finished, [=]() {
         reply->deleteLater();
         if (reply->error() == QNetworkReply::NoError) {
-          markCached(source);
+          if (!source.isLocalFile())
+            markCached(source);
           ec(ReactImageLoader::Event_Load, *data);
         }
         ec(ReactImageLoader::Event_LoadEnd, *data);
@@ -153,7 +154,6 @@ QUrl ReactImageLoader::provideUriFromSourceUrl(const QUrl& source)
   if (d->isCached(source))
     return d->cachedUrl(source);
 
-  // Fallback XXX:
   return source;
 }
 
