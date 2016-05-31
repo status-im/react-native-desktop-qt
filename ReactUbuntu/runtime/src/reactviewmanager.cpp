@@ -15,6 +15,7 @@
 #include <QVariant>
 #include <QQuickItem>
 #include <QQmlProperty>
+#include <QMatrix4x4>
 
 #include "reactviewmanager.h"
 #include "reactitem.h"
@@ -23,6 +24,45 @@
 #include "reactflexlayout.h"
 #include "reactpropertyhandler.h"
 #include "reacttextproperties.h"
+
+
+class MatrixTransform : public QQuickTransform {
+  Q_OBJECT
+public:
+  MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
+    : QQuickTransform(parent)
+    , m_item(qobject_cast<QQuickItem*>(parent))
+  {
+    memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
+    m_transformMatrix.optimize();
+  }
+  void applyTo(QMatrix4x4 *matrix) const override {
+    if (m_transformMatrix.isIdentity())
+      return;
+    matrix->translate(m_item->width() / 2, m_item->height() / 2);
+    *matrix *= m_transformMatrix;
+    matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
+  }
+  QMatrix4x4 m_transformMatrix;
+  QQuickItem* m_item;
+};
+
+class ViewPropertyHandler : public ReactPropertyHandler {
+  Q_OBJECT
+  Q_PROPERTY(QVector<float> transformMatrix READ transformMatrix WRITE setTransformMatrix)
+public:
+  ViewPropertyHandler(QObject* object)
+    : ReactPropertyHandler(object)
+    {}
+  QVector<float> transformMatrix() const {
+    return QVector<float>{};
+  }
+  void setTransformMatrix(const QVector<float>& transformMatrix) {
+    QQmlListReference r(m_object, "transform");
+    r.clear();
+    r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(m_object)));
+  }
+};
 
 
 ReactViewManager::ReactViewManager(QObject *parent)
@@ -47,7 +87,7 @@ ReactViewManager* ReactViewManager::viewManager()
 
 ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
 {
-  return new ReactPropertyHandler(object);
+  return new ViewPropertyHandler(object);
 }
 
 QString ReactViewManager::moduleName()
