@@ -89,7 +89,10 @@ void ReactTiming::createTimer
 {
   // qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
   if (duration == 0 && !repeats) {
-    m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
+    // XXX: enqueueJSCall should enqueue
+    QTimer::singleShot(0, [=] {
+        m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
+      });
     return;
   }
 
