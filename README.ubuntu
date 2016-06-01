@@ -1,4 +1,3 @@
-g
 
 # React Native Ubuntu
 
@@ -9,14 +8,17 @@ g
 You should have an Ubuntu 16.04 (Xenial Xerus) installation.
 
 If you are going to be developing on a device:
- - You must have a device with Ubuntu Touch installed, see [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/) for more details.
+ - You must have a device with Ubuntu Touch installed, see 
+ [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/)
+ for more details.
  - Your device must be on the same local network as your development machine.
 
 You should have some familiarity with developing on Ubuntu platforms.
 
 ## Setup
 
-Before we can go further, git and node, and node's package manager must be installed.
+Before we can go further, git and node, and node's package manager must be
+installed.
 
 ```
 sudo apt-get install -y git nodejs-legacy npm
@@ -24,7 +26,8 @@ sudo apt-get install -y git nodejs-legacy npm
 
 ### Setup React Native
 
-To start working on a React Native application, the React Native packages for ubuntu need to be published to a local package repository.
+To start working on a React Native application, the React Native packages for
+ubuntu need to be published to a local package repository.
 
 Download the port for Ubuntu.
 ```
@@ -46,7 +49,8 @@ Roughly they are -
 
 ### Setup node-haste
 
-Some changes to node-haste are required to detect the Ubuntu platform. Clone the patched repo and publish to the local package repository.
+Some changes to node-haste are required to detect the Ubuntu platform. Clone
+the patched repo and publish to the local package repository.
 ```
 ~/src$ git clone https://github.com/justinmcp/node-haste
 ~/src$ cd node-haste; npm install
@@ -64,14 +68,16 @@ node-haste should be added to the packages section of the Sinopia config file
 
 ### Install React Native CLI
 
-The last step in preparing for creating our application to install the the cli tools from the local package repository.
+The last step in preparing for creating our application to install the the cli
+tools from the local package repository.
 ```
 ~$ sudo npm install -g react-native-cli
 ```
 
 ## Creating a new React Native application
 
-Now that React Native has been installed we can get started making an application.
+Now that React Native has been installed we can get started making an
+application.
 
 ```
 ~$ cd ~/src
@@ -81,14 +87,19 @@ Now that React Native has been installed we can get started making an applicatio
 ~/src/AwesomeProject$ cd ubuntu
 ```
 
-That's it, the skeleton of an application is in place. You can edit ~/src/AwesomeProject/index.ubuntu.js to start developing.
+That's it, the skeleton of an application is in place. You can edit
+~/src/AwesomeProject/index.ubuntu.js to start developing.
 
 
 ### Targeting a device
 
 #### Dependencies
 
-Usually we would want to be installing the ubuntu-sdk, which can be done directly, but since this is still in preview, we will just install a raw build environment. The build environment is a chroot provided by the hardworking sdk team, but is not part of the general distribution. We will need to add the sdk team's repository first.
+Usually we would want to be installing the ubuntu-sdk, which can be done
+directly, but since this is still in preview, we will just install a raw build
+environment. The build environment is a chroot provided by the hardworking sdk
+team, but is not part of the general distribution. We will need to add the sdk
+team's repository first.
 
 ```
 ~$ sudo add-apt-repository -y ppa:ubuntu-sdk-team/ppa
@@ -102,14 +113,17 @@ Then we can install all necessary packages.
 
 #### Building
 
-To build for the device, run the build script through the chroot build environment.
+To build for the device, run the build script through the chroot build
+environment.
 ```
 ~/src/AwesomeProject/ubuntu$ click chroot -a armhf -f ubuntu-sdk-15.04 -n click run ./build.sh
 ```
 
 #### Running
 
-Make sure that the device can be connected to via adb. The device will need to have developer mode enabled, instruction on these topics can be found on the [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/).
+Make sure that the device can be connected to via adb. The device will need to
+have developer mode enabled, instruction on these topics can be found on the
+[Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/).
 
 In a separate shell, start the React Native packager.
 ```
@@ -143,14 +157,16 @@ In a separate shell, start the React Native packager.
 ~/src/AwesomeProject$ npm start
 ```
 
-Then it is all good to go. Live reload can be activated by passing the --live-reload flag.
+Then it is all good to go. Live reload can be activated by passing the
+--live-reload flag.
 ```
 ~/src/AwesomeProject/ubuntu$ ./run-app.sh —live-reload
 ```
 
 ## Developing React Native Ubuntu
 
-If you would like to contribute, or just want a short cut to trying some React Native examples, you can build React Native directly.
+If you would like to contribute, or just want a short cut to trying some React
+Native examples, you can build React Native directly.
 
 #### Dependencies
 
@@ -159,7 +175,9 @@ If you would like to contribute, or just want a short cut to trying some React N
 ~/src/reactnative-ubuntu$ npm install
 ```
 
-*Note*; you do not need need to add react-native and react-native-cli to the local repository if you are building this way, but you must add node-haste, as per the instructions above.
+*Note*; you do not need need to add react-native and react-native-cli to the
+local repository if you are building this way, but you must add node-haste, as
+per the instructions above.
 
 #### Building
 
