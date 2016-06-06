@@ -23,6 +23,7 @@
 class QNetworkAccessManager;
 
 
+class ReactSourceCodePrivate;
 class ReactSourceCode
   : public QObject
   , public ReactModuleInterface
@@ -33,10 +34,13 @@ class ReactSourceCode
 
   Q_PROPERTY(QUrl scriptURL READ scriptUrl CONSTANT)
   Q_PROPERTY(QByteArray sourceCode READ sourceCode NOTIFY sourceCodeChanged SCRIPTABLE false)
+  Q_PROPERTY(int retryCount READ retryCount WRITE setRetryCount NOTIFY retryCountChanged SCRIPTABLE false)
 
   Q_INVOKABLE void getScriptText(
       const ReactModuleInterface::ResponseBlock& success,
       const ReactModuleInterface::ErrorBlock& error);
+
+  Q_DECLARE_PRIVATE(ReactSourceCode);
 
 public:
   ReactSourceCode(QObject* parent = 0);
@@ -56,16 +60,19 @@ public:
 
   QByteArray sourceCode() const;
 
+  int retryCount() const;
+  void setRetryCount(int retryCount);
+
   void loadSource(QNetworkAccessManager* nam);
 
 Q_SIGNALS:
   void scriptUrlChanged();
   void sourceCodeChanged();
+  void retryCountChanged();
+  void loadFailed();
 
 private:
-  ReactBridge* m_bridge;
-  QUrl m_scriptUrl;
-  QByteArray m_sourceCode;
+  QScopedPointer<ReactSourceCodePrivate> d_ptr;
 };
 
 #endif // REACTSOURCECODE_H

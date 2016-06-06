@@ -11,11 +11,26 @@
  *
  */
 
+#include <memory>
+
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QTimer>
 
 #include "reactsourcecode.h"
+
+
+class ReactSourceCodePrivate
+{
+public:
+  ReactBridge* bridge = nullptr;
+  QUrl scriptUrl;
+  QByteArray sourceCode;
+  int retryCount = 4;
+  int retryAttempts = 0;
+  int retryTimeout = 250;
+};
 
 
 void ReactSourceCode::getScriptText
@@ -24,15 +39,18 @@ void ReactSourceCode::getScriptText
  const ReactModuleInterface::ErrorBlock& error
 )
 {
-  if (!m_sourceCode.isNull())
-    success(m_bridge, QVariantList{ QVariantMap{ {"text", m_sourceCode}, {"url", m_scriptUrl.toString()} } });
+  Q_D(ReactSourceCode);
+  if (!d->sourceCode.isNull())
+    success(d->bridge, QVariantList{QVariantMap{{"text", d->sourceCode},
+                                                {"url", d->scriptUrl.toString()}}});
   else
-    error(m_bridge, QVariantMap{ {"text", "Source code is not available"} });
+    error(d->bridge, QVariantMap{ {"text", "Source code is not available"} });
 }
 
 
 ReactSourceCode::ReactSourceCode(QObject* parent)
   : QObject(parent)
+  , d_ptr(new ReactSourceCodePrivate)
 {
 }
 
@@ -43,7 +61,8 @@ ReactSourceCode::~ReactSourceCode()
 
 void ReactSourceCode::setBridge(ReactBridge* bridge)
 {
-  m_bridge = bridge;
+  Q_D(ReactSourceCode);
+  d->bridge = bridge;
 }
 
 ReactViewManager* ReactSourceCode::viewManager()
@@ -68,30 +87,58 @@ QVariantMap ReactSourceCode::constantsToExport()
 
 QUrl ReactSourceCode::scriptUrl() const
 {
-  return m_scriptUrl;
+  return d_func()->scriptUrl;
 }
 
 void ReactSourceCode::setScriptUrl(const QUrl& scriptUrl)
 {
-  m_scriptUrl = scriptUrl;
+  Q_D(ReactSourceCode);
+  if (d->scriptUrl == scriptUrl)
+    return;
+  d->scriptUrl = scriptUrl;
 }
 
 QByteArray ReactSourceCode::sourceCode() const
 {
-  return m_sourceCode;
+  return d_func()->sourceCode;
+}
+
+int ReactSourceCode::retryCount() const
+{
+  return d_func()->retryCount;
+}
+
+void ReactSourceCode::setRetryCount(int retryCount)
+{
+  Q_D(ReactSourceCode);
+  if (d->retryCount == retryCount)
+    return;
+  d->retryCount = retryCount;
+  Q_EMIT retryCountChanged();
 }
 
 void ReactSourceCode::loadSource(QNetworkAccessManager* nam)
 {
-  QNetworkRequest request(m_scriptUrl);
+  Q_D(ReactSourceCode);
+
+  QNetworkRequest request(d->scriptUrl);
   QNetworkReply* reply = nam->get(request);
   QObject::connect(reply, &QNetworkReply::finished, [=]() {
       reply->deleteLater();
       if (reply->error() != QNetworkReply::NoError) {
-        qCritical() << __PRETTY_FUNCTION__ << ": Error while loading source" << reply->errorString();
+        if (d->retryAttempts < d->retryCount) {
+          d->retryAttempts++;
+          d->retryTimeout *= 2;
+          QTimer::singleShot(d->retryTimeout, [=] { loadSource(nam); });
+        } else {
+          qCritical() << __PRETTY_FUNCTION__ << ": Error while loading source" << reply->errorString();
+          Q_EMIT loadFailed();
+        }
         return;
       }
-      m_sourceCode = reply->readAll();
+      d->sourceCode = reply->readAll();
+      d->retryAttempts = 0;
+      d->retryTimeout = 250;
       Q_EMIT sourceCodeChanged();
     });
 }
