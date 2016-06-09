@@ -26,7 +26,7 @@ class ReactModuleData;
 class ReactUIManager;
 class ReactImageLoader;
 class ReactEventDispatcher;
-
+class ReactRedboxItem;
 
 class ReactBridgePrivate;
 class ReactBridge : public QObject
@@ -76,12 +76,14 @@ public:
   QList<ReactModuleData*> modules() const;
   ReactUIManager* uiManager() const;
   ReactImageLoader* imageLoader() const;
+  ReactRedboxItem* redbox();
 
 Q_SIGNALS:
   void readyChanged();
 
 private Q_SLOTS:
   void sourcesFinished();
+  void sourcesLoadFailed();
   void applicationScriptDone();
 
 private:

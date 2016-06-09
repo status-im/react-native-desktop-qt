@@ -47,6 +47,8 @@ set(
   reacttextproperties.cpp
   reactrawtextproperties.cpp
   reactuimanager.cpp
+  reactredboxitem.cpp
+  reactexceptionsmanager.cpp
   ubuntucomponentsloader.cpp
   ubuntucomponentmodule.cpp
   ubuntuscrollviewmanager.cpp

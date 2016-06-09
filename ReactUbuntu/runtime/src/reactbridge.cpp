@@ -40,6 +40,8 @@
 #include "reactimagemanager.h"
 #include "reactuimanager.h"
 #include "reactimageloader.h"
+#include "reactredboxitem.h"
+#include "reactexceptionsmanager.h"
 
 #include "ubuntuscrollviewmanager.h"
 #include "ubuntunavigatormanager.h"
@@ -56,6 +58,7 @@ public:
   ReactExecutor* executor = nullptr;
   QQmlEngine* qmlEngine = nullptr;
   QQuickItem* visualParent = nullptr;
+  ReactRedboxItem* redbox = nullptr;
   QNetworkAccessManager* nam = nullptr;
   ReactUIManager* uiManager = nullptr;
   ReactImageLoader* imageLoader = nullptr;
@@ -75,6 +78,7 @@ public:
       new ReactRawTextManager,
       new ReactTextManager,
       new ReactImageManager,
+      new ReactExceptionsManager,
     };
   }
 
@@ -267,6 +271,15 @@ ReactImageLoader* ReactBridge::imageLoader() const
   return d_func()->imageLoader;
 }
 
+
+ReactRedboxItem* ReactBridge::redbox()
+{
+  Q_D(ReactBridge);
+  if (d->redbox == nullptr)
+    d->redbox = new ReactRedboxItem(this);
+  return d->redbox;
+}
+
 void ReactBridge::sourcesFinished()
 {
   Q_D(ReactBridge);
@@ -274,6 +287,12 @@ void ReactBridge::sourcesFinished()
   QTimer::singleShot(200, [=]() {
       d->executor->executeApplicationScript(d->sourceCode->sourceCode(), d->bundleUrl);
     });
+}
+
+void ReactBridge::sourcesLoadFailed()
+{
+  Q_D(ReactBridge);
+  redbox()->showErrorMessage("Failed to load source code");
 }
 
 void ReactBridge::loadSource()
@@ -306,6 +325,7 @@ void ReactBridge::initModules()
   // XXX:
   d->sourceCode->setScriptUrl(d->bundleUrl);
   connect(d->sourceCode, SIGNAL(sourceCodeChanged()), SLOT(sourcesFinished()));
+  connect(d->sourceCode, SIGNAL(loadFailed()), SLOT(sourcesLoadFailed()));
 
   // XXX:
   for (QObject* o : modules) {

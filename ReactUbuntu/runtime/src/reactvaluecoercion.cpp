@@ -72,6 +72,20 @@ QMap<int, coerce_function> coerceFunctions
     }
   },
   {
+    qMetaTypeId<QList<QVariantMap>>(),
+    [](const QVariant& value) {
+      Q_ASSERT(value.canConvert<QVariantList>());
+      QVariantList s = value.toList();
+      QList<QVariantMap> r;
+      std::transform(s.begin(), s.end(),
+                     std::back_inserter(r),
+                     [](const QVariant& v) {
+                       return v.toMap();
+                     });
+      return QVariant::fromValue(r);
+    }
+  },
+  {
     qMetaTypeId<QList<QList<QString>>>(),
     [](const QVariant& value) {
       Q_ASSERT(value.canConvert<QVariantList>());
