@@ -22,5 +22,6 @@ Rectangle {
 
     moduleName: "${APP_NAME}"
     codeLocation: ReactNativeProperties.codeLocation
+    pluginsPath: ReactNativeProperties.pluginsPath
   }
 }

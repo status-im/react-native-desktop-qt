@@ -13,6 +13,7 @@
 
 #include <QStandardPaths>
 #include <QMap>
+#include <QDir>
 #include <QPluginLoader>
 #include <QJsonDocument>
 #include <QQuickItem>
@@ -65,6 +66,7 @@ public:
   ReactSourceCode* sourceCode = nullptr;
   ReactEventDispatcher* eventDispatcher = nullptr;
   QUrl bundleUrl;
+  QString pluginsPath = "./plugins";
   QMap<int, ReactModuleData*> modules;
 
   QObjectList internalModules() {
@@ -98,6 +100,24 @@ public:
     modules << new UbuntuPageManager;
     modules << new UbuntuTextFieldManager;
     modules << new UbuntuDatePickerManager;
+
+    // Look for all modules in pluginsPath
+    QDir pluginsDir(pluginsPath);
+    for (auto& pluginPath : pluginsDir.entryList(QStringList{"*.so"})) {
+      QPluginLoader pl(pluginsDir.absoluteFilePath(pluginPath));
+      QObject* instance = pl.instance();
+      if (instance == nullptr) {
+        qWarning() << "Found non-plugin library in plugin path" << pluginPath << pl.errorString();
+        continue;
+      }
+      auto ml = qobject_cast<ReactModuleLoader*>(instance);
+      if (ml == nullptr) {
+        qWarning() << "Cound not find ReactModuleLoader interface";
+        continue;
+      }
+      modules << ml->availableModules();
+    }
+
     return modules;
   }
 };
@@ -249,6 +269,19 @@ void ReactBridge::setBundleUrl(const QUrl& bundleUrl)
   if (d->bundleUrl == bundleUrl)
     return;
   d->bundleUrl = bundleUrl;
+}
+
+QString ReactBridge::pluginsPath() const
+{
+  return d_func()->pluginsPath;
+}
+
+void ReactBridge::setPluginsPath(const QString& pluginsPath)
+{
+  Q_D(ReactBridge);
+  if (d->pluginsPath == pluginsPath)
+    return;
+  d->pluginsPath = pluginsPath;
 }
 
 ReactEventDispatcher* ReactBridge::eventDispatcher() const

@@ -26,6 +26,7 @@ class ReactNativeProperties : public QObject {
   Q_OBJECT
   Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
   Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
+  Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
 public:
   ReactNativeProperties(QObject* parent = 0): QObject(parent) {
     m_codeLocation = m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort);
@@ -47,6 +48,15 @@ public:
       return;
     m_codeLocation = codeLocation;
     Q_EMIT codeLocationChanged();
+  }
+  QString pluginsPath() const {
+    return m_pluginsPath;
+  }
+  void setPluginsPath(const QString& pluginsPath) {
+    if (m_pluginsPath == pluginsPath)
+      return;
+    m_pluginsPath = pluginsPath;
+    Q_EMIT pluginsPathChanged();
   }
   QString packagerHost() const {
     return m_packagerHost;
@@ -86,6 +96,7 @@ public:
 Q_SIGNALS:
   void liveReloadChanged();
   void codeLocationChanged();
+  void pluginsPathChanged();
 private:
   bool m_liveReload = false;
   QString m_packagerHost = "localhost";
@@ -93,6 +104,7 @@ private:
   QString m_localSource;
   QString m_packagerTemplate = "http://%1:%2/index.ubuntu.bundle?platform=ubuntu&dev=true";
   QUrl m_codeLocation;
+  QString m_pluginsPath;
 };
 
 void registerTypes()
@@ -121,6 +133,7 @@ int main(int argc, char** argv)
     {{"H", "host"}, "Set packager host address.", rnp->packagerHost()},
     {{"P", "port"}, "Set packager port number.", rnp->packagerPort()},
     {{"L", "local"}, "Set path to the local packaged source", "not set"},
+    {{"M", "plugins-path"}, "Set path to node modules", "./plugins"},
   });
   p.process(app);
   rnp->setLiveReload(p.isSet("live-reload"));
@@ -130,6 +143,8 @@ int main(int argc, char** argv)
     rnp->setPackagerPort(p.value("port"));
   if (p.isSet("local"))
     rnp->setLocalSource(p.value("local"));
+  if (p.isSet("plugins-path"))
+    rnp->setPluginsPath(p.value("plugins-path"));
 
   view.rootContext()->setContextProperty("ReactNativeProperties", rnp);
   view.setSource(QUrl("qrc:///main.qml"));

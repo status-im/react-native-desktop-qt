@@ -37,6 +37,7 @@ class ReactBridge : public QObject
   Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
   Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
   Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
+  Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath)
   Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
   Q_PROPERTY(ReactUIManager* uiManager READ uiManager)
   Q_PROPERTY(ReactImageLoader* imageLoader READ imageLoader)
@@ -71,6 +72,9 @@ public:
 
   QUrl bundleUrl() const;
   void setBundleUrl(const QUrl& bundleUrl);
+
+  QString pluginsPath() const;
+  void setPluginsPath(const QString& pluginsPath);
 
   ReactEventDispatcher* eventDispatcher() const;
   QList<ReactModuleData*> modules() const;

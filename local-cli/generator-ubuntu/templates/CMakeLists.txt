@@ -18,5 +18,6 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactU
 configure_file(
   run-app.sh.in
   ${CMAKE_CURRENT_BINARY_DIR}/run-app.sh
+  @ONLY
 )
 

@@ -15,6 +15,8 @@ var chalk = require('chalk');
 var fs = require('fs');
 var path = require('path');
 var yeoman = require('yeoman-generator');
+var mkdirp = require('mkdirp');
+
 
 function validatePackageName(name) {
   // TODO: check that this matches Ubuntu package reqs as well
@@ -80,6 +82,7 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.templatePath('click/icon.png'),
       this.destinationPath(path.join('ubuntu', 'click', 'share', 'icons', this.name + '.png'))
     );
+    mkdirp.sync('share');
   },
 
   end: function() {

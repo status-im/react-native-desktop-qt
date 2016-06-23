@@ -32,6 +32,7 @@ class ReactView : public ReactItem
   Q_PROPERTY(QString moduleName READ moduleName WRITE setModuleName NOTIFY moduleNameChanged)
   Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
   Q_PROPERTY(QVariantMap properties READ properties WRITE setProperties NOTIFY propertiesChanged)
+  Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
 
   Q_DECLARE_PRIVATE(ReactView)
 
@@ -51,11 +52,15 @@ public:
   QVariantMap properties() const;
   void setProperties(const QVariantMap& properties);
 
+  QString pluginsPath() const;
+  void setPluginsPath(const QString& pluginsPath);
+
 Q_SIGNALS:
   void liveReloadChanged();
   void moduleNameChanged();
   void codeLocationChanged();
   void propertiesChanged();
+  void pluginsPathChanged();
 
 private Q_SLOTS:
   void bridgeReady();

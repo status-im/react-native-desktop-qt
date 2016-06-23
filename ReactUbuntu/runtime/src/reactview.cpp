@@ -77,6 +77,7 @@ public:
   QString moduleName;
   QUrl codeLocation;
   QVariantMap properties;
+  QString pluginsPath;
   ReactBridge* bridge = nullptr;
   ReactView* q_ptr;
 
@@ -191,6 +192,20 @@ void ReactView::setProperties(const QVariantMap& properties)
   emit propertiesChanged();
 }
 
+QString ReactView::pluginsPath() const
+{
+  return d_func()->pluginsPath;
+}
+
+void ReactView::setPluginsPath(const QString& pluginsPath)
+{
+  Q_D(ReactView);
+  if (d->pluginsPath == pluginsPath)
+    return;
+  d->pluginsPath = pluginsPath;
+  Q_EMIT pluginsPathChanged();
+}
+
 void ReactView::bridgeReady()
 {
   Q_D(ReactView);
@@ -229,6 +244,7 @@ void ReactView::componentComplete()
       d->bridge->setQmlEngine(qmlEngine(this));
       d->bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
       d->bridge->setBundleUrl(d->codeLocation);
+      d->bridge->setPluginsPath(d->pluginsPath);
       d->bridge->setVisualParent(this);
       d->bridge->init();
     });
