@@ -57,7 +57,7 @@ function packageUbuntu(argv, config) {
 
 function _copyAssets(args, resolve, reject) {
   console.log(chalk.bold('Copying app assets...'));
-  child_process.exec('cp -uR ' + path.join(args.root, 'share/* ') + path.join(args.root, 'ubuntu/click/share') + ' || true',
+  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/share/* ') + path.join(args.root, 'ubuntu/click/share') + ' || true',
                       {}, (error, stdout, stderr) => {
                         if (error)
                           reject(error);
