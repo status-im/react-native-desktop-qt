@@ -82,7 +82,7 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.templatePath('click/icon.png'),
       this.destinationPath(path.join('ubuntu', 'click', 'share', 'icons', this.name + '.png'))
     );
-    mkdirp.sync('share');
+    mkdirp.sync('ubuntu/share');
   },
 
   end: function() {
