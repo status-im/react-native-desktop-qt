@@ -10,6 +10,7 @@
 args=""
 on_device=0
 plugins_path=""
+asset_path="share"
 
 for arg in "$@"
 do
@@ -19,6 +20,8 @@ do
   elif [ $parts == "--plugins-path" ]; then
     plugins_path=${parts[1]}
     args=$args" --plugins-path=./plugins"
+  elif [ $parts == "--asset-path]" ]; then
+    asset_path=${parts[1]}
   else
     args=$args" $parts"
   fi
@@ -31,6 +34,7 @@ then
   react_host=`hostname -I`
   adb push @CMAKE_BINARY_DIR@/bin/@APP_NAME@ /home/phablet/@APP_NAME@/@APP_NAME@
   [ -d $plugins_path ] && adb push $plugins_path /home/phablet/@APP_NAME@/plugins/
+  [ -d $asset_path ] && adb push $asset_path /home/phablet/@APP_NAME@/share/
 #  adb reverse --no-rebind tcp:8081 tcp:8081
   adb shell "cd /home/phablet/@APP_NAME@ && REACT_SERVER_HOST=$react_host ./@APP_NAME@ --host $react_host $args -- --desktop_file_hint=/usr/share/applications/webbrowser-app.desktop"
 else
