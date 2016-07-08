@@ -40,7 +40,7 @@ QString findNodeExecutablePath() {
         return nodeExePath;
     }
   }
-  return "./";
+  return "";
 }
 
 struct RegisterClass {
