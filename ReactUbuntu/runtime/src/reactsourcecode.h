@@ -36,9 +36,9 @@ class ReactSourceCode
   Q_PROPERTY(QByteArray sourceCode READ sourceCode NOTIFY sourceCodeChanged SCRIPTABLE false)
   Q_PROPERTY(int retryCount READ retryCount WRITE setRetryCount NOTIFY retryCountChanged SCRIPTABLE false)
 
-  Q_INVOKABLE void getScriptText(
-      const ReactModuleInterface::ResponseBlock& success,
-      const ReactModuleInterface::ErrorBlock& error);
+  Q_INVOKABLE REACT_PROMISE
+    void getScriptText(const ReactModuleInterface::ListArgumentBlock& resolve,
+                       const ReactModuleInterface::ListArgumentBlock& reject);
 
   Q_DECLARE_PRIVATE(ReactSourceCode);
 

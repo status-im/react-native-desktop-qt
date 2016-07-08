@@ -33,18 +33,16 @@ public:
 };
 
 
-void ReactSourceCode::getScriptText
-(
- const ReactModuleInterface::ResponseBlock& success,
- const ReactModuleInterface::ErrorBlock& error
-)
-{
+void ReactSourceCode::getScriptText(
+  const ReactModuleInterface::ListArgumentBlock& resolve,
+  const ReactModuleInterface::ListArgumentBlock& reject
+) {
   Q_D(ReactSourceCode);
   if (!d->sourceCode.isNull())
-    success(d->bridge, QVariantList{QVariantMap{{"text", d->sourceCode},
+    resolve(d->bridge, QVariantList{QVariantMap{{"text", d->sourceCode},
                                                 {"url", d->scriptUrl.toString()}}});
   else
-    error(d->bridge, QVariantMap{ {"text", "Source code is not available"} });
+    reject(d->bridge, QVariantList{QVariantMap{ {"text", "Source code is not available"}}});
 }
 
 

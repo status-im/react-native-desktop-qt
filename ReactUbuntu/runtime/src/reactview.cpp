@@ -78,6 +78,7 @@ public:
   QUrl codeLocation;
   QVariantMap properties;
   QString pluginsPath;
+  QString executor = "ReactNetExecutor";
   ReactBridge* bridge = nullptr;
   ReactView* q_ptr;
 
@@ -206,6 +207,20 @@ void ReactView::setPluginsPath(const QString& pluginsPath)
   Q_EMIT pluginsPathChanged();
 }
 
+QString ReactView::executor() const
+{
+  return d_func()->executor;
+}
+
+void ReactView::setExecutor(const QString& executor)
+{
+  Q_D(ReactView);
+  if (d->executor == executor)
+    return;
+  d->executor = executor;
+  Q_EMIT executorChanged();
+}
+
 void ReactView::bridgeReady()
 {
   Q_D(ReactView);
@@ -245,6 +260,7 @@ void ReactView::componentComplete()
       d->bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
       d->bridge->setBundleUrl(d->codeLocation);
       d->bridge->setPluginsPath(d->pluginsPath);
+      d->bridge->setExecutorName(d->executor);
       d->bridge->setVisualParent(this);
       d->bridge->init();
     });

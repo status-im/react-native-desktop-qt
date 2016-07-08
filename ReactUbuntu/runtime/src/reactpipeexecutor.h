@@ -16,15 +16,29 @@
 
 #include "reactexecutor.h"
 
-class QProcess;
 
+class ReactPipeExecutorPrivate;
 class ReactPipeExecutor : public ReactExecutor
 {
   Q_OBJECT
+  Q_PROPERTY(QString nodePath READ nodePath WRITE setNodePath)
+  Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
+  Q_PROPERTY(bool logErrors READ logErrors WRITE setLogErrors)
+
+  Q_DECLARE_PRIVATE(ReactPipeExecutor)
 
 public:
-  ReactPipeExecutor(QObject* parent);
+  Q_INVOKABLE ReactPipeExecutor(QObject* parent = 0);
   ~ReactPipeExecutor();
+
+  QString nodePath() const;
+  void setNodePath(const QString& nodePath);
+
+  QStringList arguments() const;
+  void setArguments(const QStringList& arguments);
+
+  bool logErrors() const;
+  void setLogErrors(bool logErrors);
 
   void init() override;
 
@@ -32,23 +46,12 @@ public:
   void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
   void executeJSCall(const QString& method,
                      const QVariantList& args = QVariantList(),
-                     const ExecuteCallback& callback = ExecuteCallback()
-                     ) override;
-
-private Q_SLOTS:
-  void readReply();
+                     const ExecuteCallback& callback = ExecuteCallback()) override;
 
 private:
-  void sendRequest(const QByteArray& request);
-  QJsonDocument handleResponse();
-  void handleExecuteApplicationScriptResponse(const QVariantMap& message);
-  void handleExecuteJavascriptCallResponse(const QVariantMap& message);
+  void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
 
-  QVariantMap injectedObjects;
-  QProcess* m_nodeProcess;
-
-  QByteArray m_inputBuffer;
+  QScopedPointer<ReactPipeExecutorPrivate> d_ptr;
 };
-
 
 #endif // REACTPIPEEXECUTOR_H

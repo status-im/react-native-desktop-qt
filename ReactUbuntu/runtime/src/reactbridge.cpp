@@ -56,6 +56,7 @@ class ReactBridgePrivate
 {
 public:
   bool ready = false;
+  QString executorName = "ReactNetExecutor";
   ReactExecutor* executor = nullptr;
   QQmlEngine* qmlEngine = nullptr;
   QQuickItem* visualParent = nullptr;
@@ -129,7 +130,6 @@ ReactBridge::ReactBridge(QObject* parent)
 {
   Q_D(ReactBridge);
 
-  setupExecutor();
 
   d->eventDispatcher = new ReactEventDispatcher(this);
 }
@@ -138,19 +138,31 @@ ReactBridge::~ReactBridge()
 {
 }
 
-void ReactBridge::setupExecutor() {
+void ReactBridge::setupExecutor()
+{
   Q_D(ReactBridge);
 
-  d->executor = new ReactNetExecutor(this); // TODO: config/property
+  // Find executor
+  const int executorType = QMetaType::type((d->executorName + "*").toLocal8Bit());
+  if (executorType != QMetaType::UnknownType) {
+    d->executor = qobject_cast<ReactExecutor*>(QMetaType::metaObjectForType(executorType)->newInstance(Q_ARG(QObject*, this)));
+  }
+
+  if (d->executor == nullptr) {
+    qWarning() << __PRETTY_FUNCTION__ << "Could not construct executor named" << d->executorName <<
+              "constructing default (ReactNetExecutor)";
+    d->executor = new ReactNetExecutor(this); // TODO: config/property
+  }
+
   connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
+  d->executor->init();
 }
 
 void ReactBridge::init()
 {
   Q_D(ReactBridge);
 
-  d->executor->init();
-
+  setupExecutor();
   initModules();
   injectModules();
   loadSource();
@@ -163,9 +175,7 @@ void ReactBridge::reload()
   setReady(false);
 
   d->executor->deleteLater();
-  d->executor = new ReactNetExecutor(this);
-  connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
-  d->executor->init();
+  setupExecutor();
 
   // d->uiManager->reset();
   for (auto& md : d->modules) {
@@ -282,6 +292,19 @@ void ReactBridge::setPluginsPath(const QString& pluginsPath)
   if (d->pluginsPath == pluginsPath)
     return;
   d->pluginsPath = pluginsPath;
+}
+
+QString ReactBridge::executorName() const
+{
+  return d_func()->executorName;
+}
+
+void ReactBridge::setExecutorName(const QString& executorName)
+{
+  Q_D(ReactBridge);
+  if (d->executorName == executorName)
+    return;
+  d->executorName = executorName;
 }
 
 ReactEventDispatcher* ReactBridge::eventDispatcher() const

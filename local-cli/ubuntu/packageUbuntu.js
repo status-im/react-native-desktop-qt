@@ -11,6 +11,7 @@
  *
  */
 
+const http = require('http');
 const path = require('path');
 const chalk = require('chalk');
 const child_process = require('child_process');
@@ -26,6 +27,7 @@ const buildUbuntu = require('./buildUbuntu');
 
 function packageUbuntu(argv, config) {
   const args = parseArguments(argv);
+  var packagePath = '';
 
   return new Promise((resolve, reject) => {
     if (!checkUbuntu(args)) {
@@ -34,30 +36,55 @@ function packageUbuntu(argv, config) {
       resolve();
     }
   }).then(() => {
+    return new Promise((resolve, reject) => {
+      if (!args.click && !args.snap || args.click && args.snap) {
+        console.log(chalk.red('You must be creating either a click or snap package.'));
+        return;
+      }
+      packagePath = path.join(args.root, `ubuntu/${args.click ? 'click' : 'snap'}/`);
+      resolve();
+    });
+  }).then(() => {
     return buildUbuntu(args);
   }).then(() => {
     console.log(chalk.bold('Running RN bundler...'));
-    mkdirp.sync(path.join(args.root, 'ubuntu/click/share/js'));
-    const bundleArgs='--platform ubuntu --entry-file index.ubuntu.js --bundle-output ubuntu/click/share/js/index.js --assets-dest ubuntu/click/share/assets'.split(' ');
+    const sharePath = path.join(packagePath, 'share');
+    mkdirp.sync(path.join(sharePath, 'js'));
+    const bundleArgs=`--platform ubuntu --entry-file index.ubuntu.js --bundle-output ${path.join(sharePath, 'js/index.js')} --assets-dest ${path.join(sharePath, 'assets')}`.split(' ');
     return bundle(bundleArgs, config);
   }).then(() => {
     return new Promise((resolve, reject) => {
-      _copyAssets(args, resolve, reject);
+      if (args.click)
+        _fetchArmNode(args, packagePath, resolve, reject);
+      else
+        resolve();
     });
   }).then(() => {
     return new Promise((resolve, reject) => {
-      _copyModules(args, resolve, reject);
+      _copyAssets(args, packagePath, resolve, reject);
     });
   }).then(() => {
     return new Promise((resolve, reject) => {
-      _buildClick(args, resolve, reject);
+      _copyModules(args, packagePath, resolve, reject);
+    });
+  }).then(() => {
+    return new Promise((resolve, reject) => {
+      _copyBinaries(args, packagePath, resolve, reject);
+    });
+  }).then(() => {
+    return new Promise((resolve, reject) => {
+      if (args.click)
+        _buildClick(args, packagePath, resolve, reject);
+      else {
+        _buildSnap(args, packagePath, resolve, reject);
+      }
     });
   });
 }
 
-function _copyAssets(args, resolve, reject) {
+function _copyAssets(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Copying app assets...'));
-  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/share/* ') + path.join(args.root, 'ubuntu/click/share') + ' || true',
+  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/share/* ') + path.join(packagePath, 'share') + ' || true',
                       {}, (error, stdout, stderr) => {
                         if (error)
                           reject(error);
@@ -66,9 +93,9 @@ function _copyAssets(args, resolve, reject) {
                       });
 }
 
-function _copyModules(args, resolve, reject) {
+function _copyModules(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Copying Ubuntu modules...'));
-  const pluginsDestPath = path.join(args.root, 'ubuntu/click/plugins');
+  const pluginsDestPath = path.join(packagePath, 'plugins');
   mkdirp.sync(pluginsDestPath);
   child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/plugins/* ') + pluginsDestPath + ' || true',
                       {}, (error, stdout, stderr) => {
@@ -79,10 +106,56 @@ function _copyModules(args, resolve, reject) {
                       });
 }
 
-function _buildClick(args, resolve, reject) {
+function _copyBinaries(args, packagePath, resolve, reject) {
+  console.log(chalk.bold('Copying app binaries...'));
+  const binDestPath = path.join(packagePath, 'bin');
+  mkdirp.sync(binDestPath);
+  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/bin/ubuntu-server.js ') + binDestPath + ' || true',
+                      {}, (error, stdout, stderr) => {
+                        if (error)
+                          reject(error);
+                        else
+                          resolve();
+                      });
+}
+
+// https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-armv7l.tar.xz
+function _fetchArmNode(args, packagePath, resolve, reject) {
+  console.log(chalk.bold('Downloading arm node binaries...'));
+  const binDestPath = path.join(packagePath, 'bin');
+
+  const wget = 'wget -N https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-armv7l.tar.xz';
+  const tar = 'tar xf node-v4.4.7-linux-armv7l.tar.xz node-v4.4.7-linux-armv7l/bin/node';
+  const mv = 'mv node-v4.4.7-linux-armv7l/bin/node ../' + binDestPath;
+  const download_cmd = wget + ' && ' + tar + ' && ' + mv;
+
+  mkdirp.sync(binDestPath);
+  child_process.exec(download_cmd,
+                     {cwd: path.join(args.root, 'tmp')},
+                     (error, stdout, stderr) => {
+                       if (error)
+                        reject(error);
+                      else
+                        resolve();
+                     });
+}
+
+function _buildClick(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Building click package...'));
   child_process.exec('click build click .',
                      {cwd: path.join(args.root, 'ubuntu')},
+                     (error, stdout, stderr) => {
+                       if (error)
+                        reject(error);
+                      else
+                        resolve();
+                     });
+}
+
+function _buildSnap(args, packagePath, resolve, reject) {
+  console.log(chalk.bold('Building snap package...'));
+  child_process.exec('snapcraft',
+                     {cwd: path.join(args.root, 'ubuntu/snap')},
                      (error, stdout, stderr) => {
                        if (error)
                         reject(error);

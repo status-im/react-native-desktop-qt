@@ -33,6 +33,10 @@ function parseArguments(argv) {
     type: 'string',
     description: 'Set packager port'
   }, {
+    command: 'executor',
+    type: 'string',
+    description: 'Name of executor to use'
+  }, {
     command: 'arch',
     type: 'string',
     description: 'Set build architecture',
@@ -42,6 +46,14 @@ function parseArguments(argv) {
     type: 'string',
     description: 'Path to node modules',
     default: process.cwd() + "/ubuntu/plugins"
+  }, {
+    command: 'click',
+    description: 'Build a click package',
+    default: false
+  }, {
+    command: 'snap',
+    description: 'Build a click package',
+    default: false
   }], argv);
   args.root = args.root || '';
 

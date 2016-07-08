@@ -87,7 +87,7 @@ var AppRegistry = {
       '__DEV__ === ' + String(__DEV__) +
       ', development-level warning are ' + (__DEV__ ? 'ON' : 'OFF') +
       ', performance optimizations are ' + (__DEV__ ? 'OFF' : 'ON');
-    console.log(msg);
+    console.error(msg);
     BugReporting.init();
     BugReporting.addSource('AppRegistry.runApplication' + runCount++, () => msg);
     invariant(

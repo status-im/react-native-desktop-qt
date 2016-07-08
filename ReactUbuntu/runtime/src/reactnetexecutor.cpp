@@ -13,66 +13,152 @@
 
 #include <QString>
 #include <QUrl>
+#include <QQueue>
 #include <QObject>
 #include <QTcpSocket>
 #include <QJsonDocument>
+#include <QStateMachine>
 
 #include <QDebug>
 
 #include "reactnetexecutor.h"
 
 
+namespace {
+struct RegisterClass {
+  RegisterClass() { qRegisterMetaType<ReactNetExecutor*>(); }
+} registerClass;
+}
+
+class ReactNetExecutorPrivate : public QObject {
+  Q_OBJECT
+public:
+  QString serverHost = "localhost";
+  QTcpSocket* socket = nullptr;
+  QStateMachine* machina = nullptr;
+  QByteArray inputBuffer;
+  QQueue<QByteArray> requestQueue;
+  QQueue<ReactExecutor::ExecuteCallback> responseQueue;
+
+  void processRequests() {
+    if (socket->state() != QAbstractSocket::ConnectedState ||
+        requestQueue.isEmpty()) {
+      return;
+    }
+
+    QByteArray request = requestQueue.dequeue();
+    quint32 length = request.size();
+    socket->write((const char*)&length, sizeof(length));
+    socket->write(request.constData(), request.size());
+  }
+
+public Q_SLOTS:
+  void readReply() {
+    if (inputBuffer.capacity() == 0) {
+      quint32 length = 0;
+      if (socket->bytesAvailable() < sizeof(length))
+        return;
+      socket->read((char*)&length, sizeof(length));
+      inputBuffer.reserve(length);
+    }
+
+    inputBuffer += socket->read(inputBuffer.capacity() - inputBuffer.size());
+
+    if (inputBuffer.size() < inputBuffer.capacity())
+      return;
+
+    ReactExecutor::ExecuteCallback callback = responseQueue.dequeue();
+    if (callback) {
+      QJsonDocument doc;
+      if (inputBuffer != "undefined") {
+        doc = QJsonDocument::fromJson(inputBuffer);
+      }
+      callback(doc);
+    }
+
+    inputBuffer.clear();
+  }
+};
+
+
 ReactNetExecutor::ReactNetExecutor(QObject* parent)
   : ReactExecutor(parent)
-  , m_socket(new QTcpSocket(this))
+  , d_ptr(new ReactNetExecutorPrivate)
 {
+  Q_D(ReactNetExecutor);
   QString serverHost = qgetenv("REACT_SERVER_HOST");
-  if (serverHost.isEmpty())
-    serverHost = "localhost";
-  m_socket->connectToHost(serverHost, 5000);
-  //  connect(m_socket, SIGNAL(connected()), SLOT(connected()));
-  //  connect(m_socket, SIGNAL(disconnected()), SLOT(disconnected()));
-  connect(m_socket, SIGNAL(readyRead()), SLOT(readReply()));
+  if (!serverHost.isEmpty())
+    d->serverHost = serverHost;
+
+  d->socket = new QTcpSocket(this);
+  connect(d->socket, SIGNAL(readyRead()), d, SLOT(readReply()));
+
+  d->machina = new QStateMachine(this);
+
+  QState* initialState = new QState();
+  QState* errorState = new QState();
+  QState* readyState = new QState();
+
+  initialState->addTransition(d->socket, SIGNAL(connected()), readyState);
+  readyState->addTransition(d->socket, SIGNAL(error(QAbstractSocket::SocketError)), errorState);
+  readyState->addTransition(d->socket, SIGNAL(disconnected()), errorState);
+
+  connect(initialState, &QAbstractState::entered, [=] {
+      d->socket->connectToHost(d->serverHost, 5000);
+    });
+  connect(readyState, &QAbstractState::entered, [=] {
+      d->processRequests();
+    });
+  connect(errorState, &QAbstractState::entered, [=] {
+      d->machina->stop();
+    });
+
+  d->machina->addState(initialState);
+  d->machina->addState(errorState);
+  d->machina->addState(readyState);
+  d->machina->setInitialState(initialState);
 }
 
 ReactNetExecutor::~ReactNetExecutor()
 {
 }
 
+QString ReactNetExecutor::serverHost() const
+{
+  return d_func()->serverHost;
+}
+
+void ReactNetExecutor::setServerHost(const QString& serverHost)
+{
+  Q_D(ReactNetExecutor);
+  if (d->serverHost == serverHost)
+    return;
+  d->serverHost = serverHost;
+}
+
 void ReactNetExecutor::init()
 {
-  // TODO: move socket connect to here
+  d_func()->machina->start();
 }
 
 void ReactNetExecutor::injectJson(const QString& name, const QVariant& data)
 {
-  // qDebug() << __func__ << "name=" << name; // << "json=" << data;
-
   QJsonDocument doc = QJsonDocument::fromVariant(data);
-  // qDebug() << __func__ << "doc=" << doc.toJson(QJsonDocument::Indented);
-  sendRequest(name.toLocal8Bit() + "=" + doc.toJson(QJsonDocument::Compact));
-  handleResponse();
+  processRequest(name.toLocal8Bit() + "=" + doc.toJson(QJsonDocument::Compact));
 }
 
 void ReactNetExecutor::executeApplicationScript(const QByteArray& script, const QUrl& /*sourceUrl*/)
 {
-  // Size is a problem?
-  sendRequest(script);
-
-  handleResponse();
-
-  Q_EMIT applicationScriptDone();
+  processRequest(script, [=](const QJsonDocument&) {
+      Q_EMIT applicationScriptDone();
+    });
 }
 
-void ReactNetExecutor::executeJSCall (
-    const QString& method,
-    const QVariantList& args,
-    const ExecuteCallback& callback
+void ReactNetExecutor::executeJSCall(
+  const QString& method,
+  const QVariantList& args,
+  const ReactExecutor::ExecuteCallback& callback
 ) {
-  // qDebug() << __func__ << "method=" << method << "args=" << args;
-
-  m_socket->waitForConnected();  // TODO:
-
   QByteArrayList stringifiedArgs;
   for (const QVariant& arg : args) {
     if (arg.type() == QVariant::List || arg.type() == QVariant::Map) {
@@ -83,71 +169,21 @@ void ReactNetExecutor::executeJSCall (
     }
   }
 
-  sendRequest(
-        QByteArray("__fbBatchedBridge.") +
-        method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");"
-      );
-
-  QJsonDocument result = handleResponse();
-  if (callback)
-    callback(result);
+  processRequest(
+     QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");",
+     callback);
 }
 
-void ReactNetExecutor::readReply()
-{
-  /*
-  if (m_inputBuffer.capacity() == 0) {
-    quint32 length = 0;
-    if (m_nodeProcess->bytesAvailable() < sizeof(length)) {
-      return;
-    }
-    m_nodeProcess->read((char*)&length, sizeof(length));
-    m_inputBuffer.reserve(length);
-  }
-
-  if (m_nodeProcess->bytesAvailable() < m_inputBuffer.capacity()) {
-    return;
-  }
-
-  m_inputBuffer += m_nodeProcess->read(m_inputBuffer.capacity());
-  qDebug() << __func__ << "collected=" << m_inputBuffer;
-  */
-}
-
-void ReactNetExecutor::sendRequest(const QByteArray& request)
-{
-  m_socket->waitForConnected();  // TODO:
-
-  quint32 length = request.size();
-  m_socket->write((const char*)&length, sizeof(length));
-  m_socket->write(request.constData(), request.size());
-}
-
-QJsonDocument ReactNetExecutor::handleResponse()
-{
-  m_socket->waitForReadyRead();
-
-  QJsonDocument doc;
-  // Read JSON response
-  QByteArray response = m_socket->readAll();
-  if (response == "undefined")
-    return doc;
-  doc = QJsonDocument::fromJson(response);
-  return doc;
-}
-
-/*
-void ReactNetExecutor::handleExecuteApplicationScriptResponse
-(
-  const QVariantMap& message
+void ReactNetExecutor::processRequest(
+  const QByteArray& request,
+  const ReactExecutor::ExecuteCallback& callback
 ) {
-  Q_EMIT applicationScriptDone();
+  Q_D(ReactNetExecutor);
+
+  d->requestQueue.enqueue(request);
+  d->responseQueue.enqueue(callback);
+  d->processRequests();
 }
 
-void ReactNetExecutor::handleExecuteJavascriptCallResponse
-(
-  const QVariantMap& message
-) {
-  Q_EMIT javascriptCallDone(message.toVariant());
-}
-*/
+#include "reactnetexecutor.moc"
+

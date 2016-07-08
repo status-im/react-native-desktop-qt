@@ -65,6 +65,13 @@ module.exports = yeoman.generators.NamedBase.extend({
       templateParams
     );
     this.fs.copyTpl(
+      this.templatePath('ubuntu-server.js'),
+      this.destinationPath(path.join('ubuntu', 'bin/ubuntu-server.js')),
+      templateParams
+    );
+
+    // click
+    this.fs.copyTpl(
       this.templatePath('click/manifest.json'),
       this.destinationPath(path.join('ubuntu', 'click', 'manifest.json')),
       templateParams
@@ -82,6 +89,17 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.templatePath('click/icon.png'),
       this.destinationPath(path.join('ubuntu', 'click', 'share', 'icons', this.name + '.png'))
     );
+
+    // snap
+    this.fs.copy(
+      this.templatePath('snap/snapcraft.yaml'),
+      this.destinationPath(path.join('ubuntu', 'snap', 'snapcraft.yaml'))
+    );
+    this.fs.copy(
+      this.templatePath('snap/parts/plugins/x-nodejs.py'),
+      this.destinationPath(path.join('ubuntu', 'snap/parts/plugins', 'x-nodejs.py'))
+    );
+
     mkdirp.sync('ubuntu/share');
   },
 

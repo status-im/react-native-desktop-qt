@@ -70,6 +70,8 @@ function actuallyRun(args, reject) {
         appArgs.push('--host=' + args['host']);
       if (args['port'])
         appArgs.push('--port=' + args['port']);
+      if (args['executor'])
+        appArgs.push('--executor=' + args['executor']);
       if (args['arch'].startsWith('arm'))
         appArgs.push('--on-device');
       appArgs.push('--plugins-path=' + args['plugins-path']);

@@ -17,15 +17,20 @@
 #include "reactexecutor.h"
 
 
-class QTcpSocket;
-
+class ReactNetExecutorPrivate;
 class ReactNetExecutor : public ReactExecutor
 {
   Q_OBJECT
+  Q_PROPERTY(QString serverHost READ serverHost WRITE setServerHost)
+
+  Q_DECLARE_PRIVATE(ReactNetExecutor)
 
 public:
-  ReactNetExecutor(QObject* parent);
+  Q_INVOKABLE ReactNetExecutor(QObject* parent = 0);
   ~ReactNetExecutor();
+
+  QString serverHost() const;
+  void setServerHost(const QString& serverHost);
 
   void init() override;
 
@@ -33,21 +38,12 @@ public:
   void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
   void executeJSCall(const QString& method,
                      const QVariantList& args = QVariantList(),
-                     const ExecuteCallback& callback = ExecuteCallback()
-                     ) override;
-
-private Q_SLOTS:
-  void readReply();
+                     const ExecuteCallback& callback = ExecuteCallback()) override;
 
 private:
-  void sendRequest(const QByteArray& request);
-  QJsonDocument handleResponse();
-  void handleExecuteApplicationScriptResponse(const QVariantMap& message);
-  void handleExecuteJavascriptCallResponse(const QVariantMap& message);
+  void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
 
-  QTcpSocket* m_socket;
-
-  QByteArray m_inputBuffer;
+  QScopedPointer<ReactNetExecutorPrivate> d_ptr;
 };
 
 #endif // REACTNETEXECUTOR_H

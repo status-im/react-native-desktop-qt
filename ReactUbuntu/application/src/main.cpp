@@ -27,6 +27,7 @@ class ReactNativeProperties : public QObject {
   Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
   Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
   Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
+  Q_PROPERTY(QString executor READ executor WRITE setExecutor NOTIFY executorChanged)
 public:
   ReactNativeProperties(QObject* parent = 0): QObject(parent) {
     m_codeLocation = m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort);
@@ -57,6 +58,15 @@ public:
       return;
     m_pluginsPath = pluginsPath;
     Q_EMIT pluginsPathChanged();
+  }
+  QString executor() const {
+    return m_executor;
+  }
+  void setExecutor(const QString& executor) {
+    if (m_executor == executor)
+      return;
+    m_executor = executor;
+    Q_EMIT executorChanged();
   }
   QString packagerHost() const {
     return m_packagerHost;
@@ -97,6 +107,7 @@ Q_SIGNALS:
   void liveReloadChanged();
   void codeLocationChanged();
   void pluginsPathChanged();
+  void executorChanged();
 private:
   bool m_liveReload = false;
   QString m_packagerHost = "localhost";
@@ -105,6 +116,7 @@ private:
   QString m_packagerTemplate = "http://%1:%2/index.ubuntu.bundle?platform=ubuntu&dev=true";
   QUrl m_codeLocation;
   QString m_pluginsPath;
+  QString m_executor = "ReactPipeExecutor";
 };
 
 void registerTypes()
@@ -134,6 +146,7 @@ int main(int argc, char** argv)
     {{"P", "port"}, "Set packager port number.", rnp->packagerPort()},
     {{"L", "local"}, "Set path to the local packaged source", "not set"},
     {{"M", "plugins-path"}, "Set path to node modules", "./plugins"},
+    {{"E", "executor"}, "Set Javascript executor", rnp->executor()},
   });
   p.process(app);
   rnp->setLiveReload(p.isSet("live-reload"));
@@ -145,6 +158,8 @@ int main(int argc, char** argv)
     rnp->setLocalSource(p.value("local"));
   if (p.isSet("plugins-path"))
     rnp->setPluginsPath(p.value("plugins-path"));
+  if (p.isSet("executor"))
+    rnp->setExecutor(p.value("executor"));
 
   view.rootContext()->setContextProperty("ReactNativeProperties", rnp);
   view.setSource(QUrl("qrc:///main.qml"));
