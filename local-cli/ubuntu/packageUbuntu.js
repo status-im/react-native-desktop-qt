@@ -123,6 +123,7 @@ function _copyBinaries(args, packagePath, resolve, reject) {
 function _fetchArmNode(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Downloading arm node binaries...'));
   const binDestPath = path.join(packagePath, 'bin');
+  mkdirp.sync(path.join(args.root, 'tmp'));
 
   const wget = 'wget -N https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-armv7l.tar.xz';
   const tar = 'tar xf node-v4.4.7-linux-armv7l.tar.xz node-v4.4.7-linux-armv7l/bin/node';

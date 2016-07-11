@@ -15,7 +15,7 @@ var repl = require('repl');
 var vm = require('vm');
 var util = require('util');
 
-var DEBUG = 3;
+var DEBUG = 1;
 
 function rnUbuntuServer(readable, writable) {
   var sandbox = { console: console, util: util };
@@ -26,11 +26,11 @@ function rnUbuntuServer(readable, writable) {
   var buffer = new Buffer(0);
 
   var internalEval = function(code) {
-    DEBUG > 1 && console.error("-- internalEval: executing script(length=" + code.length + "): " + code.slice(0, 80) + " ... " + code.slice(-80));
-    DEBUG > 2 && console.error("-- before sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
+    DEBUG > 3 && console.error("-- internalEval: executing script(length=" + code.length + "): " + code.slice(0, 80) + " ... " + code.slice(-80));
+    DEBUG > 3 && console.error("-- before sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
     result = vm.runInContext(code, sandbox);
-    DEBUG > 2 && console.error("-- internalEval: result = " + result);
-    DEBUG > 2 && console.error("-- after sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
+    DEBUG > 3 && console.error("-- internalEval: result = " + result);
+    DEBUG > 3 && console.error("-- after sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
     return result;
   };
 
@@ -44,7 +44,7 @@ function rnUbuntuServer(readable, writable) {
     }
 
     stringifiedResult = JSON.stringify(result);
-    DEBUG > 2 && console.error("-- sending result=" + stringifiedResult);
+    DEBUG > 3 && console.error("-- sending result=" + stringifiedResult);
     if (stringifiedResult === undefined) {
       sendResponsePacket('undefined');
       return;
@@ -58,16 +58,16 @@ function rnUbuntuServer(readable, writable) {
     DEBUG > 2 && console.error("-- buffer length(original): " + buffer.length)
 
     if (chunk == null || state === 'eof')
-        return;
+      return;
 
     buffer = Buffer.concat([buffer, chunk]);
     DEBUG > 2 && console.error("-- buffer length(concat): " + buffer.length)
 
     if (state === 'start') {
       if (buffer.length < 4)
-          return; 
+        return; 
       length = buffer.readUInt32LE(0);
-      DEBUG > 2 && console.error("-- Packet length: " + length);
+      DEBUG > 2 && console.error("-- New Packet: length=" + length);
 
       if (buffer.length >= length + 4) {
         result = internalEval(buffer.toString('utf8', 4, length + 4));
@@ -81,7 +81,7 @@ function rnUbuntuServer(readable, writable) {
       return;
     }
 
-    if (state == 'script') {
+    if (state === 'script') {
       DEBUG > 2 && console.error("-- Packet length: " + length);
       if (buffer.length >= length + 4) {
         result = internalEval(buffer.toString('utf8', 4, length + 4));

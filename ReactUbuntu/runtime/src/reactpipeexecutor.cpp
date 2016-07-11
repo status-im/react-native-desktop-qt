@@ -28,19 +28,19 @@
 
 namespace {
 QString default_executable{"node"};
-QStringList default_arguments{"ubuntu-server.js", "--pipe"};
-QStringList default_executable_search_paths{QDir::currentPath(), QCoreApplication::applicationDirPath()};
+QString default_script{"ubuntu-server.js"};
+QStringList default_arguments{"--pipe"};
 
-QString findNodeExecutablePath() {
+QString itemWithPath(const QString& item, const QStringList& searchPaths) {
   const QStringList local_paths{".", "bin"};
-  for (const QString& searchPath : default_executable_search_paths) {
+  for (const QString& searchPath : searchPaths) {
     for (const QString& localPath : local_paths) {
-      QString nodeExePath = searchPath + "/" + localPath + "/";
-      if (QFileInfo::exists(nodeExePath + default_executable))
-        return nodeExePath;
+      QString testPath = searchPath + "/" + localPath + "/";
+      if (QFileInfo::exists(testPath + item))
+        return testPath + item;
     }
   }
-  return "";
+  return item;
 }
 
 struct RegisterClass {
@@ -51,7 +51,7 @@ struct RegisterClass {
 class ReactPipeExecutorPrivate : public QObject {
   Q_OBJECT
 public:
-  bool logErrors = true;
+  bool logErrors = false;
   QProcess* nodeProcess = nullptr;
   QStateMachine* machina = nullptr;
   QByteArray inputBuffer;
@@ -105,12 +105,13 @@ ReactPipeExecutor::ReactPipeExecutor(QObject* parent)
 {
   Q_D(ReactPipeExecutor);
 
+  // applicationDirPath needs to be called after creation of Application
+  const QStringList search_paths{QDir::currentPath(),
+                                 QCoreApplication::applicationDirPath()};
+
   d->nodeProcess = new QProcess(this);
-  QString nodeExePath = findNodeExecutablePath();
-  d->nodeProcess->setProgram(nodeExePath + default_executable);
-  QStringList arguments = default_arguments;
-  arguments[0] = nodeExePath + arguments[0];
-  d->nodeProcess->setArguments(arguments);
+  d->nodeProcess->setProgram(itemWithPath(default_executable, search_paths));
+  d->nodeProcess->setArguments(QStringList() << itemWithPath(default_script, search_paths) << default_arguments);
 
   connect(d->nodeProcess, SIGNAL(readyReadStandardOutput()), d, SLOT(readReply()));
   connect(d->nodeProcess, &QProcess::readyReadStandardError, [=] {

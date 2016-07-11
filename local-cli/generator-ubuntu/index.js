@@ -91,9 +91,10 @@ module.exports = yeoman.generators.NamedBase.extend({
     );
 
     // snap
-    this.fs.copy(
+    this.fs.copyTpl(
       this.templatePath('snap/snapcraft.yaml'),
-      this.destinationPath(path.join('ubuntu', 'snap', 'snapcraft.yaml'))
+      this.destinationPath(path.join('ubuntu', 'snap', 'snapcraft.yaml')),
+      templateParams
     );
     this.fs.copy(
       this.templatePath('snap/parts/plugins/x-nodejs.py'),
@@ -101,6 +102,7 @@ module.exports = yeoman.generators.NamedBase.extend({
     );
 
     mkdirp.sync('ubuntu/share');
+    mkdirp.sync('ubuntu/plugins');
   },
 
   end: function() {

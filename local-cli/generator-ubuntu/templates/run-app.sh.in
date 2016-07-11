@@ -15,30 +15,47 @@ executor=""
 
 react_host=`hostname -I`
 
+# Parse args
 for arg in "$@"
 do
   IFS="=" read -a parts <<< "$arg"
-  if [ $parts == "--on-device" ]; then
+  if [[ $parts == "--on-device" ]]; then
     on_device=1
-  elif [ $parts == "--plugins-path" ]; then
+  elif [[ $parts == "--plugins-path" ]]; then
     plugins_path=${parts[1]}
     args=$args" --plugins-path=./plugins"
-  elif [ $parts == "--asset-path" ]; then
+  elif [[ $parts == "--asset-path" ]]; then
     asset_path=${parts[1]}
-  elif [ $parts == "--executor" ]; then
-    executor=${parts[1]}
+  elif [[ $parts == "--executor" ]]; then
+    if [[ $on_device == 1 ]]; then
+      # Force net executor for now
+      executor="ReactNetExecutor"
+    else
+      executor=${parts[1]}
+    fi
     args=$args" --executor=$executor"
   else
     args=$args" $parts"
   fi
 done
 
-# Try and run executor; it is probably OK if this fails - it's just running elsewhere
-if [ "$executor" == "ReactNetExecutor" ]; then
+# Handle defaults
+if [[ -z "$executor" ]]; then
+  if [[ $on_device == 1 ]]; then
+    executor="ReactNetExecutor"
+    args=$args" --executor=ReactNetExecutor"
+  fi
+
+  # The RN application selects pipe executor by default
+fi
+
+# For net case, try and run executor; it is probably OK if this fails - it's
+# just running elsewhere
+if [[ "$executor" == "ReactNetExecutor" ]]; then
   (node @CMAKE_BINARY_DIR@/bin/ubuntu-server.js 2>&1 > /dev/null) &
 fi
 
-if [[ $on_device = 1 ]]; then
+if [[ $on_device == 1 ]]; then
   app_path="/home/phablet/@APP_NAME@"
 
 # Push binaries
