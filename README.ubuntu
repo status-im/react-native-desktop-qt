@@ -8,8 +8,8 @@
 You should have an Ubuntu 16.04 (Xenial Xerus) installation.
 
 If you are going to be developing on a device:
- - You must have a device with Ubuntu Touch installed, see 
- [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/)
+ - You must have a device with Ubuntu Touch installed and developer mode
+ enabled, see [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/)
  for more details.
  - Your device must be on the same local network as your development machine.
 
@@ -68,7 +68,7 @@ node-haste should be added to the packages section of the Sinopia config file
 
 ### Install React Native CLI
 
-The last step in preparing for creating our application to install the the cli
+The last step in preparing for creating our application to install the CLI
 tools from the local package repository.
 ```
 ~$ sudo npm install -g react-native-cli
@@ -90,6 +90,28 @@ application.
 That's it, the skeleton of an application is in place. You can edit
 ~/src/AwesomeProject/index.ubuntu.js to start developing.
 
+## Easy path
+
+The quick and easy way to get started is to use the react-native CLI tool to
+build and run the application.
+```
+~/src/AwesomeProject$ react-native run-ubuntu
+```
+
+If you have a connected Ubuntu device, you can launch onto the device with
+```
+~/src/AwesomeProject$ react-native run-ubuntu --arch=arm
+```
+*Note*; For device builds, the Ubuntu SDK must have been installed as per the
+instructions below.
+
+
+Other command line arguments can be passed 
+```
+~/src/AwesomeProject$ react-native run-ubuntu -h
+```
+To be able to read the list.
+
 
 ### Targeting a device
 
@@ -97,8 +119,8 @@ That's it, the skeleton of an application is in place. You can edit
 
 Usually we would want to be installing the ubuntu-sdk, which can be done
 directly, but since this is still in preview, we will just install a raw build
-environment. The build environment is a chroot provided by the hardworking sdk
-team, but is not part of the general distribution. We will need to add the sdk
+environment. The build environment is a chroot provided by the hardworking SDK
+team, but is not part of the general distribution. We will need to add the SDK
 team's repository first.
 
 ```
@@ -110,6 +132,7 @@ Then we can install all necessary packages.
 ```
 ~$ sudo apt-get install -y adb click-dev ubuntu-sdk-api-15.04-armhf
 ```
+
 
 #### Building
 
