@@ -103,6 +103,7 @@ module.exports = yeoman.generators.NamedBase.extend({
 
     mkdirp.sync('ubuntu/share');
     mkdirp.sync('ubuntu/plugins');
+    mkdirp.sync('ubuntu/tmp');
   },
 
   end: function() {
