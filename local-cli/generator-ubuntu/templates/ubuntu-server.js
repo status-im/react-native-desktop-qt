@@ -18,6 +18,7 @@ var util = require('util');
 var DEBUG = 1;
 
 function rnUbuntuServer(readable, writable) {
+  console.reportErrorsAsExceptions = false;  // XXX:
   var sandbox = { console: console, util: util };
   vm.createContext(sandbox);
 
