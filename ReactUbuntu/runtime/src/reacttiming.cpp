@@ -97,10 +97,13 @@ void ReactTiming::createTimer
   }
 
   QTimer *timer = new QTimer(this);
+  timer->setTimerType(Qt::PreciseTimer);
   timer->setSingleShot(!repeats);
   QObject::connect(timer, &QTimer::timeout, [=]() {
       if (m_bridge)
         m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
+      if (!repeats)
+        deleteTimer(callbackId);
     });
   m_activeTimers[callbackId] = timer;
   if (duration < 18) {
