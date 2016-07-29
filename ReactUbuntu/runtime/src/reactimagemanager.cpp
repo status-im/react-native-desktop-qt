@@ -51,7 +51,7 @@ class ImagePropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(QString overflow READ overflow WRITE setOverflow)
   Q_PROPERTY(QColor tintColor READ tintColor WRITE setTintColor)
   Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
-  Q_PROPERTY(QUrl source READ source WRITE setSource)
+  Q_PROPERTY(QVariantMap source READ source WRITE setSource)
   Q_PROPERTY(bool onLoadStart READ onLoadStart WRITE setOnLoadStart)
   Q_PROPERTY(bool onProgress READ onProgress WRITE setOnProgress)
   Q_PROPERTY(bool onError READ onError WRITE setOnError)
@@ -82,8 +82,8 @@ public:
   void setOverflow(const QString& overdlow);
   QColor borderColor() const;
   void setBorderColor(const QColor& borderColor);
-  QUrl source() const;
-  void setSource(const QUrl& source);
+  QVariantMap source() const;
+  void setSource(const QVariantMap& source);
   bool onLoadStart() const;
   void setOnLoadStart(bool onLoadStart);
   bool onProgress() const;
@@ -141,13 +141,17 @@ void ImagePropertyHandler::setBackfaceVisibility(const QString& backfaceVisibili
 {
 }
 
-QUrl ImagePropertyHandler::source() const
+QVariantMap ImagePropertyHandler::source() const
 {
-  return QUrl();
+  return QVariantMap{};
 }
 
-void ImagePropertyHandler::setSource(const QUrl& source)
+void ImagePropertyHandler::setSource(const QVariantMap& imageSource)
 {
+  QUrl source = imageSource["uri"].toUrl();
+  if (source.isRelative())
+    source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
+
   m_bridge->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data) {
       if (event == ReactImageLoader::Event_Load) {
         m_object->setProperty("source", m_bridge->imageLoader()->provideUriFromSourceUrl(source));

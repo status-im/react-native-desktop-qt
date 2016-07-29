@@ -31,7 +31,12 @@ var {
 var Image = React.createClass({
   propTypes: {
     style: StyleSheetPropType(ImageStylePropTypes),
-    source: PropTypes.shape({uri: PropTypes.string}),
+    source: PropTypes.oneOfType([
+      PropTypes.shape({
+        uri: PropTypes.string,
+      }),
+      PropTypes.number,
+    ]),
     onLoadStart: PropTypes.func,
     onProgress: PropTypes.func,
     onError: PropTypes.func,
@@ -58,10 +63,9 @@ var Image = React.createClass({
 
     return (
       <RCTImageView
-        { ...this.props }
-        source={source.uri}
-        >
-      </RCTImageView>
+        {...this.props}
+        source={source}
+      />
     );
   }
 });
