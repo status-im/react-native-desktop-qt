@@ -130,7 +130,6 @@ ReactBridge::ReactBridge(QObject* parent)
 {
   Q_D(ReactBridge);
 
-
   d->eventDispatcher = new ReactEventDispatcher(this);
 }
 
@@ -339,9 +338,9 @@ ReactRedboxItem* ReactBridge::redbox()
 void ReactBridge::sourcesFinished()
 {
   Q_D(ReactBridge);
-  // XXX:
-  QTimer::singleShot(200, [=]() {
-      d->executor->executeApplicationScript(d->sourceCode->sourceCode(), d->bundleUrl);
+  QTimer::singleShot(0, [=] {
+      d->executor->executeApplicationScript(d->sourceCode->sourceCode(),
+                                            d->bundleUrl);
     });
 }
 
@@ -420,7 +419,7 @@ void ReactBridge::processResult(const QJsonDocument& doc)
     return;
 
   if (!doc.isArray()) {
-    qCritical() << "Returned document from executor in unexpected form";
+    qCritical() << __PRETTY_FUNCTION__ << "Returned document from executor in unexpected form";
     return;
   }
 
@@ -439,13 +438,13 @@ void ReactBridge::processResult(const QJsonDocument& doc)
   for (int i = 0; i < moduleIDs.size(); ++i) {
     ReactModuleData* moduleData = d->modules[moduleIDs[i].toInt()];
     if (moduleData == nullptr) {
-      qCritical() << "Could not find referenced module";
+      qCritical() << __PRETTY_FUNCTION__ << "Could not find referenced module";
       continue;
     }
 
     ReactModuleMethod* method = moduleData->method(methodIDs[i].toInt());
     if (method == nullptr) {
-      qCritical() << "Request for unsupported method";
+      qCritical() << __PRETTY_FUNCTION__ << "Request for unsupported method";
       continue;
     }
 

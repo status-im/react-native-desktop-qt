@@ -29,9 +29,7 @@ static QMap<QNetworkAccessManager::NetworkAccessibility, QString> accessibleName
 class ReactNetInfoPrivate {
 public:
   void monitorNetworkAccess() {
-    qDebug() << __PRETTY_FUNCTION__;
     QObject::connect(bridge->networkAccessManager(), &QNetworkAccessManager::networkAccessibleChanged, [=](QNetworkAccessManager::NetworkAccessibility accessible) {
-        qDebug() << __PRETTY_FUNCTION__ << accessible;
         bridge->eventDispatcher()->sendDeviceEvent("networkStatusDidChange", QVariantList{
               QVariantMap{{"network_info", accessibleName.value(accessible)}}
           });
@@ -48,7 +46,6 @@ void ReactNetInfo::getCurrentConnectivity(
 ) {
   Q_UNUSED(reject);
   Q_D(ReactNetInfo);
-  qDebug() << __PRETTY_FUNCTION__ << accessibleName.value(d->bridge->networkAccessManager()->networkAccessible());
   resolve(d->bridge, QVariantList{
                         QVariantMap{{"network_info",
                                     accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}
