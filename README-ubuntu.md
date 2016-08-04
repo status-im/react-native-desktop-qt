@@ -3,6 +3,10 @@
 
 ## Introduction
 
+### Platforms
+
+There is support for applications on both Desktop Ubuntu and Ubuntu Touch.
+
 ### Prerequisites
 
 You should have an Ubuntu 16.04 (Xenial Xerus) installation.
@@ -32,7 +36,7 @@ ubuntu need to be published to a local package repository.
 Download the port for Ubuntu.
 ```
 ~$ mkdir src; cd src
-~/src$ git clone https://git.launchpad.net/reactnative-ubuntu -b ubuntu
+~/src$ git clone https://github.com/CanonicalLtd/react-native -b ubuntu
 ```
 And then follow the instruction in ~/src/reactnative-ubuntu/react-native-cli/README.md
 
