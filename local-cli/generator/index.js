@@ -29,7 +29,7 @@ module.exports = yeoman.generators.NamedBase.extend({
     this.option('skip-ubuntu', {
       desc: 'Skip generating Ubuntu files',
       type: Boolean,
-      defaults: true
+      defaults: false
     });
     this.option('upgrade', {
       desc: 'Specify an upgrade',
