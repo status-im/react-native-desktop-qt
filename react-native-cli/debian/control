@@ -1,6 +1,9 @@
 Source: react-native
 Priority: optional
 Maintainer: Justin McPherson <justin.mcpherson@canonical.com>
+Build-Depends: debhelper (>= 9),
+               dh-make,
+               npm (>= 3.5.2-0ubuntu4),
 Standards-Version: 3.9.5
 Section: universe/web
 Homepage: https://github.com/CanonicalLtd/react-native
