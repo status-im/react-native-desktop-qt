@@ -47,8 +47,8 @@ Roughly they are -
 ~/src$ sinopia&
 ~/src$ npm set registry http://localhost:4873/
 ~/src$ npm adduser --registry http://localhost:4873/
-~/src$ cd reactnative-ubuntu/react-native-cli; npm publish —force
-~/src/reactnative-ubuntu/react-native-cli$ cd ..; npm publish —force
+~/src$ cd reactnative-ubuntu/react-native-cli; npm publish --force
+~/src/reactnative-ubuntu/react-native-cli$ cd ..; npm publish --force
 ```
 
 ### Setup node-haste
@@ -59,7 +59,7 @@ the patched repo and publish to the local package repository.
 ~/src$ git clone https://github.com/justinmcp/node-haste
 ~/src$ cd node-haste; npm install
 ~/src/node-haste$ (add node-haste to sinopia config - see below)
-~/src/node-haste$ npm publish —force
+~/src/node-haste$ npm publish --force
 ```
 
 node-haste should be added to the packages section of the Sinopia config file
