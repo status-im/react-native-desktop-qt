@@ -12,8 +12,8 @@ set(APP_NAME <%= name %>)
 set(REACT_BUILD_STATIC_LIB ON)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/React/Layout)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactUbuntu/runtime/src ${CMAKE_CURRENT_BINARY_DIR}/lib)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactUbuntu/application/src ${CMAKE_CURRENT_BINARY_DIR}/bin)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/runtime/src ${CMAKE_CURRENT_BINARY_DIR}/lib)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/application/src ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 configure_file(
   run-app.sh.in
