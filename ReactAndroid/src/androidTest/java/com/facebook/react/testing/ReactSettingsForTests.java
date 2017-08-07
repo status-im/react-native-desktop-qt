@@ -8,7 +8,7 @@
 
 package com.facebook.react.testing;
 
-import com.facebook.react.modules.debug.DeveloperSettings;
+import com.facebook.react.modules.debug.interfaces.DeveloperSettings;
 
 public class ReactSettingsForTests implements DeveloperSettings {
 
@@ -35,5 +35,15 @@ public class ReactSettingsForTests implements DeveloperSettings {
   @Override
   public boolean isElementInspectorEnabled() {
     return false;
+  }
+
+  @Override
+  public boolean isRemoteJSDebugEnabled() {
+    return false;
+  }
+
+  @Override
+  public void setRemoteJSDebugEnabled(boolean remoteJSDebugEnabled) {
+
   }
 }

@@ -1,11 +1,16 @@
 /**
- * Copyright 2004-present Facebook. All Rights Reserved.
+ * Copyright (c) 2013-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
  */
 
 'use strict';
 
 jest
-  .disableAutomock()
   .mock('ErrorUtils')
   .mock('BatchedBridge');
 
@@ -19,7 +24,7 @@ describe('InteractionManager', () => {
   let interactionComplete;
 
   beforeEach(() => {
-    jest.resetModuleRegistry();
+    jest.resetModules();
     InteractionManager = require('InteractionManager');
 
     interactionStart = jest.fn();
@@ -49,7 +54,7 @@ describe('InteractionManager', () => {
   });
 
   it('notifies asynchronously when interaction stops', () => {
-    var handle = InteractionManager.createInteractionHandle();
+    const handle = InteractionManager.createInteractionHandle();
     jest.runAllTimers();
     interactionStart.mockClear();
     InteractionManager.clearInteractionHandle(handle);
@@ -61,7 +66,7 @@ describe('InteractionManager', () => {
   });
 
   it('does not notify when started & stopped in same event loop', () => {
-    var handle = InteractionManager.createInteractionHandle();
+    const handle = InteractionManager.createInteractionHandle();
     InteractionManager.clearInteractionHandle(handle);
 
     jest.runAllTimers();
@@ -71,7 +76,7 @@ describe('InteractionManager', () => {
 
   it('does not notify when going from two -> one active interactions', () => {
     InteractionManager.createInteractionHandle();
-    var handle = InteractionManager.createInteractionHandle();
+    const handle = InteractionManager.createInteractionHandle();
     jest.runAllTimers();
 
     interactionStart.mockClear();
@@ -84,7 +89,7 @@ describe('InteractionManager', () => {
   });
 
   it('runs tasks asynchronously when there are interactions', () => {
-    var task = jest.fn();
+    const task = jest.fn();
     InteractionManager.runAfterInteractions(task);
     expect(task).not.toBeCalled();
 
@@ -93,8 +98,8 @@ describe('InteractionManager', () => {
   });
 
   it('runs tasks when interactions complete', () => {
-    var task = jest.fn();
-    var handle = InteractionManager.createInteractionHandle();
+    const task = jest.fn();
+    const handle = InteractionManager.createInteractionHandle();
     InteractionManager.runAfterInteractions(task);
 
     jest.runAllTimers();
@@ -106,8 +111,8 @@ describe('InteractionManager', () => {
   });
 
   it('does not run tasks twice', () => {
-    var task1 = jest.fn();
-    var task2 = jest.fn();
+    const task1 = jest.fn();
+    const task2 = jest.fn();
     InteractionManager.runAfterInteractions(task1);
     jest.runAllTimers();
 
@@ -118,10 +123,10 @@ describe('InteractionManager', () => {
   });
 
   it('runs tasks added while processing previous tasks', () => {
-    var task1 = jest.fn(() => {
+    const task1 = jest.fn(() => {
       InteractionManager.runAfterInteractions(task2);
     });
-    var task2 = jest.fn();
+    const task2 = jest.fn();
 
     InteractionManager.runAfterInteractions(task1);
     expect(task2).not.toBeCalled();
@@ -129,6 +134,20 @@ describe('InteractionManager', () => {
     jest.runAllTimers();
 
     expect(task1).toBeCalled();
+    expect(task2).toBeCalled();
+  });
+
+  it('allows tasks to be cancelled', () => {
+    const task1 = jest.fn();
+    const task2 = jest.fn();
+    const promise1 = InteractionManager.runAfterInteractions(task1);
+    InteractionManager.runAfterInteractions(task2);
+    expect(task1).not.toBeCalled();
+    expect(task2).not.toBeCalled();
+    promise1.cancel();
+
+    jest.runAllTimers();
+    expect(task1).not.toBeCalled();
     expect(task2).toBeCalled();
   });
 });
@@ -143,7 +162,8 @@ describe('promise tasks', () => {
     });
   }
   beforeEach(() => {
-    jest.resetModuleRegistry();
+    jest.resetModules();
+    jest.useFakeTimers();
     InteractionManager = require('InteractionManager');
     BatchedBridge = require('BatchedBridge');
     sequenceId = 0;
@@ -236,7 +256,9 @@ describe('promise tasks', () => {
     expectToBeCalledOnce(task2);
   });
 
-  const bigAsyncTest = () => {
+  const bigAsyncTest = (resolve) => {
+    jest.useRealTimers();
+
     const task1 = createSequenceTask(1);
     const task2 = jest.fn(() => {
       expect(++sequenceId).toBe(2);
@@ -262,27 +284,25 @@ describe('promise tasks', () => {
     InteractionManager.runAfterInteractions({gen: task2, name: 'gen2'});
     InteractionManager.runAfterInteractions(task6);
 
-    jest.runAllTimers();
-    // runAllTimers doesn't actually run all timers with nested timer functions
-    // inside Promises, so we have to call it extra times.
-    jest.runAllTimers();
-    jest.runAllTimers();
+    setTimeout(() => {
+      expectToBeCalledOnce(task1);
+      expectToBeCalledOnce(task2);
+      expectToBeCalledOnce(task3);
+      expectToBeCalledOnce(task4);
+      expectToBeCalledOnce(task5);
+      expectToBeCalledOnce(task6);
 
-    expectToBeCalledOnce(task1);
-    expectToBeCalledOnce(task2);
-    expectToBeCalledOnce(task3);
-    expectToBeCalledOnce(task4);
-    expectToBeCalledOnce(task5);
-    expectToBeCalledOnce(task6);
+      resolve();
+    }, 100);
   };
 
   it('resolves async tasks recusively before other queued tasks', () => {
-    bigAsyncTest();
+    return new Promise(bigAsyncTest);
   });
 
   it('should also work with a deadline', () => {
     InteractionManager.setDeadline(100);
     BatchedBridge.getEventLoopRunningTime.mockReturnValue(200);
-    bigAsyncTest();
+    return new Promise(bigAsyncTest);
   });
 });

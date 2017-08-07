@@ -27,10 +27,10 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import com.facebook.yoga.YogaConstants;
 import com.facebook.react.common.annotations.VisibleForTesting;
-import com.facebook.csslayout.CSSConstants;
-import com.facebook.csslayout.FloatUtil;
-import com.facebook.csslayout.Spacing;
+import com.facebook.react.uimanager.FloatUtil;
+import com.facebook.react.uimanager.Spacing;
 
 /**
  * A subclass of {@link Drawable} used for background of {@link ReactViewGroup}. It supports
@@ -43,9 +43,16 @@ import com.facebook.csslayout.Spacing;
  * {@code mBorderWidthResult} and similar. When only background color is set we won't allocate any
  * extra/unnecessary objects.
  */
-/* package */ class ReactViewBackgroundDrawable extends Drawable {
+public class ReactViewBackgroundDrawable extends Drawable {
 
   private static final int DEFAULT_BORDER_COLOR = Color.BLACK;
+  private static final int DEFAULT_BORDER_RGB = 0x00FFFFFF & DEFAULT_BORDER_COLOR;
+  private static final int DEFAULT_BORDER_ALPHA = (0xFF000000 & DEFAULT_BORDER_COLOR) >>> 24;
+  // ~0 == 0xFFFFFFFF, all bits set to 1.
+  private static final int ALL_BITS_SET = ~0;
+  // 0 == 0x00000000, all bits set to 0.
+  private static final int ALL_BITS_UNSET = 0;
+
 
   private static enum BorderStyle {
     SOLID,
@@ -73,7 +80,8 @@ import com.facebook.csslayout.Spacing;
 
   /* Value at Spacing.ALL index used for rounded borders, whole array used by rectangular borders */
   private @Nullable Spacing mBorderWidth;
-  private @Nullable Spacing mBorderColor;
+  private @Nullable Spacing mBorderRGB;
+  private @Nullable Spacing mBorderAlpha;
   private @Nullable BorderStyle mBorderStyle;
 
   /* Used for rounded border and rounded background */
@@ -84,7 +92,7 @@ import com.facebook.csslayout.Spacing;
   private @Nullable RectF mTempRectForBorderRadius;
   private @Nullable RectF mTempRectForBorderRadiusOutline;
   private boolean mNeedUpdatePathForBorderRadius = false;
-  private float mBorderRadius = CSSConstants.UNDEFINED;
+  private float mBorderRadius = YogaConstants.UNDEFINED;
 
   /* Used by all types of background and for drawing borders */
   private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -95,10 +103,14 @@ import com.facebook.csslayout.Spacing;
 
   @Override
   public void draw(Canvas canvas) {
-    if ((!CSSConstants.isUndefined(mBorderRadius) && mBorderRadius > 0) || mBorderCornerRadii != null) {
-      drawRoundedBackgroundWithBorders(canvas);
-    } else {
+    updatePathEffect();
+    boolean roundedBorders = mBorderCornerRadii != null ||
+        (!YogaConstants.isUndefined(mBorderRadius) && mBorderRadius > 0);
+
+    if (!roundedBorders) {
       drawRectangularBackgroundWithBorders(canvas);
+    } else {
+      drawRoundedBackgroundWithBorders(canvas);
     }
   }
 
@@ -138,7 +150,7 @@ import com.facebook.csslayout.Spacing;
       super.getOutline(outline);
       return;
     }
-    if((!CSSConstants.isUndefined(mBorderRadius) && mBorderRadius > 0) || mBorderCornerRadii != null) {
+    if ((!YogaConstants.isUndefined(mBorderRadius) && mBorderRadius > 0) || mBorderCornerRadii != null) {
       updatePath();
 
       outline.setConvexPath(mPathForBorderRadiusOutline);
@@ -160,16 +172,29 @@ import com.facebook.csslayout.Spacing;
     }
   }
 
-  public void setBorderColor(int position, float color) {
-    if (mBorderColor == null) {
-      mBorderColor = new Spacing();
-      mBorderColor.setDefault(Spacing.LEFT, DEFAULT_BORDER_COLOR);
-      mBorderColor.setDefault(Spacing.TOP, DEFAULT_BORDER_COLOR);
-      mBorderColor.setDefault(Spacing.RIGHT, DEFAULT_BORDER_COLOR);
-      mBorderColor.setDefault(Spacing.BOTTOM, DEFAULT_BORDER_COLOR);
+  public void setBorderColor(int position, float rgb, float alpha) {
+    this.setBorderRGB(position, rgb);
+    this.setBorderAlpha(position, alpha);
+  }
+
+  private void setBorderRGB(int position, float rgb) {
+    // set RGB component
+    if (mBorderRGB == null) {
+      mBorderRGB = new Spacing(DEFAULT_BORDER_RGB);
     }
-    if (!FloatUtil.floatsEqual(mBorderColor.getRaw(position), color)) {
-      mBorderColor.set(position, color);
+    if (!FloatUtil.floatsEqual(mBorderRGB.getRaw(position), rgb)) {
+      mBorderRGB.set(position, rgb);
+      invalidateSelf();
+    }
+  }
+
+  private void setBorderAlpha(int position, float alpha) {
+    // set Alpha component
+    if (mBorderAlpha == null) {
+      mBorderAlpha = new Spacing(DEFAULT_BORDER_ALPHA);
+    }
+    if (!FloatUtil.floatsEqual(mBorderAlpha.getRaw(position), alpha)) {
+      mBorderAlpha.set(position, alpha);
       invalidateSelf();
     }
   }
@@ -196,7 +221,7 @@ import com.facebook.csslayout.Spacing;
   public void setRadius(float radius, int position) {
     if (mBorderCornerRadii == null) {
       mBorderCornerRadii = new float[4];
-      Arrays.fill(mBorderCornerRadii, CSSConstants.UNDEFINED);
+      Arrays.fill(mBorderCornerRadii, YogaConstants.UNDEFINED);
     }
 
     if (!FloatUtil.floatsEqual(mBorderCornerRadii[position], radius)) {
@@ -219,7 +244,7 @@ import com.facebook.csslayout.Spacing;
   private void drawRoundedBackgroundWithBorders(Canvas canvas) {
     updatePath();
     int useColor = ColorUtil.multiplyColorAlpha(mColor, mAlpha);
-    if ((useColor >>> 24) != 0) { // color is not transparent
+    if (Color.alpha(useColor) != 0) { // color is not transparent
       mPaint.setColor(useColor);
       mPaint.setStyle(Paint.Style.FILL);
       canvas.drawPath(mPathForBorderRadius, mPaint);
@@ -231,7 +256,6 @@ import com.facebook.csslayout.Spacing;
       mPaint.setColor(ColorUtil.multiplyColorAlpha(borderColor, mAlpha));
       mPaint.setStyle(Paint.Style.STROKE);
       mPaint.setStrokeWidth(fullBorderWidth);
-      mPaint.setPathEffect(mPathEffectForBorderStyle);
       canvas.drawPath(mPathForBorderRadius, mPaint);
     }
   }
@@ -258,12 +282,11 @@ import com.facebook.csslayout.Spacing;
       mTempRectForBorderRadius.inset(fullBorderWidth * 0.5f, fullBorderWidth * 0.5f);
     }
 
-    float defaultBorderRadius = !CSSConstants.isUndefined(mBorderRadius) ? mBorderRadius : 0;
-    float topLeftRadius = mBorderCornerRadii != null && !CSSConstants.isUndefined(mBorderCornerRadii[0]) ? mBorderCornerRadii[0] : defaultBorderRadius;
-    float topRightRadius = mBorderCornerRadii != null && !CSSConstants.isUndefined(mBorderCornerRadii[1]) ? mBorderCornerRadii[1] : defaultBorderRadius;
-    float bottomRightRadius = mBorderCornerRadii != null && !CSSConstants.isUndefined(mBorderCornerRadii[2]) ? mBorderCornerRadii[2] : defaultBorderRadius;
-    float bottomLeftRadius = mBorderCornerRadii != null && !CSSConstants.isUndefined(mBorderCornerRadii[3]) ? mBorderCornerRadii[3] : defaultBorderRadius;
-
+    float defaultBorderRadius = !YogaConstants.isUndefined(mBorderRadius) ? mBorderRadius : 0;
+    float topLeftRadius = mBorderCornerRadii != null && !YogaConstants.isUndefined(mBorderCornerRadii[0]) ? mBorderCornerRadii[0] : defaultBorderRadius;
+    float topRightRadius = mBorderCornerRadii != null && !YogaConstants.isUndefined(mBorderCornerRadii[1]) ? mBorderCornerRadii[1] : defaultBorderRadius;
+    float bottomRightRadius = mBorderCornerRadii != null && !YogaConstants.isUndefined(mBorderCornerRadii[2]) ? mBorderCornerRadii[2] : defaultBorderRadius;
+    float bottomLeftRadius = mBorderCornerRadii != null && !YogaConstants.isUndefined(mBorderCornerRadii[3]) ? mBorderCornerRadii[3] : defaultBorderRadius;
 
     mPathForBorderRadius.addRoundRect(
         mTempRectForBorderRadius,
@@ -298,17 +321,24 @@ import com.facebook.csslayout.Spacing;
         bottomLeftRadius + extraRadiusForOutline
       },
       Path.Direction.CW);
+  }
 
+  /**
+   * Set type of border
+   */
+  private void updatePathEffect() {
     mPathEffectForBorderStyle = mBorderStyle != null
         ? mBorderStyle.getPathEffect(getFullBorderWidth())
         : null;
+
+    mPaint.setPathEffect(mPathEffectForBorderStyle);
   }
 
   /**
    * For rounded borders we use default "borderWidth" property.
    */
   private float getFullBorderWidth() {
-    return (mBorderWidth != null && !CSSConstants.isUndefined(mBorderWidth.getRaw(Spacing.ALL))) ?
+    return (mBorderWidth != null && !YogaConstants.isUndefined(mBorderWidth.getRaw(Spacing.ALL))) ?
         mBorderWidth.getRaw(Spacing.ALL) : 0f;
   }
 
@@ -317,13 +347,45 @@ import com.facebook.csslayout.Spacing;
    * {@link #getFullBorderWidth}.
    */
   private int getFullBorderColor() {
-    return (mBorderColor != null && !CSSConstants.isUndefined(mBorderColor.getRaw(Spacing.ALL))) ?
-        (int) (long) mBorderColor.getRaw(Spacing.ALL) : DEFAULT_BORDER_COLOR;
+    float rgb = (mBorderRGB != null && !YogaConstants.isUndefined(mBorderRGB.getRaw(Spacing.ALL))) ?
+        mBorderRGB.getRaw(Spacing.ALL) : DEFAULT_BORDER_RGB;
+    float alpha = (mBorderAlpha != null && !YogaConstants.isUndefined(mBorderAlpha.getRaw(Spacing.ALL))) ?
+        mBorderAlpha.getRaw(Spacing.ALL) : DEFAULT_BORDER_ALPHA;
+    return ReactViewBackgroundDrawable.colorFromAlphaAndRGBComponents(alpha, rgb);
+  }
+
+  /**
+   * Quickly determine if all the set border colors are equal.  Bitwise AND all the set colors
+   * together, then OR them all together.  If the AND and the OR are the same, then the colors
+   * are compatible, so return this color.
+   *
+   * Used to avoid expensive path creation and expensive calls to canvas.drawPath
+   *
+   * @return A compatible border color, or zero if the border colors are not compatible.
+   */
+  private static int fastBorderCompatibleColorOrZero(
+      int borderLeft,
+      int borderTop,
+      int borderRight,
+      int borderBottom,
+      int colorLeft,
+      int colorTop,
+      int colorRight,
+      int colorBottom) {
+    int andSmear = (borderLeft > 0 ? colorLeft : ALL_BITS_SET) &
+        (borderTop > 0 ? colorTop : ALL_BITS_SET) &
+        (borderRight > 0 ? colorRight : ALL_BITS_SET) &
+        (borderBottom > 0 ? colorBottom : ALL_BITS_SET);
+    int orSmear = (borderLeft > 0 ? colorLeft : ALL_BITS_UNSET) |
+        (borderTop > 0 ? colorTop : ALL_BITS_UNSET) |
+        (borderRight > 0 ? colorRight : ALL_BITS_UNSET) |
+        (borderBottom > 0 ? colorBottom : ALL_BITS_UNSET);
+    return andSmear == orSmear ? andSmear : 0;
   }
 
   private void drawRectangularBackgroundWithBorders(Canvas canvas) {
     int useColor = ColorUtil.multiplyColorAlpha(mColor, mAlpha);
-    if ((useColor >>> 24) != 0) { // color is not transparent
+    if (Color.alpha(useColor) != 0) { // color is not transparent
       mPaint.setColor(useColor);
       mPaint.setStyle(Paint.Style.FILL);
       canvas.drawRect(getBounds(), mPaint);
@@ -331,6 +393,7 @@ import com.facebook.csslayout.Spacing;
     // maybe draw borders?
     if (getBorderWidth(Spacing.LEFT) > 0 || getBorderWidth(Spacing.TOP) > 0 ||
         getBorderWidth(Spacing.RIGHT) > 0 || getBorderWidth(Spacing.BOTTOM) > 0) {
+      Rect bounds = getBounds();
 
       int borderLeft = getBorderWidth(Spacing.LEFT);
       int borderTop = getBorderWidth(Spacing.TOP);
@@ -341,67 +404,106 @@ import com.facebook.csslayout.Spacing;
       int colorRight = getBorderColor(Spacing.RIGHT);
       int colorBottom = getBorderColor(Spacing.BOTTOM);
 
-      int width = getBounds().width();
-      int height = getBounds().height();
+      int left = bounds.left;
+      int top = bounds.top;
 
-      // If the path drawn previously is of the same color,
-      // there would be a slight white space between borders
-      // with anti-alias set to true.
-      // Therefore we need to disable anti-alias, and
-      // after drawing is done, we will re-enable it.
+      // Check for fast path to border drawing.
+      int fastBorderColor = fastBorderCompatibleColorOrZero(
+          borderLeft,
+          borderTop,
+          borderRight,
+          borderBottom,
+          colorLeft,
+          colorTop,
+          colorRight,
+          colorBottom);
+      if (fastBorderColor != 0) {
+        if (Color.alpha(fastBorderColor) != 0) {
+          // Border color is not transparent.
+          int right = bounds.right;
+          int bottom = bounds.bottom;
 
-      mPaint.setAntiAlias(false);
+          mPaint.setColor(fastBorderColor);
+          if (borderLeft > 0) {
+            int leftInset = left + borderLeft;
+            canvas.drawRect(left, top, leftInset, bottom - borderBottom, mPaint);
+          }
+          if (borderTop > 0) {
+            int topInset = top + borderTop;
+            canvas.drawRect(left + borderLeft, top, right, topInset, mPaint);
+          }
+          if (borderRight > 0) {
+            int rightInset = right - borderRight;
+            canvas.drawRect(rightInset, top + borderTop, right, bottom, mPaint);
+          }
+          if (borderBottom > 0) {
+            int bottomInset = bottom - borderBottom;
+            canvas.drawRect(left, bottomInset, right - borderRight, bottom, mPaint);
+          }
+        }
+      } else {
+        if (mPathForBorder == null) {
+          mPathForBorder = new Path();
+        }
 
-      if (mPathForBorder == null) {
-        mPathForBorder = new Path();
+        // If the path drawn previously is of the same color,
+        // there would be a slight white space between borders
+        // with anti-alias set to true.
+        // Therefore we need to disable anti-alias, and
+        // after drawing is done, we will re-enable it.
+
+        mPaint.setAntiAlias(false);
+
+        int width = bounds.width();
+        int height = bounds.height();
+
+        if (borderLeft > 0 && colorLeft != Color.TRANSPARENT) {
+          mPaint.setColor(colorLeft);
+          mPathForBorder.reset();
+          mPathForBorder.moveTo(left, top);
+          mPathForBorder.lineTo(left + borderLeft, top + borderTop);
+          mPathForBorder.lineTo(left + borderLeft, top + height - borderBottom);
+          mPathForBorder.lineTo(left, top + height);
+          mPathForBorder.lineTo(left, top);
+          canvas.drawPath(mPathForBorder, mPaint);
+        }
+
+        if (borderTop > 0 && colorTop != Color.TRANSPARENT) {
+          mPaint.setColor(colorTop);
+          mPathForBorder.reset();
+          mPathForBorder.moveTo(left, top);
+          mPathForBorder.lineTo(left + borderLeft, top + borderTop);
+          mPathForBorder.lineTo(left + width - borderRight, top + borderTop);
+          mPathForBorder.lineTo(left + width, top);
+          mPathForBorder.lineTo(left, top);
+          canvas.drawPath(mPathForBorder, mPaint);
+        }
+
+        if (borderRight > 0 && colorRight != Color.TRANSPARENT) {
+          mPaint.setColor(colorRight);
+          mPathForBorder.reset();
+          mPathForBorder.moveTo(left + width, top);
+          mPathForBorder.lineTo(left + width, top + height);
+          mPathForBorder.lineTo(left + width - borderRight, top + height - borderBottom);
+          mPathForBorder.lineTo(left + width - borderRight, top + borderTop);
+          mPathForBorder.lineTo(left + width, top);
+          canvas.drawPath(mPathForBorder, mPaint);
+        }
+
+        if (borderBottom > 0 && colorBottom != Color.TRANSPARENT) {
+          mPaint.setColor(colorBottom);
+          mPathForBorder.reset();
+          mPathForBorder.moveTo(left, top + height);
+          mPathForBorder.lineTo(left + width, top + height);
+          mPathForBorder.lineTo(left + width - borderRight, top + height - borderBottom);
+          mPathForBorder.lineTo(left + borderLeft, top + height - borderBottom);
+          mPathForBorder.lineTo(left, top + height);
+          canvas.drawPath(mPathForBorder, mPaint);
+        }
+
+        // re-enable anti alias
+        mPaint.setAntiAlias(true);
       }
-
-      if (borderLeft > 0 && colorLeft != Color.TRANSPARENT) {
-        mPaint.setColor(colorLeft);
-        mPathForBorder.reset();
-        mPathForBorder.moveTo(0, 0);
-        mPathForBorder.lineTo(borderLeft, borderTop);
-        mPathForBorder.lineTo(borderLeft, height - borderBottom);
-        mPathForBorder.lineTo(0, height);
-        mPathForBorder.lineTo(0, 0);
-        canvas.drawPath(mPathForBorder, mPaint);
-      }
-
-      if (borderTop > 0 && colorTop != Color.TRANSPARENT) {
-        mPaint.setColor(colorTop);
-        mPathForBorder.reset();
-        mPathForBorder.moveTo(0, 0);
-        mPathForBorder.lineTo(borderLeft, borderTop);
-        mPathForBorder.lineTo(width - borderRight, borderTop);
-        mPathForBorder.lineTo(width, 0);
-        mPathForBorder.lineTo(0, 0);
-        canvas.drawPath(mPathForBorder, mPaint);
-      }
-
-      if (borderRight > 0 && colorRight != Color.TRANSPARENT) {
-        mPaint.setColor(colorRight);
-        mPathForBorder.reset();
-        mPathForBorder.moveTo(width, 0);
-        mPathForBorder.lineTo(width, height);
-        mPathForBorder.lineTo(width - borderRight, height - borderBottom);
-        mPathForBorder.lineTo(width - borderRight, borderTop);
-        mPathForBorder.lineTo(width, 0);
-        canvas.drawPath(mPathForBorder, mPaint);
-      }
-
-      if (borderBottom > 0 && colorBottom != Color.TRANSPARENT) {
-        mPaint.setColor(colorBottom);
-        mPathForBorder.reset();
-        mPathForBorder.moveTo(0, height);
-        mPathForBorder.lineTo(width, height);
-        mPathForBorder.lineTo(width - borderRight, height - borderBottom);
-        mPathForBorder.lineTo(borderLeft, height - borderBottom);
-        mPathForBorder.lineTo(0, height);
-        canvas.drawPath(mPathForBorder, mPaint);
-      }
-
-      // re-enable anti alias
-      mPaint.setAntiAlias(true);
     }
   }
 
@@ -409,8 +511,17 @@ import com.facebook.csslayout.Spacing;
     return mBorderWidth != null ? Math.round(mBorderWidth.get(position)) : 0;
   }
 
+  private static int colorFromAlphaAndRGBComponents(float alpha, float rgb) {
+    int rgbComponent = 0x00FFFFFF & (int)rgb;
+    int alphaComponent = 0xFF000000 & ((int)alpha) << 24;
+
+    return rgbComponent | alphaComponent;
+  }
+
   private int getBorderColor(int position) {
-    // Check ReactStylesDiffMap#getColorInt() to see why this is needed
-    return mBorderColor != null ? (int) (long) mBorderColor.get(position) : DEFAULT_BORDER_COLOR;
+    float rgb = mBorderRGB != null ? mBorderRGB.get(position) : DEFAULT_BORDER_RGB;
+    float alpha = mBorderAlpha != null ? mBorderAlpha.get(position) : DEFAULT_BORDER_ALPHA;
+
+    return ReactViewBackgroundDrawable.colorFromAlphaAndRGBComponents(alpha, rgb);
   }
 }

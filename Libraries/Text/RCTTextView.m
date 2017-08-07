@@ -9,88 +9,55 @@
 
 #import "RCTTextView.h"
 
-#import "RCTConvert.h"
-#import "RCTEventDispatcher.h"
+#import <React/RCTConvert.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTUIManager.h>
+#import <React/RCTUtils.h>
+#import <React/UIView+React.h>
+
 #import "RCTShadowText.h"
 #import "RCTText.h"
-#import "RCTUtils.h"
-#import "UIView+React.h"
+#import "RCTTextSelection.h"
+#import "RCTUITextView.h"
 
-@interface RCTUITextView : UITextView
-
-@property (nonatomic, assign) BOOL textWasPasted;
-
-@end
-
-@implementation RCTUITextView
-{
-  BOOL _jsRequestingFirstResponder;
-}
-
-- (void)paste:(id)sender
-{
-  _textWasPasted = YES;
-  [super paste:sender];
-}
-
-- (void)reactWillMakeFirstResponder
-{
-  _jsRequestingFirstResponder = YES;
-}
-
-- (BOOL)canBecomeFirstResponder
-{
-  return _jsRequestingFirstResponder;
-}
-
-- (void)reactDidMakeFirstResponder
-{
-  _jsRequestingFirstResponder = NO;
-}
+@interface RCTTextView () <RCTBackedTextInputDelegate>
 
 @end
 
 @implementation RCTTextView
 {
-  RCTEventDispatcher *_eventDispatcher;
-  NSString *_placeholder;
-  UITextView *_placeholderView;
-  UITextView *_textView;
-  NSInteger _nativeEventCount;
+  RCTUITextView *_backedTextInput;
   RCTText *_richTextView;
   NSAttributedString *_pendingAttributedText;
-  NSMutableArray<UIView *> *_subviews;
+
+  NSString *_predictedText;
+
   BOOL _blockTextShouldChange;
-  UITextRange *_previousSelectionRange;
-  NSUInteger _previousTextLength;
-  CGFloat _previousContentHeight;
-  UIScrollView *_scrollView;
+  BOOL _nativeUpdatesInFlight;
 }
 
-- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher
+- (instancetype)initWithBridge:(RCTBridge *)bridge
 {
-  RCTAssertParam(eventDispatcher);
+  RCTAssertParam(bridge);
 
-  if ((self = [super initWithFrame:CGRectZero])) {
-    _contentInset = UIEdgeInsetsZero;
-    _eventDispatcher = eventDispatcher;
-    _placeholderTextColor = [self defaultPlaceholderTextColor];
+  if (self = [super initWithBridge:bridge]) {
+    // `blurOnSubmit` defaults to `false` for <TextInput multiline={true}> by design.
     _blurOnSubmit = NO;
 
-    _textView = [[RCTUITextView alloc] initWithFrame:CGRectZero];
-    _textView.backgroundColor = [UIColor clearColor];
-    _textView.scrollsToTop = NO;
-    _textView.scrollEnabled = NO;
-    _textView.delegate = self;
+    _backedTextInput = [[RCTUITextView alloc] initWithFrame:self.bounds];
+    _backedTextInput.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    _backedTextInput.backgroundColor = [UIColor clearColor];
+    _backedTextInput.textColor = [UIColor blackColor];
+    // This line actually removes 5pt (default value) left and right padding in UITextView.
+    _backedTextInput.textContainer.lineFragmentPadding = 0;
+#if !TARGET_OS_TV
+    _backedTextInput.scrollsToTop = NO;
+#endif
+    _backedTextInput.scrollEnabled = YES;
 
-    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
-    _scrollView.scrollsToTop = NO;
-    [_scrollView addSubview:_textView];
+    _backedTextInput.textInputDelegate = self;
 
-    _previousSelectionRange = _textView.selectedTextRange;
-
-    _subviews = [NSMutableArray new];
-    [self addSubview:_scrollView];
+    [self addSubview:_backedTextInput];
   }
   return self;
 }
@@ -98,47 +65,54 @@
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithFrame:(CGRect)frame)
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 
-- (NSArray<UIView *> *)reactSubviews
+- (id<RCTBackedTextInputViewProtocol>)backedTextInputView
 {
-  return _subviews;
+  return _backedTextInput;
 }
+
+#pragma mark - RCTComponent
 
 - (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)index
 {
+  [super insertReactSubview:subview atIndex:index];
+
   if ([subview isKindOfClass:[RCTText class]]) {
     if (_richTextView) {
       RCTLogError(@"Tried to insert a second <Text> into <TextInput> - there can only be one.");
     }
     _richTextView = (RCTText *)subview;
-    [_subviews insertObject:_richTextView atIndex:index];
 
     // If this <TextInput> is in rich text editing mode, and the child <Text> node providing rich text
     // styling has a backgroundColor, then the attributedText produced by the child <Text> node will have an
     // NSBackgroundColor attribute. We need to forward this attribute to the text view manually because the text view
-    // always has a clear background color in -initWithEventDispatcher:.
+    // always has a clear background color in `initWithBridge:`.
     //
     // TODO: This should be removed when the related hack in -performPendingTextUpdate is removed.
     if (subview.backgroundColor) {
-      NSMutableDictionary<NSString *, id> *attrs = [_textView.typingAttributes mutableCopy];
+      NSMutableDictionary<NSString *, id> *attrs = [_backedTextInput.typingAttributes mutableCopy];
       attrs[NSBackgroundColorAttributeName] = subview.backgroundColor;
-      _textView.typingAttributes = attrs;
+      _backedTextInput.typingAttributes = attrs;
     }
-  } else {
-    [_subviews insertObject:subview atIndex:index];
-    [self insertSubview:subview atIndex:index];
+
+    [self performTextUpdate];
   }
 }
 
 - (void)removeReactSubview:(UIView *)subview
 {
+  [super removeReactSubview:subview];
   if (_richTextView == subview) {
-    [_subviews removeObject:_richTextView];
     _richTextView = nil;
-  } else {
-    [_subviews removeObject:subview];
-    [subview removeFromSuperview];
+    [self performTextUpdate];
   }
 }
+
+- (void)didUpdateReactSubviews
+{
+  // Do nothing, as we don't allow non-text subviews.
+}
+
+#pragma mark - Routine
 
 - (void)setMostRecentEventCount:(NSInteger)mostRecentEventCount
 {
@@ -158,7 +132,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
     _pendingAttributedText = _richTextView.textStorage;
     [self performPendingTextUpdate];
   } else if (!self.text) {
-    _textView.attributedText = nil;
+    _backedTextInput.attributedText = nil;
   }
 }
 
@@ -175,7 +149,7 @@ static NSAttributedString *removeReactTagFromString(NSAttributedString *string)
 
 - (void)performPendingTextUpdate
 {
-  if (!_pendingAttributedText || _mostRecentEventCount < _nativeEventCount) {
+  if (!_pendingAttributedText || _mostRecentEventCount < _nativeEventCount || _nativeUpdatesInFlight) {
     return;
   }
 
@@ -187,7 +161,7 @@ static NSAttributedString *removeReactTagFromString(NSAttributedString *string)
   // TODO: Kill this after we finish passing all style/attribute info into JS.
   _pendingAttributedText = removeReactTagFromString(_pendingAttributedText);
 
-  if ([_textView.attributedText isEqualToAttributedString:_pendingAttributedText]) {
+  if ([_backedTextInput.attributedText isEqualToAttributedString:_pendingAttributedText]) {
     _pendingAttributedText = nil; // Don't try again.
     return;
   }
@@ -197,372 +171,240 @@ static NSAttributedString *removeReactTagFromString(NSAttributedString *string)
   // we temporarily block all textShouldChange events so they are not applied.
   _blockTextShouldChange = YES;
 
-  UITextRange *selection = _textView.selectedTextRange;
-  NSInteger oldTextLength = _textView.attributedText.length;
+  UITextRange *selection = _backedTextInput.selectedTextRange;
+  NSInteger oldTextLength = _backedTextInput.attributedText.length;
 
-  _textView.attributedText = _pendingAttributedText;
+  _backedTextInput.attributedText = _pendingAttributedText;
+  _predictedText = _pendingAttributedText.string;
   _pendingAttributedText = nil;
 
   if (selection.empty) {
     // maintain cursor position relative to the end of the old text
-    NSInteger start = [_textView offsetFromPosition:_textView.beginningOfDocument toPosition:selection.start];
+    NSInteger start = [_backedTextInput offsetFromPosition:_backedTextInput.beginningOfDocument toPosition:selection.start];
     NSInteger offsetFromEnd = oldTextLength - start;
-    NSInteger newOffset = _textView.attributedText.length - offsetFromEnd;
-    UITextPosition *position = [_textView positionFromPosition:_textView.beginningOfDocument offset:newOffset];
-    _textView.selectedTextRange = [_textView textRangeFromPosition:position toPosition:position];
+    NSInteger newOffset = _backedTextInput.attributedText.length - offsetFromEnd;
+    UITextPosition *position = [_backedTextInput positionFromPosition:_backedTextInput.beginningOfDocument offset:newOffset];
+    [_backedTextInput setSelectedTextRange:[_backedTextInput textRangeFromPosition:position toPosition:position]
+                            notifyDelegate:YES];
   }
 
-  [_textView layoutIfNeeded];
+  [_backedTextInput layoutIfNeeded];
 
-  [self _setPlaceholderVisibility];
+  [self invalidateContentSize];
 
   _blockTextShouldChange = NO;
 }
 
-- (void)updateFrames
-{
-  // Adjust the insets so that they are as close as possible to single-line
-  // RCTTextField defaults, using the system defaults of font size 17 and a
-  // height of 31 points.
-  //
-  // We apply the left inset to the frame since a negative left text-container
-  // inset mysteriously causes the text to be hidden until the text view is
-  // first focused.
-  UIEdgeInsets adjustedFrameInset = UIEdgeInsetsZero;
-  adjustedFrameInset.left = _contentInset.left - 5;
-
-  UIEdgeInsets adjustedTextContainerInset = _contentInset;
-  adjustedTextContainerInset.top += 5;
-  adjustedTextContainerInset.left = 0;
-
-  CGRect frame = UIEdgeInsetsInsetRect(self.bounds, adjustedFrameInset);
-  _textView.frame = frame;
-  _placeholderView.frame = frame;
-  _scrollView.frame = frame;
-  [self updateContentSize];
-
-  _textView.textContainerInset = adjustedTextContainerInset;
-  _placeholderView.textContainerInset = adjustedTextContainerInset;
-}
-
-- (void)updateContentSize
-{
-  CGSize size = (CGSize){_scrollView.frame.size.width, INFINITY};
-  size.height = [_textView sizeThatFits:size].height;
-  _scrollView.contentSize = size;
-  _textView.frame = (CGRect){CGPointZero, size};
-}
-
-- (void)updatePlaceholder
-{
-  [_placeholderView removeFromSuperview];
-  _placeholderView = nil;
-
-  if (_placeholder) {
-    _placeholderView = [[UITextView alloc] initWithFrame:self.bounds];
-    _placeholderView.editable = NO;
-    _placeholderView.userInteractionEnabled = NO;
-    _placeholderView.backgroundColor = [UIColor clearColor];
-    _placeholderView.scrollEnabled = false;
-    _placeholderView.scrollsToTop = NO;
-    _placeholderView.attributedText =
-    [[NSAttributedString alloc] initWithString:_placeholder attributes:@{
-      NSFontAttributeName : (_textView.font ? _textView.font : [self defaultPlaceholderFont]),
-      NSForegroundColorAttributeName : _placeholderTextColor
-    }];
-
-    [self insertSubview:_placeholderView belowSubview:_textView];
-    [self _setPlaceholderVisibility];
-  }
-}
+#pragma mark - Properties
 
 - (UIFont *)font
 {
-  return _textView.font;
+  return _backedTextInput.font;
 }
 
 - (void)setFont:(UIFont *)font
 {
-  _textView.font = font;
-  [self updatePlaceholder];
-}
-
-- (void)setPlaceholder:(NSString *)placeholder
-{
-  _placeholder = placeholder;
-  [self updatePlaceholder];
-}
-
-- (void)setPlaceholderTextColor:(UIColor *)placeholderTextColor
-{
-  if (placeholderTextColor) {
-    _placeholderTextColor = placeholderTextColor;
-  } else {
-    _placeholderTextColor = [self defaultPlaceholderTextColor];
-  }
-  [self updatePlaceholder];
-}
-
-- (void)setContentInset:(UIEdgeInsets)contentInset
-{
-  _contentInset = contentInset;
-  [self updateFrames];
+  _backedTextInput.font = font;
+  [self setNeedsLayout];
 }
 
 - (NSString *)text
 {
-  return _textView.text;
-}
-
-- (BOOL)textView:(RCTUITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-  if (_blockTextShouldChange) {
-    return NO;
-  }
-
-  if (textView.textWasPasted) {
-    textView.textWasPasted = NO;
-  } else {
-
-    [_eventDispatcher sendTextEventWithType:RCTTextEventTypeKeyPress
-                                   reactTag:self.reactTag
-                                       text:nil
-                                        key:text
-                                 eventCount:_nativeEventCount];
-
-    if (_blurOnSubmit && [text isEqualToString:@"\n"]) {
-
-      // TODO: the purpose of blurOnSubmit on RCTextField is to decide if the
-      // field should lose focus when return is pressed or not. We're cheating a
-      // bit here by using it on RCTextView to decide if return character should
-      // submit the form, or be entered into the field.
-      //
-      // The reason this is cheating is because there's no way to specify that
-      // you want the return key to be swallowed *and* have the field retain
-      // focus (which was what blurOnSubmit was originally for). For the case
-      // where _blurOnSubmit = YES, this is still the correct and expected
-      // behavior though, so we'll leave the don't-blur-or-add-newline problem
-      // to be solved another day.
-
-      [_eventDispatcher sendTextEventWithType:RCTTextEventTypeSubmit
-                                     reactTag:self.reactTag
-                                         text:self.text
-                                          key:nil
-                                   eventCount:_nativeEventCount];
-      [self resignFirstResponder];
-      return NO;
-    }
-  }
-
-  if (_maxLength == nil) {
-    return YES;
-  }
-  NSUInteger allowedLength = _maxLength.integerValue - textView.text.length + range.length;
-  if (text.length > allowedLength) {
-    if (text.length > 1) {
-      // Truncate the input string so the result is exactly maxLength
-      NSString *limitedString = [text substringToIndex:allowedLength];
-      NSMutableString *newString = textView.text.mutableCopy;
-      [newString replaceCharactersInRange:range withString:limitedString];
-      textView.text = newString;
-      // Collapse selection at end of insert to match normal paste behavior
-      UITextPosition *insertEnd = [textView positionFromPosition:textView.beginningOfDocument
-                                                          offset:(range.location + allowedLength)];
-      textView.selectedTextRange = [textView textRangeFromPosition:insertEnd toPosition:insertEnd];
-      [self textViewDidChange:textView];
-    }
-    return NO;
-  } else {
-    return YES;
-  }
-}
-
-- (void)textViewDidChangeSelection:(RCTUITextView *)textView
-{
-  if (_onSelectionChange &&
-      textView.selectedTextRange != _previousSelectionRange &&
-      ![textView.selectedTextRange isEqual:_previousSelectionRange]) {
-
-    _previousSelectionRange = textView.selectedTextRange;
-
-    UITextRange *selection = textView.selectedTextRange;
-    NSInteger start = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selection.start];
-    NSInteger end = [textView offsetFromPosition:textView.beginningOfDocument toPosition:selection.end];
-    _onSelectionChange(@{
-      @"selection": @{
-        @"start": @(start),
-        @"end": @(end),
-      },
-    });
-  }
+  return _backedTextInput.text;
 }
 
 - (void)setText:(NSString *)text
 {
   NSInteger eventLag = _nativeEventCount - _mostRecentEventCount;
-  if (eventLag == 0 && ![text isEqualToString:_textView.text]) {
-    UITextRange *selection = _textView.selectedTextRange;
-    NSInteger oldTextLength = _textView.text.length;
+  if (eventLag == 0 && ![text isEqualToString:_backedTextInput.text]) {
+    UITextRange *selection = _backedTextInput.selectedTextRange;
+    NSInteger oldTextLength = _backedTextInput.text.length;
 
-    _textView.text = text;
+    _predictedText = text;
+    _backedTextInput.text = text;
 
     if (selection.empty) {
       // maintain cursor position relative to the end of the old text
-      NSInteger start = [_textView offsetFromPosition:_textView.beginningOfDocument toPosition:selection.start];
+      NSInteger start = [_backedTextInput offsetFromPosition:_backedTextInput.beginningOfDocument toPosition:selection.start];
       NSInteger offsetFromEnd = oldTextLength - start;
       NSInteger newOffset = text.length - offsetFromEnd;
-      UITextPosition *position = [_textView positionFromPosition:_textView.beginningOfDocument offset:newOffset];
-      _textView.selectedTextRange = [_textView textRangeFromPosition:position toPosition:position];
+      UITextPosition *position = [_backedTextInput positionFromPosition:_backedTextInput.beginningOfDocument offset:newOffset];
+      [_backedTextInput setSelectedTextRange:[_backedTextInput textRangeFromPosition:position toPosition:position]
+                              notifyDelegate:YES];
     }
 
-    [self _setPlaceholderVisibility];
-    [self updateContentSize]; //keep the text wrapping when the length of
-    //the textline has been extended longer than the length of textinputView
+    [self invalidateContentSize];
   } else if (eventLag > RCTTextUpdateLagWarningThreshold) {
     RCTLogWarn(@"Native TextInput(%@) is %zd events ahead of JS - try to make your JS faster.", self.text, eventLag);
   }
 }
 
-- (void)_setPlaceholderVisibility
+#pragma mark - RCTBackedTextInputDelegate
+
+- (BOOL)textInputShouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
-  if (_textView.text.length > 0) {
-    [_placeholderView setHidden:YES];
-  } else {
-    [_placeholderView setHidden:NO];
+  if (!_backedTextInput.textWasPasted) {
+    [_eventDispatcher sendTextEventWithType:RCTTextEventTypeKeyPress
+                                   reactTag:self.reactTag
+                                       text:nil
+                                        key:text
+                                 eventCount:_nativeEventCount];
   }
-}
 
-- (void)setAutoCorrect:(BOOL)autoCorrect
-{
-  _textView.autocorrectionType = (autoCorrect ? UITextAutocorrectionTypeYes : UITextAutocorrectionTypeNo);
-}
+  // So we need to track that there is a native update in flight just in case JS manages to come back around and update
+  // things /before/ UITextView can update itself asynchronously.  If there is a native update in flight, we defer the
+  // JS update when it comes in and apply the deferred update once textViewDidChange fires with the native update applied.
+  if (_blockTextShouldChange) {
+    return NO;
+  }
 
-- (BOOL)autoCorrect
-{
-  return _textView.autocorrectionType == UITextAutocorrectionTypeYes;
-}
+  if (_maxLength) {
+    NSUInteger allowedLength = _maxLength.integerValue - _backedTextInput.text.length + range.length;
+    if (text.length > allowedLength) {
+      // If we typed/pasted more than one character, limit the text inputted
+      if (text.length > 1) {
+        // Truncate the input string so the result is exactly maxLength
+        NSString *limitedString = [text substringToIndex:allowedLength];
+        NSMutableString *newString = _backedTextInput.text.mutableCopy;
+        [newString replaceCharactersInRange:range withString:limitedString];
+        _backedTextInput.text = newString;
+        _predictedText = newString;
 
-- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
-{
-  if (_selectTextOnFocus) {
-    dispatch_async(dispatch_get_main_queue(), ^{
-      [textView selectAll:nil];
+        // Collapse selection at end of insert to match normal paste behavior
+        UITextPosition *insertEnd = [_backedTextInput positionFromPosition:_backedTextInput.beginningOfDocument
+                                                            offset:(range.location + allowedLength)];
+        [_backedTextInput setSelectedTextRange:[_backedTextInput textRangeFromPosition:insertEnd toPosition:insertEnd]
+                                notifyDelegate:YES];
+
+        [self textInputDidChange];
+      }
+      return NO;
+    }
+  }
+
+  _nativeUpdatesInFlight = YES;
+
+  if (range.location + range.length > _predictedText.length) {
+    // _predictedText got out of sync in a bad way, so let's just force sync it.  Haven't been able to repro this, but
+    // it's causing a real crash here: #6523822
+    _predictedText = _backedTextInput.text;
+  }
+
+  NSString *previousText = [_predictedText substringWithRange:range];
+  if (_predictedText) {
+    _predictedText = [_predictedText stringByReplacingCharactersInRange:range withString:text];
+  } else {
+    _predictedText = text;
+  }
+
+  if (_onTextInput) {
+    _onTextInput(@{
+      @"text": text,
+      @"previousText": previousText ?: @"",
+      @"range": @{
+        @"start": @(range.location),
+        @"end": @(range.location + range.length)
+      },
+      @"eventCount": @(_nativeEventCount),
     });
   }
+
   return YES;
 }
 
-- (void)textViewDidBeginEditing:(UITextView *)textView
+static BOOL findMismatch(NSString *first, NSString *second, NSRange *firstRange, NSRange *secondRange)
 {
-  if (_clearTextOnFocus) {
-    _textView.text = @"";
-    [self _setPlaceholderVisibility];
+  NSInteger firstMismatch = -1;
+  for (NSUInteger ii = 0; ii < MAX(first.length, second.length); ii++) {
+    if (ii >= first.length || ii >= second.length || [first characterAtIndex:ii] != [second characterAtIndex:ii]) {
+      firstMismatch = ii;
+      break;
+    }
   }
 
-  [_eventDispatcher sendTextEventWithType:RCTTextEventTypeFocus
-                                 reactTag:self.reactTag
-                                     text:nil
-                                      key:nil
-                               eventCount:_nativeEventCount];
+  if (firstMismatch == -1) {
+    return NO;
+  }
+
+  NSUInteger ii = second.length;
+  NSUInteger lastMismatch = first.length;
+  while (ii > firstMismatch && lastMismatch > firstMismatch) {
+    if ([first characterAtIndex:(lastMismatch - 1)] != [second characterAtIndex:(ii - 1)]) {
+      break;
+    }
+    ii--;
+    lastMismatch--;
+  }
+
+  *firstRange = NSMakeRange(firstMismatch, lastMismatch - firstMismatch);
+  *secondRange = NSMakeRange(firstMismatch, ii - firstMismatch);
+  return YES;
 }
 
-- (void)textViewDidChange:(UITextView *)textView
+- (void)textInputDidChange
 {
-  [self updateContentSize];
-  [self _setPlaceholderVisibility];
+  [self invalidateContentSize];
+
+  // Detect when _backedTextInput updates happend that didn't invoke `shouldChangeTextInRange`
+  // (e.g. typing simplified chinese in pinyin will insert and remove spaces without
+  // calling shouldChangeTextInRange).  This will cause JS to get out of sync so we
+  // update the mismatched range.
+  NSRange currentRange;
+  NSRange predictionRange;
+  if (findMismatch(_backedTextInput.text, _predictedText, &currentRange, &predictionRange)) {
+    NSString *replacement = [_backedTextInput.text substringWithRange:currentRange];
+    [self textInputShouldChangeTextInRange:predictionRange replacementText:replacement];
+    // JS will assume the selection changed based on the location of our shouldChangeTextInRange, so reset it.
+    [self textInputDidChangeSelection];
+    _predictedText = _backedTextInput.text;
+  }
+
+  _nativeUpdatesInFlight = NO;
   _nativeEventCount++;
 
-  if (!self.reactTag) {
+  if (!self.reactTag || !_onChange) {
     return;
   }
 
-  // When the context size increases, iOS updates the contentSize twice; once
-  // with a lower height, then again with the correct height. To prevent a
-  // spurious event from being sent, we track the previous, and only send the
-  // update event if it matches our expectation that greater text length
-  // should result in increased height. This assumption is, of course, not
-  // necessarily true because shorter text might include more linebreaks, but
-  // in practice this works well enough.
-  NSUInteger textLength = textView.text.length;
-  CGFloat contentHeight = textView.contentSize.height;
-  if (textLength >= _previousTextLength) {
-    contentHeight = MAX(contentHeight, _previousContentHeight);
-  }
-  _previousTextLength = textLength;
-  _previousContentHeight = contentHeight;
-
-  NSDictionary *event = @{
+  _onChange(@{
     @"text": self.text,
-    @"contentSize": @{
-      @"height": @(contentHeight),
-      @"width": @(textView.contentSize.width)
-    },
     @"target": self.reactTag,
     @"eventCount": @(_nativeEventCount),
-  };
-  [_eventDispatcher sendInputEventWithName:@"change" body:event];
+  });
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView
-{
-  [_eventDispatcher sendTextEventWithType:RCTTextEventTypeEnd
-                                 reactTag:self.reactTag
-                                     text:textView.text
-                                      key:nil
-                               eventCount:_nativeEventCount];
+#pragma mark - UIScrollViewDelegate
 
-  [_eventDispatcher sendTextEventWithType:RCTTextEventTypeBlur
-                                 reactTag:self.reactTag
-                                     text:nil
-                                      key:nil
-                               eventCount:_nativeEventCount];
-}
-
-- (BOOL)isFirstResponder
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-  return [_textView isFirstResponder];
-}
+  if (_onScroll) {
+    CGPoint contentOffset = scrollView.contentOffset;
+    CGSize contentSize = scrollView.contentSize;
+    CGSize size = scrollView.bounds.size;
+    UIEdgeInsets contentInset = scrollView.contentInset;
 
-- (BOOL)canBecomeFirstResponder
-{
-  return [_textView canBecomeFirstResponder];
-}
-
-- (void)reactWillMakeFirstResponder
-{
-  [_textView reactWillMakeFirstResponder];
-}
-
-- (BOOL)becomeFirstResponder
-{
-  return [_textView becomeFirstResponder];
-}
-
-- (void)reactDidMakeFirstResponder
-{
-  [_textView reactDidMakeFirstResponder];
-}
-
-- (BOOL)resignFirstResponder
-{
-  [super resignFirstResponder];
-  return [_textView resignFirstResponder];
-}
-
-- (void)layoutSubviews
-{
-  [super layoutSubviews];
-  [self updateFrames];
-}
-
-- (UIFont *)defaultPlaceholderFont
-{
-  return [UIFont systemFontOfSize:17];
-}
-
-- (UIColor *)defaultPlaceholderTextColor
-{
-  return [UIColor colorWithRed:0.0/255.0 green:0.0/255.0 blue:0.098/255.0 alpha:0.22];
+    _onScroll(@{
+      @"contentOffset": @{
+        @"x": @(contentOffset.x),
+        @"y": @(contentOffset.y)
+      },
+      @"contentInset": @{
+        @"top": @(contentInset.top),
+        @"left": @(contentInset.left),
+        @"bottom": @(contentInset.bottom),
+        @"right": @(contentInset.right)
+      },
+      @"contentSize": @{
+        @"width": @(contentSize.width),
+        @"height": @(contentSize.height)
+      },
+      @"layoutMeasurement": @{
+        @"width": @(size.width),
+        @"height": @(size.height)
+      },
+      @"zoomScale": @(scrollView.zoomScale ?: 1),
+    });
+  }
 }
 
 @end

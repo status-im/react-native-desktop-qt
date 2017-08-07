@@ -5,153 +5,136 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @flow
  */
+
 'use strict';
 
-const chalk = require('chalk');
-const checkNodeVersion = require('./checkNodeVersion');
-const formatBanner = require('./formatBanner');
-const parseCommandLine = require('../util/parseCommandLine');
 const path = require('path');
-const Promise = require('promise');
 const runServer = require('./runServer');
+
+import type {RNConfig} from '../core';
+import type {ConfigT} from '../util/Config';
+import type {Args as RunServerArgs} from './runServer';
 
 /**
  * Starts the React Native Packager Server.
  */
-function server(argv, config) {
-  return new Promise((resolve, reject) => {
-    _server(argv, config, resolve, reject);
-  });
+function server(argv: mixed, config: RNConfig, allArgs: Object) {
+  const {root, ...args} = allArgs;
+  args.projectRoots = args.projectRoots.concat(root);
+
+  const startedCallback = logReporter => {
+    logReporter.update({
+      type: 'initialize_packager_started',
+      port: args.port,
+      projectRoots: args.projectRoots,
+    });
+
+    process.on('uncaughtException', error => {
+      logReporter.update({
+        type: 'initialize_packager_failed',
+        port: args.port,
+        error,
+      });
+
+      process.exit(11);
+    });
+  };
+
+  const readyCallback = logReporter => {
+    logReporter.update({
+      type: 'initialize_packager_done',
+    });
+  };
+
+  /* $FlowFixMe: we would have either to invariant() everything, or to
+   * auto-generate CLI args Flow types. */
+  const runServerArgs: RunServerArgs = args;
+  /* $FlowFixMe: ConfigT shouldn't be extendable. */
+  const configT: ConfigT = config;
+  runServer(runServerArgs, configT, startedCallback, readyCallback);
 }
 
-function _server(argv, config, resolve, reject) {
-  const args = parseCommandLine([{
-    command: 'port',
+module.exports = {
+  name: 'start',
+  func: server,
+  description: 'starts the webserver',
+  options: [{
+    command: '--port [number]',
     default: 8081,
-    type: 'string',
+    parse: (val: string) => Number(val),
   }, {
-    command: 'host',
+    command: '--host [string]',
     default: '',
-    type: 'string',
   }, {
-    command: 'root',
-    type: 'string',
+    command: '--root [list]',
     description: 'add another root(s) to be used by the packager in this project',
+    parse: (val: string) => val.split(',').map(root => path.resolve(root)),
+    default: [],
   }, {
-    command: 'projectRoots',
-    type: 'string',
+    command: '--projectRoots [list]',
     description: 'override the root(s) to be used by the packager',
-  },{
-    command: 'assetRoots',
-    type: 'string',
-    description: 'specify the root directories of app assets'
+    parse: (val: string) => val.split(','),
+    default: (config: ConfigT) => config.getProjectRoots(),
   }, {
-    command: 'skipflow',
+    command: '--assetExts [list]',
+    description: 'Specify any additional asset extensions to be used by the packager',
+    parse: (val: string) => val.split(','),
+    default: (config: ConfigT) => config.getAssetExts(),
+  }, {
+    command: '--sourceExts [list]',
+    description: 'Specify any additional source extensions to be used by the packager',
+    parse: (val: string) => val.split(','),
+    default: (config: ConfigT) => config.getSourceExts(),
+  }, {
+    command: '--platforms [list]',
+    description: 'Specify any additional platforms to be used by the packager',
+    parse: (val: string) => val.split(','),
+    default: (config: ConfigT) => config.getPlatforms(),
+  }, {
+    command: '--providesModuleNodeModules [list]',
+    description: 'Specify any npm packages that import dependencies with providesModule',
+    parse: (val: string) => val.split(','),
+    default: (config: RNConfig) => {
+      if (typeof config.getProvidesModuleNodeModules === 'function') {
+        return config.getProvidesModuleNodeModules();
+      }
+      return null;
+    },
+  }, {
+    command: '--max-workers [number]',
+    description: 'Specifies the maximum number of workers the worker-pool ' +
+      'will spawn for transforming files. This defaults to the number of the ' +
+      'cores available on your machine.',
+    parse: (workers: string) => Number(workers),
+  }, {
+    command: '--skipflow',
     description: 'Disable flow checks'
   }, {
-    command: 'nonPersistent',
+    command: '--nonPersistent',
     description: 'Disable file watcher'
   }, {
-    command: 'transformer',
-    type: 'string',
-    default: require.resolve('../../packager/transformer'),
-    description: 'Specify a custom transformer to be used (absolute path)'
+    command: '--transformer [string]',
+    description: 'Specify a custom transformer to be used'
   }, {
-    command: 'resetCache',
+    command: '--reset-cache, --resetCache',
     description: 'Removes cached files',
-    default: false,
   }, {
-    command: 'reset-cache',
-    description: 'Removes cached files',
-    default: false,
+    command: '--custom-log-reporter-path, --customLogReporterPath [string]',
+    description: 'Path to a JavaScript file that exports a log reporter as a replacement for TerminalReporter',
   }, {
-    command: 'verbose',
+    command: '--verbose',
     description: 'Enables logging',
-    default: false,
-  }]);
-
-  args.projectRoots = args.projectRoots
-    ? argToArray(args.projectRoots)
-    : config.getProjectRoots();
-
-  if (args.root) {
-    const additionalRoots = argToArray(args.root);
-    additionalRoots.forEach(root => {
-      args.projectRoots.push(path.resolve(root));
-    });
-  }
-
-  args.assetRoots = args.assetRoots
-    ? argToArray(args.assetRoots).map(dir =>
-      path.resolve(process.cwd(), dir)
-    )
-    : config.getAssetRoots();
-
-  checkNodeVersion();
-
-  console.log(formatBanner(
-    'Running packager on port ' + args.port + '.\n\n' +
-    'Keep this packager running while developing on any JS projects. ' +
-    'Feel free to close this tab and run your own packager instance if you ' +
-    'prefer.\n\n' +
-    'https://github.com/facebook/react-native', {
-      marginLeft: 1,
-      marginRight: 1,
-      paddingBottom: 1,
-    })
-  );
-
-  console.log(
-    'Looking for JS files in\n  ',
-    chalk.dim(args.projectRoots.join('\n   ')),
-    '\n'
-  );
-
-  process.on('uncaughtException', error => {
-    if (error.code === 'EADDRINUSE') {
-      console.log(
-        chalk.bgRed.bold(' ERROR '),
-        chalk.red('Packager can\'t listen on port', chalk.bold(args.port))
-      );
-      console.log('Most likely another process is already using this port');
-      console.log('Run the following command to find out which process:');
-      console.log('\n  ', chalk.bold('lsof -n -i4TCP:' + args.port), '\n');
-      console.log('You can either shut down the other process:');
-      console.log('\n  ', chalk.bold('kill -9 <PID>'), '\n');
-      console.log('or run packager on different port.');
-    } else {
-      console.log(chalk.bgRed.bold(' ERROR '), chalk.red(error.message));
-      const errorAttributes = JSON.stringify(error);
-      if (errorAttributes !== '{}') {
-        console.error(chalk.red(errorAttributes));
-      }
-      console.error(chalk.red(error.stack));
-    }
-    console.log('\nSee', chalk.underline('http://facebook.github.io/react-native/docs/troubleshooting.html'));
-    console.log('for common problems and solutions.');
-    process.exit(1);
-  });
-
-  // TODO: remove once we deprecate this arg
-  if (args.resetCache) {
-    console.log(
-      'Please start using `--reset-cache` instead. ' +
-      'We\'ll deprecate this argument soon.'
-    );
-  }
-
-  startServer(args, config);
-}
-
-function startServer(args, config) {
-  runServer(args, config, () =>
-    console.log('\nReact packager ready.\n')
-  );
-}
-
-function argToArray(arg) {
-  return Array.isArray(arg) ? arg : arg.split(',');
-}
-
-module.exports = server;
+  }, {
+    command: '--https',
+    description: 'Enables https connections to the server',
+  }, {
+    command: '--key [path]',
+    description: 'Path to custom SSL key',
+  }, {
+    command: '--cert [path]',
+    description: 'Path to custom SSL cert',
+  }],
+};

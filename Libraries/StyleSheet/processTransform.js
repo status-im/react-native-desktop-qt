@@ -25,15 +25,23 @@ var stringifySafe = require('stringifySafe');
  * be applied in an arbitrary order, and yet have a universal, singular
  * interface to native code.
  */
-function processTransform(transform: Object): Object {
+function processTransform(transform: Array<Object>): Array<Object> | Array<number> {
+  if (__DEV__) {
+    _validateTransforms(transform);
+  }
+
+  // Android & iOS implementations of transform property accept the list of
+  // transform properties as opposed to a transform Matrix. This is necessary
+  // to control transform property updates completely on the native thread.
+  if (Platform.OS === 'android' || Platform.OS === 'ios') {
+    return transform;
+  }
+
   var result = MatrixMath.createIdentityMatrix();
 
   transform.forEach(transformation => {
     var key = Object.keys(transformation)[0];
     var value = transformation[key];
-    if (__DEV__) {
-      _validateTransform(key, value, transformation);
-    }
 
     switch (key) {
       case 'matrix':
@@ -81,13 +89,6 @@ function processTransform(transform: Object): Object {
     }
   });
 
-  // Android does not support the direct application of a transform matrix to
-  // a view, so we need to decompose the result matrix into transforms that can
-  // get applied in the specific order of (1) translate (2) scale (3) rotate.
-  // Once we can directly apply a matrix, we can remove this decomposition.
-  if (Platform.OS === 'android') {
-    return MatrixMath.decomposeMatrix(result);
-  }
   return result;
 }
 
@@ -110,8 +111,22 @@ function _multiplyTransform(
  * Note that validation on the string is done in `_validateTransform()`.
  */
 function _convertToRadians(value: string): number {
-  var floatValue = parseFloat(value, 10);
+  var floatValue = parseFloat(value);
   return value.indexOf('rad') > -1 ? floatValue : floatValue * Math.PI / 180;
+}
+
+function _validateTransforms(transform: Array<Object>): void {
+  transform.forEach(transformation => {
+    var keys = Object.keys(transformation);
+    invariant(
+      keys.length === 1,
+      'You must specify exactly one property per transform object. Passed properties: %s',
+      stringifySafe(transformation),
+    );
+    var key = keys[0];
+    var value = transformation[key];
+    _validateTransform(key, value, transformation);
+  });
 }
 
 function _validateTransform(key, value, transformation) {
@@ -145,6 +160,12 @@ function _validateTransform(key, value, transformation) {
       );
       break;
     case 'translate':
+      invariant(
+        value.length === 2 || value.length === 3,
+        'Transform with key translate must be an array of length 2 or 3, found %s: %s',
+        value.length,
+        stringifySafe(transformation),
+      );
       break;
     case 'rotateX':
     case 'rotateY':
@@ -179,13 +200,20 @@ function _validateTransform(key, value, transformation) {
         stringifySafe(transformation),
       );
       break;
-    default:
+    case 'translateX':
+    case 'translateY':
+    case 'scale':
+    case 'scaleX':
+    case 'scaleY':
       invariant(
         typeof value === 'number',
         'Transform with key of "%s" must be a number: %s',
         key,
         stringifySafe(transformation),
       );
+      break;
+    default:
+      invariant(false, 'Invalid transform %s: %s', key, stringifySafe(transformation));
   }
 }
 

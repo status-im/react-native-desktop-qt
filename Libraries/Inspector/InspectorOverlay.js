@@ -12,50 +12,53 @@
 'use strict';
 
 var Dimensions = require('Dimensions');
-var InspectorUtils = require('InspectorUtils');
+var ElementBox = require('ElementBox');
+var PropTypes = require('prop-types');
 var React = require('React');
 var StyleSheet = require('StyleSheet');
-var UIManager = require('NativeModules').UIManager;
+var UIManager = require('UIManager');
 var View = require('View');
-var ElementBox = require('ElementBox');
-
-var PropTypes = React.PropTypes;
 
 type EventLike = {
-  nativeEvent: Object;
+  nativeEvent: Object,
 };
 
-var InspectorOverlay = React.createClass({
-  propTypes: {
+class InspectorOverlay extends React.Component {
+  props: {
+    inspected?: {
+      frame?: Object,
+      style?: any,
+    },
+    inspectedViewTag?: number,
+    onTouchViewTag: (tag: number, frame: Object, pointerY: number) => void,
+  };
+
+  static propTypes = {
     inspected: PropTypes.shape({
       frame: PropTypes.object,
       style: PropTypes.any,
     }),
     inspectedViewTag: PropTypes.number,
-    onTouchInstance: PropTypes.func.isRequired,
-  },
+    onTouchViewTag: PropTypes.func.isRequired,
+  };
 
-  findViewForTouchEvent: function(e: EventLike) {
+  findViewForTouchEvent = (e: EventLike) => {
     var {locationX, locationY} = e.nativeEvent.touches[0];
     UIManager.findSubviewIn(
       this.props.inspectedViewTag,
       [locationX, locationY],
       (nativeViewTag, left, top, width, height) => {
-        var instance = InspectorUtils.findInstanceByNativeTag(this.props.rootTag, nativeViewTag);
-        if (!instance) {
-          return;
-        }
-        this.props.onTouchInstance(instance, {left, top, width, height}, locationY);
+        this.props.onTouchViewTag(nativeViewTag, {left, top, width, height}, locationY);
       }
     );
-  },
+  };
 
-  shouldSetResponser: function(e: EventLike): bool {
+  shouldSetResponser = (e: EventLike): bool => {
     this.findViewForTouchEvent(e);
     return true;
-  },
+  };
 
-  render: function() {
+  render() {
     var content = null;
     if (this.props.inspected) {
       content = <ElementBox frame={this.props.inspected.frame} style={this.props.inspected.style} />;
@@ -70,7 +73,7 @@ var InspectorOverlay = React.createClass({
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   inspector: {

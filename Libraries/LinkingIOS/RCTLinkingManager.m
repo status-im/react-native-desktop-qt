@@ -9,49 +9,53 @@
 
 #import "RCTLinkingManager.h"
 
-#import "RCTBridge.h"
-#import "RCTEventDispatcher.h"
-#import "RCTUtils.h"
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import <React/RCTUtils.h>
 
-NSString *const RCTOpenURLNotification = @"RCTOpenURLNotification";
+static NSString *const kOpenURLNotification = @"RCTOpenURLNotification";
+
+static void postNotificationWithURL(NSURL *URL, id sender)
+{
+  NSDictionary<NSString *, id> *payload = @{@"url": URL.absoluteString};
+  [[NSNotificationCenter defaultCenter] postNotificationName:kOpenURLNotification
+                                                      object:sender
+                                                    userInfo:payload];
+}
 
 @implementation RCTLinkingManager
 
-@synthesize bridge = _bridge;
-
 RCT_EXPORT_MODULE()
 
-- (void)setBridge:(RCTBridge *)bridge
+- (dispatch_queue_t)methodQueue
 {
-  _bridge = bridge;
+  return dispatch_get_main_queue();
+}
 
+- (void)startObserving
+{
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(handleOpenURLNotification:)
-                                               name:RCTOpenURLNotification
+                                               name:kOpenURLNotification
                                              object:nil];
 }
 
-- (NSDictionary<NSString *, id> *)constantsToExport
-{
-  NSURL *initialURL;
-
-  if (_bridge.launchOptions[UIApplicationLaunchOptionsURLKey]) {
-    initialURL = _bridge.launchOptions[UIApplicationLaunchOptionsURLKey];
-  } else if (&UIApplicationLaunchOptionsUserActivityDictionaryKey &&
-      _bridge.launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey]) {
-    NSDictionary *userActivityDictionary = _bridge.launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey];
-
-    if ([userActivityDictionary[UIApplicationLaunchOptionsUserActivityTypeKey] isEqual:NSUserActivityTypeBrowsingWeb]) {
-      initialURL = ((NSUserActivity *)userActivityDictionary[@"UIApplicationLaunchOptionsUserActivityKey"]).webpageURL;
-    }
-  }
-
-  return @{@"initialURL": RCTNullIfNil(initialURL.absoluteString)};
-}
-
-- (void)dealloc
+- (void)stopObserving
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (NSArray<NSString *> *)supportedEvents
+{
+  return @[@"url"];
+}
+
++ (BOOL)application:(UIApplication *)app
+            openURL:(NSURL *)URL
+            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  postNotificationWithURL(URL, self);
+  return YES;
 }
 
 + (BOOL)application:(UIApplication *)application
@@ -59,10 +63,7 @@ RCT_EXPORT_MODULE()
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation
 {
-  NSDictionary<NSString *, id> *payload = @{@"url": URL.absoluteString};
-  [[NSNotificationCenter defaultCenter] postNotificationName:RCTOpenURLNotification
-                                                      object:self
-                                                    userInfo:payload];
+  postNotificationWithURL(URL, self);
   return YES;
 }
 
@@ -72,7 +73,7 @@ continueUserActivity:(NSUserActivity *)userActivity
 {
   if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
     NSDictionary *payload = @{@"url": userActivity.webpageURL.absoluteString};
-    [[NSNotificationCenter defaultCenter] postNotificationName:RCTOpenURLNotification
+    [[NSNotificationCenter defaultCenter] postNotificationName:kOpenURLNotification
                                                         object:self
                                                       userInfo:payload];
   }
@@ -81,16 +82,19 @@ continueUserActivity:(NSUserActivity *)userActivity
 
 - (void)handleOpenURLNotification:(NSNotification *)notification
 {
-  [_bridge.eventDispatcher sendDeviceEventWithName:@"openURL"
-                                              body:notification.userInfo];
+  [self sendEventWithName:@"url" body:notification.userInfo];
 }
 
 RCT_EXPORT_METHOD(openURL:(NSURL *)URL
                   resolve:(RCTPromiseResolveBlock)resolve
-                  reject:(__unused RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 {
   BOOL opened = [RCTSharedApplication() openURL:URL];
-  resolve(@(opened));
+  if (opened) {
+    resolve(nil);
+  } else {
+    reject(RCTErrorUnspecified, [NSString stringWithFormat:@"Unable to open URL: %@", URL], nil);
+  }
 }
 
 RCT_EXPORT_METHOD(canOpenURL:(NSURL *)URL
@@ -104,9 +108,29 @@ RCT_EXPORT_METHOD(canOpenURL:(NSURL *)URL
     return;
   }
 
+  // TODO: on iOS9 this will fail if URL isn't included in the plist
+  // we should probably check for that and reject in that case instead of
+  // simply resolving with NO
+
   // This can be expensive, so we deliberately don't call on main thread
   BOOL canOpen = [RCTSharedApplication() canOpenURL:URL];
   resolve(@(canOpen));
+}
+
+RCT_EXPORT_METHOD(getInitialURL:(RCTPromiseResolveBlock)resolve
+                  reject:(__unused RCTPromiseRejectBlock)reject)
+{
+  NSURL *initialURL = nil;
+  if (self.bridge.launchOptions[UIApplicationLaunchOptionsURLKey]) {
+    initialURL = self.bridge.launchOptions[UIApplicationLaunchOptionsURLKey];
+  } else {
+    NSDictionary *userActivityDictionary =
+      self.bridge.launchOptions[UIApplicationLaunchOptionsUserActivityDictionaryKey];
+    if ([userActivityDictionary[UIApplicationLaunchOptionsUserActivityTypeKey] isEqual:NSUserActivityTypeBrowsingWeb]) {
+      initialURL = ((NSUserActivity *)userActivityDictionary[@"UIApplicationLaunchOptionsUserActivityKey"]).webpageURL;
+    }
+  }
+  resolve(RCTNullIfNil(initialURL.absoluteString));
 }
 
 @end

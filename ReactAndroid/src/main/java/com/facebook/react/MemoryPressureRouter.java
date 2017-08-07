@@ -20,38 +20,30 @@ import static android.content.ComponentCallbacks2.TRIM_MEMORY_BACKGROUND;
 import static android.content.ComponentCallbacks2.TRIM_MEMORY_COMPLETE;
 import static android.content.ComponentCallbacks2.TRIM_MEMORY_MODERATE;
 import static android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL;
+import static android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN;
 
 /**
  * Translates and routes memory pressure events to the current catalyst instance.
  */
-public class MemoryPressureRouter {
+public class MemoryPressureRouter implements ComponentCallbacks2 {
   // Trigger this by sending an intent to your activity with adb shell:
-  // am broadcast -a com.facebook.catalyst.ACTION_TRIM_MEMORY_MODERATE
+  // am broadcast -a com.facebook.react.ACTION_TRIM_MEMORY_MODERATE
+  private static final String ACTION_TRIM_MEMORY_UI_HIDDEN =
+    "com.facebook.react.ACTION_TRIM_MEMORY_UI_HIDDEN";
   private static final String ACTION_TRIM_MEMORY_MODERATE =
-    "com.facebook.rnfeed.ACTION_TRIM_MEMORY_MODERATE";
+    "com.facebook.react.ACTION_TRIM_MEMORY_MODERATE";
   private static final String ACTION_TRIM_MEMORY_CRITICAL =
-    "com.facebook.rnfeed.ACTION_TRIM_MEMORY_CRITICAL";
+    "com.facebook.react.ACTION_TRIM_MEMORY_CRITICAL";
 
   private final Set<MemoryPressureListener> mListeners =
     Collections.synchronizedSet(new LinkedHashSet<MemoryPressureListener>());
-  private final ComponentCallbacks2 mCallbacks = new ComponentCallbacks2() {
-    @Override
-    public void onTrimMemory(int level) {
-      trimMemory(level);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-    }
-
-    @Override
-    public void onLowMemory() {
-    }
-  };
 
   @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
   public static boolean handleDebugIntent(Application application, String action) {
     switch (action) {
+      case ACTION_TRIM_MEMORY_UI_HIDDEN:
+        simulateTrimMemory(application, ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN);
+        break;
       case ACTION_TRIM_MEMORY_MODERATE:
         simulateTrimMemory(application, TRIM_MEMORY_MODERATE);
         break;
@@ -65,7 +57,11 @@ public class MemoryPressureRouter {
   }
 
   MemoryPressureRouter(Context context) {
-    context.getApplicationContext().registerComponentCallbacks(mCallbacks);
+    context.getApplicationContext().registerComponentCallbacks(this);
+  }
+
+  public void destroy(Context context) {
+    context.getApplicationContext().unregisterComponentCallbacks(this);
   }
 
   /**
@@ -82,16 +78,23 @@ public class MemoryPressureRouter {
     mListeners.remove(listener);
   }
 
-  public void destroy(Context context) {
-    context.getApplicationContext().unregisterComponentCallbacks(mCallbacks);
-  }
-
-  private void trimMemory(int level) {
-    if (level >= ComponentCallbacks2.TRIM_MEMORY_COMPLETE) {
+  @Override
+  public void onTrimMemory(int level) {
+    if (level >= TRIM_MEMORY_COMPLETE) {
       dispatchMemoryPressure(MemoryPressure.CRITICAL);
     } else if (level >= TRIM_MEMORY_BACKGROUND || level == TRIM_MEMORY_RUNNING_CRITICAL) {
       dispatchMemoryPressure(MemoryPressure.MODERATE);
+    } else if (level == TRIM_MEMORY_UI_HIDDEN) {
+      dispatchMemoryPressure(MemoryPressure.UI_HIDDEN);
     }
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+  }
+
+  @Override
+  public void onLowMemory() {
   }
 
   private void dispatchMemoryPressure(MemoryPressure level) {

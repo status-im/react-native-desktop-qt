@@ -46,7 +46,27 @@ public class TouchTargetHelper {
       float eventX,
       float eventY,
       ViewGroup viewGroup) {
-    return findTargetTagAndCoordinatesForTouch(eventX, eventY, viewGroup, mEventCoords);
+    return findTargetTagAndCoordinatesForTouch(
+        eventX, eventY, viewGroup, mEventCoords, null);
+  }
+
+  /**
+   * Find touch event target view within the provided container given the coordinates provided
+   * via {@link MotionEvent}.
+   *
+   * @param eventX the X screen coordinate of the touch location
+   * @param eventY the Y screen coordinate of the touch location
+   * @param viewGroup the container view to traverse
+   * @param nativeViewId the native react view containing this touch target
+   * @return the react tag ID of the child view that should handle the event
+   */
+  public static int findTargetTagForTouch(
+      float eventX,
+      float eventY,
+      ViewGroup viewGroup,
+      @Nullable int[] nativeViewId) {
+    return findTargetTagAndCoordinatesForTouch(
+        eventX, eventY, viewGroup, mEventCoords, nativeViewId);
   }
 
   /**
@@ -57,13 +77,15 @@ public class TouchTargetHelper {
    * @param eventY the Y screen coordinate of the touch location
    * @param viewGroup the container view to traverse
    * @param viewCoords an out parameter that will return the X,Y value in the target view
+   * @param nativeViewTag an out parameter that will return the native view id
    * @return the react tag ID of the child view that should handle the event
    */
   public static int findTargetTagAndCoordinatesForTouch(
       float eventX,
       float eventY,
       ViewGroup viewGroup,
-      float[] viewCoords) {
+      float[] viewCoords,
+      @Nullable int[] nativeViewTag) {
     UiThreadUtil.assertOnUiThread();
     int targetTag = viewGroup.getId();
     // Store eventCoords in array so that they are modified to be relative to the targetView found.
@@ -73,6 +95,9 @@ public class TouchTargetHelper {
     if (nativeTargetView != null) {
       View reactTargetView = findClosestReactAncestor(nativeTargetView);
       if (reactTargetView != null) {
+        if (nativeViewTag != null) {
+          nativeViewTag[0] = reactTargetView.getId();
+        }
         targetTag = getTouchTargetForView(reactTargetView, viewCoords[0], viewCoords[1]);
       }
     }
@@ -99,8 +124,13 @@ public class TouchTargetHelper {
    */
   private static View findTouchTargetView(float[] eventCoords, ViewGroup viewGroup) {
     int childrenCount = viewGroup.getChildCount();
+    // Consider z-index when determining the touch target.
+    ReactZIndexedViewGroup zIndexedViewGroup = viewGroup instanceof ReactZIndexedViewGroup ?
+      (ReactZIndexedViewGroup) viewGroup :
+      null;
     for (int i = childrenCount - 1; i >= 0; i--) {
-      View child = viewGroup.getChildAt(i);
+      int childIndex = zIndexedViewGroup != null ? zIndexedViewGroup.getZIndexMappedChildIndex(i) : i;
+      View child = viewGroup.getChildAt(childIndex);
       PointF childPoint = mTempPoint;
       if (isTransformedTouchPointInView(eventCoords[0], eventCoords[1], viewGroup, child, childPoint)) {
         // If it is contained within the child View, the childPoint value will contain the view
@@ -175,6 +205,18 @@ public class TouchTargetHelper {
       float eventCoords[], View view) {
     PointerEvents pointerEvents = view instanceof ReactPointerEventsView ?
         ((ReactPointerEventsView) view).getPointerEvents() : PointerEvents.AUTO;
+
+    // Views that are disabled should never be the target of pointer events. However, their children
+    // can be because some views (SwipeRefreshLayout) use enabled but still have children that can
+    // be valid targets.
+    if (!view.isEnabled()) {
+      if (pointerEvents == PointerEvents.AUTO) {
+        pointerEvents = PointerEvents.BOX_NONE;
+      } else if (pointerEvents == PointerEvents.BOX_ONLY) {
+        pointerEvents = PointerEvents.NONE;
+      }
+    }
+
     if (pointerEvents == PointerEvents.NONE) {
       // This view and its children can't be the target
       return null;
@@ -184,7 +226,7 @@ public class TouchTargetHelper {
       return view;
 
     } else if (pointerEvents == PointerEvents.BOX_NONE) {
-      // This view can't be the target, but its children might
+      // This view can't be the target, but its children might.
       if (view instanceof ViewGroup) {
         View targetView = findTouchTargetView(eventCoords, (ViewGroup) view);
         if (targetView != view) {

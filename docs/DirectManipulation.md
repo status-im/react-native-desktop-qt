@@ -4,7 +4,8 @@ title: Direct Manipulation
 layout: docs
 category: Guides
 permalink: docs/direct-manipulation.html
-next: debugging
+next: colors
+previous: javascript-environment
 ---
 
 It is sometimes necessary to make changes directly to a component
@@ -32,7 +33,7 @@ uses `setNativeProps` internally to update the opacity of its child
 component:
 
 ```javascript
-setOpacityTo: function(value) {
+setOpacityTo(value) {
   // Redacted: animation related code
   this.refs[CHILD_REF].setNativeProps({
     opacity: value
@@ -49,7 +50,7 @@ any knowledge of that fact or requiring any changes to its implementation:
   <View style={styles.button}>
     <Text>Press me!</Text>
   </View>
-<TouchableOpacity>
+</TouchableOpacity>
 ```
 
 Let's imagine that `setNativeProps` was not available. One way that we
@@ -57,9 +58,10 @@ might implement it with that constraint is to store the opacity value
 in the state, then update that value whenever `onPress` is fired:
 
 ```javascript
-getInitialState() {
-  return { myButtonOpacity: 1, }
-},
+constructor(props) {
+  super(props);
+  this.state = { myButtonOpacity: 1, };
+}
 
 render() {
   return (
@@ -81,45 +83,47 @@ performing continuous animations and responding to gestures, judiciously
 optimizing your components can improve your animations' fidelity.
 
 If you look at the implementation of `setNativeProps` in
-[NativeMethodsMixin.js](https://github.com/facebook/react-native/blob/master/Libraries/ReactIOS/NativeMethodsMixin.js)
+[NativeMethodsMixin.js](https://github.com/facebook/react/blob/master/src/renderers/native/NativeMethodsMixin.js)
 you will notice that it is a wrapper around `RCTUIManager.updateView` -
 this is the exact same function call that results from re-rendering -
 see [receiveComponent in
-ReactNativeBaseComponent.js](https://github.com/facebook/react-native/blob/master/Libraries/ReactNative/ReactNativeBaseComponent.js).
+ReactNativeBaseComponent.js](https://github.com/facebook/react/blob/master/src/renderers/native/ReactNativeBaseComponent.js).
 
 ## Composite components and setNativeProps
 
 Composite components are not backed by a native view, so you cannot call
 `setNativeProps` on them. Consider this example:
 
-```javascript
-var MyButton = React.createClass({
+```SnackPlayer?name=setNativeProps%20with%20Composite%20Components
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+
+class MyButton extends React.Component {
   render() {
     return (
       <View>
         <Text>{this.props.label}</Text>
       </View>
     )
-  },
-});
+  }
+}
 
-var App = React.createClass({
+export default class App extends React.Component {
   render() {
     return (
       <TouchableOpacity>
         <MyButton label="Press me!" />
       </TouchableOpacity>
     )
-  },
-});
+  }
+}
 ```
-[Run this example](https://rnplay.org/apps/JXkgmQ)
 
 If you run this you will immediately see this error: `Touchable child
 must either be native or forward setNativeProps to a native component`.
 This occurs because `MyButton` isn't directly backed by a native view
 whose opacity should be set. You can think about it like this: if you
-define a component with `React.createClass` you would not expect to be
+define a component with `createReactClass` you would not expect to be
 able to set a style prop on it and have that work - you would need to
 pass the style prop down to a child, unless you are wrapping a native
 component. Similarly, we are going to forward `setNativeProps` to a
@@ -131,11 +135,14 @@ All we need to do is provide a `setNativeProps` method on our component
 that calls `setNativeProps` on the appropriate child with the given
 arguments.
 
-```javascript
-var MyButton = React.createClass({
-  setNativeProps(nativeProps) {
+```SnackPlayer?name=Forwarding%20setNativeProps
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+
+class MyButton extends React.Component {
+  setNativeProps = (nativeProps) => {
     this._root.setNativeProps(nativeProps);
-  },
+  }
 
   render() {
     return (
@@ -143,10 +150,19 @@ var MyButton = React.createClass({
         <Text>{this.props.label}</Text>
       </View>
     )
-  },
-});
+  }
+}
+
+export default class App extends React.Component {
+  render() {
+    return (
+      <TouchableOpacity>
+        <MyButton label="Press me!" />
+      </TouchableOpacity>
+    )
+  }
+}
 ```
-[Run this example](https://rnplay.org/apps/YJxnEQ)
 
 You can now use `MyButton` inside of `TouchableOpacity`! A sidenote for
 clarity: we used the [ref callback](https://facebook.github.io/react/docs/more-about-refs.html#the-ref-callback-attribute) syntax here, rather than the traditional string-based ref.
@@ -171,26 +187,30 @@ use `setNativeProps` to directly manipulate the TextInput value when
 necessary. For example, the following code demonstrates clearing the
 input when you tap a button:
 
-```javascript
-var App = React.createClass({
-  clearText() {
+```SnackPlayer?name=Clear%20text
+import React from 'react';
+import { TextInput, Text, TouchableOpacity, View } from 'react-native';
+
+export default class App extends React.Component {
+  clearText = () => {
     this._textInput.setNativeProps({text: ''});
-  },
+  }
 
   render() {
     return (
-      <View style={styles.container}>
-        <TextInput ref={component => this._textInput = component}
-                   style={styles.textInput} />
+      <View style={{flex: 1}}>
+        <TextInput
+          ref={component => this._textInput = component}
+          style={{height: 50, flex: 1, marginHorizontal: 20, borderWidth: 1, borderColor: '#ccc'}}
+        />
         <TouchableOpacity onPress={this.clearText}>
           <Text>Clear text</Text>
         </TouchableOpacity>
       </View>
     );
   }
-});
+}
 ```
-[Run this example](https://rnplay.org/plays/pOI9bA)
 
 ## Avoiding conflicts with the render function
 
@@ -198,9 +218,7 @@ If you update a property that is also managed by the render function,
 you might end up with some unpredictable and confusing bugs because
 anytime the component re-renders and that property changes, whatever
 value was previously set from `setNativeProps` will be completely
-ignored and overridden. [See this example](https://rnplay.org/apps/bp1DvQ)
-for a demonstration of what can happen if these two collide - notice
-the jerky animation each 250ms when `setState` triggers a re-render.
+ignored and overridden.
 
 ## setNativeProps & shouldComponentUpdate
 
@@ -209,3 +227,43 @@ By [intelligently applying
 you can avoid the unnecessary overhead involved in reconciling unchanged
 component subtrees, to the point where it may be performant enough to
 use `setState` instead of `setNativeProps`.
+
+## Other native methods
+
+The methods described here are available on most of the default components provided by React Native. Note, however, that they are *not* available on composite components that aren't directly backed by a native view. This will generally include most components that you define in your own app.
+
+### measure(callback)
+
+Determines the location on screen, width, and height of the given view and returns the values via an async callback. If successful, the callback will be called with the following arguments:
+
+* x
+* y
+* width
+* height
+* pageX
+* pageY
+
+Note that these measurements are not available until after the rendering has been completed in native. If you need the measurements as soon as possible, consider using the [`onLayout` prop](docs/view.html#onlayout) instead.
+
+### measureInWindow(callback)
+
+Determines the location of the given view in the window and returns the values via an async callback. If the React root view is embedded in another native view, this will give you the absolute coordinates. If successful, the callback will be called with the following arguments:
+
+* x
+* y
+* width
+* height
+
+### measureLayout(relativeToNativeNode, onSuccess, onFail)
+
+Like `measure()`, but measures the view relative an ancestor, specified as `relativeToNativeNode`. This means that the returned x, y are relative to the origin x, y of the ancestor view.
+
+As always, to obtain a native node handle for a component, you can use `ReactNative.findNodeHandle(component)`.
+
+### focus()
+
+Requests focus for the given input or view. The exact behavior triggered will depend on the platform and type of view.
+
+### blur()
+
+Removes focus from an input or view. This is the opposite of `focus()`.

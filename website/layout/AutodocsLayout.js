@@ -9,14 +9,18 @@
  * @providesModule AutodocsLayout
  */
 
+'use strict';
+
 var DocsSidebar = require('DocsSidebar');
-var H = require('Header');
+var Footer = require('Footer');
 var Header = require('Header');
-var HeaderWithGithub = require('HeaderWithGithub');
 var Marked = require('Marked');
+var Metadata = require('Metadata');
 var Prism = require('Prism');
 var React = require('React');
+const PropTypes = require('prop-types');
 var Site = require('Site');
+
 var slugify = require('slugify');
 
 var styleReferencePattern = /^[^.]+\.propTypes\.style$/;
@@ -30,6 +34,18 @@ function renderEnumValue(value) {
 }
 
 function renderType(type) {
+  const baseType = renderBaseType(type);
+  return type.nullable ? <span>?{baseType}</span> : baseType;
+}
+
+function spanJoinMapper(elements, callback, separator) {
+  return <span>{elements.map((rawElement, ii) => {
+    const el = callback(rawElement);
+    return (ii + 1 < elements.length) ? <span>{el}{separator}</span> : el;
+  })}</span>;
+}
+
+function renderBaseType(type) {
   if (type.name === 'enum') {
     if (typeof type.value === 'string') {
       return type.value;
@@ -45,14 +61,18 @@ function renderType(type) {
   }
 
   if (type.name === 'shape') {
-    return '{' + Object.keys(type.value).map((key => key + ': ' + renderType(type.value[key]))).join(', ') + '}';
+    return <span>{'{'}{spanJoinMapper(
+      Object.keys(type.value),
+      (key) => <span>{key + ': '}{renderType(type.value[key])}</span>,
+      ', '
+    )}{'}'}</span>;
   }
 
   if (type.name === 'union') {
     if (type.value) {
-      return type.value.map(renderType).join(', ');
+      return spanJoinMapper(type.value, renderType, ', ');
     }
-    return type.elements.map(renderType).join(' | ');
+    return spanJoinMapper(type.elements, renderType, ' | ');
   }
 
   if (type.name === 'arrayOf') {
@@ -89,7 +109,46 @@ function renderType(type) {
     return type.raw;
   }
 
-  return type.name;
+  return type.raw || type.name;
+}
+
+function renderTypeNameLink(typeName, docPath, namedTypes) {
+  const ignoreTypes = [
+    'string',
+    'number',
+    'boolean',
+    'object',
+    'function',
+    'array',
+  ];
+  const typeNameLower = typeName.toLowerCase();
+  if (ignoreTypes.indexOf(typeNameLower) !== -1 || !namedTypes[typeNameLower]) {
+    return typeName;
+  }
+  return <a href={docPath + '#' + typeNameLower}>{typeName}</a>;
+}
+
+function renderTypeWithLinks(type, docTitle, namedTypes) {
+  if (!type || !type.names) {
+    return null;
+  }
+
+  const docPath = docTitle ? 'docs/' + docTitle.toLowerCase() + '.html' : 'docs/';
+  return (
+    <div>
+      {
+        type.names.map((typeName, index, array) => {
+          const separator = index < array.length - 1 && ' | ';
+          return (
+            <span key={index}>
+              {renderTypeNameLink(typeName, docPath, namedTypes)}
+              {separator}
+            </span>
+          );
+        })
+      }
+    </div>
+  );
 }
 
 function sortByPlatform(props, nameA, nameB) {
@@ -133,8 +192,34 @@ function removeCommentsFromDocblock(docblock) {
     .join('\n');
 }
 
-var ComponentDoc = React.createClass({
-  renderProp: function(name, prop) {
+function getNamedTypes(typedefs) {
+  const namedTypes = {};
+  typedefs && typedefs.forEach(typedef => {
+    if (typedef.name) {
+      const type = typedef.name.toLowerCase();
+      namedTypes[type] = 1;
+    }
+  });
+  return namedTypes;
+}
+
+class ComponentDoc extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.extractPlatformFromProps = this.extractPlatformFromProps.bind(this);
+    this.renderCompose = this.renderCompose.bind(this);
+    this.renderStylesheetProp = this.renderStylesheetProp.bind(this);
+    this.renderStylesheetProps = this.renderStylesheetProps.bind(this);
+    this.renderMethod = this.renderMethod.bind(this);
+    this.renderMethods = this.renderMethods.bind(this);
+    this.renderProp = this.renderProp.bind(this);
+    this.renderProps = this.renderProps.bind(this);
+    this.renderTypeDef = this.renderTypeDef.bind(this);
+    this.renderTypeDefs = this.renderTypeDefs.bind(this);
+  }
+
+  renderProp(name, prop) {
     return (
       <div className="prop" key={name}>
         <Header level={4} className="propTitle" toSlug={name}>
@@ -142,9 +227,9 @@ var ComponentDoc = React.createClass({
             <span className="platform">{platform}</span>
           )}
           {name}
-          {' '}
-          {prop.type && <span className="propType">
-            {renderType(prop.type)}
+          {prop.required ? ': ' : '?: '}
+          {(prop.type || prop.flowType) && <span className="propType">
+            {renderType(prop.flowType || prop.type)}
           </span>}
         </Header>
         {prop.deprecationMessage && <div className="deprecated">
@@ -161,9 +246,9 @@ var ComponentDoc = React.createClass({
         {prop.description && <Marked>{prop.description}</Marked>}
       </div>
     );
-  },
+  }
 
-  renderCompose: function(name) {
+  renderCompose(name) {
     return (
       <div className="prop" key={name}>
         <Header level={4} className="propTitle" toSlug={name}>
@@ -171,9 +256,9 @@ var ComponentDoc = React.createClass({
         </Header>
       </div>
     );
-  },
+  }
 
-  renderStylesheetProp: function(name, prop) {
+  renderStylesheetProp(name, prop) {
     return (
       <div className="prop" key={name}>
         <h6 className="propTitle">
@@ -190,9 +275,9 @@ var ComponentDoc = React.createClass({
         </h6>
       </div>
     );
-  },
+  }
 
-  renderStylesheetProps: function(stylesheetName) {
+  renderStylesheetProps(stylesheetName) {
     var style = this.props.content.styles[stylesheetName];
     this.extractPlatformFromProps(style.props);
     return (
@@ -200,13 +285,17 @@ var ComponentDoc = React.createClass({
         {(style.composes || []).map((name) => {
           var link;
           if (name === 'LayoutPropTypes') {
-            name = 'Flexbox';
+            name = 'Layout Props';
             link =
-              <a href={'docs/' + slugify(name) + '.html#proptypes'}>{name}...</a>;
+              <a href={'docs/' + slugify(name) + '.html#props'}>{name}...</a>;
+          } else if (name === 'ShadowPropTypesIOS') {
+            name = 'Shadow Props';
+            link =
+              <a href={'docs/' + slugify(name) + '.html#props'}>{name}...</a>;
           } else if (name === 'TransformPropTypes') {
             name = 'Transforms';
             link =
-              <a href={'docs/' + slugify(name) + '.html#proptypes'}>{name}...</a>;
+              <a href={'docs/' + slugify(name) + '.html#props'}>{name}...</a>;
           } else {
             name = name.replace('StylePropTypes', '');
             link =
@@ -224,9 +313,9 @@ var ComponentDoc = React.createClass({
         }
       </div>
     );
-  },
+  }
 
-  renderProps: function(props, composes) {
+  renderProps(props, composes) {
     return (
       <div className="props">
         {(composes || []).map((name) =>
@@ -238,9 +327,9 @@ var ComponentDoc = React.createClass({
         }
       </div>
     );
-  },
+  }
 
-  extractPlatformFromProps: function(props) {
+  extractPlatformFromProps(props) {
     for (var key in props) {
       var prop = props[key];
       var description = prop.description || '';
@@ -251,91 +340,142 @@ var ComponentDoc = React.createClass({
       prop.description = description;
       prop.platforms = platforms;
     }
-  },
+  }
 
-  renderMethod: function(method) {
+  renderMethod(method, namedTypes) {
     return (
       <Method
         key={method.name}
         name={method.name}
         description={method.description}
         params={method.params}
-        modifiers={method.modifiers}
+        modifiers={method.scope ? [method.scope] : method.modifiers}
+        examples={method.examples}
         returns={method.returns}
+        namedTypes={namedTypes}
+        entityName={this.props.componentName}
       />
     );
-  },
+  }
 
-  renderMethods: function(methods) {
+  renderMethods(methods, namedTypes) {
     if (!methods || !methods.length) {
       return null;
     }
     return (
       <span>
-        <H level={3}>Methods</H>
+        <Header level={3}>Methods</Header>
         <div className="props">
           {methods.filter((method) => {
             return method.name[0] !== '_';
-          }).map(this.renderMethod)}
+          }).map(method => this.renderMethod(method, namedTypes))}
         </div>
       </span>
     );
-  },
+  }
 
-  render: function() {
+  renderTypeDef(typedef, namedTypes) {
+    return (
+      <TypeDef
+        key={typedef.name}
+        name={typedef.name}
+        description={typedef.description}
+        type={typedef.type}
+        properties={typedef.properties}
+        values={typedef.values}
+        apiName={this.props.apiName}
+        namedTypes={namedTypes}
+      />
+    );
+  }
+
+  renderTypeDefs(typedefs, namedTypes) {
+    if (!typedefs || !typedefs.length) {
+      return null;
+    }
+    return (
+      <span>
+        <Header level={3}>Type Definitions</Header>
+        <div className="props">
+          {typedefs.map((typedef) => {
+            return this.renderTypeDef(typedef, namedTypes);
+          })}
+        </div>
+      </span>
+    );
+  }
+
+  render() {
     var content = this.props.content;
     this.extractPlatformFromProps(content.props);
+    const namedTypes = getNamedTypes(content.typedef);
     return (
       <div>
         <Marked>
           {content.description}
         </Marked>
-        <H level={3}>Props</H>
+        <Header level={3}>Props</Header>
         {this.renderProps(content.props, content.composes)}
-        {this.renderMethods(content.methods)}
+        {this.renderMethods(content.methods, namedTypes)}
+        {this.renderTypeDefs(content.typedef, namedTypes)}
       </div>
     );
   }
-});
+}
 
-var APIDoc = React.createClass({
+class APIDoc extends React.Component {
+  constructor(props, context) {
+    super(props, context);
 
-  renderMethod: function(method) {
+    this.renderMethod = this.renderMethod.bind(this);
+    this.renderMethods = this.renderMethods.bind(this);
+    this.renderProperty = this.renderProperty.bind(this);
+    this.renderProperties = this.renderProperties.bind(this);
+    this.renderClasses = this.renderClasses.bind(this);
+    this.renderTypeDef = this.renderTypeDef.bind(this);
+    this.renderTypeDefs = this.renderTypeDefs.bind(this);
+    this.renderMainDescription = this.renderMainDescription.bind(this);
+  }
+
+  renderMethod(method, namedTypes) {
     return (
       <Method
         key={method.name}
         name={method.name}
-        description={method.docblock && removeCommentsFromDocblock(method.docblock)}
+        description={method.description || method.docblock && removeCommentsFromDocblock(method.docblock)}
         params={method.params}
-        modifiers={method.modifiers}
+        modifiers={method.scope ? [method.scope] : method.modifiers}
+        examples={method.examples}
+        entityName={this.props.apiName}
+        namedTypes={namedTypes}
       />
     );
-  },
+  }
 
-  renderMethods: function(methods) {
+  renderMethods(methods, namedTypes) {
     if (!methods.length) {
       return null;
     }
     return (
       <span>
-        <H level={3}>Methods</H>
+        <Header level={3}>Methods</Header>
         <div className="props">
           {methods.filter((method) => {
             return method.name[0] !== '_';
-          }).map(this.renderMethod)}
+          }).map(method => this.renderMethod(method, namedTypes))}
         </div>
       </span>
     );
-  },
+  }
 
-  renderProperty: function(property) {
+  renderProperty(property) {
     return (
       <div className="prop" key={property.name}>
         <Header level={4} className="propTitle" toSlug={property.name}>
           {property.name}
-          {property.type &&
+          {(property.type || property.flowType) &&
             <span className="propType">
-              {': ' + renderType(property.type)}
+              {': ' + renderType(property.flowType || property.type)}
             </span>
           }
         </Header>
@@ -344,15 +484,15 @@ var APIDoc = React.createClass({
         </Marked>}
       </div>
     );
-  },
+  }
 
-  renderProperties: function(properties) {
+  renderProperties(properties) {
     if (!properties || !properties.length) {
       return null;
     }
     return (
       <span>
-        <H level={3}>Properties</H>
+        <Header level={3}>Properties</Header>
         <div className="props">
           {properties.filter((property) => {
             return property.name[0] !== '_';
@@ -360,9 +500,9 @@ var APIDoc = React.createClass({
         </div>
       </span>
     );
-  },
+  }
 
-  renderClasses: function(classes) {
+  renderClasses(classes, namedTypes) {
     if (!classes || !classes.length) {
       return null;
     }
@@ -377,43 +517,100 @@ var APIDoc = React.createClass({
                 <Header level={2} toSlug={cls.name}>
                   class {cls.name}
                 </Header>
-                <ul>
+                <div>
                   {cls.docblock && <Marked>
                     {removeCommentsFromDocblock(cls.docblock)}
                   </Marked>}
-                  {this.renderMethods(cls.methods)}
+                  {this.renderMethods(cls.methods, namedTypes)}
                   {this.renderProperties(cls.properties)}
-                </ul>
+                </div>
               </span>
             );
           })}
         </div>
       </span>
     );
-  },
+  }
 
-  render: function() {
+  renderTypeDef(typedef, namedTypes) {
+    return (
+      <TypeDef
+        key={typedef.name}
+        name={typedef.name}
+        description={typedef.description}
+        type={typedef.type}
+        properties={typedef.properties}
+        values={typedef.values}
+        apiName={this.props.apiName}
+        namedTypes={namedTypes}
+      />
+    );
+  }
+
+  renderTypeDefs(typedefs, namedTypes) {
+    if (!typedefs || !typedefs.length) {
+      return null;
+    }
+    return (
+      <span>
+        <Header level={3}>Type Definitions</Header>
+        <div className="props">
+          {typedefs.map((typedef) => {
+            return this.renderTypeDef(typedef, namedTypes);
+          })}
+        </div>
+      </span>
+    );
+  };
+
+  renderMainDescription(content) {
+    if (content.docblock) {
+      return (
+        <Marked>
+          {removeCommentsFromDocblock(content.docblock)}
+        </Marked>
+      );
+    }
+    if (content.class && content.class.length && content.class[0].description) {
+      return (
+        <Marked>
+          {content.class[0].description}
+        </Marked>
+      );
+    }
+    return null;
+  }
+
+  render() {
     var content = this.props.content;
     if (!content.methods) {
       throw new Error(
         'No component methods found for ' + content.componentName
       );
     }
+    const namedTypes = getNamedTypes(content.typedef);
     return (
       <div>
-        <Marked>
-          {removeCommentsFromDocblock(content.docblock)}
-        </Marked>
-        {this.renderMethods(content.methods)}
+        {this.renderMainDescription(content)}
+        {this.renderMethods(content.methods, namedTypes)}
         {this.renderProperties(content.properties)}
-        {this.renderClasses(content.classes)}
+        {this.renderClasses(content.classes, namedTypes)}
+        {this.renderTypeDefs(content.typedef, namedTypes)}
       </div>
     );
   }
-});
+}
 
-var Method = React.createClass({
-  renderTypehintRec: function(typehint) {
+class Method extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.renderTypehint = this.renderTypehint.bind(this);
+    this.renderTypehintRec = this.renderTypehintRec.bind(this);
+    this.renderMethodExamples = this.renderMethodExamples.bind(this);
+    this.renderMethodParameters = this.renderMethodParameters.bind(this);
+  }
+  renderTypehintRec(typehint) {
     if (typehint.type === 'simple') {
       return typehint.value;
     }
@@ -423,10 +620,9 @@ var Method = React.createClass({
     }
 
     return JSON.stringify(typehint);
+  }
 
-  },
-
-  renderTypehint: function(typehint) {
+  renderTypehint(typehint) {
     if (typeof typehint === 'object' && typehint.name) {
       return renderType(typehint);
     }
@@ -437,165 +633,262 @@ var Method = React.createClass({
     }
 
     return this.renderTypehintRec(typehint);
-  },
+  }
 
-  render: function() {
+  renderMethodExamples(examples) {
+    if (!examples || !examples.length) {
+      return null;
+    }
+    return examples.map((example) => {
+      const re = /<caption>(.*?)<\/caption>/ig;
+      const result = re.exec(example);
+      const caption = result ? result[1] + ':' : 'Example:';
+      const code = example.replace(/<caption>.*?<\/caption>/ig, '')
+        .replace(/^\n\n/, '');
+      return (
+        <div>
+          <br/>
+          {caption}
+          <Prism>
+            {code}
+          </Prism>
+        </div>
+      );
+    });
+  };
+
+  renderMethodParameters(params) {
+    if (!params || !params.length) {
+      return null;
+    }
+    if (!params[0].type || !params[0].type.names) {
+      return null;
+    }
+    const foundDescription = params.find(p => p.description);
+    if (!foundDescription) {
+      return null;
+    }
+
+    return (
+      <div>
+        <strong>Parameters:</strong>
+          <table className="params">
+            <thead>
+              <tr>
+                <th>Name and Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {params.map((param) => {
+                return (
+                  <tr>
+                    <td>
+                      {param.optional ? '[' + param.name + ']' : param.name}
+                      <br/><br/>
+                      {renderTypeWithLinks(param.type, this.props.entityName, this.props.namedTypes)}
+                    </td>
+                    <td className="description"><Marked>{param.description}</Marked></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+      </div>
+    );
+  }
+
+  render() {
     return (
       <div className="prop">
-        <Header level={4} className="propTitle" toSlug={this.props.name}>
-          {this.props.modifiers.length && <span className="propType">
+        <Header level={4} className="methodTitle" toSlug={this.props.name}>
+          {this.props.modifiers && this.props.modifiers.length && <span className="methodType">
             {this.props.modifiers.join(' ') + ' '}
           </span> || ''}
           {this.props.name}
-          <span className="propType">
-            ({this.props.params
+          <span className="methodType">
+            ({(this.props.params && this.props.params.length && this.props.params
               .map((param) => {
                 var res = param.name;
-                if (param.type) {
-                  res += ': ' + this.renderTypehint(param.type);
-                }
+                res += param.optional ? '?' : '';
+                param.type && param.type.names && (res += ': ' + param.type.names.join(', '));
                 return res;
               })
-              .join(', ')})
+              .join(', ')) || ''})
               {this.props.returns && ': ' + this.renderTypehint(this.props.returns.type)}
           </span>
         </Header>
         {this.props.description && <Marked>
           {this.props.description}
         </Marked>}
+        {this.renderMethodParameters(this.props.params)}
+        {this.renderMethodExamples(this.props.examples)}
       </div>
     );
-  },
-});
+  }
+}
 
-var EmbeddedSimulator = React.createClass({
-  render: function() {
-    if (!this.props.shouldRender) {
+class TypeDef extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.renderProperties = this.renderProperties.bind(this);
+    this.renderValues = this.renderValues.bind(this);
+  }
+
+  renderProperties(properties) {
+    if (!properties || !properties.length) {
       return null;
     }
-
-    var metadata = this.props.metadata;
-
-    var imagePreview = metadata.platform === 'android'
-      ? <img alt="Run example in simulator" width="170" height="338" src="img/uiexplorer_main_android.png" />
-      : <img alt="Run example in simulator" width="170" height="356" src="img/uiexplorer_main_ios.png" />;
-
-    return (
-      <div className="column-left">
-        <p><a className="modal-button-open"><strong>Run this example</strong></a></p>
-        <div className="modal-button-open modal-button-open-img">
-          {imagePreview}
-        </div>
-        <Modal metadata={metadata} />
-      </div>
-    );
-  }
-});
-
-var Modal = React.createClass({
-  render: function() {
-    var metadata = this.props.metadata;
-    var appParams = {route: metadata.title};
-    var encodedParams = encodeURIComponent(JSON.stringify(appParams));
-    var url = metadata.platform === 'android'
-      ? `https://appetize.io/embed/q7wkvt42v6bkr0pzt1n0gmbwfr?device=nexus5&scale=65&autoplay=false&orientation=portrait&deviceColor=white&params=${encodedParams}`
-      : `https://appetize.io/embed/7vdfm9h3e6vuf4gfdm7r5rgc48?device=iphone6s&scale=60&autoplay=false&orientation=portrait&deviceColor=white&params=${encodedParams}`;
-
+    if (!properties[0].type || !properties[0].type.names) {
+      return null;
+    }
     return (
       <div>
-        <div className="modal">
-          <div className="modal-content">
-            <button className="modal-button-close">&times;</button>
-            <div className="center">
-              <iframe className="simulator" src={url} width="256" height="550" frameborder="0" scrolling="no"></iframe>
-              <p>Powered by <a target="_blank" href="https://appetize.io">appetize.io</a></p>
-            </div>
-          </div>
-        </div>
-        <div className="modal-backdrop" />
+        <br/>
+        <strong>Properties:</strong>
+          <table className="params">
+            <thead>
+              <tr>
+                <th>Name and Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              {properties.map((property) => {
+                return (
+                  <tr>
+                    <td>
+                      {property.optional ? '[' + property.name + ']' : property.name}
+                      <br/><br/>
+                      {renderTypeWithLinks(property.type, this.props.apiName, this.props.namedTypes)}
+                    </td>
+                    <td className="description"><Marked>{property.description}</Marked></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
       </div>
     );
   }
-});
 
-var Autodocs = React.createClass({
-  childContextTypes: {
-    permalink: React.PropTypes.string
-  },
+  renderValues(values) {
+    if (!values || !values.length) {
+      return null;
+    }
+    if (!values[0].type || !values[0].type.names) {
+      return null;
+    }
+    return (
+      <div>
+        <br/>
+        <strong>Constants:</strong>
+        <table className="params">
+          <thead>
+            <tr>
+              <th>Value</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {values.map((value) => {
+              return (
+                <tr>
+                  <td>
+                    {value.name}
+                  </td>
+                  <td className="description"><Marked>{value.description}</Marked></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
 
-  getChildContext: function() {
-    return {permalink: this.props.metadata.permalink};
-  },
+  render() {
+    return (
+      <div className="prop">
+        <Header level={4} className="propTitle" toSlug={this.props.name}>
+          {this.props.name}
+        </Header>
+        {this.props.description && <Marked>
+          {this.props.description}
+        </Marked>}
+        <strong>Type:</strong>
+        <br/>
+        {this.props.type.names.join(' | ')}
+        {this.renderProperties(this.props.properties)}
+        {this.renderValues(this.props.values)}
+      </div>
+    );
+  }
+}
 
-  renderFullDescription: function(docs) {
+class Autodocs extends React.Component {
+  contsructor(props, context) {
+    super(props, context);
+
+    this.renderFullDescription = this.renderFullDescription.bind(this);
+  }
+
+  getChildContext() {
+    return {
+      permalink: this.props.metadata.permalink,
+      version: Metadata.config.RN_VERSION || 'next'
+    };
+  }
+
+  renderFullDescription(docs) {
     if (!docs.fullDescription) {
       return;
     }
     return (
       <div>
-        <HeaderWithGithub
-          title="Description"
-          path={'docs/' + docs.componentName + '.md'}
-        />
+        <Header level={1}>Description</Header>
         <Marked>
           {docs.fullDescription}
         </Marked>
+        <Footer path={'docs/' + docs.componentName + '.md'} />
       </div>
     );
-  },
+  }
 
-  renderExample: function(docs, metadata) {
-    if (!docs.example) {
-      return;
-    }
-
-    return (
-      <div>
-        <HeaderWithGithub
-          title="Examples"
-          path={docs.example.path}
-          metadata={metadata}
-        />
-        <Prism>
-          {docs.example.content.replace(/^[\s\S]*?\*\//, '').trim()}
-        </Prism>
-      </div>
-    );
-  },
-
-  render: function() {
+  render() {
     var metadata = this.props.metadata;
     var docs = JSON.parse(this.props.children);
-    var content  = docs.type === 'component' || docs.type === 'style' ?
-      <ComponentDoc content={docs} /> :
-      <APIDoc content={docs} apiName={metadata.title} />;
+    var content  = docs.type === 'component' || docs.type === 'style'
+      ? <ComponentDoc content={docs} componentName={metadata.title} />
+      : <APIDoc content={docs} apiName={metadata.title} />;
 
     return (
-      <Site section="docs" title={metadata.title}>
+      <Site
+        section="docs"
+        title={metadata.title} >
         <section className="content wrap documentationContent">
           <DocsSidebar metadata={metadata} />
           <div className="inner-content">
             <a id="content" />
-            <HeaderWithGithub
-              title={metadata.title}
-              level={1}
-              path={metadata.path}
-            />
+            <Header level={1}>{metadata.title}</Header>
             {content}
+            <Footer path={metadata.path} />
             {this.renderFullDescription(docs)}
-            {this.renderExample(docs, metadata)}
             <div className="docs-prevnext">
               {metadata.previous && <a className="docs-prev" href={'docs/' + metadata.previous + '.html#content'}>&larr; Prev</a>}
               {metadata.next && <a className="docs-next" href={'docs/' + metadata.next + '.html#content'}>Next &rarr;</a>}
             </div>
           </div>
-
-          <EmbeddedSimulator shouldRender={metadata.runnable} metadata={metadata} />
-
         </section>
       </Site>
     );
   }
-});
+}
+
+Autodocs.childContextTypes = {
+  permalink: PropTypes.string,
+  version: PropTypes.string
+};
 
 module.exports = Autodocs;

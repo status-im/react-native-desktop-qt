@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 
 import android.content.res.Resources;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -35,6 +36,7 @@ import com.facebook.react.bridge.SoftAssertions;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.touch.JSResponderHandler;
 import com.facebook.react.uimanager.layoutanimation.LayoutAnimationController;
+import com.facebook.react.uimanager.layoutanimation.LayoutAnimationListener;
 import com.facebook.systrace.Systrace;
 import com.facebook.systrace.SystraceMessage;
 
@@ -63,26 +65,33 @@ import com.facebook.systrace.SystraceMessage;
 @NotThreadSafe
 public class NativeViewHierarchyManager {
 
+  private static final String TAG = NativeViewHierarchyManager.class.getSimpleName();
+
   private final AnimationRegistry mAnimationRegistry;
   private final SparseArray<View> mTagsToViews;
   private final SparseArray<ViewManager> mTagsToViewManagers;
   private final SparseBooleanArray mRootTags;
   private final ViewManagerRegistry mViewManagers;
   private final JSResponderHandler mJSResponderHandler = new JSResponderHandler();
-  private final RootViewManager mRootViewManager = new RootViewManager();
+  private final RootViewManager mRootViewManager;
   private final LayoutAnimationController mLayoutAnimator = new LayoutAnimationController();
 
   private boolean mLayoutAnimationEnabled;
 
   public NativeViewHierarchyManager(ViewManagerRegistry viewManagers) {
+    this(viewManagers, new RootViewManager());
+  }
+
+  public NativeViewHierarchyManager(ViewManagerRegistry viewManagers, RootViewManager manager) {
     mAnimationRegistry = new AnimationRegistry();
     mViewManagers = viewManagers;
     mTagsToViews = new SparseArray<>();
     mTagsToViewManagers = new SparseArray<>();
     mRootTags = new SparseBooleanArray();
+    mRootViewManager = manager;
   }
 
-  protected final View resolveView(int tag) {
+  public synchronized final View resolveView(int tag) {
     View view = mTagsToViews.get(tag);
     if (view == null) {
       throw new IllegalViewOperationException("Trying to resolve view with tag " + tag
@@ -91,7 +100,7 @@ public class NativeViewHierarchyManager {
     return view;
   }
 
-  protected final ViewManager resolveViewManager(int tag) {
+  public synchronized final ViewManager resolveViewManager(int tag) {
     ViewManager viewManager = mTagsToViewManagers.get(tag);
     if (viewManager == null) {
       throw new IllegalViewOperationException("ViewManager for tag " + tag + " could not be found");
@@ -107,15 +116,19 @@ public class NativeViewHierarchyManager {
     mLayoutAnimationEnabled = enabled;
   }
 
-  public void updateProperties(int tag, ReactStylesDiffMap props) {
+  public synchronized void updateProperties(int tag, ReactStylesDiffMap props) {
     UiThreadUtil.assertOnUiThread();
 
-    ViewManager viewManager = resolveViewManager(tag);
-    View viewToUpdate = resolveView(tag);
-    viewManager.updateProperties(viewToUpdate, props);
+    try {
+      ViewManager viewManager = resolveViewManager(tag);
+      View viewToUpdate = resolveView(tag);
+      viewManager.updateProperties(viewToUpdate, props);
+    } catch (IllegalViewOperationException e) {
+      Log.e(TAG, "Unable to update properties for view tag " + tag, e);
+    }
   }
 
-  public void updateViewExtraData(int tag, Object extraData) {
+  public synchronized void updateViewExtraData(int tag, Object extraData) {
     UiThreadUtil.assertOnUiThread();
 
     ViewManager viewManager = resolveViewManager(tag);
@@ -123,7 +136,7 @@ public class NativeViewHierarchyManager {
     viewManager.updateExtraData(viewToUpdate, extraData);
   }
 
-  public void updateLayout(
+  public synchronized void updateLayout(
       int parentTag,
       int tag,
       int x,
@@ -187,7 +200,7 @@ public class NativeViewHierarchyManager {
     }
   }
 
-  public void createView(
+  public synchronized void createView(
       ThemedReactContext themedContext,
       int tag,
       String className,
@@ -226,17 +239,20 @@ public class NativeViewHierarchyManager {
       @Nullable int[] tagsToDelete) {
     StringBuilder stringBuilder = new StringBuilder();
 
-    stringBuilder.append("View tag:" + viewToManage.getId() + "\n");
-    stringBuilder.append("  children(" + viewManager.getChildCount(viewToManage) + "): [\n");
-    for (int index=0; index<viewManager.getChildCount(viewToManage); index+=16) {
-      for (int innerOffset=0;
-           ((index+innerOffset) < viewManager.getChildCount(viewToManage)) && innerOffset < 16;
-           innerOffset++) {
-        stringBuilder.append(viewManager.getChildAt(viewToManage, index+innerOffset).getId() + ",");
+    if (null != viewToManage) {
+      stringBuilder.append("View tag:" + viewToManage.getId() + "\n");
+      stringBuilder.append("  children(" + viewManager.getChildCount(viewToManage) + "): [\n");
+      for (int index=0; index<viewManager.getChildCount(viewToManage); index+=16) {
+        for (int innerOffset=0;
+             ((index+innerOffset) < viewManager.getChildCount(viewToManage)) && innerOffset < 16;
+             innerOffset++) {
+          stringBuilder.append(viewManager.getChildAt(viewToManage, index+innerOffset).getId() + ",");
+        }
+        stringBuilder.append("\n");
       }
-      stringBuilder.append("\n");
+      stringBuilder.append(" ],\n");
     }
-    stringBuilder.append(" ],\n");
+
     if (indicesToRemove != null) {
       stringBuilder.append("  indicesToRemove(" + indicesToRemove.length + "): [\n");
       for (int index = 0; index < indicesToRemove.length; index += 16) {
@@ -289,13 +305,14 @@ public class NativeViewHierarchyManager {
    * a view which should be added at the specified index
    * @param tagsToDelete list of tags corresponding to views that should be removed
    */
-  public void manageChildren(
+  public synchronized void manageChildren(
       int tag,
       @Nullable int[] indicesToRemove,
       @Nullable ViewAtIndex[] viewsToAdd,
       @Nullable int[] tagsToDelete) {
-    ViewGroup viewToManage = (ViewGroup) mTagsToViews.get(tag);
-    ViewGroupManager viewManager = (ViewGroupManager) resolveViewManager(tag);
+    UiThreadUtil.assertOnUiThread();
+    final ViewGroup viewToManage = (ViewGroup) mTagsToViews.get(tag);
+    final ViewGroupManager viewManager = (ViewGroupManager) resolveViewManager(tag);
     if (viewToManage == null) {
       throw new IllegalViewOperationException("Trying to manageChildren view with tag " + tag +
         " which doesn't exist\n detail: " +
@@ -344,7 +361,18 @@ public class NativeViewHierarchyManager {
                       viewsToAdd,
                       tagsToDelete));
         }
-        viewManager.removeViewAt(viewToManage, indicesToRemove[i]);
+
+        View viewToRemove = viewManager.getChildAt(viewToManage, indexToRemove);
+
+        if (mLayoutAnimationEnabled &&
+            mLayoutAnimator.shouldAnimateLayout(viewToRemove) &&
+            arrayContains(tagsToDelete, viewToRemove.getId())) {
+          // The view will be removed and dropped by the 'delete' layout animation
+          // instead, so do nothing
+        } else {
+          viewManager.removeViewAt(viewToManage, indexToRemove);
+        }
+
         lastIndexToRemove = indexToRemove;
       }
     }
@@ -371,7 +399,7 @@ public class NativeViewHierarchyManager {
     if (tagsToDelete != null) {
       for (int i = 0; i < tagsToDelete.length; i++) {
         int tagToDelete = tagsToDelete[i];
-        View viewToDestroy = mTagsToViews.get(tagToDelete);
+        final View viewToDestroy = mTagsToViews.get(tagToDelete);
         if (viewToDestroy == null) {
           throw new IllegalViewOperationException(
               "Trying to destroy unknown view tag: "
@@ -383,33 +411,100 @@ public class NativeViewHierarchyManager {
                       viewsToAdd,
                       tagsToDelete));
         }
-        dropView(viewToDestroy);
+
+        if (mLayoutAnimationEnabled &&
+            mLayoutAnimator.shouldAnimateLayout(viewToDestroy)) {
+          mLayoutAnimator.deleteView(viewToDestroy, new LayoutAnimationListener() {
+            @Override
+            public void onAnimationEnd() {
+              viewManager.removeView(viewToManage, viewToDestroy);
+              dropView(viewToDestroy);
+            }
+          });
+        } else {
+          dropView(viewToDestroy);
+        }
       }
     }
   }
 
+  private boolean arrayContains(@Nullable int[] array, int ele) {
+    if (array == null) {
+      return false;
+    }
+    for (int curEle : array) {
+      if (curEle == ele) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   /**
-   * See {@link UIManagerModule#addMeasuredRootView}.
-   *
-   * Must be called from the UI thread.
+   * Simplified version of constructManageChildrenErrorMessage that only deals with adding children
+   * views
    */
-  public void addRootView(
+  private static String constructSetChildrenErrorMessage(
+    ViewGroup viewToManage,
+    ViewGroupManager viewManager,
+    ReadableArray childrenTags) {
+    ViewAtIndex[] viewsToAdd = new ViewAtIndex[childrenTags.size()];
+    for (int i = 0; i < childrenTags.size(); i++) {
+      viewsToAdd[i] = new ViewAtIndex(childrenTags.getInt(i), i);
+    }
+    return constructManageChildrenErrorMessage(
+      viewToManage,
+      viewManager,
+      null,
+      viewsToAdd,
+      null
+    );
+  }
+
+  /**
+   * Simplified version of manageChildren that only deals with adding children views
+   */
+  public synchronized void setChildren(
+    int tag,
+    ReadableArray childrenTags) {
+    UiThreadUtil.assertOnUiThread();
+    ViewGroup viewToManage = (ViewGroup) mTagsToViews.get(tag);
+    ViewGroupManager viewManager = (ViewGroupManager) resolveViewManager(tag);
+
+    for (int i = 0; i < childrenTags.size(); i++) {
+      View viewToAdd = mTagsToViews.get(childrenTags.getInt(i));
+      if (viewToAdd == null) {
+        throw new IllegalViewOperationException(
+          "Trying to add unknown view tag: "
+            + childrenTags.getInt(i) + "\n detail: " +
+            constructSetChildrenErrorMessage(
+              viewToManage,
+              viewManager,
+              childrenTags));
+      }
+      viewManager.addView(viewToManage, viewToAdd, i);
+    }
+  }
+
+  /**
+   * See {@link UIManagerModule#addRootView}.
+   */
+  public synchronized void addRootView(
       int tag,
       SizeMonitoringFrameLayout view,
       ThemedReactContext themedContext) {
     addRootViewGroup(tag, view, themedContext);
   }
 
-  protected final void addRootViewGroup(
+  protected synchronized final void addRootViewGroup(
       int tag,
       ViewGroup view,
       ThemedReactContext themedContext) {
-    UiThreadUtil.assertOnUiThread();
     if (view.getId() != View.NO_ID) {
       throw new IllegalViewOperationException(
           "Trying to add a root view with an explicit id already set. React Native uses " +
           "the id field to track react tags and will overwrite this field. If that is fine, " +
-          "explicitly overwrite the id field to View.NO_ID before calling addMeasuredRootView.");
+          "explicitly overwrite the id field to View.NO_ID before calling addRootView.");
     }
 
     mTagsToViews.put(tag, view);
@@ -421,7 +516,7 @@ public class NativeViewHierarchyManager {
   /**
    * Releases all references to given native View.
    */
-  protected final void dropView(View view) {
+  protected synchronized void dropView(View view) {
     UiThreadUtil.assertOnUiThread();
     if (!mRootTags.get(view.getId())) {
       // For non-root views we notify viewmanager with {@link ViewManager#onDropInstance}
@@ -443,7 +538,7 @@ public class NativeViewHierarchyManager {
     mTagsToViewManagers.remove(view.getId());
   }
 
-  public void removeRootView(int rootViewTag) {
+  public synchronized void removeRootView(int rootViewTag) {
     UiThreadUtil.assertOnUiThread();
     if (!mRootTags.get(rootViewTag)) {
         SoftAssertions.assertUnreachable(
@@ -458,7 +553,7 @@ public class NativeViewHierarchyManager {
    * Returns true on success, false on failure. If successful, after calling, output buffer will be
    * {x, y, width, height}.
    */
-  public void measure(int tag, int[] outputBuffer) {
+  public synchronized void measure(int tag, int[] outputBuffer) {
     UiThreadUtil.assertOnUiThread();
     View v = mTagsToViews.get(tag);
     if (v == null) {
@@ -491,7 +586,7 @@ public class NativeViewHierarchyManager {
    * @param outputBuffer - output buffer that contains [x,y,width,height] of the view in coordinates
    *  relative to the device window
    */
-  public void measureInWindow(int tag, int[] outputBuffer) {
+  public synchronized void measureInWindow(int tag, int[] outputBuffer) {
     UiThreadUtil.assertOnUiThread();
     View v = mTagsToViews.get(tag);
     if (v == null) {
@@ -514,7 +609,8 @@ public class NativeViewHierarchyManager {
     outputBuffer[3] = v.getHeight();
   }
 
-  public int findTargetTagForTouch(int reactTag, float touchX, float touchY) {
+  public synchronized int findTargetTagForTouch(int reactTag, float touchX, float touchY) {
+    UiThreadUtil.assertOnUiThread();
     View view = mTagsToViews.get(reactTag);
     if (view == null) {
       throw new JSApplicationIllegalArgumentException("Could not find view with tag " + reactTag);
@@ -522,7 +618,10 @@ public class NativeViewHierarchyManager {
     return TouchTargetHelper.findTargetTagForTouch(touchX, touchY, (ViewGroup) view);
   }
 
-  public void setJSResponder(int reactTag, int initialReactTag, boolean blockNativeResponder) {
+  public synchronized void setJSResponder(
+    int reactTag,
+    int initialReactTag,
+    boolean blockNativeResponder) {
     if (!blockNativeResponder) {
       mJSResponderHandler.setJSResponder(initialReactTag, null);
       return;
@@ -556,7 +655,7 @@ public class NativeViewHierarchyManager {
     mLayoutAnimator.reset();
   }
 
-  /* package */ void startAnimationForNativeView(
+  /* package */ synchronized void startAnimationForNativeView(
       int reactTag,
       Animation animation,
       @Nullable final Callback animationCallback) {
@@ -595,7 +694,10 @@ public class NativeViewHierarchyManager {
     }
   }
 
-  public void dispatchCommand(int reactTag, int commandId, @Nullable ReadableArray args) {
+  public synchronized void dispatchCommand(
+    int reactTag,
+    int commandId,
+    @Nullable ReadableArray args) {
     UiThreadUtil.assertOnUiThread();
     View view = mTagsToViews.get(reactTag);
     if (view == null) {
@@ -616,7 +718,7 @@ public class NativeViewHierarchyManager {
    * @param success will be called with the position of the selected item as the first argument, or
    *        no arguments if the menu is dismissed
    */
-  public void showPopupMenu(int reactTag, ReadableArray items, Callback success) {
+  public synchronized void showPopupMenu(int reactTag, ReadableArray items, Callback success) {
     UiThreadUtil.assertOnUiThread();
     View anchor = mTagsToViews.get(reactTag);
     if (anchor == null) {
@@ -684,5 +786,4 @@ public class NativeViewHierarchyManager {
     }
     AccessibilityHelper.sendAccessibilityEvent(view, eventType);
   }
-
 }

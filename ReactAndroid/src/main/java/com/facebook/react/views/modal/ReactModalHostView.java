@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,9 +22,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
+import android.widget.FrameLayout;
 
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.R;
+import com.facebook.react.bridge.GuardedRunnable;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.common.annotations.VisibleForTesting;
 import com.facebook.react.uimanager.JSTouchDispatcher;
@@ -44,7 +49,7 @@ import com.facebook.react.views.view.ReactViewGroup;
  *     DialogRootViewGroup were part of the hierarchy.  Therefore, we forward all view changes
  *     around addition and removal of views to the DialogRootViewGroup.
  */
-public class ReactModalHostView extends ViewGroup {
+public class ReactModalHostView extends ViewGroup implements LifecycleEventListener {
 
   // This listener is called when the user presses KeyEvent.KEYCODE_BACK
   // An event is then passed to JS which can either close or not close the Modal by setting the
@@ -56,7 +61,8 @@ public class ReactModalHostView extends ViewGroup {
   private DialogRootViewGroup mHostView;
   private @Nullable Dialog mDialog;
   private boolean mTransparent;
-  private boolean mAnimated;
+  private String mAnimationType;
+  private boolean mHardwareAccelerated;
   // Set this flag to true if changing a particular property on the view requires a new Dialog to
   // be created.  For instance, animation does since it affects Dialog creation through the theme
   // but transparency does not since we can access the window to update the property.
@@ -66,6 +72,7 @@ public class ReactModalHostView extends ViewGroup {
 
   public ReactModalHostView(Context context) {
     super(context);
+    ((ReactContext) context).addLifecycleEventListener(this);
 
     mHostView = new DialogRootViewGroup(context);
   }
@@ -107,7 +114,19 @@ public class ReactModalHostView extends ViewGroup {
     // Those will be handled by the mHostView which lives in the dialog
   }
 
-  public void dismiss() {
+  @Override
+  public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+    // Explicitly override this to prevent accessibility events being passed down to children
+    // Those will be handled by the mHostView which lives in the dialog
+    return false;
+  }
+
+  public void onDropInstance() {
+    ((ReactContext) getContext()).removeLifecycleEventListener(this);
+    dismiss();
+  }
+
+  private void dismiss() {
     if (mDialog != null) {
       mDialog.dismiss();
       mDialog = null;
@@ -131,9 +150,32 @@ public class ReactModalHostView extends ViewGroup {
     mTransparent = transparent;
   }
 
-  protected void setAnimated(boolean animated) {
-    mAnimated = animated;
+  protected void setAnimationType(String animationType) {
+    mAnimationType = animationType;
     mPropertyRequiresNewDialog = true;
+  }
+
+  protected void setHardwareAccelerated(boolean hardwareAccelerated) {
+    mHardwareAccelerated = hardwareAccelerated;
+    mPropertyRequiresNewDialog = true;
+  }
+
+  @Override
+  public void onHostResume() {
+    // We show the dialog again when the host resumes
+    showOrUpdate();
+  }
+
+  @Override
+  public void onHostPause() {
+    // We dismiss the dialog and reconstitute it onHostResume
+    dismiss();
+  }
+
+  @Override
+  public void onHostDestroy() {
+    // Drop the instance if the host is destroyed which will dismiss the dialog
+    onDropInstance();
   }
 
   @VisibleForTesting
@@ -162,12 +204,14 @@ public class ReactModalHostView extends ViewGroup {
     // Reset the flag since we are going to create a new dialog
     mPropertyRequiresNewDialog = false;
     int theme = R.style.Theme_FullScreenDialog;
-    if (mAnimated) {
-      theme = R.style.Theme_FullScreenDialogAnimated;
+    if (mAnimationType.equals("fade")) {
+      theme = R.style.Theme_FullScreenDialogAnimatedFade;
+    } else if (mAnimationType.equals("slide")) {
+      theme = R.style.Theme_FullScreenDialogAnimatedSlide;
     }
     mDialog = new Dialog(getContext(), theme);
 
-    mDialog.setContentView(mHostView);
+    mDialog.setContentView(getContentView());
     updateProperties();
 
     mDialog.setOnShowListener(mOnShowListener);
@@ -175,24 +219,48 @@ public class ReactModalHostView extends ViewGroup {
       new DialogInterface.OnKeyListener() {
         @Override
         public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-          // We need to stop the BACK button from closing the dialog by default so we capture that
-          // event and instead inform JS so that it can make the decision as to whether or not to
-          // allow the back button to close the dialog.  If it chooses to, it can just set visible
-          // to false on the Modal and the Modal will go away
-          if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (event.getAction() == KeyEvent.ACTION_UP) {
+          if (event.getAction() == KeyEvent.ACTION_UP) {
+            // We need to stop the BACK button from closing the dialog by default so we capture that
+            // event and instead inform JS so that it can make the decision as to whether or not to
+            // allow the back button to close the dialog.  If it chooses to, it can just set visible
+            // to false on the Modal and the Modal will go away
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
               Assertions.assertNotNull(
-                  mOnRequestCloseListener,
-                  "setOnRequestCloseListener must be called by the manager");
+                mOnRequestCloseListener,
+                "setOnRequestCloseListener must be called by the manager");
               mOnRequestCloseListener.onRequestClose(dialog);
+              return true;
+            } else {
+              // We redirect the rest of the key events to the current activity, since the activity
+              // expects to receive those events and react to them, ie. in the case of the dev menu
+              Activity currentActivity = ((ReactContext) getContext()).getCurrentActivity();
+              if (currentActivity != null) {
+                return currentActivity.onKeyUp(keyCode, event);
+              }
             }
-            return true;
           }
           return false;
         }
       });
 
+    mDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+    if (mHardwareAccelerated) {
+      mDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+    }
     mDialog.show();
+  }
+
+  /**
+   * Returns the view that will be the root view of the dialog. We are wrapping this in a
+   * FrameLayout because this is the system's way of notifying us that the dialog size has changed.
+   * This has the pleasant side-effect of us not having to preface all Modals with
+   * "top: statusBarHeight", since that margin will be included in the FrameLayout.
+   */
+  private View getContentView() {
+    FrameLayout frameLayout = new FrameLayout(getContext());
+    frameLayout.addView(mHostView);
+    frameLayout.setFitsSystemWindows(true);
+    return frameLayout;
   }
 
   /**
@@ -218,6 +286,11 @@ public class ReactModalHostView extends ViewGroup {
    * child information forwarded from ReactModalHostView and uses that to create children.  It is
    * also responsible for acting as a RootView and handling touch events.  It does this the same
    * way as ReactRootView.
+   *
+   * To get layout to work properly, we need to layout all the elements within the Modal as if they
+   * can fill the entire window.  To do that, we need to explicitly set the styleWidth and
+   * styleHeight on the LayoutShadowNode to be the window size. This is done through the
+   * UIManagerModule, and will then cause the children to layout as if they can fill the window.
    */
   static class DialogRootViewGroup extends ReactViewGroup implements RootView {
 
@@ -225,6 +298,23 @@ public class ReactModalHostView extends ViewGroup {
 
     public DialogRootViewGroup(Context context) {
       super(context);
+    }
+
+    @Override
+    protected void onSizeChanged(final int w, final int h, int oldw, int oldh) {
+      super.onSizeChanged(w, h, oldw, oldh);
+      if (getChildCount() > 0) {
+        final int viewTag = getChildAt(0).getId();
+        ReactContext reactContext = (ReactContext) getContext();
+        reactContext.runUIBackgroundRunnable(
+          new GuardedRunnable(reactContext) {
+            @Override
+            public void runGuarded() {
+              ((ReactContext) getContext()).getNativeModule(UIManagerModule.class)
+                .updateNodeSize(viewTag, w, h);
+            }
+          });
+      }
     }
 
     @Override

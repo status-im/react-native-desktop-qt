@@ -8,15 +8,18 @@
  *
  * @providesModule AlgoliaDocSearch
  */
+'use strict';
 
-var AlgoliaDocSearch = React.createClass({
-  render: function() {
+var React = require('React');
+
+class AlgoliaDocSearch extends React.Component {
+  render() {
     return (
       <div className="algolia-search-wrapper">
-        <input id="algolia-doc-search" type="text" placeholder="Search docs..." />
+        <input id="algolia-doc-search" tabIndex="0" type="text" placeholder="Search docs..." />
       </div>
     );
   }
-});
+}
 
 module.exports = AlgoliaDocSearch;

@@ -16,6 +16,8 @@ import android.util.DisplayMetrics;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.ImageView;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.events.TouchEventType;
 
@@ -71,11 +73,13 @@ import com.facebook.react.uimanager.events.TouchEventType;
 
   /* package */ static Map getDirectEventTypeConstants() {
     return MapBuilder.builder()
-        .put("topSelectionChange", MapBuilder.of("registrationName", "onSelectionChange"))
-        .put("topLoadingStart", MapBuilder.of("registrationName", "onLoadingStart"))
-        .put("topLoadingFinish", MapBuilder.of("registrationName", "onLoadingFinish"))
-        .put("topLoadingError", MapBuilder.of("registrationName", "onLoadingError"))
+        .put("topContentSizeChange", MapBuilder.of("registrationName", "onContentSizeChange"))
         .put("topLayout", MapBuilder.of("registrationName", "onLayout"))
+        .put("topLoadingError", MapBuilder.of("registrationName", "onLoadingError"))
+        .put("topLoadingFinish", MapBuilder.of("registrationName", "onLoadingFinish"))
+        .put("topLoadingStart", MapBuilder.of("registrationName", "onLoadingStart"))
+        .put("topSelectionChange", MapBuilder.of("registrationName", "onSelectionChange"))
+        .put("topMessage", MapBuilder.of("registrationName", "onMessage"))
         .build();
   }
 
@@ -92,36 +96,6 @@ import com.facebook.react.uimanager.events.TouchEventType;
                 ImageView.ScaleType.CENTER_CROP.ordinal(),
                 "ScaleAspectCenter",
                 ImageView.ScaleType.CENTER_INSIDE.ordinal())));
-
-    DisplayMetrics displayMetrics = DisplayMetricsHolder.getWindowDisplayMetrics();
-    DisplayMetrics screenDisplayMetrics = DisplayMetricsHolder.getScreenDisplayMetrics();
-    constants.put(
-        "Dimensions",
-        MapBuilder.of(
-            "windowPhysicalPixels",
-            MapBuilder.of(
-                "width",
-                displayMetrics.widthPixels,
-                "height",
-                displayMetrics.heightPixels,
-                "scale",
-                displayMetrics.density,
-                "fontScale",
-                displayMetrics.scaledDensity,
-                "densityDpi",
-                displayMetrics.densityDpi),
-        "screenPhysicalPixels",
-        MapBuilder.of(
-            "width",
-            screenDisplayMetrics.widthPixels,
-            "height",
-            screenDisplayMetrics.heightPixels,
-            "scale",
-            screenDisplayMetrics.density,
-            "fontScale",
-            screenDisplayMetrics.scaledDensity,
-            "densityDpi",
-            screenDisplayMetrics.densityDpi)));
 
     constants.put(
         "StyleConstants",

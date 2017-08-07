@@ -3,7 +3,7 @@
 #pragma once
 
 #include <android/asset_manager.h>
-#include <react/JSModulesUnbundle.h>
+#include <cxxreact/JSModulesUnbundle.h>
 
 namespace facebook {
 namespace react {

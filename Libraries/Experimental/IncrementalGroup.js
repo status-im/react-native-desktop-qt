@@ -14,6 +14,10 @@
 const Incremental = require('Incremental');
 const React = require('React');
 
+const PropTypes = require('prop-types');
+
+const infoLog = require('infoLog');
+
 let _groupCounter = -1;
 const DEBUG = false;
 
@@ -31,12 +35,12 @@ import type {Props, Context} from 'Incremental';
  * See Incremental.js for more info.
  */
 class IncrementalGroup extends React.Component {
-  props: Props;
+  props: Props & {disabled?: boolean};
   context: Context;
   _groupInc: string;
   componentWillMount() {
     this._groupInc = `g${++_groupCounter}-`;
-    DEBUG && console.log(
+    DEBUG && infoLog(
       'create IncrementalGroup with id ' + this.getGroupId()
     );
   }
@@ -63,7 +67,7 @@ class IncrementalGroup extends React.Component {
     };
   }
 
-  render(): ReactElement {
+  render(): React.Element<any> {
     return (
       <Incremental
         onDone={this.props.onDone}
@@ -73,8 +77,8 @@ class IncrementalGroup extends React.Component {
   }
 }
 IncrementalGroup.contextTypes = {
-  incrementalGroup: React.PropTypes.object,
-  incrementalGroupEnabled: React.PropTypes.bool,
+  incrementalGroup: PropTypes.object,
+  incrementalGroupEnabled: PropTypes.bool,
 };
 IncrementalGroup.childContextTypes = IncrementalGroup.contextTypes;
 

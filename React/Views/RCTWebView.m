@@ -21,12 +21,15 @@
 
 NSString *const RCTJSNavigationScheme = @"react-js-navigation";
 
+static NSString *const kPostMessageHost = @"postMessage";
+
 @interface RCTWebView () <UIWebViewDelegate, RCTAutoInsetsProtocol>
 
 @property (nonatomic, copy) RCTDirectEventBlock onLoadingStart;
 @property (nonatomic, copy) RCTDirectEventBlock onLoadingFinish;
 @property (nonatomic, copy) RCTDirectEventBlock onLoadingError;
 @property (nonatomic, copy) RCTDirectEventBlock onShouldStartLoadWithRequest;
+@property (nonatomic, copy) RCTDirectEventBlock onMessage;
 
 @end
 
@@ -80,6 +83,23 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 - (void)stopLoading
 {
   [_webView stopLoading];
+}
+
+- (void)postMessage:(NSString *)message
+{
+  NSDictionary *eventInitDict = @{
+    @"data": message,
+  };
+  NSString *source = [NSString
+    stringWithFormat:@"document.dispatchEvent(new MessageEvent('message', %@));",
+    RCTJSONStringify(eventInitDict, NULL)
+  ];
+  [_webView stringByEvaluatingJavaScriptFromString:source];
+}
+
+- (void)injectJavaScript:(NSString *)script
+{
+  [_webView stringByEvaluatingJavaScriptFromString:script];
 }
 
 - (void)setSource:(NSDictionary *)source
@@ -221,6 +241,23 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
     }
   }
 
+  if (isJSNavigation && [request.URL.host isEqualToString:kPostMessageHost]) {
+    NSString *data = request.URL.query;
+    data = [data stringByReplacingOccurrencesOfString:@"+" withString:@" "];
+    data = [data stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+    NSMutableDictionary<NSString *, id> *event = [self baseEvent];
+    [event addEntriesFromDictionary: @{
+      @"data": data,
+    }];
+
+    NSString *source = @"document.dispatchEvent(new MessageEvent('message:received'));";
+
+    [_webView stringByEvaluatingJavaScriptFromString:source];
+
+    _onMessage(event);
+  }
+
   // JS Navigation handler
   return !isJSNavigation;
 }
@@ -236,6 +273,14 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
       return;
     }
 
+    if ([error.domain isEqualToString:@"WebKitErrorDomain"] && error.code == 102) {
+      // Error code 102 "Frame load interrupted" is raised by the UIWebView if
+      // its delegate returns FALSE from webView:shouldStartLoadWithRequest:navigationType
+      // when the URL is from an http redirect. This is a common pattern when
+      // implementing OAuth with a WebView.
+      return;
+    }
+
     NSMutableDictionary<NSString *, id> *event = [self baseEvent];
     [event addEntriesFromDictionary:@{
       @"domain": error.domain,
@@ -248,6 +293,44 @@ RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
+  if (_messagingEnabled) {
+    #if RCT_DEV
+    // See isNative in lodash
+    NSString *testPostMessageNative = @"String(window.postMessage) === String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage')";
+    BOOL postMessageIsNative = [
+      [webView stringByEvaluatingJavaScriptFromString:testPostMessageNative]
+      isEqualToString:@"true"
+    ];
+    if (!postMessageIsNative) {
+      RCTLogError(@"Setting onMessage on a WebView overrides existing values of window.postMessage, but a previous value was defined");
+    }
+    #endif
+    NSString *source = [NSString stringWithFormat:
+      @"(function() {"
+        "window.originalPostMessage = window.postMessage;"
+
+        "var messageQueue = [];"
+        "var messagePending = false;"
+
+        "function processQueue() {"
+          "if (!messageQueue.length || messagePending) return;"
+          "messagePending = true;"
+          "window.location = '%@://%@?' + encodeURIComponent(messageQueue.shift());"
+        "}"
+
+        "window.postMessage = function(data) {"
+          "messageQueue.push(String(data));"
+          "processQueue();"
+        "};"
+
+        "document.addEventListener('message:received', function(e) {"
+          "messagePending = false;"
+          "processQueue();"
+        "});"
+      "})();", RCTJSNavigationScheme, kPostMessageHost
+    ];
+    [webView stringByEvaluatingJavaScriptFromString:source];
+  }
   if (_injectedJavaScript != nil) {
     NSString *jsEvaluationValue = [webView stringByEvaluatingJavaScriptFromString:_injectedJavaScript];
 

@@ -7,15 +7,21 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import <UIKit/UIKit.h>
+#import <React/RCTEventEmitter.h>
 
-#import "RCTBridgeModule.h"
+extern NSString *const RCTRemoteNotificationReceived;
 
-@interface RCTPushNotificationManager : NSObject <RCTBridgeModule>
+@interface RCTPushNotificationManager : RCTEventEmitter
 
+typedef void (^RCTRemoteNotificationCallback)(UIBackgroundFetchResult result);
+
+#if !TARGET_OS_TV
 + (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
 + (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
 + (void)didReceiveRemoteNotification:(NSDictionary *)notification;
++ (void)didReceiveRemoteNotification:(NSDictionary *)notification fetchCompletionHandler:(RCTRemoteNotificationCallback)completionHandler;
 + (void)didReceiveLocalNotification:(UILocalNotification *)notification;
++ (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
+#endif
 
 @end

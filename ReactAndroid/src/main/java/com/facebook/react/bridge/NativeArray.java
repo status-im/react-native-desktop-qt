@@ -11,7 +11,6 @@ package com.facebook.react.bridge;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
-import com.facebook.soloader.SoLoader;
 
 /**
  * Base class for an array whose members are stored in native code (C++).
@@ -19,7 +18,7 @@ import com.facebook.soloader.SoLoader;
 @DoNotStrip
 public abstract class NativeArray {
   static {
-    SoLoader.loadLibrary(ReactBridge.REACT_NATIVE_LIB);
+    ReactBridge.staticInit();
   }
 
   protected NativeArray(HybridData hybridData) {

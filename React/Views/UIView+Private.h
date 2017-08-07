@@ -9,8 +9,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIView (RCTViewUnmounting)
+@interface UIView (Private)
 
+// remove clipped subviews implementation
 - (void)react_remountAllSubviews;
 - (void)react_updateClippedSubviewsWithClipRect:(CGRect)clipRect relativeToView:(UIView *)clipView;
 - (UIView *)react_findClipView;

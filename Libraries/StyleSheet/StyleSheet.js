@@ -13,14 +13,27 @@
 
 var PixelRatio = require('PixelRatio');
 var ReactNativePropRegistry = require('ReactNativePropRegistry');
+var ReactNativeStyleAttributes = require('ReactNativeStyleAttributes');
 var StyleSheetValidation = require('StyleSheetValidation');
 
 var flatten = require('flattenStyle');
+
+export type Styles = {[key: string]: Object};
+export type StyleSheet<S: Styles> = {[key: $Keys<S>]: number};
 
 var hairlineWidth = PixelRatio.roundToNearestPixel(0.4);
 if (hairlineWidth === 0) {
   hairlineWidth = 1 / PixelRatio.get();
 }
+
+const absoluteFillObject = {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+};
+const absoluteFill = ReactNativePropRegistry.register(absoluteFillObject); // This also freezes it
 
 /**
  * A StyleSheet is an abstraction similar to CSS StyleSheets
@@ -83,8 +96,31 @@ module.exports = {
    * on the underlying platform. However, you should not rely on it being a
    * constant size, because on different platforms and screen densities its
    * value may be calculated differently.
+   *
+   * A line with hairline width may not be visible if your simulator is downscaled.
    */
   hairlineWidth,
+
+  /**
+   * A very common pattern is to create overlays with position absolute and zero positioning,
+   * so `absoluteFill` can be used for convenience and to reduce duplication of these repeated
+   * styles.
+   */
+  absoluteFill,
+
+  /**
+   * Sometimes you may want `absoluteFill` but with a couple tweaks - `absoluteFillObject` can be
+   * used to create a customized entry in a `StyleSheet`, e.g.:
+   *
+   *   const styles = StyleSheet.create({
+   *     wrapper: {
+   *       ...StyleSheet.absoluteFillObject,
+   *       top: 10,
+   *       backgroundColor: 'transparent',
+   *     },
+   *   });
+   */
+  absoluteFillObject,
 
   /**
    * Flattens an array of style objects, into one aggregated style object.
@@ -128,14 +164,42 @@ module.exports = {
   flatten,
 
   /**
+   * WARNING: EXPERIMENTAL. Breaking changes will probably happen a lot and will
+   * not be reliably announced. The whole thing might be deleted, who knows? Use
+   * at your own risk.
+   *
+   * Sets a function to use to pre-process a style property value. This is used
+   * internally to process color and transform values. You should not use this
+   * unless you really know what you are doing and have exhausted other options.
+   */
+  setStyleAttributePreprocessor(property: string, process: (nextProp: mixed) => mixed) {
+    let value;
+
+    if (typeof ReactNativeStyleAttributes[property] === 'string') {
+      value = {};
+    } else if (typeof ReactNativeStyleAttributes[property] === 'object') {
+      value = ReactNativeStyleAttributes[property];
+    } else {
+      console.error(`${property} is not a valid style attribute`);
+      return;
+    }
+
+    if (__DEV__ && typeof value.process === 'function') {
+      console.warn(`Overwriting ${property} style attribute preprocessor`);
+    }
+
+    ReactNativeStyleAttributes[property] = { ...value, process };
+  },
+
+  /**
    * Creates a StyleSheet style reference from the given object.
    */
-  create(obj: {[key: string]: any}): {[key: string]: number} {
-    var result = {};
+  create<S: Styles>(obj: S): StyleSheet<S> {
+    const result: StyleSheet<S> = {};
     for (var key in obj) {
       StyleSheetValidation.validateStyle(key, obj);
       result[key] = ReactNativePropRegistry.register(obj[key]);
     }
     return result;
-  }
+  },
 };

@@ -9,11 +9,10 @@
 
 package com.facebook.react.views.art;
 
-import android.graphics.Bitmap;
-
-import com.facebook.csslayout.CSSMeasureMode;
-import com.facebook.csslayout.CSSNode;
-import com.facebook.csslayout.MeasureOutput;
+import com.facebook.yoga.YogaMeasureMode;
+import com.facebook.yoga.YogaMeasureFunction;
+import com.facebook.yoga.YogaNode;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.BaseViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
 
@@ -21,20 +20,20 @@ import com.facebook.react.uimanager.ThemedReactContext;
  * ViewManager for ARTSurfaceView React views. Renders as a {@link ARTSurfaceView} and handles
  * invalidating the native view on shadow view updates happening in the underlying tree.
  */
+@ReactModule(name = ARTSurfaceViewManager.REACT_CLASS)
 public class ARTSurfaceViewManager extends
     BaseViewManager<ARTSurfaceView, ARTSurfaceViewShadowNode> {
 
-  private static final String REACT_CLASS = "ARTSurfaceView";
+  protected static final String REACT_CLASS = "ARTSurfaceView";
 
-  private static final CSSNode.MeasureFunction MEASURE_FUNCTION = new CSSNode.MeasureFunction() {
+  private static final YogaMeasureFunction MEASURE_FUNCTION = new YogaMeasureFunction() {
     @Override
-    public void measure(
-        CSSNode node,
+    public long measure(
+        YogaNode node,
         float width,
-        CSSMeasureMode widthMode,
+        YogaMeasureMode widthMode,
         float height,
-        CSSMeasureMode heightMode,
-        MeasureOutput measureOutput) {
+        YogaMeasureMode heightMode) {
       throw new IllegalStateException("SurfaceView should have explicit width and height set");
     }
   };
@@ -63,6 +62,14 @@ public class ARTSurfaceViewManager extends
 
   @Override
   public void updateExtraData(ARTSurfaceView root, Object extraData) {
-    root.setBitmap((Bitmap) extraData);
+    root.setSurfaceTextureListener((ARTSurfaceViewShadowNode) extraData);
+  }
+
+  @Override
+  public void setBackgroundColor(ARTSurfaceView view, int backgroundColor) {
+    // As of Android N TextureView does not support calling setBackground on it.
+    // It will also throw an exception when target SDK is set to N or higher.
+
+    // Setting the background color for this view is handled in the shadow node.
   }
 }

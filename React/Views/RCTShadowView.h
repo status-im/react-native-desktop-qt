@@ -9,9 +9,9 @@
 
 #import <UIKit/UIKit.h>
 
-#import "Layout.h"
-#import "RCTComponent.h"
-#import "RCTRootView.h"
+#import <React/RCTComponent.h>
+#import <React/RCTRootView.h>
+#import <yoga/Yoga.h>
 
 @class RCTSparseArray;
 
@@ -35,14 +35,25 @@ typedef void (^RCTApplierBlock)(NSDictionary<NSNumber *, UIView *> *viewRegistry
  */
 @interface RCTShadowView : NSObject <RCTComponent>
 
-- (NSArray<RCTShadowView *> *)reactSubviews;
-- (RCTShadowView *)reactSuperview;
+/**
+ * Yoga Config which will be used to create `yogaNode` property.
+ * Override in subclass to enable special Yoga features.
+ * Defaults to suitable to current device configuration.
+ */
++ (YGConfigRef)yogaConfig;
+
+/**
+ * RCTComponent interface.
+ */
+- (NSArray<RCTShadowView *> *)reactSubviews NS_REQUIRES_SUPER;
+- (RCTShadowView *)reactSuperview NS_REQUIRES_SUPER;
+- (void)insertReactSubview:(RCTShadowView *)subview atIndex:(NSInteger)atIndex NS_REQUIRES_SUPER;
+- (void)removeReactSubview:(RCTShadowView *)subview NS_REQUIRES_SUPER;
 
 @property (nonatomic, weak, readonly) RCTShadowView *superview;
-@property (nonatomic, assign, readonly) css_node_t *cssNode;
+@property (nonatomic, assign, readonly) YGNodeRef yogaNode;
 @property (nonatomic, copy) NSString *viewName;
 @property (nonatomic, strong) UIColor *backgroundColor; // Used to propagate to children
-@property (nonatomic, assign) RCTUpdateLifecycle layoutLifecycle;
 @property (nonatomic, copy) RCTDirectEventBlock onLayout;
 
 /**
@@ -53,70 +64,114 @@ typedef void (^RCTApplierBlock)(NSDictionary<NSNumber *, UIView *> *viewRegistry
 @property (nonatomic, assign, getter=isNewView) BOOL newView;
 
 /**
+ * isHidden - RCTUIManager uses this to determine whether or not the UIView should be hidden. Useful if the
+ * ShadowView determines that its UIView will be clipped and wants to hide it.
+ */
+@property (nonatomic, assign, getter=isHidden) BOOL hidden;
+
+/**
+ * Computed layout direction for the view backed to Yoga node value.
+ */
+@property (nonatomic, assign, readonly) UIUserInterfaceLayoutDirection effectiveLayoutDirection;
+
+/**
  * Position and dimensions.
  * Defaults to { 0, 0, NAN, NAN }.
  */
-@property (nonatomic, assign) CGFloat top;
-@property (nonatomic, assign) CGFloat left;
-@property (nonatomic, assign) CGFloat bottom;
-@property (nonatomic, assign) CGFloat right;
+@property (nonatomic, assign) YGValue top;
+@property (nonatomic, assign) YGValue left;
+@property (nonatomic, assign) YGValue bottom;
+@property (nonatomic, assign) YGValue right;
 
-@property (nonatomic, assign) CGFloat width;
-@property (nonatomic, assign) CGFloat height;
-@property (nonatomic, assign) CGRect frame;
+@property (nonatomic, assign) YGValue width;
+@property (nonatomic, assign) YGValue height;
 
-- (void)setTopLeft:(CGPoint)topLeft;
-- (void)setSize:(CGSize)size;
+@property (nonatomic, assign) YGValue minWidth;
+@property (nonatomic, assign) YGValue maxWidth;
+@property (nonatomic, assign) YGValue minHeight;
+@property (nonatomic, assign) YGValue maxHeight;
 
 /**
- * Set the natural size of the view, which is used when no explicit size is set.
- * Use UIViewNoIntrinsicMetric to ignore a dimension.
+ * Convenient alias to `width` and `height` in pixels.
+ * Defaults to NAN in case of non-pixel dimention.
  */
-- (void)setIntrinsicContentSize:(CGSize)size;
+@property (nonatomic, assign) CGSize size;
 
 /**
  * Border. Defaults to { 0, 0, 0, 0 }.
  */
-@property (nonatomic, assign) CGFloat borderWidth;
-@property (nonatomic, assign) CGFloat borderTopWidth;
-@property (nonatomic, assign) CGFloat borderLeftWidth;
-@property (nonatomic, assign) CGFloat borderBottomWidth;
-@property (nonatomic, assign) CGFloat borderRightWidth;
+@property (nonatomic, assign) float borderWidth;
+@property (nonatomic, assign) float borderTopWidth;
+@property (nonatomic, assign) float borderLeftWidth;
+@property (nonatomic, assign) float borderBottomWidth;
+@property (nonatomic, assign) float borderRightWidth;
 
 /**
  * Margin. Defaults to { 0, 0, 0, 0 }.
  */
-@property (nonatomic, assign) CGFloat margin;
-@property (nonatomic, assign) CGFloat marginVertical;
-@property (nonatomic, assign) CGFloat marginHorizontal;
-@property (nonatomic, assign) CGFloat marginTop;
-@property (nonatomic, assign) CGFloat marginLeft;
-@property (nonatomic, assign) CGFloat marginBottom;
-@property (nonatomic, assign) CGFloat marginRight;
+@property (nonatomic, assign) YGValue margin;
+@property (nonatomic, assign) YGValue marginVertical;
+@property (nonatomic, assign) YGValue marginHorizontal;
+@property (nonatomic, assign) YGValue marginTop;
+@property (nonatomic, assign) YGValue marginLeft;
+@property (nonatomic, assign) YGValue marginBottom;
+@property (nonatomic, assign) YGValue marginRight;
 
 /**
  * Padding. Defaults to { 0, 0, 0, 0 }.
  */
-@property (nonatomic, assign) CGFloat padding;
-@property (nonatomic, assign) CGFloat paddingVertical;
-@property (nonatomic, assign) CGFloat paddingHorizontal;
-@property (nonatomic, assign) CGFloat paddingTop;
-@property (nonatomic, assign) CGFloat paddingLeft;
-@property (nonatomic, assign) CGFloat paddingBottom;
-@property (nonatomic, assign) CGFloat paddingRight;
-
-- (UIEdgeInsets)paddingAsInsets;
+@property (nonatomic, assign) YGValue padding;
+@property (nonatomic, assign) YGValue paddingVertical;
+@property (nonatomic, assign) YGValue paddingHorizontal;
+@property (nonatomic, assign) YGValue paddingTop;
+@property (nonatomic, assign) YGValue paddingLeft;
+@property (nonatomic, assign) YGValue paddingBottom;
+@property (nonatomic, assign) YGValue paddingRight;
 
 /**
  * Flexbox properties. All zero/disabled by default
  */
-@property (nonatomic, assign) css_flex_direction_t flexDirection;
-@property (nonatomic, assign) css_justify_t justifyContent;
-@property (nonatomic, assign) css_align_t alignSelf;
-@property (nonatomic, assign) css_align_t alignItems;
-@property (nonatomic, assign) css_position_type_t position;
-@property (nonatomic, assign) css_wrap_type_t flexWrap;
-@property (nonatomic, assign) CGFloat flex;
+@property (nonatomic, assign) YGFlexDirection flexDirection;
+@property (nonatomic, assign) YGJustify justifyContent;
+@property (nonatomic, assign) YGAlign alignSelf;
+@property (nonatomic, assign) YGAlign alignItems;
+@property (nonatomic, assign) YGAlign alignContent;
+@property (nonatomic, assign) YGPositionType position;
+@property (nonatomic, assign) YGWrap flexWrap;
+@property (nonatomic, assign) YGDisplay display;
+
+@property (nonatomic, assign) float flex;
+@property (nonatomic, assign) float flexGrow;
+@property (nonatomic, assign) float flexShrink;
+@property (nonatomic, assign) YGValue flexBasis;
+
+@property (nonatomic, assign) float aspectRatio;
+
+/**
+ * z-index, used to override sibling order in the view
+ */
+@property (nonatomic, assign) NSInteger zIndex;
+
+/**
+ * Interface direction (LTR or RTL)
+ */
+@property (nonatomic, assign) YGDirection direction;
+
+/**
+ * Clipping properties
+ */
+@property (nonatomic, assign) YGOverflow overflow;
+
+/**
+ * Computed position of the view.
+ */
+@property (nonatomic, assign, readonly) CGRect frame;
+
+/**
+ * Represents the natural size of the view, which is used when explicit size is not set or is ambiguous.
+ * Defaults to `{UIViewNoIntrinsicMetric, UIViewNoIntrinsicMetric}`.
+ */
+@property (nonatomic, assign) CGSize intrinsicContentSize;
 
 /**
  * Calculate property changes that need to be propagated to the view.
@@ -134,18 +189,52 @@ typedef void (^RCTApplierBlock)(NSDictionary<NSNumber *, UIView *> *viewRegistry
                                           parentProperties:(NSDictionary<NSString *, id> *)parentProperties NS_REQUIRES_SUPER;
 
 /**
- * Recursively apply layout to children.
+ * Can be called by a parent on a child in order to calculate all views whose frame needs
+ * updating in that branch. Adds these frames to `viewsWithNewFrame`. Useful if layout
+ * enters a view where flex doesn't apply (e.g. Text) and then you want to resume flex
+ * layout on a subview.
  */
-- (void)applyLayoutNode:(css_node_t *)node
+- (void)collectUpdatedFrames:(NSMutableSet<RCTShadowView *> *)viewsWithNewFrame
+                   withFrame:(CGRect)frame
+                      hidden:(BOOL)hidden
+            absolutePosition:(CGPoint)absolutePosition;
+
+/**
+ * Apply the CSS layout.
+ * This method also calls `applyLayoutToChildren:` internally. The functionality
+ * is split into two methods so subclasses can override `applyLayoutToChildren:`
+ * while using default implementation of `applyLayoutNode:`.
+ */
+- (void)applyLayoutNode:(YGNodeRef)node
       viewsWithNewFrame:(NSMutableSet<RCTShadowView *> *)viewsWithNewFrame
        absolutePosition:(CGPoint)absolutePosition NS_REQUIRES_SUPER;
 
 /**
- * The following are implementation details exposed to subclasses. Do not call them directly
+ * Enumerate the child nodes and tell them to apply layout.
  */
-- (void)fillCSSNode:(css_node_t *)node NS_REQUIRES_SUPER;
-- (void)dirtyLayout NS_REQUIRES_SUPER;
-- (BOOL)isLayoutDirty;
+- (void)applyLayoutToChildren:(YGNodeRef)node
+            viewsWithNewFrame:(NSMutableSet<RCTShadowView *> *)viewsWithNewFrame
+             absolutePosition:(CGPoint)absolutePosition;
+
+/**
+ * Returns whether or not this view can have any subviews.
+ * Adding/inserting a child view to leaf view (`canHaveSubviews` equals `NO`)
+ * will throw an error.
+ * Return `NO` for components which must not have any descendants
+ * (like <Image>, for example.)
+ * Defaults to `YES`. Can be overridden in subclasses.
+ * Don't confuse this with `isYogaLeafNode`.
+ */
+- (BOOL)canHaveSubviews;
+
+/**
+ * Returns whether or not this node acts as a leaf node in the eyes of Yoga.
+ * For example `RCTShadowText` has children which it does not want Yoga
+ * to lay out so in the eyes of Yoga it is a leaf node.
+ * Defaults to `NO`. Can be overridden in subclasses.
+ * Don't confuse this with `canHaveSubviews`.
+ */
+- (BOOL)isYogaLeafNode;
 
 - (void)dirtyPropagation NS_REQUIRES_SUPER;
 - (BOOL)isPropagationDirty;
@@ -154,6 +243,10 @@ typedef void (^RCTApplierBlock)(NSDictionary<NSNumber *, UIView *> *viewRegistry
 - (void)setTextComputed NS_REQUIRES_SUPER;
 - (BOOL)isTextDirty;
 
+/**
+ * As described in RCTComponent protocol.
+ */
+- (void)didUpdateReactSubviews NS_REQUIRES_SUPER;
 - (void)didSetProps:(NSArray<NSString *> *)changedProps NS_REQUIRES_SUPER;
 
 /**
@@ -165,5 +258,20 @@ typedef void (^RCTApplierBlock)(NSDictionary<NSNumber *, UIView *> *viewRegistry
  * transforms or anchor points.
  */
 - (CGRect)measureLayoutRelativeToAncestor:(RCTShadowView *)ancestor;
+
+/**
+ * Checks if the current shadow view is a descendant of the provided `ancestor`
+ */
+- (BOOL)viewIsDescendantOf:(RCTShadowView *)ancestor;
+
+@end
+
+@interface RCTShadowView (Deprecated)
+
+@property (nonatomic, assign, readonly) YGNodeRef cssNode
+__deprecated_msg("Use `yogaNode` instead.");
+
+- (BOOL)isCSSLeafNode
+__deprecated_msg("Use `isYogaLeafNode` instead.");
 
 @end

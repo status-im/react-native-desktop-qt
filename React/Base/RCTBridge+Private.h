@@ -7,11 +7,28 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
-#import "RCTBridge.h"
+#import <JavaScriptCore/JSBase.h>
+
+#import <React/RCTBridge.h>
 
 @class RCTModuleData;
+@protocol RCTJavaScriptExecutor;
+
+RCT_EXTERN NSArray<Class> *RCTGetModuleClasses(void);
+
+RCT_EXTERN __attribute__((weak)) void RCTFBQuickPerformanceLoggerConfigureHooks(JSGlobalContextRef ctx);
+
+#if RCT_DEBUG
+RCT_EXTERN void RCTVerifyAllModulesExported(NSArray *extraModules);
+#endif
 
 @interface RCTBridge ()
+
+// Private designated initializer
+- (instancetype)initWithDelegate:(id<RCTBridgeDelegate>)delegate
+                       bundleURL:(NSURL *)bundleURL
+                  moduleProvider:(RCTBridgeModuleListProvider)block
+                   launchOptions:(NSDictionary *)launchOptions NS_DESIGNATED_INITIALIZER;
 
 // Used for the profiler flow events between JS and native
 @property (nonatomic, assign) int64_t flowID;
@@ -44,7 +61,7 @@
  * The block that creates the modules' instances to be added to the bridge.
  * Exposed for the RCTBatchedBridge
  */
-@property (nonatomic, copy, readonly) RCTBridgeModuleProviderBlock moduleProvider;
+@property (nonatomic, copy, readonly) RCTBridgeModuleListProvider moduleProvider;
 
 /**
  * Used by RCTDevMenu to override the `hot` param of the current bundleURL.
@@ -56,14 +73,27 @@
 @interface RCTBridge (RCTBatchedBridge)
 
 /**
- * Used for unit testing, to detect when executor has been invalidated.
+ * Access the underlying JavaScript executor. You can use this in unit tests to detect
+ * when the executor has been invalidated, or when you want to schedule calls on the
+ * JS VM outside of React Native. Use with care!
  */
 @property (nonatomic, weak, readonly) id<RCTJavaScriptExecutor> javaScriptExecutor;
 
 /**
  * Used by RCTModuleData
  */
+
+@property (nonatomic, weak, readonly) RCTBridge *parentBridge;
+
+/**
+ * Used by RCTModuleData
+ */
 @property (nonatomic, assign, readonly) BOOL moduleSetupComplete;
+
+/**
+ * Called on the child bridge to run the executor and start loading.
+ */
+- (void)start;
 
 /**
  * Used by RCTModuleData to register the module for frame updates after it is
@@ -91,15 +121,17 @@
 - (void)stopProfiling:(void (^)(NSData *))callback;
 
 /**
- * Executes native calls sent by JavaScript. Exposed for testing purposes only
- */
-- (void)handleBuffer:(NSArray<NSArray *> *)buffer;
-
-/**
  * Exposed for the RCTJSCExecutor for sending native methods called from
  * JavaScript in the middle of a batch.
  */
 - (void)handleBuffer:(NSArray<NSArray *> *)buffer batchEnded:(BOOL)hasEnded;
+
+/**
+ * Synchronously call a specific native module's method and return the result
+ */
+- (id)callNativeModule:(NSUInteger)moduleID
+                method:(NSUInteger)methodID
+                params:(NSArray *)params;
 
 /**
  * Exposed for the RCTJSCExecutor for lazily loading native modules
@@ -120,10 +152,11 @@
 
 @interface RCTBatchedBridge : RCTBridge <RCTInvalidating>
 
-@property (nonatomic, weak) RCTBridge *parentBridge;
-@property (nonatomic, weak) id<RCTJavaScriptExecutor> javaScriptExecutor;
-@property (nonatomic, assign) BOOL moduleSetupComplete;
+@property (nonatomic, weak, readonly) RCTBridge *parentBridge;
+@property (nonatomic, weak, readonly) id<RCTJavaScriptExecutor> javaScriptExecutor;
+@property (nonatomic, assign, readonly) BOOL moduleSetupComplete;
 
 - (instancetype)initWithParentBridge:(RCTBridge *)bridge NS_DESIGNATED_INITIALIZER;
+- (void)start;
 
 @end

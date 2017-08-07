@@ -9,13 +9,22 @@
 
 #import <UIKit/UIKit.h>
 
-#import "RCTComponent.h"
+#import <React/RCTComponent.h>
+#import <React/RCTConvert.h>
+
+@interface RCTConvert (UITabBarSystemItem)
+
++ (UITabBarSystemItem)UITabBarSystemItem:(id)json;
+
+@end
 
 @interface RCTTabBarItem : UIView
 
 @property (nonatomic, copy) id /* NSString or NSNumber */ badge;
 @property (nonatomic, strong) UIImage *icon;
+@property (nonatomic, strong) UIImage *selectedIcon;
 @property (nonatomic, assign) UITabBarSystemItem systemIcon;
+@property (nonatomic, assign) BOOL renderAsOriginal;
 @property (nonatomic, assign, getter=isSelected) BOOL selected;
 @property (nonatomic, readonly) UITabBarItem *barItem;
 @property (nonatomic, copy) RCTBubblingEventBlock onPress;

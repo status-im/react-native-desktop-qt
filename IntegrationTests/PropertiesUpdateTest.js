@@ -5,6 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
+ * @providesModule PropertiesUpdateTest
  */
 'use strict';
 
@@ -16,8 +17,7 @@ var {
 
 var { TestModule } = ReactNative.NativeModules;
 
-var PropertiesUpdateTest = React.createClass({
-
+class PropertiesUpdateTest extends React.Component {
   render() {
     if (this.props.markTestPassed) {
       TestModule.markTestPassed(true);
@@ -26,7 +26,7 @@ var PropertiesUpdateTest = React.createClass({
       <View/>
     );
   }
-});
+}
 
 PropertiesUpdateTest.displayName = 'PropertiesUpdateTest';
 

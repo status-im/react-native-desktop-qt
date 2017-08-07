@@ -9,16 +9,56 @@
 
 #import <UIKit/UIKit.h>
 
+#import <React/RCTComponent.h>
+#import <yoga/YGEnums.h>
+
 @class RCTShadowView;
-
-#import "RCTComponent.h"
-
-//TODO: let's try to eliminate this category if possible
 
 @interface UIView (React) <RCTComponent>
 
-- (NSArray<UIView *> *)reactSubviews;
-- (UIView *)reactSuperview;
+/**
+ * RCTComponent interface.
+ */
+- (NSArray<UIView *> *)reactSubviews NS_REQUIRES_SUPER;
+- (UIView *)reactSuperview NS_REQUIRES_SUPER;
+- (void)insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex NS_REQUIRES_SUPER;
+- (void)removeReactSubview:(UIView *)subview NS_REQUIRES_SUPER;
+
+/**
+ * The native id of the view, used to locate view from native codes
+ */
+@property (nonatomic, copy) NSString *nativeID;
+
+/**
+ * Layout direction of the view.
+ * Internally backed to `semanticContentAttribute` property.
+ * Defaults to `LeftToRight` in case of ambiguity.
+ */
+@property (nonatomic, assign) UIUserInterfaceLayoutDirection reactLayoutDirection;
+
+/**
+ * Yoga `display` style property. Can be `flex` or `none`.
+ * Defaults to `flex`.
+ * May be used to temporary hide the view in a very efficient way.
+ */
+@property (nonatomic, assign) YGDisplay reactDisplay;
+
+/**
+ * The z-index of the view.
+ */
+@property (nonatomic, assign) NSInteger reactZIndex;
+
+/**
+ * Subviews sorted by z-index. Note that this method doesn't do any caching (yet)
+ * and sorts all the views each call.
+ */
+- (NSArray<UIView *> *)reactZIndexSortedSubviews;
+
+/**
+ * Updates the subviews array based on the reactSubviews. Default behavior is
+ * to insert the sortedReactSubviews into the UIView.
+ */
+- (void)didUpdateReactSubviews;
 
 /**
  * Used by the UIIManager to set the view frame.
@@ -45,17 +85,37 @@
 - (void)reactAddControllerToClosestParent:(UIViewController *)controller;
 
 /**
- * Responder overrides - to be deprecated.
+ * Focus manipulation.
  */
-- (void)reactWillMakeFirstResponder;
-- (void)reactDidMakeFirstResponder;
-- (BOOL)reactRespondsToTouch:(UITouch *)touch;
+- (void)reactFocus;
+- (void)reactFocusIfNeeded;
+- (void)reactBlur;
+
+/**
+ * Useful properties for computing layout.
+ */
+@property (nonatomic, readonly) UIEdgeInsets reactBorderInsets;
+@property (nonatomic, readonly) UIEdgeInsets reactPaddingInsets;
+@property (nonatomic, readonly) UIEdgeInsets reactCompoundInsets;
+@property (nonatomic, readonly) CGRect reactContentFrame;
+
+/**
+ * The (sub)view which represents this view in terms of accessibility.
+ * ViewManager will apply all accessibility properties directly to this view.
+ * May be overriten in view subclass which needs to be accessiblitywise
+ * transparent in favour of some subview.
+ * Defaults to `self`.
+ */
+@property (nonatomic, readonly) UIView *reactAccessibilityElement;
+
+#if RCT_DEV
 
 /**
  Tools for debugging
  */
-#if RCT_DEV
+
 @property (nonatomic, strong, setter=_DEBUG_setReactShadowView:) RCTShadowView *_DEBUG_reactShadowView;
+
 #endif
 
 @end

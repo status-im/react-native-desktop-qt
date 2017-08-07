@@ -7,6 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @flow
+ * @providesModule IntegrationTestsApp
  */
 'use strict';
 
@@ -21,7 +22,7 @@ var {
   View,
 } = ReactNative;
 
-// Keep this list in sync with UIExplorerIntegrationTests.m
+// Keep this list in sync with RNTesterIntegrationTests.m
 var TESTS = [
   require('./IntegrationTestHarnessTest'),
   require('./TimersTest'),
@@ -29,8 +30,13 @@ var TESTS = [
   require('./LayoutEventsTest'),
   require('./AppEventsTest'),
   require('./SimpleSnapshotTest'),
+  require('./ImageCachePolicyTest'),
   require('./ImageSnapshotTest'),
   require('./PromiseTest'),
+  require('./WebViewTest'),
+  require('./SyncMethodTest'),
+  require('./WebSocketTest'),
+  require('./AccessibilityManagerTest'),
 ];
 
 TESTS.forEach(
@@ -42,13 +48,12 @@ require('LoggingTestModule');
 
 type Test = any;
 
-var IntegrationTestsApp = React.createClass({
-  getInitialState: function() {
-    return {
-      test: (null: ?Test),
-    };
-  },
-  render: function() {
+class IntegrationTestsApp extends React.Component {
+  state = {
+    test: (null: ?Test),
+  };
+
+  render() {
     if (this.state.test) {
       return (
         <ScrollView>
@@ -79,7 +84,7 @@ var IntegrationTestsApp = React.createClass({
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {

@@ -12,7 +12,6 @@ package com.facebook.react.bridge;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;
-import com.facebook.soloader.SoLoader;
 
 /**
  * Implementation of a write-only array stored in native memory. Use
@@ -21,9 +20,8 @@ import com.facebook.soloader.SoLoader;
  */
 @DoNotStrip
 public class WritableNativeArray extends ReadableNativeArray implements WritableArray {
-
   static {
-    SoLoader.loadLibrary(ReactBridge.REACT_NATIVE_LIB);
+    ReactBridge.staticInit();
   }
 
   public WritableNativeArray() {
@@ -57,7 +55,7 @@ public class WritableNativeArray extends ReadableNativeArray implements Writable
     pushNativeMap((WritableNativeMap) map);
   }
 
-  private native static HybridData initHybrid();
+  private static native HybridData initHybrid();
   private native void pushNativeArray(WritableNativeArray array);
   private native void pushNativeMap(WritableNativeMap map);
 }

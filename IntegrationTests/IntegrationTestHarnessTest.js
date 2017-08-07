@@ -7,11 +7,13 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @flow
+ * @providesModule IntegrationTestHarnessTest
  */
 'use strict';
 
 var requestAnimationFrame = require('fbjs/lib/requestAnimationFrame');
 var React = require('react');
+var PropTypes = require('prop-types');
 var ReactNative = require('react-native');
 var {
   Text,
@@ -19,17 +21,20 @@ var {
 } = ReactNative;
 var { TestModule } = ReactNative.NativeModules;
 
-var IntegrationTestHarnessTest = React.createClass({
-  propTypes: {
-    shouldThrow: React.PropTypes.bool,
-    waitOneFrame: React.PropTypes.bool,
-  },
+class IntegrationTestHarnessTest extends React.Component {
+  props: {
+    shouldThrow?: boolean,
+    waitOneFrame?: boolean,
+  };
 
-  getInitialState() {
-    return {
-      done: false,
-    };
-  },
+  static propTypes = {
+    shouldThrow: PropTypes.bool,
+    waitOneFrame: PropTypes.bool,
+  };
+
+  state = {
+    done: false,
+  };
 
   componentDidMount() {
     if (this.props.waitOneFrame) {
@@ -37,9 +42,9 @@ var IntegrationTestHarnessTest = React.createClass({
     } else {
       this.runTest();
     }
-  },
+  }
 
-  runTest() {
+  runTest = () => {
     if (this.props.shouldThrow) {
       throw new Error('Throwing error because shouldThrow');
     }
@@ -48,8 +53,10 @@ var IntegrationTestHarnessTest = React.createClass({
     } else if (!TestModule.markTestCompleted) {
       throw new Error('RCTTestModule.markTestCompleted not defined.');
     }
-    this.setState({done: true}, TestModule.markTestCompleted);
-  },
+    this.setState({done: true}, () => {
+      TestModule.markTestCompleted();
+    });
+  };
 
   render() {
     return (
@@ -61,7 +68,7 @@ var IntegrationTestHarnessTest = React.createClass({
       </View>
     );
   }
-});
+}
 
 IntegrationTestHarnessTest.displayName = 'IntegrationTestHarnessTest';
 

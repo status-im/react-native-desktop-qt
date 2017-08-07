@@ -8,17 +8,18 @@
  *
  * @providesModule center
  */
+'use strict';
 
 var React = require('React');
 
-var center = React.createClass({
-  render: function() {
+class center extends React.Component {
+  render() {
     return (
       <div {...this.props} style={{textAlign: 'center'}}>
         {this.props.children}
       </div>
     );
   }
-});
+}
 
 module.exports = center;

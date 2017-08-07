@@ -12,14 +12,13 @@ package com.facebook.react.bridge;
 import com.facebook.proguard.annotations.DoNotStrip;
 
 @DoNotStrip
-public interface ReactCallback {
-
-  @DoNotStrip
-  void call(ExecutorToken executorToken, int moduleId, int methodId, ReadableNativeArray parameters);
-
+/* package */ interface ReactCallback {
   @DoNotStrip
   void onBatchComplete();
 
   @DoNotStrip
-  void onExecutorUnregistered(ExecutorToken executorToken);
+  void incrementPendingJSCalls();
+
+  @DoNotStrip
+  void decrementPendingJSCalls();
 }

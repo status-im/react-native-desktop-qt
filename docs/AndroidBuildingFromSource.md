@@ -4,7 +4,9 @@ title: Building React Native from source
 layout: docs
 category: Guides (Android)
 permalink: docs/android-building-from-source.html
-next: activityindicatorios
+banner: ejected
+next: contributing
+previous: android-ui-performance
 ---
 
 You will need to build React Native from source if you want to work on a new feature/bug fix, try out the latest features which are not released yet, or maintain your own fork with patches that cannot be merged to the core.
@@ -17,15 +19,27 @@ Make sure you have the following installed:
 
 1. Android SDK version 23 (compileSdkVersion in [`build.gradle`](https://github.com/facebook/react-native/blob/master/ReactAndroid/build.gradle))
 2. SDK build tools version 23.0.1 (buildToolsVersion in [`build.gradle`](https://github.com/facebook/react-native/blob/master/ReactAndroid/build.gradle))
-3. Local Maven repository for Support Libraries (formerly `Android Support Repository`) >= 17 (for Android Support Library)
+3. Android Support Repository >= 17 (for Android Support Library)
 4. Android NDK (download links and installation instructions below)
 
-Point Gradle to your Android SDK: either have `$ANDROID_SDK` and `$ANDROID_NDK ` defined, or create a local.properties file in the root of your react-native checkout with the following contents:
+### Point Gradle to your Android SDK:
+
+**Step 1:**  Set environment variables through your local shell.
+
+Note: Files may vary based on shell flavor. See below for examples from common shells.
+
+- bash: `.bash_profile` or `.bashrc`
+- zsh: `.zprofile` or `.zshrc`
+- ksh: `.profile` or `$ENV`
+
+Example:
 
 ```
-sdk.dir=absolute_path_to_android_sdk
-ndk.dir=absolute_path_to_android_ndk
+export ANDROID_SDK=/Users/your_unix_name/android-sdk-macosx
+export ANDROID_NDK=/Users/your_unix_name/android-ndk/android-ndk-r10e
 ```
+
+**Step 2:** Create a `local.properties` file in the `android` directory of your react-native app with the following contents:
 
 Example:
 
@@ -63,7 +77,7 @@ Add `gradle-download-task` as dependency in `android/build.gradle`:
 ...
     dependencies {
         classpath 'com.android.tools.build:gradle:1.3.1'
-        classpath 'de.undercouch:gradle-download-task:2.0.0'
+        classpath 'de.undercouch:gradle-download-task:3.1.2'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -84,7 +98,7 @@ project(':ReactAndroid').projectDir = new File(
 ...
 ```
 
-Modify your `android/app/build.gradle` to use the `:ReactAndroid` project instead of the pre-compiled library, e.g. - replace `compile 'com.facebook.react:react-native:0.16.+'` with `compile project(':ReactAndroid')`:
+Modify your `android/app/build.gradle` to use the `:ReactAndroid` project instead of the pre-compiled library, e.g. - replace `compile 'com.facebook.react:react-native:+'` with `compile project(':ReactAndroid')`:
 
 ```gradle
 ...
@@ -103,10 +117,10 @@ dependencies {
 
 If you use 3rd-party React Native modules, you need to override their dependencies so that they don't bundle the pre-compiled library. Otherwise you'll get an error while compiling - `Error: more than one library with package name 'com.facebook.react'`.
 
-Modify your `android/app/build.gradle` and replace `compile project(':react-native-custom-module')` with:
+Modify your `android/app/build.gradle`, and add:
 
 ```gradle
-compile(project(':react-native-custom-module')) {
+configurations.all {
     exclude group: 'com.facebook.react', module: 'react-native'
 }
 ```
@@ -128,6 +142,22 @@ gradle.projectsLoaded {
     }
 }
 ```
+
+## Building for Maven/Nexus deployment
+
+If you find that you need to push up a locally compiled React Native .aar and related files to a remote Nexus repository, you can.
+
+Start by following the `Point Gradle to your Android SDK` section of this page. Once you do this, assuming you have Gradle configured properly, you can then run the following command from the root of your React Native checkout to build and package all required files:
+
+```
+./gradlew ReactAndroid:installArchives
+```
+
+This will package everything that would typically be included in the `android` directory of your `node_modules/react-native/` installation in the root directory of your React Native checkout.
+
+## Testing
+
+If you made changes to React Native and submit a pull request, all tests will run on your pull request automatically. To run the tests locally, see [Running Tests](docs/testing.html).
 
 ## Troubleshooting
 

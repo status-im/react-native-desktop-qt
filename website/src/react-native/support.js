@@ -6,67 +6,168 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
+'use strict';
 
 var React = require('React');
+var PropTypes = require('prop-types');
 var Site = require('Site');
-var center = require('center');
-var H2 = require('H2');
 
-var support = React.createClass({
-  childContextTypes: {
-    permalink: React.PropTypes.string
-  },
+class support extends React.Component {
+  getChildContext() {
+    return { permalink: 'support.html' };
+  }
 
-  getChildContext: function() {
-    return {permalink: 'support.html'};
-  },
-  render: function() {
+  render() {
     return (
-      <Site section="support" title="Support">
+      <Site section="support" title="Help">
 
-        <section className="content wrap documentationContent nosidebar">
-          <div className="inner-content">
+        <section
+          className="content wrap documentationContent helpSection nosidebar"
+        >
+          <div className="helpSection inner-content">
             <h1>Need help?</h1>
-            <div className="subHeader"></div>
             <p>
-              <strong>React Native</strong> is worked on full-time by Facebook&#39;s
-              product infrastructure user interface
-              engineering teams. They&#39;re often around and available for
-              questions.
+              At Facebook, there are dozens of engineers who work on React Native full-time. But there are far more people in the community who make key contributions and fix things. So if you need help with your React Native app, the right place to go depends on the type of help that you need.
             </p>
 
-            <H2>Community translation</H2>
-            <p>The following is a list of translated docs offered by community volunteers. Send a pull request to fill the list!</p>
-            <ul>
-              <li><a href="http://reactnative.cn">Chinese</a> (<a href="https://github.com/reactnativecn/react-native-docs-cn">source</a>)</li>
-            </ul>
+            <div className="help-row">
+              <div className="help-col">
 
-            <H2>Stack Overflow</H2>
-            <p>Many members of the community use Stack Overflow to ask questions. Read through the <a href="http://stackoverflow.com/questions/tagged/react-native">existing questions</a> tagged with <strong>react-native</strong> or <a href="http://stackoverflow.com/questions/ask">ask your own</a>!</p>
+                <h2>Browse the docs</h2>
+                <p>
+                  Find what you're looking for in our detailed documentation and guides.
+                </p>
 
-            <H2>Chat</H2>
-            <p>Join us in <strong><a href="https://discord.gg/0ZcbPKXt5bZjGY5n">#react-native on Reactiflux</a></strong>.</p>
+                <ul>
+                  <li className="help-list-entry">
+                    <a
+                      href="/react-native/docs/getting-started.html"
+                    >
+                      Getting Started
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="/react-native/docs/tutorial.html"
+                    >
+                      The Basics Tutorial
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="/react-native/docs/components-and-apis.html"
+                    >
+                      Components and APIs
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="/react-native/docs/integration-with-existing-apps.html"
+                    >
+                      Integration With Existing Apps
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-            <H2>Product Pains</H2>
-            <p>React Native uses <a href="https://productpains.com/product/react-native/">Product Pains</a> for feature requests. It has a voting system to surface which issues are most important to the community. GitHub issues should only be used for bugs.</p>
+              <div className="help-col">
+                <h2>Join the community</h2>
+                <p>
+                  Connect with other React Native developers. Show off your project, or ask how other people solved similar problems.
+                </p>
 
-            <iframe
-              width="100%"
-              height="600px"
-              scrolling="yes"
-              src="https://productpains.com/widget.html?token=3b929306-e0f7-5c94-7d7c-ecc05d059748"
-            />
+                <ul>
+                  <li className="help-list-entry">
+                    <a
+                      href="http://stackoverflow.com/questions/tagged/react-native?sort=frequent"
+                    >
+                      Stack Overflow
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="https://www.facebook.com/groups/react.native.community"
+                    >
+                      React Native Community
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="https://discord.gg/0ZcbPKXt5bZjGY5n"
+                    >
+                      Reactiflux Chat
+                    </a>
+                  </li>
+                </ul>
+              </div>
 
-            <H2>Twitter</H2>
-            <p><a href="https://twitter.com/search?q=%23reactnative"><strong>#reactnative</strong> hash tag on Twitter</a> is used to keep up with the latest React Native news.</p>
+              <div className="help-col">
+                <h2>Stay up to date</h2>
+                <p>
+                  Find out what's happening in the world of React Native.
+                </p>
 
-            <p><center><a className="twitter-timeline" data-dnt="true" data-chrome="nofooter noheader transparent" href="https://twitter.com/search?q=%23reactnative" data-widget-id="565960513457098753"></a></center></p>
+                <ul>
+                  <li className="help-list-entry">
+                    <a
+                      href="https://twitter.com/reactnative"
+                    >
+                      React Native on Twitter
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a href="/react-native/blog/">
+                      The React Native Blog
+                    </a>
+                  </li>
+                  <li className="help-list-entry">
+                    <a
+                      href="https://github.com/facebook/react-native/releases"
+                    >
+                      Release notes
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <p>
+              React Native is
+              {' '}
+              <a
+                href="https://github.com/facebook/react-native"
+              >
+                open source
+              </a>
+              ! If you want to contribute, read the <a href="/react-native/docs/contributing.html">Contributor's Guide</a>, then take a look at the
+              {' '}
+              <a
+                href="https://github.com/facebook/react-native/wiki/Roadmap"
+              >
+                Roadmap
+              </a>
+              {' '}
+              to learn more about what people are working on, or check out the list of
+              {' '}
+              <a
+                href="https://react-native.canny.io/feature-requests"
+              >
+                most popular features
+              </a>
+              {' '}
+              requested by the community.
+              {' '}
+            </p>
+
           </div>
         </section>
 
       </Site>
     );
   }
-});
+}
+
+support.childContextTypes = {
+  permalink: PropTypes.string,
+};
 
 module.exports = support;

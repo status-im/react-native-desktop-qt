@@ -13,7 +13,7 @@ import com.facebook.react.bridge.ReadableMapKeySetIterator;
 
 public class ViewManagerPropertyUpdater {
   public interface Settable {
-    Map<String, String> getProperties();
+     void getProperties(Map<String, String> props);
   }
 
   public interface ViewManagerSetter<T extends ViewManager, V extends View> extends Settable {
@@ -29,6 +29,12 @@ public class ViewManagerPropertyUpdater {
   private static final Map<Class<?>, ViewManagerSetter<?, ?>> VIEW_MANAGER_SETTER_MAP =
       new HashMap<>();
   private static final Map<Class<?>, ShadowNodeSetter<?>> SHADOW_NODE_SETTER_MAP = new HashMap<>();
+
+  public static void clear() {
+    ViewManagersPropertyCache.clear();
+    VIEW_MANAGER_SETTER_MAP.clear();
+    SHADOW_NODE_SETTER_MAP.clear();
+  }
 
   public static <T extends ViewManager, V extends View> void updateProps(
       T manager,
@@ -57,8 +63,8 @@ public class ViewManagerPropertyUpdater {
       Class<? extends ViewManager> viewManagerTopClass,
       Class<? extends ReactShadowNode> shadowNodeTopClass) {
     Map<String, String> props = new HashMap<>();
-    props.putAll(findManagerSetter(viewManagerTopClass).getProperties());
-    props.putAll(findNodeSetter(shadowNodeTopClass).getProperties());
+    findManagerSetter(viewManagerTopClass).getProperties(props);
+    findNodeSetter(shadowNodeTopClass).getProperties(props);
     return props;
   }
 
@@ -125,12 +131,10 @@ public class ViewManagerPropertyUpdater {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-      Map<String, String> nativeProps = new HashMap<>();
+    public void getProperties(Map<String, String> props) {
       for (ViewManagersPropertyCache.PropSetter setter : mPropSetters.values()) {
-        nativeProps.put(setter.getPropName(), setter.getPropType());
+        props.put(setter.getPropName(), setter.getPropType());
       }
-      return nativeProps;
     }
   }
 
@@ -152,12 +156,10 @@ public class ViewManagerPropertyUpdater {
     }
 
     @Override
-    public Map<String, String> getProperties() {
-      Map<String, String> nativeProps = new HashMap<>();
+    public void getProperties(Map<String, String> props) {
       for (ViewManagersPropertyCache.PropSetter setter : mPropSetters.values()) {
-        nativeProps.put(setter.getPropName(), setter.getPropType());
+        props.put(setter.getPropName(), setter.getPropType());
       }
-      return nativeProps;
     }
   }
 }

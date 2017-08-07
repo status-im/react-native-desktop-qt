@@ -20,13 +20,18 @@ function deprecatedPropType(
   propType: ReactPropsCheckType,
   explanation: string
 ): ReactPropsCheckType {
-  return function validate(props, propName, componentName) {
+  return function validate(props, propName, componentName, ...rest) {
     // Don't warn for native components.
     if (!UIManager[componentName] && props[propName] !== undefined) {
       console.warn(`\`${propName}\` supplied to \`${componentName}\` has been deprecated. ${explanation}`);
     }
 
-    return propType(props, propName, componentName);
+    return propType(
+      props,
+      propName,
+      componentName,
+      ...rest
+    );
   };
 }
 

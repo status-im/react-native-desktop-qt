@@ -1,15 +1,10 @@
 /**
- * The examples provided by Facebook are for non-commercial testing and
- * evaluation purposes only.
+ * Copyright (c) 2015-present, Facebook, Inc.
+ * All rights reserved.
  *
- * Facebook reserves all rights not expressly granted.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
- * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL
- * FACEBOOK BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
- * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @providesModule IncrementalExample
  * @flow
@@ -32,14 +27,11 @@ const IncrementalGroup = require('IncrementalGroup');
 const IncrementalPresenter = require('IncrementalPresenter');
 
 const JSEventLoopWatchdog = require('JSEventLoopWatchdog');
-const StaticContainer = require('StaticContainer.react');
 
-const performanceNow = require('performanceNow');
+const performanceNow = require('fbjs/lib/performanceNow');
 
 InteractionManager.setDeadline(1000);
 JSEventLoopWatchdog.install({thresholdMS: 200});
-
-const NUM_ITEMS = 20;
 
 let totalWidgets = 0;
 
@@ -124,7 +116,7 @@ class IncrementalExample extends React.Component {
       console.log('onDone:', stats);
     }, 0);
   }
-  render(): ReactElement {
+  render(): React.Element<any> {
     return (
       <IncrementalGroup
         disabled={false}

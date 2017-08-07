@@ -10,7 +10,7 @@
 #include "RCTDefines.h"
 #include "RCTMacros.h"
 
-#if RCT_DEV && defined(__arm__)
+#if RCT_PROFILE && defined(__arm__)
 
   .thumb
   .thumb_func
@@ -35,9 +35,7 @@ SYMBOL_NAME(RCTProfileTrampoline):
    * profile
    */
   mov r0, #0xc
-  ldr ip, =L_malloc
-  ldr ip, [ip]
-  blx ip
+  bl SYMBOL_NAME(RCTProfileMalloc)
   /**
    * r4 is the callee saved register we'll use to refer to the allocated memory,
    * store its initial value, so we can restore it later
@@ -89,21 +87,12 @@ SYMBOL_NAME(RCTProfileTrampoline):
   ldr r1, [r4, #0x8]
   ldr r4, [r4]
   push {r1} // save the caller on the stack
-  ldr ip, =L_free
-  ldr ip, [ip]
-  blx ip
+  bl SYMBOL_NAME(RCTProfileFree)
 
   pop {lr} // pop the caller
   pop {r0} // pop the return value
   bx lr // jump to the calleer
 
   trap
-
-  .data
-  .p2align 2
-L_malloc:
-  .long SYMBOL_NAME(malloc)
-L_free:
-  .long SYMBOL_NAME(free)
 
 #endif

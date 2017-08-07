@@ -23,10 +23,10 @@ project.xcworkspace
 
 # Gradle
 /build/
-/Examples/**/android/app/build/
-/Examples/**/android/app/gradle/
-/Examples/**/android/app/gradlew
-/Examples/**/android/app/gradlew.bat
+/RNTester/android/app/build/
+/RNTester/android/app/gradle/
+/RNTester/android/app/gradlew
+/RNTester/android/app/gradlew.bat
 /ReactAndroid/build/
 
 # Buck
@@ -34,6 +34,7 @@ project.xcworkspace
 buck-out
 /ReactAndroid/src/main/jni/prebuilt/lib/armeabi-v7a/
 /ReactAndroid/src/main/jni/prebuilt/lib/x86/
+/ReactAndroid/src/main/gen
 
 # Android
 .idea
@@ -46,10 +47,12 @@ local.properties
 node_modules
 *.log
 .nvm
+/danger/node_modules/
 
 # OS X
 .DS_Store
 
+<<<<<<< HEAD
 # Qt/QML
 moc_*.cpp
 *_automoc.cpp
@@ -57,3 +60,11 @@ moc_*.cpp
 
 # Emacs
 *~
+=======
+# Test generated files
+/ReactAndroid/src/androidTest/assets/AndroidTestBundle.js
+*.js.meta
+
+/coverage
+/third-party
+>>>>>>> 0.48-stable

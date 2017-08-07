@@ -13,19 +13,26 @@
 
 var React = require('React');
 
-var StaticRenderer = React.createClass({
-  propTypes: {
-    shouldUpdate: React.PropTypes.bool.isRequired,
-    render: React.PropTypes.func.isRequired,
-  },
+var PropTypes = require('prop-types');
 
-  shouldComponentUpdate: function(nextProps: { shouldUpdate: boolean }): boolean {
+class StaticRenderer extends React.Component {
+  props: {
+    shouldUpdate: boolean,
+    render: Function,
+  };
+
+  static propTypes = {
+    shouldUpdate: PropTypes.bool.isRequired,
+    render: PropTypes.func.isRequired,
+  };
+
+  shouldComponentUpdate(nextProps: { shouldUpdate: boolean }): boolean {
     return nextProps.shouldUpdate;
-  },
+  }
 
-  render: function(): ReactElement {
+  render(): React.Element<any> {
     return this.props.render();
-  },
-});
+  }
+}
 
 module.exports = StaticRenderer;

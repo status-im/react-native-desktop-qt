@@ -34,7 +34,7 @@ This especially includes **new modules** Facebook doesn't use in production. Exp
 
 ### An issue is a feature request, you're pretty sure we should maintain this feature as part of RN
 This should be rare - adding a new feature means maintaining it.
-Tell the author something like: "Pull requests are welcome. In case you're not up for sending a PR, you should post to [Product Pains](https://productpains.com/product/react-native/?tab=top). It has a voting system and if the feature gets upvoted enough it might get implemented."
+Tell the author something like: "Pull requests are welcome. In case you're not up for sending a PR, you should post to [Canny](https://react-native.canny.io/feature-requests). It has a voting system and if the feature gets upvoted enough it might get implemented."
 
 ### How to add a label
 Add any relevant labels, for example 'Android', 'iOS'.
@@ -46,3 +46,6 @@ Comment `@facebook-github-bot reopen`
 
 ### What are all the available commands for the bot?
 When you mention the bot, it follows the commands defined in [IssueCommands.txt](https://github.com/facebook/react-native/blob/master/bots/IssueCommands.txt).
+
+### How can I help manage issues?
+Thank you for wanting to take the time to help us with managing GitHub issues. To have access to the bot please add your GitHub username to the first line of  [IssueCommands.txt](https://github.com/facebook/react-native/blob/master/bots/IssueCommands.txt), in alphabetical order, by submitting a Pull Request.

@@ -9,20 +9,16 @@
 
 #import <UIKit/UIKit.h>
 
-#import "RCTBridgeDelegate.h"
-#import "RCTBridgeModule.h"
-#import "RCTDefines.h"
-#import "RCTFrameUpdate.h"
-#import "RCTInvalidating.h"
-#import "RCTJavaScriptExecutor.h"
+#import <React/RCTBridgeDelegate.h>
+#import <React/RCTBridgeModule.h>
+#import <React/RCTDefines.h>
+#import <React/RCTFrameUpdate.h>
+#import <React/RCTInvalidating.h>
 
+@class JSValue;
 @class RCTBridge;
 @class RCTEventDispatcher;
-
-/**
- * This notification triggers a reload of all bridges currently running.
- */
-RCT_EXTERN NSString *const RCTReloadNotification;
+@class RCTPerformanceLogger;
 
 /**
  * This notification fires when the bridge starts loading the JS bundle.
@@ -56,7 +52,7 @@ RCT_EXTERN NSString *const RCTDidInitializeModuleNotification;
  * For this reason, the block should always return new module instances, and
  * module instances should not be shared between bridges.
  */
-typedef NSArray<id<RCTBridgeModule>> *(^RCTBridgeModuleProviderBlock)(void);
+typedef NSArray<id<RCTBridgeModule>> *(^RCTBridgeModuleListProvider)(void);
 
 /**
  * This function returns the module name for a given class.
@@ -78,7 +74,7 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
  * or configuration.
  */
 - (instancetype)initWithDelegate:(id<RCTBridgeDelegate>)delegate
-                   launchOptions:(NSDictionary *)launchOptions NS_DESIGNATED_INITIALIZER;
+                   launchOptions:(NSDictionary *)launchOptions;
 
 /**
  * DEPRECATED: Use initWithDelegate:launchOptions: instead
@@ -91,8 +87,8 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
  * parameters or configuration.
  */
 - (instancetype)initWithBundleURL:(NSURL *)bundleURL
-                   moduleProvider:(RCTBridgeModuleProviderBlock)block
-                    launchOptions:(NSDictionary *)launchOptions NS_DESIGNATED_INITIALIZER;
+                   moduleProvider:(RCTBridgeModuleListProvider)block
+                    launchOptions:(NSDictionary *)launchOptions;
 
 /**
  * This method is used to call functions in the JavaScript application context.
@@ -100,6 +96,23 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
  * with the JavaScript code. Safe to call from any thread.
  */
 - (void)enqueueJSCall:(NSString *)moduleDotMethod args:(NSArray *)args;
+- (void)enqueueJSCall:(NSString *)module method:(NSString *)method args:(NSArray *)args completion:(dispatch_block_t)completion;
+
+/**
+ * This method is used to call functions in the JavaScript application context
+ * synchronously.  This is intended for use by applications which do their own
+ * thread management and are careful to manage multi-threaded access to the JSVM.
+ * See also -[RCTBridgeDelgate shouldBridgeLoadJavaScriptSynchronously], which
+ * may be needed to ensure that any requires JS code is loaded before this method
+ * is called.  If the underlying executor is not JSC, this will return nil.  Safe
+ * to call from any thread.
+ *
+ * @experimental
+ */
+- (JSValue *)callFunctionOnModule:(NSString *)module
+                           method:(NSString *)method
+                        arguments:(NSArray *)arguments
+                            error:(NSError **)error;
 
 /**
  * Retrieve a bridge module instance by name or class. Note that modules are
@@ -125,6 +138,17 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
 - (BOOL)moduleIsInitialized:(Class)moduleClass;
 
 /**
+ * Call when your delegate's `whitelistedModulesForBridge:` value has changed.
+ * In response to this, the bridge will immediately instantiate any (whitelisted)
+ * native modules that require main thread initialization. Modules that do not require
+ * main thread initialization will still be created lazily.
+ *
+ * This method must be called on the main thread, as any pending native modules
+ * will be initialized immediately.
+ */
+- (void)whitelistedModulesDidChange;
+
+/**
  * All registered bridge module classes.
  */
 @property (nonatomic, copy, readonly) NSArray<Class> *moduleClasses;
@@ -146,17 +170,6 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
 @property (nonatomic, weak, readonly) id<RCTBridgeDelegate> delegate;
 
 /**
- * The event dispatcher is a wrapper around -enqueueJSCall:args: that provides a
- * higher-level interface for sending UI events such as touches and text input.
- *
- * NOTE: RCTEventDispatcher is now a bridge module, this is implemented as a
- * category but remains declared in the bridge to avoid breaking changes
- *
- * To be moved.
- */
-@property (nonatomic, readonly) RCTEventDispatcher *eventDispatcher;
-
-/**
  * The launch options that were used to initialize the bridge.
  */
 @property (nonatomic, copy, readonly) NSDictionary *launchOptions;
@@ -172,9 +185,19 @@ RCT_EXTERN NSString *RCTBridgeModuleNameForClass(Class bridgeModuleClass);
 @property (nonatomic, readonly, getter=isValid) BOOL valid;
 
 /**
+ * Link to the Performance Logger that logs React Native perf events.
+ */
+@property (nonatomic, readonly, strong) RCTPerformanceLogger *performanceLogger;
+
+/**
  * Reload the bundle and reset executor & modules. Safe to call from any thread.
  */
 - (void)reload;
+
+/**
+ * Inform the bridge, and anything subscribing to it, that it should reload.
+ */
+- (void)requestReload __deprecated_msg("Call reload instead");
 
 /**
  * Says whether bridge has started recieving calls from javascript.

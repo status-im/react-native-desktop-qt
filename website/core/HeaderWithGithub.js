@@ -8,12 +8,19 @@
  *
  * @providesModule HeaderWithGithub
  */
+'use strict';
 
 var H = require('Header');
 var React = require('React');
 
-var HeaderWithGithub = React.createClass({
-  render: function() {
+var PropTypes = require('prop-types');
+
+function getGitHubPath(path) {
+  return  'https://github.com/facebook/react-native/blob/master/' + path;
+}
+
+class HeaderWithGithub extends React.Component {
+  render() {
     return (
       <table width="100%">
         <tbody>
@@ -26,7 +33,7 @@ var HeaderWithGithub = React.createClass({
             <td style={{textAlign: 'right'}}>
               <a
                 target="_blank"
-                href={'https://github.com/facebook/react-native/blob/master/' + this.props.path}>
+                href={getGitHubPath(this.props.path)}>
                 Edit on GitHub
               </a>
             </td>
@@ -35,6 +42,10 @@ var HeaderWithGithub = React.createClass({
       </table>
     );
   }
-});
+}
+
+HeaderWithGithub.contextTypes = {
+  version: PropTypes.string
+};
 
 module.exports = HeaderWithGithub;

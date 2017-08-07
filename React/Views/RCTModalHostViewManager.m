@@ -11,9 +11,22 @@
 
 #import "RCTBridge.h"
 #import "RCTModalHostView.h"
-#import "RCTTouchHandler.h"
+#import "RCTModalHostViewController.h"
 #import "RCTShadowView.h"
 #import "RCTUtils.h"
+
+@implementation RCTConvert (RCTModalHostView)
+
+RCT_ENUM_CONVERTER(UIModalPresentationStyle, (@{
+  @"fullScreen": @(UIModalPresentationFullScreen),
+#if !TARGET_OS_TV
+  @"pageSheet": @(UIModalPresentationPageSheet),
+  @"formSheet": @(UIModalPresentationFormSheet),
+#endif
+  @"overFullScreen": @(UIModalPresentationOverFullScreen),
+}), UIModalPresentationFullScreen, integerValue)
+
+@end
 
 @interface RCTModalHostShadowView : RCTShadowView
 
@@ -25,10 +38,13 @@
 {
   [super insertReactSubview:subview atIndex:atIndex];
   if ([subview isKindOfClass:[RCTShadowView class]]) {
-    CGRect frame = {.origin = CGPointZero, .size = RCTScreenSize()};
-    [(RCTShadowView *)subview setFrame:frame];
+    ((RCTShadowView *)subview).size = RCTScreenSize();
   }
 }
+
+@end
+
+@interface RCTModalHostViewManager () <RCTModalHostViewInteractor>
 
 @end
 
@@ -41,13 +57,38 @@ RCT_EXPORT_MODULE()
 
 - (UIView *)view
 {
-  UIView *view = [[RCTModalHostView alloc] initWithBridge:self.bridge];
-  if (_hostViews) {
+  RCTModalHostView *view = [[RCTModalHostView alloc] initWithBridge:self.bridge];
+  view.delegate = self;
+  if (!_hostViews) {
     _hostViews = [NSHashTable weakObjectsHashTable];
   }
   [_hostViews addObject:view];
   return view;
 }
+
+- (void)presentModalHostView:(RCTModalHostView *)modalHostView withViewController:(RCTModalHostViewController *)viewController animated:(BOOL)animated
+{
+  dispatch_block_t completionBlock = ^{
+    if (modalHostView.onShow) {
+      modalHostView.onShow(nil);
+    }
+  };
+  if (_presentationBlock) {
+    _presentationBlock([modalHostView reactViewController], viewController, animated, completionBlock);
+  } else {
+    [[modalHostView reactViewController] presentViewController:viewController animated:animated completion:completionBlock];
+  }
+}
+
+- (void)dismissModalHostView:(RCTModalHostView *)modalHostView withViewController:(RCTModalHostViewController *)viewController animated:(BOOL)animated
+{
+  if (_dismissalBlock) {
+    _dismissalBlock([modalHostView reactViewController], viewController, animated, nil);
+  } else {
+    [viewController dismissViewControllerAnimated:animated completion:nil];
+  }
+}
+
 
 - (RCTShadowView *)shadowView
 {
@@ -62,8 +103,11 @@ RCT_EXPORT_MODULE()
   [_hostViews removeAllObjects];
 }
 
-RCT_EXPORT_VIEW_PROPERTY(animated, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(animationType, NSString)
+RCT_EXPORT_VIEW_PROPERTY(presentationStyle, UIModalPresentationStyle)
 RCT_EXPORT_VIEW_PROPERTY(transparent, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(onShow, RCTDirectEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(supportedOrientations, NSArray)
+RCT_EXPORT_VIEW_PROPERTY(onOrientationChange, RCTDirectEventBlock)
 
 @end

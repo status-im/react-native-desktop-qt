@@ -15,10 +15,12 @@ var Path = require('ARTSerializablePath');
 var Transform = require('art/core/transform');
 
 var React = require('React');
+var PropTypes = require('prop-types');
 var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
 
 var createReactNativeComponentClass = require('createReactNativeComponentClass');
 var merge = require('merge');
+var invariant = require('fbjs/lib/invariant');
 
 // Diff Helpers
 
@@ -136,9 +138,16 @@ function childrenAsString(children) {
 
 // Surface - Root node of all ART
 
-var Surface = React.createClass({
+class Surface extends React.Component {
+  static childContextTypes = {
+    isInSurface: PropTypes.bool,
+  };
 
-  render: function() {
+  getChildContext() {
+    return { isInSurface: true };
+  }
+
+  render() {
     var props = this.props;
     var w = extractNumber(props.width, 0);
     var h = extractNumber(props.height, 0);
@@ -148,8 +157,7 @@ var Surface = React.createClass({
       </NativeSurfaceView>
     );
   }
-
-});
+}
 
 // Node Props
 
@@ -204,10 +212,17 @@ function extractOpacity(props) {
 // Note: ART has a notion of width and height on Group but AFAIK it's a noop in
 // ReactART.
 
-var Group = React.createClass({
+class Group extends React.Component {
+  static contextTypes = {
+    isInSurface: PropTypes.bool.isRequired,
+  };
 
-  render: function() {
+  render() {
     var props = this.props;
+    invariant(
+      this.context.isInSurface,
+      'ART: <Group /> must be a child of a <Surface />'
+    );
     return (
       <NativeGroup
         opacity={extractOpacity(props)}
@@ -216,12 +231,10 @@ var Group = React.createClass({
       </NativeGroup>
     );
   }
+}
 
-});
-
-var ClippingRectangle = React.createClass({
-
-  render: function() {
+class ClippingRectangle extends React.Component {
+  render() {
     var props = this.props;
     var x = extractNumber(props.x, 0);
     var y = extractNumber(props.y, 0);
@@ -241,8 +254,7 @@ var ClippingRectangle = React.createClass({
       </NativeGroup>
     );
   }
-
-});
+}
 
 // Renderables
 
@@ -376,12 +388,11 @@ function extractStrokeJoin(strokeJoin) {
 // Note: ART has a notion of width and height on Shape but AFAIK it's a noop in
 // ReactART.
 
-var Shape = React.createClass({
-
-  render: function() {
+class Shape extends React.Component {
+  render() {
     var props = this.props;
     var path = props.d || childrenAsString(props.children);
-    var d = new Path(path).toJSON();
+    var d = (path instanceof Path ? path : new Path(path)).toJSON();
     return (
       <NativeShape
         fill={extractBrush(props.fill, props)}
@@ -397,8 +408,7 @@ var Shape = React.createClass({
       />
     );
   }
-
-});
+}
 
 // Text
 
@@ -447,11 +457,12 @@ function extractFont(font) {
   }
   var fontFamily = extractSingleFontFamily(font.fontFamily);
   var fontSize = +font.fontSize || 12;
+  var fontWeight = font.fontWeight != null ? font.fontWeight.toString() : '400';
   return {
     // Normalize
     fontFamily: fontFamily,
     fontSize: fontSize,
-    fontWeight: font.fontWeight,
+    fontWeight: fontWeight,
     fontStyle: font.fontStyle,
   };
 }
@@ -472,11 +483,11 @@ function extractAlignment(alignment) {
   }
 }
 
-var Text = React.createClass({
-
-  render: function() {
+class Text extends React.Component {
+  render() {
     var props = this.props;
-    var textPath = props.path ? new Path(props.path).toJSON() : null;
+    var path = props.path;
+    var textPath = path ? (path instanceof Path ? path : new Path(path)).toJSON() : null;
     var textFrame = extractFontAndLines(
       props.font,
       childrenAsString(props.children)
@@ -498,8 +509,7 @@ var Text = React.createClass({
       />
     );
   }
-
-});
+}
 
 // Declarative fill type objects - API design not finalized
 

@@ -14,7 +14,7 @@ import java.util.Map;
 import android.content.DialogInterface;
 
 import com.facebook.react.common.MapBuilder;
-import com.facebook.react.common.SystemClock;
+import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.LayoutShadowNode;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
@@ -25,9 +25,10 @@ import com.facebook.react.uimanager.events.EventDispatcher;
 /**
  * View manager for {@link ReactModalHostView} components.
  */
+@ReactModule(name = ReactModalHostManager.REACT_CLASS)
 public class ReactModalHostManager extends ViewGroupManager<ReactModalHostView> {
 
-  private static final String REACT_CLASS = "RCTModalHostView";
+  protected static final String REACT_CLASS = "RCTModalHostView";
 
   @Override
   public String getName() {
@@ -52,17 +53,22 @@ public class ReactModalHostManager extends ViewGroupManager<ReactModalHostView> 
   @Override
   public void onDropViewInstance(ReactModalHostView view) {
     super.onDropViewInstance(view);
-    view.dismiss();
+    view.onDropInstance();
   }
 
-  @ReactProp(name = "animated")
-  public void setAnimated(ReactModalHostView view, boolean animated) {
-    view.setAnimated(animated);
+  @ReactProp(name = "animationType")
+  public void setAnimationType(ReactModalHostView view, String animationType) {
+    view.setAnimationType(animationType);
   }
 
   @ReactProp(name = "transparent")
   public void setTransparent(ReactModalHostView view, boolean transparent) {
     view.setTransparent(transparent);
+  }
+
+  @ReactProp(name = "hardwareAccelerated")
+  public void setHardwareAccelerated(ReactModalHostView view, boolean hardwareAccelerated) {
+    view.setHardwareAccelerated(hardwareAccelerated);
   }
 
   @Override
@@ -75,14 +81,14 @@ public class ReactModalHostManager extends ViewGroupManager<ReactModalHostView> 
       new ReactModalHostView.OnRequestCloseListener() {
         @Override
         public void onRequestClose(DialogInterface dialog) {
-          dispatcher.dispatchEvent(new RequestCloseEvent(view.getId(), SystemClock.nanoTime()));
+          dispatcher.dispatchEvent(new RequestCloseEvent(view.getId()));
         }
       });
     view.setOnShowListener(
       new DialogInterface.OnShowListener() {
         @Override
         public void onShow(DialogInterface dialog) {
-          dispatcher.dispatchEvent(new ShowEvent(view.getId(), SystemClock.nanoTime()));
+          dispatcher.dispatchEvent(new ShowEvent(view.getId()));
         }
       });
   }

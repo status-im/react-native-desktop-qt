@@ -4,9 +4,8 @@
 
 #include <functional>
 
-#include <react/MessageQueueThread.h>
-
-#include <jni/fbjni.h>
+#include <cxxreact/MessageQueueThread.h>
+#include <fb/fbjni.h>
 
 using namespace facebook::jni;
 
@@ -28,9 +27,11 @@ public:
   void runOnQueue(std::function<void()>&& runnable) override;
 
   /**
-   * Returns whether the currently executing thread is this MessageQueueThread.
+   * Synchronously executes the given function to run on this
+   * MessageQueueThread, waiting until it completes.  Can be called from any
+   * thread, but will block if not called on this MessageQueueThread.
    */
-  bool isOnThread() override;
+  void runOnQueueSync(std::function<void()>&& runnable) override;
 
   /**
    * Synchronously quits the current MessageQueueThread. Can be called from any thread, but will
@@ -42,17 +43,8 @@ public:
     return m_jobj.get();
   }
 
-  /**
-   * Returns the current MessageQueueThread that owns this thread.
-   */
-  static std::unique_ptr<JMessageQueueThread> currentMessageQueueThread();
 private:
   global_ref<JavaMessageQueueThread::javaobject> m_jobj;
-};
-
-class MessageQueueThreadRegistry : public jni::JavaClass<MessageQueueThreadRegistry> {
-public:
-  static constexpr auto kJavaDescriptor = "Lcom/facebook/react/bridge/queue/MessageQueueThreadRegistry;";
 };
 
 } }
