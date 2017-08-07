@@ -39,6 +39,7 @@ const documentedCommands = [
   require('./server/server'),
   require('./runIOS/runIOS'),
   require('./runAndroid/runAndroid'),
+  require('./ubuntu/runUbuntu'),
   require('./library/library'),
   require('./bundle/bundle'),
   require('./bundle/unbundle'),

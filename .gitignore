@@ -52,7 +52,6 @@ node_modules
 # OS X
 .DS_Store
 
-<<<<<<< HEAD
 # Qt/QML
 moc_*.cpp
 *_automoc.cpp
@@ -60,11 +59,9 @@ moc_*.cpp
 
 # Emacs
 *~
-=======
 # Test generated files
 /ReactAndroid/src/androidTest/assets/AndroidTestBundle.js
 *.js.meta
 
 /coverage
 /third-party
->>>>>>> 0.48-stable

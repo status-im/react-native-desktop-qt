@@ -28,7 +28,7 @@ var {
 
 var UbuntuActivityIndicator = requireNativeComponent('UbuntuActivityIndicator', null);
 
-var ActivityIndicator = React.createClass({
+var ActivityIndicatorUbuntu = React.createClass({
   propTypes: {
     animating: PropTypes.bool,
     size: PropTypes.oneOf([
@@ -66,4 +66,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = ActivityIndicator;
+module.exports = ActivityIndicatorUbuntu;
