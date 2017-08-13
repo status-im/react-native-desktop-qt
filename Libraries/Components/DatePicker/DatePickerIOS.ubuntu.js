@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2015-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -7,53 +7,40 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  *
  * @providesModule DatePickerIOS
- * @flow
  */
+
 'use strict';
 
 var React = require('React');
-var PropTypes = require('ReactPropTypes');
+var StyleSheet = require('StyleSheet');
+var Text = require('Text');
 var View = require('View');
-var StyleSheetPropType = require("StyleSheetPropType");
-var LayoutPropTypes = require("LayoutPropTypes");
-var requireNativeComponent = require('requireNativeComponent');
 
-var UbuntuDatePicker = requireNativeComponent('UbuntuDatePicker');
-
-var DatePickerIOS = React.createClass({
-  propTypes: {
-    style: StyleSheetPropType(LayoutPropTypes),
-    date: PropTypes.instanceOf(Date).isRequired,
-    onDateChange: PropTypes.func.isRequired,
-    maximumDate: PropTypes.instanceOf(Date),
-    minimumDate: PropTypes.instanceOf(Date),
-    mode: PropTypes.oneOf(['date', 'time', 'datetime']),
-    minuteInterval: PropTypes.oneOf([1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30]),
-    timeZoneOffsetInMinutes: PropTypes.number,
-  },
-
-  getDefaultProps: function(): DefaultProps {
-    return {
-      mode: 'date',
-    };
-  },
-
-  _onChange: function(event: Event) {
-    var nativeTimeStamp = event.nativeEvent.timestamp;
-    this.props.onDateChange && this.props.onDateChange(
-      new Date(nativeTimeStamp)
-    );
-  },
-
-  render(): ReactElement {
-    var { onDateChange, ...props } = this.props;
+class DummyDatePickerIOS extends React.Component {
+  render() {
     return (
-      <UbuntuDatePicker
-        {...props}
-        style={{width: 288, height: 160}} // TODO: grab from units.gu(), implicit* not set?
-        onChange={this._onChange} />
+      <View style={[styles.dummyDatePickerIOS, this.props.style]}>
+        <Text style={styles.datePickerText}>DatePickerIOS is not supported on this platform!</Text>
+      </View>
     );
+  }
+}
+
+var styles = StyleSheet.create({
+  dummyDatePickerIOS: {
+    height: 100,
+    width: 300,
+    backgroundColor: '#ffbcbc',
+    borderWidth: 1,
+    borderColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 10,
+  },
+  datePickerText: {
+    color: '#333333',
+    margin: 20,
   }
 });
 
-module.exports = DatePickerIOS;
+module.exports = DummyDatePickerIOS;

@@ -9,7 +9,6 @@ var TimerMixin = require('react-timer-mixin');
 var Touchable = require('Touchable');
 var View = require('View');
 var ensurePositiveDelayProps = require('ensurePositiveDelayProps');
-var onlyChild = require('onlyChild');
 
 var {
   ReactTouchableManager
@@ -121,7 +120,7 @@ var TouchableWithoutFeedback = React.createClass({
 
   render: function(): ReactElement {
     // Note(avik): remove dynamic typecast once Flow has been upgraded
-    return (React: any).cloneElement(onlyChild(this.props.children), {
+    return (React: any).cloneElement(React.Children.only(this.props.children), {
       accessible: this.props.accessible !== false,
       accessibilityComponentType: this.props.accessibilityComponentType,
       accessibilityTraits: this.props.accessibilityTraits,
