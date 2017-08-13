@@ -32,6 +32,8 @@
 #include "reacteventdispatcher.h"
 #include "reactnetworking.h"
 #include "reactnetinfo.h"
+#include "reactblobprovider.h"
+#include "reactdeviceinfo.h"
 #include "reacttiming.h"
 #include "reactappstate.h"
 #include "reactasynclocalstorage.h"
@@ -77,6 +79,8 @@ public:
       new ReactAsyncLocalStorage,
       new ReactNetworking,
       new ReactNetInfo,
+      new ReactDeviceInfo,
+      new ReactBlobProvider,
       new ReactViewManager,
       new ReactRawTextManager,
       new ReactTextManager,
@@ -399,11 +403,13 @@ void ReactBridge::injectModules()
 {
   Q_D(ReactBridge);
 
-  QVariantMap moduleConfig;
+  QVariantList moduleConfig;
 
-  for (auto& md : d->modules) {
+  for (int i = 0; i < d->modules.size(); ++i) {
 //    qDebug() << "Injecting module" << md->name();
-    moduleConfig.insert(md->name(), md->info());
+    Q_ASSERT(d->modules.contains(i));
+    auto& md = d->modules[i];
+    moduleConfig.push_back(md->info());
   }
 
   d->executor->injectJson("__fbBatchedBridgeConfig", QVariantMap{

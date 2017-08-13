@@ -19,7 +19,9 @@ set(
   SRC
   reactplugin.cpp
   reactvaluecoercion.cpp
+  reactblobprovider.cpp
   reactbridge.cpp
+  reactdeviceinfo.cpp
   reacteventdispatcher.cpp
   reactevents.cpp
   reactsourcecode.cpp

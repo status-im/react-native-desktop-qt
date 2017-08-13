@@ -23,7 +23,7 @@
 
 namespace
 {
-static int nextModuleId = 1;
+static int nextModuleId = 0;
 // TODO: sort out all the issues around methodsToExport
 
 QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl)
@@ -110,19 +110,19 @@ QVariant ReactModuleData::info() const
 {
   Q_D(const ReactModuleData);
 
-  QVariantMap config;
-  config.insert("moduleID", d->id);
+  QVariantList config;
 
-  if (!d->constants.isEmpty())
-    config.insert("constants", d->constants);
+  // TODO: renaming of modules is required, since RCT prefix is not supported by react-native
+  config.push_back(name().replace("RCT", ""));
 
-  QVariantMap methodConfig;
+  config.push_back(d->constants.isEmpty() ? QVariant() : d->constants);
+
+  QVariantList methodConfig;
   for (int i = 0; i < d->methods.size(); ++i) {
-    methodConfig.insert(d->methods.at(i)->name(),
-                        QVariantMap{{"methodID", i}, {"type", d->methods.at(i)->type()}});
+      methodConfig.push_back(d->methods.at(i)->name());
   }
-  if (!methodConfig.isEmpty())
-    config.insert("methods", methodConfig);
+
+  config.push_back(methodConfig);
 
   return config;
 }

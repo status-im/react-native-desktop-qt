@@ -846,11 +846,6 @@ if (Platform.OS === 'android') {
     nativeOnlyProps
   );
 } else if (Platform.OS === 'ios') {
-<<<<<<< HEAD
-  var RCTScrollView = requireNativeComponent('RCTScrollView', ScrollView);
-} else if (Platform.OS === 'ubuntu') {
-  var UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
-=======
   nativeOnlyProps = {
     nativeOnly: {
       onMomentumScrollBegin: true,
@@ -866,7 +861,8 @@ if (Platform.OS === 'android') {
   );
   // $FlowFixMe (bvaughn) Update ComponentInterface in ViewPropTypes to include a string type (for Fiber host components) in a follow-up.
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView', View);
->>>>>>> 0.48-stable
+} else if (Platform.OS === 'ubuntu') {
+  var UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
 }
 
 module.exports = ScrollView;

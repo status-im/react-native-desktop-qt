@@ -35,7 +35,8 @@
       ],
       "platforms": [
         "ios",
-        "android"
+        "android",
+        "ubuntu"
       ]
     },
     "modulePathIgnorePatterns": [
