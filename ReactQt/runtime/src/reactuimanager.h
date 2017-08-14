@@ -48,6 +48,9 @@ class ReactUIManager
                                   const QList<int>& addChildReactTags,
                                   const QList<int>& addAtIndices,
                                   const QList<int>& removeAtIndices);
+  Q_INVOKABLE void setChildren(int containerReactTag,
+                               const QList<int>& childrenTags);
+
   Q_INVOKABLE void replaceExistingNonRootView(int reactTag, int newReactTag);
   Q_INVOKABLE void measureLayout(int reactTag,
                                  int ancestorReactTag,

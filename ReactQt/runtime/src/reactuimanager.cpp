@@ -120,6 +120,20 @@ void ReactUIManager::updateView
   m_bridge->visualParent()->polish();
 }
 
+void ReactUIManager::setChildren
+(
+  int containerReactTag,
+  const QList<int>& childrenTags
+)
+{
+  //This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
+  QList<int> newIndices;
+  foreach(int i, childrenTags) {
+     newIndices.append(i + 1);
+  }
+  manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, newIndices,  QList<int>());
+}
+
 void ReactUIManager::manageChildren
 (
   int containerReactTag,
