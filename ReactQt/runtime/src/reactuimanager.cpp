@@ -126,12 +126,12 @@ void ReactUIManager::setChildren
   const QList<int>& childrenTags
 )
 {
-  //This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
-  QList<int> newIndices;
+  //TODO: This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
+  QList<int> indices;
   foreach(int i, childrenTags) {
-     newIndices.append(i + 1);
+    indices.append(1); //same Z order for all items
   }
-  manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, newIndices,  QList<int>());
+  manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices,  QList<int>());
 }
 
 void ReactUIManager::manageChildren
