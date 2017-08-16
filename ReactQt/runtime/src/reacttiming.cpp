@@ -91,7 +91,7 @@ void ReactTiming::createTimer
   if (duration == 0 && !repeats) {
     // XXX: enqueueJSCall should enqueue
     QTimer::singleShot(0, [=] {
-        m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
+        m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
       });
     return;
   }
@@ -101,7 +101,7 @@ void ReactTiming::createTimer
   timer->setSingleShot(!repeats);
   QObject::connect(timer, &QTimer::timeout, [=]() {
       if (m_bridge)
-        m_bridge->enqueueJSCall("JSTimersExecution", "callTimers", QVariantList{QVariantList{callbackId}});
+        m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
       if (!repeats)
         deleteTimer(callbackId);
     });
