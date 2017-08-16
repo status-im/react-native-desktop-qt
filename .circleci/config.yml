@@ -1,0 +1,49 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+
+    working_directory: ~/repo
+
+    steps:
+      - run: echo 'export PATH=/opt/qt55/bin/:$PATH' >> $BASH_ENV
+
+      - checkout
+
+      # Install and configure env with Qt
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y software-properties-common
+          sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty
+          sudo apt-get -qy update
+          sudo apt-get install -y curl cmake qt55base qt55webkit mesa-common-dev libgl1-mesa-dev
+          echo "/opt/qt55/bin/qt55-env.sh" >> ~/.circlerc
+
+      # Install node
+      - run: |
+          curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+          
+      - run: qmake -version
+
+      # Build react-native-linux
+      - run: |
+          mkdir build
+          pushd build
+          cmake .. && make -j4
+          popd
+
+      # Download and cache dependencies
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+
+      - run: npm install
+
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+        
+      # run tests!
+      - run: npm test
