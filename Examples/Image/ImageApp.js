@@ -16,8 +16,10 @@ export default class ImageReactNative extends Component {
     return (
       <Image
           style={{width: 50, height: 50}}
-          source={{uri: base64Icon, scale: 3}}
+          // source={{uri: base64Icon, scale: 3}}
+          source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 3}}
         />
+//        <Text>Hello</Text>
     );
   }
 }
@@ -41,4 +43,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('ImageReactNative', () => ImageReactNative);
+AppRegistry.registerComponent('ImageApp', () => ImageReactNative);

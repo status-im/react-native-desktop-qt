@@ -18,114 +18,110 @@
 
 
 namespace {
-static const char* error_qml = R"COMPONENT(
+static const char* REDBOX_COMPONENT_QML = R"COMPONENT(
 import QtQuick 2.4
-import Ubuntu.Components 1.1
-import Ubuntu.Components.ListItems 1.0 as ListItem
+import QtQuick.Controls 1.4
 
 Rectangle {
-  id: redboxRect
-  color: 'red'
-  anchors.fill: parent
+ id: redboxRect
+ color: 'red'
+ anchors.fill: parent
 
-  property alias message: textMessage.text
-  property alias stackModel: stackListView.model
+ property alias message: textMessage.text
+ property alias stackModel: stackListView.model
 
-  signal dismissPressed();
-  signal reloadPressed();
+ signal dismissPressed();
+ signal reloadPressed();
 
-  Text {
-    id: textMessage
-    visible: message.length > 0
-    anchors {
-      centerIn: redboxRect
-      margins: 40
-    }
-    color: 'white'
-    font.pointSize: 18
-  }
+ Text {
+   id: textMessage
+   visible: message.length > 0
+   anchors {
+     centerIn: redboxRect
+     margins: 40
+   }
+   color: 'white'
+   font.pointSize: 18
+ }
 
-  UbuntuListView {
-    id: stackListView
-    anchors {
-      top: textMessage.bottom
-      left: parent.left
-      bottom: buttonRow.top
-      right: parent.right
-      margins: 40
-    }
+ ListView {
+   id: stackListView
+   anchors {
+     top: textMessage.bottom
+     left: parent.left
+     bottom: buttonRow.top
+     right: parent.right
+     margins: 40
+   }
 
-    clip: true
+   clip: true
 
-    delegate: ListItem.Standard {
-      Label {
-        anchors.fill: parent
-        color: 'white'
-        text: methodName + "\n" + file + " @ " + lineNumber + ":" + column
-        fontSize: 'large'
-        font.weight: Font.DemiBold
-        verticalAlignment: Text.AlignVCenter
-      }
-    }
-  }
+   delegate: Label {
+       height: 60
+       color: 'white'
+       text: methodName + "\n" + file + " @ " + lineNumber + ":" + column
+       font.weight: Font.DemiBold
+       verticalAlignment: Text.AlignVCenter
+     }
+   }
 
-  Row {
-    id: buttonRow
-    anchors {
-      bottomMargin: 60
-      horizontalCenter: parent.horizontalCenter
-      bottom: parent.bottom
-    }
+ Row {
+   id: buttonRow
+   anchors {
+     bottomMargin: 60
+     horizontalCenter: parent.horizontalCenter
+     bottom: parent.bottom
+   }
 
-    spacing: 40
+   spacing: 40
 
-    Button {
-      text: 'Reload JS'
-      onClicked: reloadPressed()
-    }
+   Button {
+     text: 'Reload JS'
+     onClicked: reloadPressed()
+   }
 
-    Button {
-      text: 'Dismiss'
-      onClicked: dismissPressed()
-    }
-  }
+   Button {
+     text: 'Dismiss'
+     onClicked: dismissPressed()
+   }
+ }
 
-  state: stackModel !== undefined && !stackModel.empty ? "stackTrace" : "errorMessage"
-  onStateChanged: {
-    // XXX: weird hack
-    if (state === 'stackTrace') {
-      textMessage.anchors.centerIn = undefined;
-    }
-  }
+ state: stackModel !== undefined && !stackModel.empty ? "stackTrace" : "errorMessage"
+ onStateChanged: {
+   // XXX: weird hack
+   if (state === 'stackTrace') {
+     textMessage.anchors.centerIn = undefined;
+   }
+ }
 
-  states: [
-    State {
-      name: "errorMessage"
-      PropertyChanges {
-        target: textMessage
-        anchors.left: undefined
-        anchors.top: undefined
-        anchors.centerIn: redboxRect
-      }
-      PropertyChanges {
-        target: stackListView
-        visible: false
-      }
-    },
-    State  {
-      name: "stackTrace"
-      PropertyChanges {
-        target: textMessage
-        anchors.centerIn: undefined
-        anchors.left: redboxRect.left
-        anchors.top: redboxRect.top
-      }
-      PropertyChanges {
-        target: stackListView
-        visible: true
-      }
-    }
-  ]
+ states: [
+   State {
+     name: "errorMessage"
+     PropertyChanges {
+       target: textMessage
+       anchors.left: undefined
+       anchors.top: undefined
+       anchors.centerIn: redboxRect
+     }
+     PropertyChanges {
+       target: stackListView
+       visible: false
+     }
+   },
+   State  {
+     name: "stackTrace"
+     PropertyChanges {
+       target: textMessage
+       anchors.centerIn: undefined
+       anchors.left: redboxRect.left
+       anchors.top: redboxRect.top
+     }
+     PropertyChanges {
+       target: stackListView
+       visible: true
+     }
+   }
+ ]
 }
 )COMPONENT";
 
@@ -145,9 +141,11 @@ static QHash<int, QByteArray> roleData{
 }
 
 class ReactRedboxItemPrivate : public QAbstractListModel {
+
   Q_OBJECT
   Q_PROPERTY(bool empty READ empty NOTIFY emptyChanged)
   Q_DECLARE_PUBLIC(ReactRedboxItem)
+
 public:
   QList<QVariantMap> stack;
   QQuickItem* redbox;
@@ -187,11 +185,33 @@ public:
     return stack.isEmpty();
   }
 
+
+  void createRedboxItem(QQuickItem* parent) {
+
+    QQmlComponent component(bridge->qmlEngine());
+    component.setData(REDBOX_COMPONENT_QML, QUrl::fromLocalFile(__FILE__));
+    redbox = qobject_cast<QQuickItem*>(component.create());
+    if (redbox == nullptr) {
+      qCritical() << __PRETTY_FUNCTION__ << "Unable to create RedboxItem" << component.errors();
+      return;
+    }
+
+    redbox->setObjectName("Redbox");
+    redbox->setParentItem(parent);
+    redbox->setProperty("stackModel", QVariant::fromValue(this));
+
+    connect(redbox, SIGNAL(reloadPressed()), this, SLOT(reloadPressed()));
+    connect(redbox, SIGNAL(dismissPressed()), this, SLOT(dismissPressed()));
+  }
+
+
 public Q_SLOTS:
+
   void reloadPressed() {
     q_ptr->setParentItem(0);
     bridge->reload();
   }
+
   void dismissPressed() {
     q_ptr->setParentItem(0);
   }
@@ -207,18 +227,7 @@ ReactRedboxItem::ReactRedboxItem(ReactBridge* bridge)
 {
   Q_D(ReactRedboxItem);
   d->bridge = bridge;
-  QQmlComponent component(d->bridge->qmlEngine());
-  component.setData(error_qml, QUrl::fromLocalFile(__FILE__));
-  d->redbox = qobject_cast<QQuickItem*>(component.create());
-  if (d->redbox == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "Unable to create RedboxItem" << component.errors();
-    return;
-  }
-  connect(d->redbox, SIGNAL(reloadPressed()), d, SLOT(reloadPressed()));
-  connect(d->redbox, SIGNAL(dismissPressed()), d, SLOT(dismissPressed()));
-
-  d->redbox->setParentItem(this);
-  d->redbox->setProperty("stackModel", QVariant::fromValue(d));
+  d->createRedboxItem(this);
 }
 
 ReactRedboxItem::~ReactRedboxItem()
@@ -230,9 +239,14 @@ void ReactRedboxItem::showErrorMessage(const QString& message, const QList<QVari
   Q_D(ReactRedboxItem);
   d->redbox->setProperty("message", message);
   d->setStack(stack);
-  setParentItem(d->bridge->visualParent());
-  setX(0); setY(0);
-  setWidth(d->bridge->visualParent()->width()); setHeight(d->bridge->visualParent()->height());
+
+  QQuickItem* rootView = d->bridge->visualParent();
+  setParentItem(rootView);
+
+  setX(0);
+  setY(0);
+  setWidth(rootView->width());
+  setHeight(rootView->height());
 }
 
 void ReactRedboxItem::updateErrorMessage(const QString& message, const QList<QVariantMap>& stack)
