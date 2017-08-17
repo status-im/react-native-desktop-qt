@@ -129,7 +129,7 @@ void ReactUIManager::setChildren
   //TODO: This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
   QList<int> indices;
   foreach(int i, childrenTags) {
-    indices.append(1); //same Z order for all items
+    indices.append(0); //0 is a default z-order in qml
   }
   manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices,  QList<int>());
 }

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+(node ${CMAKE_SOURCE_DIR}/ubuntu-server.js) &
+qmlscene -I ${CMAKE_BINARY_DIR}/ReactQt/runtime/src/ ${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}.qml
+

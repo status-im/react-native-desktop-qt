@@ -8,10 +8,9 @@ Rectangle {
   color: "red"
 
   React.RootView {
-    objectName: "rootView"
     anchors.fill: parent
 
-    moduleName: "TicTacToeApp"
-    codeLocation: "http://localhost:8081/Examples/TicTacToe/TicTacToeApp.bundle?platform=ubuntu&dev=true"
+    moduleName: "ImageApp"
+    codeLocation: "http://localhost:8081/Examples/Image/ImageApp.bundle?platform=ubuntu&dev=true"
   }
 }

@@ -66,7 +66,7 @@ function rnUbuntuServer(readable, writable) {
 
     if (state === 'start') {
       if (buffer.length < 4)
-        return; 
+        return;
       length = buffer.readUInt32LE(0);
       DEBUG > 2 && console.error("-- New Packet: length=" + length);
 
@@ -106,12 +106,8 @@ function rnUbuntuServer(readable, writable) {
 if (process.argv.indexOf('--pipe') != -1) {
   rnUbuntuServer(process.stdin, process.stdout);
 } else {
-  var server = net.createServer((sock) => { 
+  var server = net.createServer((sock) => {
     DEBUG && console.error("-- Connection from RN client");
     rnUbuntuServer(sock, sock);
   }).listen(5000, function() { console.error("-- Server starting") });
 }
-
-
-
-
