@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef UBUNTUNAVIGATORMANAGER_H
-#define UBUNTUNAVIGATORMANAGER_H
+#ifndef REACTNAVIGATORMANAGER_H
+#define REACTNAVIGATORMANAGER_H
 
 #include <QString>
 #include <QMap>
