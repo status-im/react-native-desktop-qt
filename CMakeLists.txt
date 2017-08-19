@@ -14,6 +14,7 @@ set(PROJECT_NAME "react-native-ubuntu")
 set(PROJECT_VERSION "0.0.1")
 
 include_directories(./React/Layout)
+enable_testing()
 
 add_subdirectory(ReactQt)
 add_subdirectory(Examples)

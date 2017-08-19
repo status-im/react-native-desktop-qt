@@ -59,6 +59,8 @@ public:
   QString executor() const;
   void setExecutor(const QString& executor);
 
+  ReactBridge* bridge() const;
+
 Q_SIGNALS:
   void liveReloadChanged();
   void moduleNameChanged();

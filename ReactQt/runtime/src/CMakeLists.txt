@@ -41,6 +41,7 @@ set(
   reactview.cpp
   reactviewmanager.cpp
   reactrawtextmanager.cpp
+  reacttestmodule.cpp
   reacttextmanager.cpp
   reactimagemanager.cpp
   reactimageloader.cpp
@@ -63,7 +64,7 @@ add_library(
 )
 else()
 add_library(
-  react-native MODULE
+  react-native SHARED
   ${SRC}
 )
 set_target_properties(

@@ -221,6 +221,11 @@ void ReactView::setExecutor(const QString& executor)
   Q_EMIT executorChanged();
 }
 
+ReactBridge *ReactView::bridge() const
+{
+  return d_func()->bridge;
+}
+
 void ReactView::bridgeReady()
 {
   Q_D(ReactView);
