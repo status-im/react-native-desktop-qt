@@ -50,6 +50,7 @@ public:
     quint32 length = request.size();
     socket->write((const char*)&length, sizeof(length));
     socket->write(request.constData(), request.size());
+    socket->flush();
   }
 
 public Q_SLOTS:

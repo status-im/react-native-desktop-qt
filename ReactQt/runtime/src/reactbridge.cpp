@@ -47,7 +47,7 @@
 #include "reactexceptionsmanager.h"
 #include "reactscrollviewmanager.h"
 #include "reactnavigatormanager.h"
-
+#include "reacttestmodule.h"
 
 
 class ReactBridgePrivate
@@ -64,6 +64,7 @@ public:
   ReactImageLoader* imageLoader = nullptr;
   ReactSourceCode* sourceCode = nullptr;
   ReactEventDispatcher* eventDispatcher = nullptr;
+  ReactTestModule* reactTestModule = nullptr;
   QUrl bundleUrl;
   QString pluginsPath = "./plugins";
   QMap<int, ReactModuleData*> modules;
@@ -286,6 +287,11 @@ ReactUIManager* ReactBridge::uiManager() const
   return d_func()->uiManager;
 }
 
+ReactTestModule *ReactBridge::testModule() const
+{
+  return d_func()->reactTestModule;
+}
+
 ReactImageLoader* ReactBridge::imageLoader() const
 {
   return d_func()->imageLoader;
@@ -338,6 +344,8 @@ void ReactBridge::initModules()
   modules << d->sourceCode;
   d->imageLoader = new ReactImageLoader;
   modules << d->imageLoader;
+  d->reactTestModule = new ReactTestModule;
+  modules << d->reactTestModule;
   d->uiManager = new ReactUIManager; // XXX: this needs to be at end, FIXME:
   modules << d->uiManager;
 

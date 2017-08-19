@@ -27,6 +27,7 @@ class ReactUIManager;
 class ReactImageLoader;
 class ReactEventDispatcher;
 class ReactRedboxItem;
+class ReactTestModule;
 
 class ReactBridgePrivate;
 class ReactBridge : public QObject
@@ -83,6 +84,7 @@ public:
   ReactEventDispatcher* eventDispatcher() const;
   QList<ReactModuleData*> modules() const;
   ReactUIManager* uiManager() const;
+  ReactTestModule* testModule() const;
   ReactImageLoader* imageLoader() const;
   ReactRedboxItem* redbox();
 

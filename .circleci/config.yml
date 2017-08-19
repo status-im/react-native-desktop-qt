@@ -16,8 +16,9 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y software-properties-common
           sudo add-apt-repository -y ppa:beineri/opt-qt551-trusty
+          sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
           sudo apt-get -qy update
-          sudo apt-get install -y curl cmake qt55base qt55webkit mesa-common-dev libgl1-mesa-dev
+          sudo apt-get install -y dbus xvfb curl cmake qt55base qt55webkit qt55graphicaleffects qt55quick1 qt55quickcontrols qt55websockets qt55declarative mesa-common-dev libgl1-mesa-dev
           echo "/opt/qt55/bin/qt55-env.sh" >> ~/.circlerc
 
       # Install node
@@ -25,7 +26,12 @@ jobs:
           curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
           sudo apt-get install -y nodejs
           
-      - run: qmake -version
+      - run: |
+          cmake -version
+          qmake -version
+
+      # Repair dbus
+      - run: ln -s /var/lib/dbus/machine-id /etc/machine-id
 
       # Build react-native-linux
       - run: |
@@ -40,6 +46,19 @@ jobs:
 
       - run: npm install
 
+      # Apply metro-bundler patch to add ubuntu platform
+      - run: patch --verbose -d ./node_modules/metro-bundler/src -i ../../../add-ubuntu-platform.patch
+
+      - type: shell
+        name: Start packager
+        command: npm start
+        background: true
+
+      - type: shell
+        name: Start ubuntu-server.js
+        command: node ./ubuntu-server.js
+        background: true
+
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
@@ -47,3 +66,9 @@ jobs:
         
       # run tests!
       - run: npm test
+
+      # run unit tests
+      - run: |
+          pushd build
+          xvfb-run --server-args="-screen 0 1024x768x24" ctest -VV
+          popd

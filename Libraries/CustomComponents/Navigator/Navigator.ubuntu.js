@@ -18,6 +18,7 @@ var StyleSheetPropType = require("StyleSheetPropType");
 
 var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandle = require('findNodeHandle');
+var util = require('util');
 
 var {
   ReactNavigatorManager
