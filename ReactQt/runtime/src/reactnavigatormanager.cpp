@@ -18,7 +18,7 @@
 
 #include <QDebug>
 
-#include "ubuntunavigatormanager.h"
+#include "reactnavigatormanager.h"
 #include "reactbridge.h"
 #include "reactuimanager.h"
 #include "reactattachedproperties.h"
@@ -52,7 +52,7 @@ void NavigatorPropertyHandler::setOnBackButtonPress(bool backButtonPress)
 
 
 
-void UbuntuNavigatorManager::push(int containerTag, int viewTag)
+void ReactNavigatorManager::push(int containerTag, int viewTag)
 {
   QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
   QQuickItem* view = m_bridge->uiManager()->viewForTag(viewTag);
@@ -64,7 +64,7 @@ void UbuntuNavigatorManager::push(int containerTag, int viewTag)
   invokeMethod("push(QVariant)", container, QVariantList{QVariant::fromValue(view)});
 }
 
-void UbuntuNavigatorManager::pop(int containerTag)
+void ReactNavigatorManager::pop(int containerTag)
 {
   QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
@@ -74,7 +74,7 @@ void UbuntuNavigatorManager::pop(int containerTag)
   invokeMethod("pop()", container);
 }
 
-void UbuntuNavigatorManager::clear(int containerTag)
+void ReactNavigatorManager::clear(int containerTag)
 {
   QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
@@ -85,48 +85,48 @@ void UbuntuNavigatorManager::clear(int containerTag)
 }
 
 
-UbuntuNavigatorManager::UbuntuNavigatorManager(QObject* parent)
+ReactNavigatorManager::ReactNavigatorManager(QObject* parent)
   : ReactViewManager(parent)
   , m_id(0)
 {
 }
 
-UbuntuNavigatorManager::~UbuntuNavigatorManager()
+ReactNavigatorManager::~ReactNavigatorManager()
 {
 }
 
-void UbuntuNavigatorManager::setBridge(ReactBridge* bridge)
+void ReactNavigatorManager::setBridge(ReactBridge* bridge)
 {
   m_bridge = bridge;
 }
 
-ReactViewManager* UbuntuNavigatorManager::viewManager()
+ReactViewManager* ReactNavigatorManager::viewManager()
 {
   return this;
 }
 
-ReactPropertyHandler* UbuntuNavigatorManager::propertyHandler(QObject* object)
+ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
   return new NavigatorPropertyHandler(object);
 }
 
-QString UbuntuNavigatorManager::moduleName()
+QString ReactNavigatorManager::moduleName()
 {
-  return "UbuntuNavigatorManager";
+  return "RCTNavigatorManager";
 }
 
-QList<ReactModuleMethod*> UbuntuNavigatorManager::methodsToExport()
+QList<ReactModuleMethod*> ReactNavigatorManager::methodsToExport()
 {
   return QList<ReactModuleMethod*>{};
 }
 
-QVariantMap UbuntuNavigatorManager::constantsToExport()
+QVariantMap ReactNavigatorManager::constantsToExport()
 {
   return QVariantMap{};
 }
 
-QStringList UbuntuNavigatorManager::customBubblingEventTypes()
+QStringList ReactNavigatorManager::customBubblingEventTypes()
 {
   return QStringList{ normalizeInputEventName("onBackButtonPress") };
 }
@@ -134,40 +134,47 @@ QStringList UbuntuNavigatorManager::customBubblingEventTypes()
 namespace {
 static const char* component_qml = R"COMPONENT(
 import QtQuick 2.4
-import Ubuntu.Components 1.2
+import QtQuick.Controls 1.4
 
-MainView {
-  id: mainView%1
-  property int numberPages: 0
-  signal backTriggered();
-  Component {
-    id: pageBackAction%1
-    Action {
-      iconName: mainView%1.numberPages > 1 ? "back" : ""
-    }
-  }
-  PageStack {
-    id: pageStack%1
-    anchors.fill: parent
-  }
-  function push(item) {
-    item.head.backAction = pageBackAction%1.createObject(item);
-    item.head.backAction.onTriggered.connect(backTriggered);
-    pageStack%1.push(item);
-    mainView%1.numberPages += 1;
-  }
-  function pop() {
-    pageStack%1.pop();
-    mainView%1.numberPages -= 1;
-  }
-  function clear() {
-    pageStack%1.clear();
-  }
+
+Item {
+ id: mainView%1
+ property int numberPages: 0
+ signal backTriggered();
+
+ Component {
+   id: pageBackAction%1
+   Action {
+     iconName: mainView%1.numberPages > 1 ? "back" : ""
+   }
+ }
+
+ StackView {
+   id: pageStack%1
+   anchors.fill: parent
+ }
+
+ function push(item) {
+   item.head.backAction = pageBackAction%1.createObject(item);
+   item.head.backAction.onTriggered.connect(backTriggered);
+   pageStack%1.push(item);
+   mainView%1.numberPages += 1;
+ }
+
+ function pop() {
+   pageStack%1.pop();
+   mainView%1.numberPages -= 1;
+ }
+
+ function clear() {
+   pageStack%1.clear();
+ }
 }
+
 )COMPONENT";
 }
 
-QQuickItem* UbuntuNavigatorManager::view(const QVariantMap& properties) const
+QQuickItem* ReactNavigatorManager::view(const QVariantMap& properties) const
 {
   QString componentString = QString(component_qml).arg(m_id++);
 
@@ -188,7 +195,7 @@ QQuickItem* UbuntuNavigatorManager::view(const QVariantMap& properties) const
   return item;
 }
 
-void UbuntuNavigatorManager::backTriggered()
+void ReactNavigatorManager::backTriggered()
 {
   ReactAttachedProperties* ap = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(sender()));
   if (ap == nullptr) {
@@ -208,13 +215,13 @@ void UbuntuNavigatorManager::backTriggered()
   }
 }
 
-void UbuntuNavigatorManager::configureView(QQuickItem* view) const
+void ReactNavigatorManager::configureView(QQuickItem* view) const
 {
   connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
 }
 
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())
-void UbuntuNavigatorManager::invokeMethod
+void ReactNavigatorManager::invokeMethod
 (
   const QString& methodSignature,
   QQuickItem* item,
@@ -237,7 +244,7 @@ void UbuntuNavigatorManager::invokeMethod
   }
 }
 
-QMetaMethod UbuntuNavigatorManager::findMethod
+QMetaMethod ReactNavigatorManager::findMethod
 (
   const QString& methodSignature,
   QQuickItem* item
@@ -261,4 +268,4 @@ QMetaMethod UbuntuNavigatorManager::findMethod
   return QMetaMethod();
 }
 
-#include "ubuntunavigatormanager.moc"
+#include "reactnavigatormanager.moc"

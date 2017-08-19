@@ -20,7 +20,7 @@ var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandle = require('findNodeHandle');
 
 var {
-  UbuntuNavigatorManager
+  ReactNavigatorManager
 } = require('NativeModules');
 
 var View = require('View');
@@ -75,7 +75,7 @@ var Navigator = React.createClass({
   componentDidMount: function() {
     if (this._pushPage == null)
       return;
-    UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
+    ReactNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
     this._pushPage = null;
   },
 
@@ -85,12 +85,12 @@ var Navigator = React.createClass({
       console.log("=== componentDidUpdate: will call push(" +
                   findNodeHandle(this._navigator) +", " +
                   findNodeHandle(this._pageRefs[this._pushPage]) + ")");
-      UbuntuNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
+      ReactNavigatorManager.push(findNodeHandle(this._navigator), findNodeHandle(this._pageRefs[this._pushPage]));
       this._pushPage = null;
     }
     if (this._popPage != null) {
       console.log("=== componentDidUpdate: will call pop()");
-      UbuntuNavigatorManager.pop(findNodeHandle(this._navigator));
+      ReactNavigatorManager.pop(findNodeHandle(this._navigator));
       this._popPage = null;
     }
   },

@@ -20,7 +20,7 @@
 
 #include "reactattachedproperties.h"
 #include "reactevents.h"
-#include "ubuntuscrollviewmanager.h"
+#include "reactscrollviewmanager.h"
 #include "reactbridge.h"
 #include "reactuimanager.h"
 #include "reactpropertyhandler.h"
@@ -52,7 +52,7 @@ void ScrollViewPropertyHandler::setOnScroll(bool onScroll)
 }
 
 
-void UbuntuScrollViewManager::scrollTo(
+void ReactScrollViewManager::scrollTo(
   int reactTag,
   double offsetX,
   double offsetY,
@@ -66,53 +66,53 @@ void UbuntuScrollViewManager::scrollTo(
 }
 
 
-UbuntuScrollViewManager::UbuntuScrollViewManager(QObject* parent)
+ReactScrollViewManager::ReactScrollViewManager(QObject* parent)
   : ReactViewManager(parent)
 {
 }
 
-UbuntuScrollViewManager::~UbuntuScrollViewManager()
+ReactScrollViewManager::~ReactScrollViewManager()
 {
 }
 
-void UbuntuScrollViewManager::setBridge(ReactBridge* bridge)
+void ReactScrollViewManager::setBridge(ReactBridge* bridge)
 {
   m_bridge = bridge;
 }
 
-ReactViewManager* UbuntuScrollViewManager::viewManager()
+ReactViewManager* ReactScrollViewManager::viewManager()
 {
   return this;
 }
 
-ReactPropertyHandler* UbuntuScrollViewManager::propertyHandler(QObject* object)
+ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
   return new ScrollViewPropertyHandler(object);
 }
 
-QString UbuntuScrollViewManager::moduleName()
+QString ReactScrollViewManager::moduleName()
 {
   return "RCTScrollViewManager";
 }
 
-QList<ReactModuleMethod*> UbuntuScrollViewManager::methodsToExport()
+QList<ReactModuleMethod*> ReactScrollViewManager::methodsToExport()
 {
   return QList<ReactModuleMethod*>{};
 }
 
-QVariantMap UbuntuScrollViewManager::constantsToExport()
+QVariantMap ReactScrollViewManager::constantsToExport()
 {
   return QVariantMap{};
 }
 
-QStringList UbuntuScrollViewManager::customDirectEventTypes()
+QStringList ReactScrollViewManager::customDirectEventTypes()
 {
   return QStringList{"scrollBeginDrag", normalizeInputEventName("onScroll"), "scrollEndDrag", "scrollAnimationEnd",
                      "momentumScrollBegin", "momentumScrollEnd"};
 }
 
-void UbuntuScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child , int position) const
+void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child , int position) const
 {
   // add to parents content item
   QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
@@ -125,23 +125,18 @@ void UbuntuScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* c
 namespace {
 static const char* component_qml = R"COMPONENT(
 import QtQuick 2.4
-import Ubuntu.Components 1.2
+import QtQuick.Controls 1.4
 
 Flickable {
-  id: flikka
-  clip: true
-  contentWidth: contentItem.childrenRect.width
-  contentHeight: contentItem.childrenRect.height
-//   Scrollbar {
-//     flickableItem: flikka
-//   }
+ id: scrollView
+ clip: true
 }
+
 )COMPONENT";
 }
 
-QQuickItem* UbuntuScrollViewManager::view(const QVariantMap& properties) const
+QQuickItem* ReactScrollViewManager::view(const QVariantMap& properties) const
 {
-  // qDebug() << __PRETTY_FUNCTION__ << properties;
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(component_qml, QUrl());
   if (!component.isReady())
@@ -158,7 +153,7 @@ QQuickItem* UbuntuScrollViewManager::view(const QVariantMap& properties) const
   return item;
 }
 
-void UbuntuScrollViewManager::scrollBeginDrag()
+void ReactScrollViewManager::scrollBeginDrag()
 {
   // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -175,7 +170,7 @@ void UbuntuScrollViewManager::scrollBeginDrag()
                           QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
 }
 
-void UbuntuScrollViewManager::scrollEndDrag()
+void ReactScrollViewManager::scrollEndDrag()
 {
   // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -192,7 +187,7 @@ void UbuntuScrollViewManager::scrollEndDrag()
                           QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
 }
 
-void UbuntuScrollViewManager::scroll()
+void ReactScrollViewManager::scroll()
 {
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
   Q_ASSERT(item != nullptr);
@@ -215,7 +210,7 @@ void UbuntuScrollViewManager::scroll()
   }
 }
 
-void UbuntuScrollViewManager::momentumScrollBegin()
+void ReactScrollViewManager::momentumScrollBegin()
 {
   // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -234,7 +229,7 @@ void UbuntuScrollViewManager::momentumScrollBegin()
                                        buildEventData(item)});
 }
 
-void UbuntuScrollViewManager::momentumScrollEnd()
+void ReactScrollViewManager::momentumScrollEnd()
 {
   // qDebug() << __PRETTY_FUNCTION__;
   QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -261,7 +256,7 @@ TP propertyValue(QQuickItem* item, const QString& property)
 }
 }
 
-QVariantMap UbuntuScrollViewManager::buildEventData(QQuickItem* item) const
+QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const
 {
   QVariantMap ed;
   ed.insert("contentOffset", QVariantMap{
@@ -282,7 +277,7 @@ QVariantMap UbuntuScrollViewManager::buildEventData(QQuickItem* item) const
   return ed;
 }
 
-void UbuntuScrollViewManager::configureView(QQuickItem* view) const
+void ReactScrollViewManager::configureView(QQuickItem* view) const
 {
   // This would be prettier with a Functor version, but connect doesnt support it
   connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
@@ -293,4 +288,4 @@ void UbuntuScrollViewManager::configureView(QQuickItem* view) const
   connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
 
-#include "ubuntuscrollviewmanager.moc"
+#include "reactscrollviewmanager.moc"

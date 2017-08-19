@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef UBUNTUPAGEMANAGER_H
-#define UBUNTUPAGEMANAGER_H
+#ifndef UBUNTUNAVIGATORMANAGER_H
+#define UBUNTUNAVIGATORMANAGER_H
 
 #include <QString>
 #include <QMap>
@@ -22,14 +22,19 @@
 
 class QQuickItem;
 
-class UbuntuPageManager : public ReactViewManager
+class ReactNavigatorManager : public ReactViewManager
 {
   Q_OBJECT
+  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
+  Q_INVOKABLE void push(int containerTag, int viewTag);
+  Q_INVOKABLE void pop(int containerTag);
+  Q_INVOKABLE void clear(int containerTag);
+
 public:
-  UbuntuPageManager(QObject* parent = 0);
-  ~UbuntuPageManager();
+  ReactNavigatorManager(QObject* parent = 0);
+  ~ReactNavigatorManager();
 
   void setBridge(ReactBridge* bridge) override;
 
@@ -40,17 +45,22 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
+  QStringList customBubblingEventTypes() override;
+
   QQuickItem* view(const QVariantMap& properties) const override;
 
 private Q_SLOTS:
-  void widthChanged();
-  void heightChanged();
+  void backTriggered();
 
 private:
   void configureView(QQuickItem* view) const;
+  void invokeMethod(const QString& methodSignature,
+                    QQuickItem* item,
+                    const QVariantList& args = QVariantList{});
+  QMetaMethod findMethod(const QString& methodSignature, QQuickItem* item);
 
   mutable int m_id;
   QMap<QPair<QString, QQuickItem*>, QMetaMethod> m_methodCache;
 };
 
-#endif // UBUNTUPAGEMANAGER_H
+#endif // UBUNTUNAVIGATORMANAGER_H

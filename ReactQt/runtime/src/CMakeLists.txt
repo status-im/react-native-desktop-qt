@@ -51,13 +51,8 @@ set(
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp
-  ubuntucomponentsloader.cpp
-  ubuntucomponentmodule.cpp
-  ubuntuscrollviewmanager.cpp
-  ubuntunavigatormanager.cpp
-  ubuntupagemanager.cpp
-  ubuntutextfieldmanager.cpp
-  ubuntudatepickermanager.cpp
+  reactscrollviewmanager.cpp
+  reactnavigatormanager.cpp
   ../../../React/Layout/Layout.c
 )
 
