@@ -140,11 +140,11 @@ QQuickItem* ReactScrollViewManager::view(const QVariantMap& properties) const
   QQmlComponent component(m_bridge->qmlEngine());
   component.setData(component_qml, QUrl());
   if (!component.isReady())
-    qCritical() << "Component for UbuntuScrollView not ready";
+    qCritical() << "Component for ReactScrollView not ready";
 
   QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
   if (item == nullptr) {
-    qCritical() << "Unable to create component for UbuntuScrollViewManager";
+    qCritical() << "Unable to create component for ReactScrollViewManager";
     return nullptr;
   }
 

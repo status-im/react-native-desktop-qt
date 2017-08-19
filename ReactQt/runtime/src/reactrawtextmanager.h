@@ -50,4 +50,4 @@ protected:
   ReactBridge* m_bridge;
 };
 
-#endif // UBUNTURAWTEXTMANAGER_H
+#endif // REACTRAWTEXTMANAGER_H
