@@ -11,46 +11,54 @@
  *
  */
 
-#ifndef UBUNTUDATEPICKERMANAGER_H
-#define UBUNTUDATEPICKERMANAGER_H
-
-#include <QString>
-#include <QMap>
+#ifndef REACTSCROLLVIEWMANAGER_H
+#define REACTSCROLLVIEWMANAGER_H
 
 #include "reactviewmanager.h"
 
+// #define QT_STATICPLUGIN
 
-class QQuickItem;
-
-class UbuntuDatePickerManager : public ReactViewManager
+class ReactScrollViewManager : public ReactViewManager
 {
   Q_OBJECT
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
+  Q_INVOKABLE void scrollTo(int reactTag,
+                            double offsetX,
+                            double offsetY,
+                            bool animated);
+
 public:
-  UbuntuDatePickerManager(QObject* parent = 0);
-  ~UbuntuDatePickerManager();
+  ReactScrollViewManager(QObject* parent = 0);
+  ~ReactScrollViewManager();
 
   void setBridge(ReactBridge* bridge) override;
 
   ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object);
+  ReactPropertyHandler* propertyHandler(QObject* object) override;
 
   QString moduleName() override;
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
-  QStringList customBubblingEventTypes() override;
+  QStringList customDirectEventTypes() override;
+
+  void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
 private Q_SLOTS:
-  void onDateChanged();
+  void scrollBeginDrag();
+  void scrollEndDrag();
+  void scroll();
+
+  void momentumScrollBegin();
+  void momentumScrollEnd();
 
 private:
+  QVariantMap buildEventData(QQuickItem* item) const;
   void configureView(QQuickItem* view) const;
-  mutable int m_id;
 };
 
-#endif // UBUNTUDATEPICKERMANAGER_H
+#endif // REACTSCROLLVIEWMANAGER_H

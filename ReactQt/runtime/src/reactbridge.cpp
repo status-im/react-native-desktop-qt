@@ -45,13 +45,9 @@
 #include "reactimageloader.h"
 #include "reactredboxitem.h"
 #include "reactexceptionsmanager.h"
+#include "reactscrollviewmanager.h"
+#include "reactnavigatormanager.h"
 
-#include "ubuntuscrollviewmanager.h"
-#include "ubuntunavigatormanager.h"
-#include "ubuntupagemanager.h"
-#include "ubuntutextfieldmanager.h"
-#include "ubuntudatepickermanager.h"
-#include "ubuntucomponentsloader.h"
 
 
 class ReactBridgePrivate
@@ -86,44 +82,9 @@ public:
       new ReactTextManager,
       new ReactImageManager,
       new ReactExceptionsManager,
+      new ReactScrollViewManager,
+      new ReactNavigatorManager,
     };
-  }
-
-  QObjectList pluginModules() {
-    QObjectList modules;
-    UbuntuComponentsLoader loader;
-    modules << loader.availableModules();
-    // for (QObject* o : QPluginLoader::staticInstances()) {
-    //   ReactModuleLoader* ml = qobject_cast<ReactModuleLoader*>(o);
-    //   if (o == nullptr)
-    //     continue;
-
-    //   modules << ml->availableModules();
-    // }
-    modules << new UbuntuScrollViewManager; //XXX:
-    modules << new UbuntuNavigatorManager;
-    modules << new UbuntuPageManager;
-    modules << new UbuntuTextFieldManager;
-    modules << new UbuntuDatePickerManager;
-
-    // Look for all modules in pluginsPath
-    QDir pluginsDir(pluginsPath);
-    for (auto& pluginPath : pluginsDir.entryList(QStringList{"*.so"})) {
-      QPluginLoader pl(pluginsDir.absoluteFilePath(pluginPath));
-      QObject* instance = pl.instance();
-      if (instance == nullptr) {
-        qWarning() << "Found non-plugin library in plugin path" << pluginPath << pl.errorString();
-        continue;
-      }
-      auto ml = qobject_cast<ReactModuleLoader*>(instance);
-      if (ml == nullptr) {
-        qWarning() << "Cound not find ReactModuleLoader interface";
-        continue;
-      }
-      modules << ml->availableModules();
-    }
-
-    return modules;
   }
 };
 
@@ -371,7 +332,6 @@ void ReactBridge::initModules()
 
   QObjectList modules;
   modules << d->internalModules();
-  modules << d->pluginModules();
 
   // Special cases // TODO:
   d->sourceCode = new ReactSourceCode;
