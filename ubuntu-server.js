@@ -65,36 +65,37 @@ function rnUbuntuServer(readable, writable) {
     buffer = Buffer.concat([buffer, chunk]);
     DEBUG > 2 && console.error("-- buffer length(concat): " + buffer.length)
 
-    if (state === 'start') {
-      if (buffer.length < 4)
-        return;
-      length = buffer.readUInt32LE(0);
-      DEBUG > 2 && console.error("-- New Packet: length=" + length);
+    while(true) {
+      if (state === 'start') {
+        if (buffer.length < 4)
+          return;
+        length = buffer.readUInt32LE(0);
+        DEBUG > 2 && console.error("-- New Packet: length=" + length);
 
-      if (buffer.length >= length + 4) {
-        var result = internalEval(buffer.toString('utf8', 4, length + 4));
-        var tmpBuffer = new Buffer(buffer.length - 4 - length);
-        buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
-        buffer = tmpBuffer;
-        sendResponse(result);
-      } else {
-        state = 'script';
-      }
-      return;
-    }
-
-    if (state === 'script') {
-      DEBUG > 2 && console.error("-- Packet length: " + length);
-      if (buffer.length >= length + 4) {
-        var result = internalEval(buffer.toString('utf8', 4, length + 4));
-        var tmpBuffer = new Buffer(buffer.length - 4 - length);
-        buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
-        buffer = tmpBuffer;
-        state = 'start';
-        sendResponse(result);
+        if (buffer.length >= length + 4) {
+          var result = internalEval(buffer.toString('utf8', 4, length + 4));
+          var tmpBuffer = new Buffer(buffer.length - 4 - length);
+          buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
+          buffer = tmpBuffer;
+          sendResponse(result);
+        } else {
+          state = 'script';
+        }
       }
 
-      return;
+      if (state === 'script') {
+        DEBUG > 2 && console.error("-- Packet length: " + length);
+        if (buffer.length >= length + 4) {
+          var result = internalEval(buffer.toString('utf8', 4, length + 4));
+          var tmpBuffer = new Buffer(buffer.length - 4 - length);
+          buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
+          buffer = tmpBuffer;
+          state = 'start';
+          sendResponse(result);
+        } else {
+          return;
+        }
+      }
     }
   });
 
