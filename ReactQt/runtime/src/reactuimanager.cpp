@@ -31,6 +31,7 @@
 #include "reactattachedproperties.h"
 #include "reactviewmanager.h"
 #include "reactuimanager.h"
+#include "reactitem.h"
 
 
 int ReactUIManager::m_nextRootTag = 1;
@@ -190,7 +191,7 @@ void ReactUIManager::manageChildren
         vm->addChildItem(container, child, i);
       } else {
         child->setParentItem(container);
-        child->setProperty("index", i);
+        child->setProperty(ReactItem::layout_index_property, i);
       }
 
       // Add to layout
@@ -218,7 +219,7 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
   QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
   Q_ASSERT(parent != nullptr);
 
-  int itemIndex = item->property("index").toUInt();
+  int itemIndex = item->property(ReactItem::layout_index_property).toUInt();
 
   manageChildren(ReactAttachedProperties::get(parent)->tag(),
                   QList<int>(),
