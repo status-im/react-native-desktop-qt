@@ -44,10 +44,6 @@ void TestIntegration::cleanupTestCase()
 
 void TestIntegration::testTestModuleMarkTestCompleted()
 {
-  QTimer timeoutTimer;
-  timeoutTimer.setSingleShot(true);
-  timeoutTimer.setInterval(30000);
-
   ReactTestModule* testModule = bridge()->testModule();
   QVERIFY(testModule);
   QSignalSpy spy(testModule, &ReactTestModule::testCompleted);
