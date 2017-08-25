@@ -118,8 +118,8 @@ void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* ch
   QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
   Q_ASSERT(contentItem != nullptr);
 
-  child->setParentItem(contentItem);
-  child->setZ(position);
+  child->setParentItem(contentItem);  
+  child->setProperty("index", position);
 }
 
 namespace {

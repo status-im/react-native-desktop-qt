@@ -190,7 +190,7 @@ void ReactUIManager::manageChildren
         vm->addChildItem(container, child, i);
       } else {
         child->setParentItem(container);
-        child->setZ(i);
+        child->setProperty("index", i);
       }
 
       // Add to layout
@@ -218,7 +218,7 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
   QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
   Q_ASSERT(parent != nullptr);
 
-  int itemIndex = item->z();
+  int itemIndex = item->property("index").toUInt();
 
   manageChildren(ReactAttachedProperties::get(parent)->tag(),
                   QList<int>(),
