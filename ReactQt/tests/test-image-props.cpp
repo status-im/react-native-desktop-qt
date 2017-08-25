@@ -31,7 +31,7 @@ private slots:
 };
 
 
-QQuickItem*TestImageProps::qmlImage()
+QQuickItem* TestImageProps::qmlImage()
 {
   //Even when in JS we have only one <Image> component returned in render(),
   //it is wrapped in <View> component implicitly, so we have hierarchy in QML:
@@ -53,6 +53,7 @@ QQuickItem*TestImageProps::qmlImage()
   return image;
 }
 
+
 void TestImageProps::initTestCase()
 {
   ReactTestCase::initTestCase();
@@ -65,6 +66,7 @@ void TestImageProps::cleanupTestCase()
 {
   ReactTestCase::cleanupTestCase();
 }
+
 
 void TestImageProps::checkTestIDProp()
 {
