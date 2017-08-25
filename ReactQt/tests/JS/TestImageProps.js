@@ -15,6 +15,12 @@ export default class ImageReactNative extends Component {
   render() {
     return (
       <Image
+        // onError={()=>{}}
+        // onLayout={()=>{}}
+        // onLoad={()=>{}}
+        // onLoadEnd={()=>{}}
+        // onLoadStart={()=>{}}
+        // resizeMode={Image.resizeMode.repeat}
         borderTopLeftRadius={20}
         source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
         style={{width: 100, height: 100}}
@@ -43,4 +49,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('ImageApp', () => ImageReactNative);
+AppRegistry.registerComponent('TestImageProps', () => ImageReactNative);

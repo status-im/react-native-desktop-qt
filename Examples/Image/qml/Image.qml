@@ -5,7 +5,6 @@ import React 0.1 as React
 Rectangle {
   id: root
   width: 640; height: 480;
-  color: "red"
 
   React.RootView {
     anchors.fill: parent

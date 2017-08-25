@@ -39,26 +39,20 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
   // qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
   buildPropertyMap();
 
-  /*
-  qDebug() << "Available properties";
-  for (auto p : m_coreProperties) {
-    qDebug() << p.name();
-  }
 
-  for (auto p : m_extraProperties) {
-    qDebug() << p.name();
-  }
-  */
 
   for (const QString& key : properties.keys()) {
+    QVariant propertyValue = properties.value(key);
     QMap<QString, QMetaProperty>::iterator it = m_extraProperties.find(key);
     // Extras get first shot
     if (it != m_extraProperties.end()) {
-      it.value().write(this, reactCoerceValue(properties.value(key), it.value().userType()));
+      QMetaProperty property = it.value();
+      setValueToObjectProperty(this, property, propertyValue);
     } else if (m_exposeQmlProperties) {
       it = m_coreProperties.find(key);
       if (it != m_coreProperties.end()) {
-        it.value().write(m_object, reactCoerceValue(properties.value(key), it.value().userType()));
+        QMetaProperty property = it.value();
+        setValueToObjectProperty(m_object, property, propertyValue);
       }
     }
   }
@@ -94,4 +88,9 @@ void ReactPropertyHandler::buildPropertyMap()
   }
   }
   m_cached = true;
+}
+
+void ReactPropertyHandler::setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value)
+{
+  property.write(object, reactCoerceValue(value, property.userType()));
 }
