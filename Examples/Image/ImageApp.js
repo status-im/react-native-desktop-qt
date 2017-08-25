@@ -43,5 +43,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('ImageApp', () => ImageReactNative);
-module.exports = ImageReactNative;
+AppRegistry.registerComponent('ImageApp', () => ImageReactNative)
