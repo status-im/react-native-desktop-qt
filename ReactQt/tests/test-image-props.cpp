@@ -15,6 +15,8 @@
 #include "reacttestcase.h"
 #include "reactview.h"
 #include "reactbridge.h"
+#include "reactimagemanager.h"
+#include "reactpropertyhandler.h"
 
 class TestImageProps : public ReactTestCase {
   Q_OBJECT
@@ -28,6 +30,9 @@ private slots:
   void cleanupTestCase();
 
   void checkTestIDProp();
+
+private:
+  ReactImageManager m_ImageManager;
 };
 
 
@@ -70,6 +75,7 @@ void TestImageProps::cleanupTestCase()
 
 void TestImageProps::checkTestIDProp()
 {
+  //m_ImageManager.propertyHandler(qmlImage())->
   QString testID = qmlImage()->property("testID").toString();
   QCOMPARE(testID, QString("testImage"));
 }

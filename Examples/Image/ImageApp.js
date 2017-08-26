@@ -16,9 +16,14 @@ export default class ImageReactNative extends Component {
     return (
       <Image
         borderTopLeftRadius={20}
-        source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
+        source={{uri: 'https://facebook.github.io/react-native/img/favicon.pngz', scale: 2}}
         style={{width: 100, height: 100}}
         testID={'testImage'}
+        onLoadStart={() => console.log("!!! Image.onLoadStart()")}
+        onLoadEnd={() => console.log("!!! Image.onLoadEnd()")}
+        onLoad={() => console.log("!!! Image.onLoad()")}
+        onError={() => console.log("!!! Image.onError()")}
+
         />
     );
   }
