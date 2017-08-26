@@ -419,7 +419,7 @@ void ReactUIManager::dispatchViewManagerCommand(
   Q_ASSERT(mm != nullptr);
   QVariantList args = QVariantList{reactTag};
   args.append(commandArgs);
-  mm->invokeWithBridge(m_bridge, args);
+  mm->invoke(args);
 }
 
 void ReactUIManager::takeSnapshot(

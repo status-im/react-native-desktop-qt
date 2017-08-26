@@ -42,6 +42,7 @@ var Image = React.createClass({
     onError: PropTypes.func,
     onLoad: PropTypes.func,
     onLoadEnd: PropTypes.func,
+    testID: PropTypes.string,
   },
 
   statics: {

@@ -57,6 +57,7 @@ class ImagePropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(bool onError READ onError WRITE setOnError)
   Q_PROPERTY(bool onLoad READ onLoad WRITE setOnLoad)
   Q_PROPERTY(bool onLoadEnd READ onLoadEnd WRITE setOnLoadEnd)
+  Q_PROPERTY(QString testID READ testID WRITE setTestID)
 
 public:
   enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
@@ -94,6 +95,8 @@ public:
   void setOnLoad(bool onLoad);
   bool onLoadEnd() const;
   void setOnLoadEnd(bool onLoadEnd);
+  QString testID() const;
+  void setTestID(const QString& testID);
 private:
   ReactBridge* m_bridge;
   QMap<ReactImageLoader::Event, bool> m_events;
@@ -274,6 +277,15 @@ void ImagePropertyHandler::setOnLoadEnd(bool onLoadEnd)
   m_events[ReactImageLoader::Event_LoadEnd] = onLoadEnd;
 }
 
+QString ImagePropertyHandler::testID() const
+{
+  return m_object->property("testID").toString();
+}
+
+void ImagePropertyHandler::setTestID(const QString& testID)
+{
+  m_object->setProperty("testID", testID);
+}
 
 ReactImageManager::ReactImageManager(QObject* parent)
   : ReactViewManager(parent)
@@ -335,6 +347,9 @@ React.Item {
   property alias source: image%1.source
   property alias resizeMode: image%1.fillMode
   property alias tintColor: colorOverlay%1.color
+  property string testID
+  objectName: testID
+
   onTintColorChanged: {
     image%1.visible = false
     colorOverlay%1.visible = true

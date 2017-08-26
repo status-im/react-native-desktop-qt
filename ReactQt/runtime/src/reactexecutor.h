@@ -39,6 +39,7 @@ public:
                             ) = 0;
 
 Q_SIGNALS:
+  //TODO: KOZIEIEV: remove from ReactExecutor. Maybe in Bridge. Executor shouldn't know about app-related things.
   void applicationScriptDone();
 };
 

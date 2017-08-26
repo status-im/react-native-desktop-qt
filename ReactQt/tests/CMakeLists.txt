@@ -15,10 +15,25 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 find_package(Qt5Test REQUIRED)
 find_package(Qt5Quick REQUIRED)
 
-add_executable(test-integration test-integration.cpp resources.qrc)
-add_test(test-integration test-integration)
+set(
+  REACT_TESTCASE_SRC
+  reacttestcase.cpp
+)
 
-target_link_libraries(test-integration Qt5::Test Qt5::Quick react-native)
+set(
+  REACT_TESTCASE_LIBRARIES
+  Qt5::Test Qt5::Quick react-native
+)
+
+
+add_executable(test-integration test-integration.cpp resources.qrc ${REACT_TESTCASE_SRC})
+add_executable(test-image-props test-image-props.cpp resources.qrc ${REACT_TESTCASE_SRC})
+
+add_test(test-integration test-integration)
+add_test(test-image-props test-image-props)
+
+target_link_libraries(test-integration ${REACT_TESTCASE_LIBRARIES})
+target_link_libraries(test-image-props ${REACT_TESTCASE_LIBRARIES})
 
 set_target_properties(
   test-integration

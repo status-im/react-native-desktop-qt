@@ -42,6 +42,7 @@ protected:
 
 private:
   void buildPropertyMap();
+  void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
 };
 
 #endif // REACTPROPERTYHANDLER_H

@@ -54,6 +54,7 @@ class ReactBridgePrivate
 {
 public:
   bool ready = false;
+  bool jsAppStarted = false;
   QString executorName = "ReactNetExecutor";
   ReactExecutor* executor = nullptr;
   QQmlEngine* qmlEngine = nullptr;
@@ -172,6 +173,16 @@ void ReactBridge::executeSourceCode(const QByteArray& sourceCode)
   Q_UNUSED(sourceCode);
 }
 
+void ReactBridge::enqueueRunAppCall(const QVariantList& args)
+{
+  d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
+                                    QVariantList{"AppRegistry", "runApplication", args},
+                                    [=](const QJsonDocument& doc) {
+                                      processResult(doc);
+                                      setJsAppStarted(true);
+                                    });
+}
+
 bool ReactBridge::ready() const
 {
   return d_func()->ready;
@@ -185,6 +196,21 @@ void ReactBridge::setReady(bool ready)
 
   d->ready = ready;
   emit readyChanged();
+}
+
+bool ReactBridge::jsAppStarted() const
+{
+  return d_func()->jsAppStarted;
+}
+
+void ReactBridge::setJsAppStarted(bool started)
+{
+  Q_D(ReactBridge);
+  if (d->jsAppStarted == started)
+    return;
+
+  d->jsAppStarted = started;
+  emit jsAppStartedChanged();
 }
 
 QQuickItem* ReactBridge::visualParent() const
@@ -410,20 +436,27 @@ void ReactBridge::processResult(const QJsonDocument& doc)
   // XXX: this should all really be wrapped up in a Module class
   // including invocations etc
   for (int i = 0; i < moduleIDs.size(); ++i) {
-    ReactModuleData* moduleData = d->modules[moduleIDs[i].toInt()];
-    if (moduleData == nullptr) {
-      qCritical() << __PRETTY_FUNCTION__ << "Could not find referenced module";
-      continue;
-    }
-
-    ReactModuleMethod* method = moduleData->method(methodIDs[i].toInt());
-    if (method == nullptr) {
-      qCritical() << __PRETTY_FUNCTION__ << "Request for unsupported method";
-      continue;
-    }
-
-    method->invokeWithBridge(this, paramArrays[i].toList());
+    invokeModuleMethod(moduleIDs[i].toInt(), methodIDs[i].toInt(), paramArrays[i].toList());
   }
+}
+
+void ReactBridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args)
+{
+  Q_D(ReactBridge);
+
+  ReactModuleData* moduleData = d->modules[moduleId];
+  if (moduleData == nullptr) {
+    qCritical() << __PRETTY_FUNCTION__ << "Could not find referenced module";
+    return;
+  }
+
+  ReactModuleMethod* method = moduleData->method(methodId);
+  if (method == nullptr) {
+    qCritical() << __PRETTY_FUNCTION__ << "Request for unsupported method";
+    return;
+  }
+
+  method->invoke(args);
 }
 
 void ReactBridge::applicationScriptDone()

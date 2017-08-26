@@ -34,7 +34,7 @@ public:
   QString name() const;
   QString type() const;
 
-  void invokeWithBridge(ReactBridge* bridge, const QVariantList& args);
+  void invoke(const QVariantList& args);
 
 private:
   ObjectFunction m_objectFunction;

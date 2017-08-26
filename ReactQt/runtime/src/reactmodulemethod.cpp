@@ -44,7 +44,7 @@ QString ReactModuleMethod::type() const
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())
 
 // TODO: don't use direct connection
-void ReactModuleMethod::invokeWithBridge(ReactBridge* bridge, const QVariantList& args)
+void ReactModuleMethod::invoke(const QVariantList& args)
 {
   QVariantList argsm = args;
   QObject* target = m_objectFunction(argsm);

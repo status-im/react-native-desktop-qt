@@ -246,7 +246,7 @@ void ReactView::bridgeReady()
     }
   };
 
-  d->bridge->enqueueJSCall("AppRegistry", "runApplication", args);
+  d->bridge->enqueueRunAppCall(args);
 
   if (d->liveReload) {
     d->monitorChangeUrl();
