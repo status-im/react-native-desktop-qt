@@ -192,6 +192,7 @@ public:
 
   void insertChild(int position, QQuickItem* child);
   QList<QQuickItem*> removeChildren(const QList<int>& indexes);
+  int getChildIndex(QQuickItem*);
 
   void applyLayoutProperties(const QVariantMap& properties);
 

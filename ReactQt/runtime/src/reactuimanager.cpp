@@ -31,6 +31,7 @@
 #include "reactattachedproperties.h"
 #include "reactviewmanager.h"
 #include "reactuimanager.h"
+#include "reactitem.h"
 
 
 int ReactUIManager::m_nextRootTag = 1;
@@ -128,8 +129,8 @@ void ReactUIManager::setChildren
 {
   //TODO: This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
   QList<int> indices;
-  foreach(int i, childrenTags) {
-    indices.append(0); //0 is a default z-order in qml
+  for(int i = 0; i < childrenTags.size(); ++i) {
+    indices.append(i);
   }
   manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices,  QList<int>());
 }
@@ -190,7 +191,6 @@ void ReactUIManager::manageChildren
         vm->addChildItem(container, child, i);
       } else {
         child->setParentItem(container);
-        child->setZ(i);
       }
 
       // Add to layout
@@ -218,7 +218,7 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
   QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
   Q_ASSERT(parent != nullptr);
 
-  int itemIndex = item->z();
+  int itemIndex = ReactFlexLayout::get(parent)->getChildIndex(item);
 
   manageChildren(ReactAttachedProperties::get(parent)->tag(),
                   QList<int>(),
