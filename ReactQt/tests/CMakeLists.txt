@@ -15,6 +15,10 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 find_package(Qt5Test REQUIRED)
 find_package(Qt5Quick REQUIRED)
 
+set(REACT_TESTCASE_JS
+  JS/TestImageProps.js
+)
+
 set(
   REACT_TESTCASE_SRC
   reacttestcase.cpp
@@ -27,7 +31,7 @@ set(
 
 
 add_executable(test-integration test-integration.cpp resources.qrc ${REACT_TESTCASE_SRC})
-add_executable(test-image-props test-image-props.cpp resources.qrc ${REACT_TESTCASE_SRC})
+add_executable(test-image-props test-image-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 
 add_test(test-integration test-integration)
 add_test(test-image-props test-image-props)

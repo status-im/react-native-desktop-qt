@@ -17,6 +17,7 @@
 #include "reactbridge.h"
 #include "reactimagemanager.h"
 #include "reactpropertyhandler.h"
+#include "reactattachedproperties.h"
 
 class TestImageProps : public ReactTestCase {
   Q_OBJECT
@@ -30,8 +31,14 @@ private slots:
   void cleanupTestCase();
 
   void checkTestIDProp();
+  void checkOnLoadStart();
+  void checkOnLoadEnd();
+  void checkOnLoad();
+  void checkOnError();
+  void checkOnProgress();
 
 private:
+  QVariant valueOfProperty(const QString& propertyName);
   ReactImageManager m_ImageManager;
 };
 
@@ -72,13 +79,48 @@ void TestImageProps::cleanupTestCase()
   ReactTestCase::cleanupTestCase();
 }
 
+QVariant TestImageProps::valueOfProperty(const QString& propertyName)
+{
+  auto attachedProperties = ReactAttachedProperties::get(qmlImage());
+  auto imagePropertyHandler = attachedProperties->propertyHandler();
+  return imagePropertyHandler->value(propertyName);
+}
+
 
 void TestImageProps::checkTestIDProp()
 {
-  //m_ImageManager.propertyHandler(qmlImage())->
-  QString testID = qmlImage()->property("testID").toString();
-  QCOMPARE(testID, QString("testImage"));
+  QCOMPARE(valueOfProperty("testID").toString(), QString("testImage"));
 }
+
+void TestImageProps::checkOnLoadStart()
+{
+  QCOMPARE(valueOfProperty("onLoadStart").toBool(), true);
+}
+
+
+void TestImageProps::checkOnLoadEnd()
+{
+  QCOMPARE(valueOfProperty("onLoadEnd").toBool(), true);
+}
+
+
+void TestImageProps::checkOnLoad()
+{
+  QCOMPARE(valueOfProperty("onLoad").toBool(), true);
+}
+
+
+void TestImageProps::checkOnError()
+{
+  QCOMPARE(valueOfProperty("onError").toBool(), true);
+}
+
+
+void TestImageProps::checkOnProgress()
+{
+  QCOMPARE(valueOfProperty("onProgress").toBool(), true);
+}
+
 
 QTEST_MAIN(TestImageProps)
 #include "test-image-props.moc"

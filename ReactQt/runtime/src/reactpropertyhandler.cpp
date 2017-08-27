@@ -22,7 +22,7 @@ ReactPropertyHandler::ReactPropertyHandler(QObject* object, bool exposeQmlProper
   , m_exposeQmlProperties(exposeQmlProperties)
   , m_object(object)
 {
-  buildPropertyMap();
+
 }
 
 ReactPropertyHandler::~ReactPropertyHandler()
@@ -31,11 +31,14 @@ ReactPropertyHandler::~ReactPropertyHandler()
 
 QList<QMetaProperty> ReactPropertyHandler::availableProperties()
 {
+  buildPropertyMap();
+
   return m_coreProperties.values() + m_extraProperties.values();
 }
 
 void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
 {
+  buildPropertyMap();
   // qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
 
   for (const QString& key : properties.keys()) {
@@ -56,18 +59,22 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
 }
 
 
-//QVariant ReactPropertyHandler::value(const QString& propertyName) const
-//{
-//  if(m_extraProperties.contains(propertyName))
-//  {
-//    return m_extraProperties[propertyName].read(this);
-//  }
-//  else if(m_exposeQmlProperties && m_coreProperties.contains(propertyName))
-//  {
-//    return m_coreProperties[propertyName].read(m_object);
-//  }
-//  return QVariant();
-//}
+QVariant ReactPropertyHandler::value(const QString& propertyName)
+{
+  buildPropertyMap();
+
+  QVariant value;
+
+  if(m_extraProperties.contains(propertyName))
+  {
+    value = m_extraProperties[propertyName].read(this);
+  }
+  else if(m_exposeQmlProperties && m_coreProperties.contains(propertyName))
+  {
+    value = m_coreProperties[propertyName].read(m_object);
+  }
+  return value;
+}
 
 
 void ReactPropertyHandler::buildPropertyMap()
