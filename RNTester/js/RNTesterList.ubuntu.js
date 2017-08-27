@@ -20,7 +20,6 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'ImageExample',
     module: require('./ImageExample'),
-    supportsTVOS: true,
   },
 ];
 

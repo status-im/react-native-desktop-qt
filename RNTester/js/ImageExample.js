@@ -227,486 +227,486 @@ exports.title = '<Image>';
 exports.description = 'Base component for displaying different types of images.';
 
 exports.examples = [
-  {
-    title: 'Plain Network Image',
-    description: 'If the `source` prop `uri` property is prefixed with ' +
-    '"http", then it will be downloaded from the network.',
-    render: function() {
-      return (
-        <Image
-          source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
-          style={styles.base}
-        />
-      );
-    },
-  },
-  {
-    title: 'Plain Static Image',
-    description: 'Static assets should be placed in the source code tree, and ' +
-    'required in the same way as JavaScript modules.',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image source={require('./uie_thumb_normal.png')} style={styles.icon} />
-          <Image source={require('./uie_thumb_selected.png')} style={styles.icon} />
-          <Image source={require('./uie_comment_normal.png')} style={styles.icon} />
-          <Image source={require('./uie_comment_highlighted.png')} style={styles.icon} />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Image Loading Events',
-    render: function() {
-      return (
-        <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
-          prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
-      );
-    },
-  },
-  {
-    title: 'Error Handler',
-    render: function() {
-      return (
-        <NetworkImageExample source={{uri: 'https://TYPO_ERROR_facebook.github.io/react/img/logo_og.png'}} />
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Image Download Progress',
-    render: function() {
-      return (
-        <NetworkImageExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1'}}/>
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'defaultSource',
-    description: 'Show a placeholder image when a network image is loading',
-    render: function() {
-      return (
-        <Image
-          defaultSource={require('./bunny.png')}
-          source={{uri: 'https://facebook.github.io/origami/public/images/birds.jpg'}}
-          style={styles.base}
-        />
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Cache Policy',
-    description: 'First image has never been loaded before and is instructed not to load unless in cache.' +
-    'Placeholder image from above will stay. Second image is the same but forced to load regardless of' +
-    ' local cache state.',
-    render: function () {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            defaultSource={require('./bunny.png')}
-            source={{
-              uri: smallImage.uri + '?cacheBust=notinCache' + Date.now(),
-              cache: 'only-if-cached'
-            }}
-            style={styles.base}
-          />
-          <Image
-            defaultSource={require('./bunny.png')}
-            source={{
-              uri: smallImage.uri + '?cacheBust=notinCache' + Date.now(),
-              cache: 'reload'
-            }}
-            style={styles.base}
-          />
-        </View>
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Border Color',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            source={smallImage}
-            style={[
-              styles.base,
-              styles.background,
-              {borderWidth: 3, borderColor: '#f099f0'}
-            ]}
-          />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Border Width',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            source={smallImage}
-            style={[
-              styles.base,
-              styles.background,
-              {borderWidth: 5, borderColor: '#f099f0'}
-            ]}
-          />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Border Radius',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            style={[styles.base, {borderRadius: 5}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {borderRadius: 19}]}
-            source={fullImage}
-          />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Background Color',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image source={smallImage} style={styles.base} />
-          <Image
-            style={[
-              styles.base,
-              styles.leftMargin,
-              {backgroundColor: 'rgba(0, 0, 100, 0.25)'}
-            ]}
-            source={smallImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {backgroundColor: 'red'}]}
-            source={smallImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {backgroundColor: 'black'}]}
-            source={smallImage}
-          />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Opacity',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            style={[styles.base, {opacity: 1}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {opacity: 0.8}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {opacity: 0.6}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {opacity: 0.4}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {opacity: 0.2}]}
-            source={fullImage}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin, {opacity: 0}]}
-            source={fullImage}
-          />
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Nesting',
-    render: function() {
-      return (
-        <ImageBackground
-          style={{width: 60, height: 60, backgroundColor: 'transparent'}}
-          source={fullImage}>
-          <Text style={styles.nestedText}>
-            React
-          </Text>
-        </ImageBackground>
-      );
-    },
-  },
-  {
-    title: 'Tint Color',
-    description: 'The `tintColor` style prop changes all the non-alpha ' +
-      'pixels to the tint color.',
-    render: function() {
-      return (
-        <View>
-          <View style={styles.horizontal}>
-            <Image
-              source={require('./uie_thumb_normal.png')}
-              style={[styles.icon, {borderRadius: 5, tintColor: '#5ac8fa' }]}
-            />
-            <Image
-              source={require('./uie_thumb_normal.png')}
-              style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#4cd964' }]}
-            />
-            <Image
-              source={require('./uie_thumb_normal.png')}
-              style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#ff2d55' }]}
-            />
-            <Image
-              source={require('./uie_thumb_normal.png')}
-              style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#8e8e93' }]}
-            />
-          </View>
-          <Text style={styles.sectionText}>
-            It also works with downloaded images:
-          </Text>
-          <View style={styles.horizontal}>
-            <Image
-              source={smallImage}
-              style={[styles.base, {borderRadius: 5, tintColor: '#5ac8fa' }]}
-            />
-            <Image
-              source={smallImage}
-              style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#4cd964' }]}
-            />
-            <Image
-              source={smallImage}
-              style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#ff2d55' }]}
-            />
-            <Image
-              source={smallImage}
-              style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#8e8e93' }]}
-            />
-          </View>
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Resize Mode',
-    description: 'The `resizeMode` style prop controls how the image is ' +
-      'rendered within the frame.',
-    render: function() {
-      return (
-        <View>
-          {[smallImage, fullImage].map((image, index) => {
-            return (
-            <View key={index}>
-              <View style={styles.horizontal}>
-                <View>
-                  <Text style={[styles.resizeModeText]}>
-                    Contain
-                  </Text>
-                  <Image
-                    style={styles.resizeMode}
-                    resizeMode={Image.resizeMode.contain}
-                    source={image}
-                  />
-                </View>
-                <View style={styles.leftMargin}>
-                  <Text style={[styles.resizeModeText]}>
-                    Cover
-                  </Text>
-                  <Image
-                    style={styles.resizeMode}
-                    resizeMode={Image.resizeMode.cover}
-                    source={image}
-                  />
-                </View>
-              </View>
-              <View style={styles.horizontal}>
-                <View>
-                  <Text style={[styles.resizeModeText]}>
-                    Stretch
-                  </Text>
-                  <Image
-                    style={styles.resizeMode}
-                    resizeMode={Image.resizeMode.stretch}
-                    source={image}
-                  />
-                </View>
-                { Platform.OS === 'ios' ?
-                  <View style={styles.leftMargin}>
-                    <Text style={[styles.resizeModeText]}>
-                      Repeat
-                    </Text>
-                    <Image
-                      style={styles.resizeMode}
-                      resizeMode={Image.resizeMode.repeat}
-                      source={image}
-                    />
-                  </View>
-                : null }
-                { Platform.OS === 'android' ?
-                  <View style={styles.leftMargin}>
-                    <Text style={[styles.resizeModeText]}>
-                      Center
-                    </Text>
-                    <Image
-                      style={styles.resizeMode}
-                      resizeMode={Image.resizeMode.center}
-                      source={image}
-                    />
-                  </View>
-                : null }
-              </View>
-            </View>
-          );
-        })}
-        </View>
-      );
-    },
-  },
-  {
-    title: 'Animated GIF',
-    render: function() {
-      return (
-        <Image
-          style={styles.gif}
-          source={{uri: 'https://38.media.tumblr.com/9e9bd08c6e2d10561dd1fb4197df4c4e/tumblr_mfqekpMktw1rn90umo1_500.gif'}}
-        />
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Base64 image',
-    render: function() {
-      return (
-        <Image
-          style={styles.base64}
-          source={{uri: base64Icon, scale: 3}}
-        />
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Cap Insets',
-    description:
-      'When the image is resized, the corners of the size specified ' +
-      'by capInsets will stay a fixed size, but the center content and ' +
-      'borders of the image will be stretched. This is useful for creating ' +
-      'resizable rounded buttons, shadows, and other resizable assets.',
-    render: function() {
-      return <ImageCapInsetsExample />;
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Image Size',
-    render: function() {
-      return <ImageSizeExample source={fullImage} />;
-    },
-  },
-  {
-    title: 'MultipleSourcesExample',
-    description:
-      'The `source` prop allows passing in an array of uris, so that native to choose which image ' +
-      'to diplay based on the size of the of the target image',
-    render: function() {
-      return <MultipleSourcesExample />;
-    },
-  },
-  {
-    title: 'Legacy local image',
-    description:
-      'Images shipped with the native bundle, but not managed ' +
-      'by the JS packager',
-    render: function() {
-      return (
-        <Image
-          source={{uri: 'legacy_image', width: 120, height: 120}}
-        />
-      );
-    },
-  },
-  {
-    title: 'Bundled images',
-    description:
-      'Images shipped in a separate native bundle',
-    render: function() {
-      return (
-        <View style={{flexDirection: 'row'}}>
-          <Image
-            source={{
-              uri: 'ImageInBundle',
-              bundle: 'RNTesterBundle',
-              width: 100,
-              height: 100,
-            }}
-            style={{borderColor: 'yellow', borderWidth: 4}}
-          />
-          <Image
-            source={{
-              uri: 'ImageInAssetCatalog',
-              bundle: 'RNTesterBundle',
-              width: 100,
-              height: 100,
-            }}
-            style={{marginLeft: 10, borderColor: 'blue', borderWidth: 4}}
-          />
-        </View>
-      );
-    },
-    platform: 'ios',
-  },
-  {
-    title: 'Blur Radius',
-    render: function() {
-      return (
-        <View style={styles.horizontal}>
-          <Image
-            style={[styles.base,]}
-            source={fullImage}
-            blurRadius={0}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin]}
-            source={fullImage}
-            blurRadius={5}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin]}
-            source={fullImage}
-            blurRadius={10}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin]}
-            source={fullImage}
-            blurRadius={15}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin]}
-            source={fullImage}
-            blurRadius={20}
-          />
-          <Image
-            style={[styles.base, styles.leftMargin]}
-            source={fullImage}
-            blurRadius={25}
-          />
-        </View>
-      );
-    },
-  },
+  // {
+  //   title: 'Plain Network Image',
+  //   description: 'If the `source` prop `uri` property is prefixed with ' +
+  //   '"http", then it will be downloaded from the network.',
+  //   render: function() {
+  //     return (
+  //       <Image
+  //         source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
+  //         style={styles.base}
+  //       />
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Plain Static Image',
+  //   description: 'Static assets should be placed in the source code tree, and ' +
+  //   'required in the same way as JavaScript modules.',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image source={require('./uie_thumb_normal.png')} style={styles.icon} />
+  //         <Image source={require('./uie_thumb_selected.png')} style={styles.icon} />
+  //         <Image source={require('./uie_comment_normal.png')} style={styles.icon} />
+  //         <Image source={require('./uie_comment_highlighted.png')} style={styles.icon} />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Image Loading Events',
+  //   render: function() {
+  //     return (
+  //       <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
+  //         prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Error Handler',
+  //   render: function() {
+  //     return (
+  //       <NetworkImageExample source={{uri: 'https://TYPO_ERROR_facebook.github.io/react/img/logo_og.png'}} />
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Image Download Progress',
+  //   render: function() {
+  //     return (
+  //       <NetworkImageExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1'}}/>
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'defaultSource',
+  //   description: 'Show a placeholder image when a network image is loading',
+  //   render: function() {
+  //     return (
+  //       <Image
+  //         defaultSource={require('./bunny.png')}
+  //         source={{uri: 'https://facebook.github.io/origami/public/images/birds.jpg'}}
+  //         style={styles.base}
+  //       />
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Cache Policy',
+  //   description: 'First image has never been loaded before and is instructed not to load unless in cache.' +
+  //   'Placeholder image from above will stay. Second image is the same but forced to load regardless of' +
+  //   ' local cache state.',
+  //   render: function () {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           defaultSource={require('./bunny.png')}
+  //           source={{
+  //             uri: smallImage.uri + '?cacheBust=notinCache' + Date.now(),
+  //             cache: 'only-if-cached'
+  //           }}
+  //           style={styles.base}
+  //         />
+  //         <Image
+  //           defaultSource={require('./bunny.png')}
+  //           source={{
+  //             uri: smallImage.uri + '?cacheBust=notinCache' + Date.now(),
+  //             cache: 'reload'
+  //           }}
+  //           style={styles.base}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Border Color',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           source={smallImage}
+  //           style={[
+  //             styles.base,
+  //             styles.background,
+  //             {borderWidth: 3, borderColor: '#f099f0'}
+  //           ]}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Border Width',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           source={smallImage}
+  //           style={[
+  //             styles.base,
+  //             styles.background,
+  //             {borderWidth: 5, borderColor: '#f099f0'}
+  //           ]}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Border Radius',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           style={[styles.base, {borderRadius: 5}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {borderRadius: 19}]}
+  //           source={fullImage}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Background Color',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image source={smallImage} style={styles.base} />
+  //         <Image
+  //           style={[
+  //             styles.base,
+  //             styles.leftMargin,
+  //             {backgroundColor: 'rgba(0, 0, 100, 0.25)'}
+  //           ]}
+  //           source={smallImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {backgroundColor: 'red'}]}
+  //           source={smallImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {backgroundColor: 'black'}]}
+  //           source={smallImage}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Opacity',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           style={[styles.base, {opacity: 1}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {opacity: 0.8}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {opacity: 0.6}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {opacity: 0.4}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {opacity: 0.2}]}
+  //           source={fullImage}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin, {opacity: 0}]}
+  //           source={fullImage}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Nesting',
+  //   render: function() {
+  //     return (
+  //       <ImageBackground
+  //         style={{width: 60, height: 60, backgroundColor: 'transparent'}}
+  //         source={fullImage}>
+  //         <Text style={styles.nestedText}>
+  //           React
+  //         </Text>
+  //       </ImageBackground>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Tint Color',
+  //   description: 'The `tintColor` style prop changes all the non-alpha ' +
+  //     'pixels to the tint color.',
+  //   render: function() {
+  //     return (
+  //       <View>
+  //         <View style={styles.horizontal}>
+  //           <Image
+  //             source={require('./uie_thumb_normal.png')}
+  //             style={[styles.icon, {borderRadius: 5, tintColor: '#5ac8fa' }]}
+  //           />
+  //           <Image
+  //             source={require('./uie_thumb_normal.png')}
+  //             style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#4cd964' }]}
+  //           />
+  //           <Image
+  //             source={require('./uie_thumb_normal.png')}
+  //             style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#ff2d55' }]}
+  //           />
+  //           <Image
+  //             source={require('./uie_thumb_normal.png')}
+  //             style={[styles.icon, styles.leftMargin, {borderRadius: 5, tintColor: '#8e8e93' }]}
+  //           />
+  //         </View>
+  //         <Text style={styles.sectionText}>
+  //           It also works with downloaded images:
+  //         </Text>
+  //         <View style={styles.horizontal}>
+  //           <Image
+  //             source={smallImage}
+  //             style={[styles.base, {borderRadius: 5, tintColor: '#5ac8fa' }]}
+  //           />
+  //           <Image
+  //             source={smallImage}
+  //             style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#4cd964' }]}
+  //           />
+  //           <Image
+  //             source={smallImage}
+  //             style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#ff2d55' }]}
+  //           />
+  //           <Image
+  //             source={smallImage}
+  //             style={[styles.base, styles.leftMargin, {borderRadius: 5, tintColor: '#8e8e93' }]}
+  //           />
+  //         </View>
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Resize Mode',
+  //   description: 'The `resizeMode` style prop controls how the image is ' +
+  //     'rendered within the frame.',
+  //   render: function() {
+  //     return (
+  //       <View>
+  //         {[smallImage, fullImage].map((image, index) => {
+  //           return (
+  //           <View key={index}>
+  //             <View style={styles.horizontal}>
+  //               <View>
+  //                 <Text style={[styles.resizeModeText]}>
+  //                   Contain
+  //                 </Text>
+  //                 <Image
+  //                   style={styles.resizeMode}
+  //                   resizeMode={Image.resizeMode.contain}
+  //                   source={image}
+  //                 />
+  //               </View>
+  //               <View style={styles.leftMargin}>
+  //                 <Text style={[styles.resizeModeText]}>
+  //                   Cover
+  //                 </Text>
+  //                 <Image
+  //                   style={styles.resizeMode}
+  //                   resizeMode={Image.resizeMode.cover}
+  //                   source={image}
+  //                 />
+  //               </View>
+  //             </View>
+  //             <View style={styles.horizontal}>
+  //               <View>
+  //                 <Text style={[styles.resizeModeText]}>
+  //                   Stretch
+  //                 </Text>
+  //                 <Image
+  //                   style={styles.resizeMode}
+  //                   resizeMode={Image.resizeMode.stretch}
+  //                   source={image}
+  //                 />
+  //               </View>
+  //               { Platform.OS === 'ios' ?
+  //                 <View style={styles.leftMargin}>
+  //                   <Text style={[styles.resizeModeText]}>
+  //                     Repeat
+  //                   </Text>
+  //                   <Image
+  //                     style={styles.resizeMode}
+  //                     resizeMode={Image.resizeMode.repeat}
+  //                     source={image}
+  //                   />
+  //                 </View>
+  //               : null }
+  //               { Platform.OS === 'android' ?
+  //                 <View style={styles.leftMargin}>
+  //                   <Text style={[styles.resizeModeText]}>
+  //                     Center
+  //                   </Text>
+  //                   <Image
+  //                     style={styles.resizeMode}
+  //                     resizeMode={Image.resizeMode.center}
+  //                     source={image}
+  //                   />
+  //                 </View>
+  //               : null }
+  //             </View>
+  //           </View>
+  //         );
+  //       })}
+  //       </View>
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Animated GIF',
+  //   render: function() {
+  //     return (
+  //       <Image
+  //         style={styles.gif}
+  //         source={{uri: 'https://38.media.tumblr.com/9e9bd08c6e2d10561dd1fb4197df4c4e/tumblr_mfqekpMktw1rn90umo1_500.gif'}}
+  //       />
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Base64 image',
+  //   render: function() {
+  //     return (
+  //       <Image
+  //         style={styles.base64}
+  //         source={{uri: base64Icon, scale: 3}}
+  //       />
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Cap Insets',
+  //   description:
+  //     'When the image is resized, the corners of the size specified ' +
+  //     'by capInsets will stay a fixed size, but the center content and ' +
+  //     'borders of the image will be stretched. This is useful for creating ' +
+  //     'resizable rounded buttons, shadows, and other resizable assets.',
+  //   render: function() {
+  //     return <ImageCapInsetsExample />;
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Image Size',
+  //   render: function() {
+  //     return <ImageSizeExample source={fullImage} />;
+  //   },
+  // },
+  // {
+  //   title: 'MultipleSourcesExample',
+  //   description:
+  //     'The `source` prop allows passing in an array of uris, so that native to choose which image ' +
+  //     'to diplay based on the size of the of the target image',
+  //   render: function() {
+  //     return <MultipleSourcesExample />;
+  //   },
+  // },
+  // {
+  //   title: 'Legacy local image',
+  //   description:
+  //     'Images shipped with the native bundle, but not managed ' +
+  //     'by the JS packager',
+  //   render: function() {
+  //     return (
+  //       <Image
+  //         source={{uri: 'legacy_image', width: 120, height: 120}}
+  //       />
+  //     );
+  //   },
+  // },
+  // {
+  //   title: 'Bundled images',
+  //   description:
+  //     'Images shipped in a separate native bundle',
+  //   render: function() {
+  //     return (
+  //       <View style={{flexDirection: 'row'}}>
+  //         <Image
+  //           source={{
+  //             uri: 'ImageInBundle',
+  //             bundle: 'RNTesterBundle',
+  //             width: 100,
+  //             height: 100,
+  //           }}
+  //           style={{borderColor: 'yellow', borderWidth: 4}}
+  //         />
+  //         <Image
+  //           source={{
+  //             uri: 'ImageInAssetCatalog',
+  //             bundle: 'RNTesterBundle',
+  //             width: 100,
+  //             height: 100,
+  //           }}
+  //           style={{marginLeft: 10, borderColor: 'blue', borderWidth: 4}}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  //   platform: 'ios',
+  // },
+  // {
+  //   title: 'Blur Radius',
+  //   render: function() {
+  //     return (
+  //       <View style={styles.horizontal}>
+  //         <Image
+  //           style={[styles.base,]}
+  //           source={fullImage}
+  //           blurRadius={0}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin]}
+  //           source={fullImage}
+  //           blurRadius={5}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin]}
+  //           source={fullImage}
+  //           blurRadius={10}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin]}
+  //           source={fullImage}
+  //           blurRadius={15}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin]}
+  //           source={fullImage}
+  //           blurRadius={20}
+  //         />
+  //         <Image
+  //           style={[styles.base, styles.leftMargin]}
+  //           source={fullImage}
+  //           blurRadius={25}
+  //         />
+  //       </View>
+  //     );
+  //   },
+  // },
 ];
 
 var fullImage = {uri: 'https://facebook.github.io/react/img/logo_og.png'};

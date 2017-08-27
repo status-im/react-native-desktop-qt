@@ -30,7 +30,8 @@ const {
   StyleSheet,
   Text,
   View,
-  Image
+  Image,
+//  Button
 } = ReactNative;
 
 import type { RNTesterExample } from './RNTesterList.ubuntu';
@@ -44,38 +45,20 @@ type Props = {
 const APP_STATE_KEY = 'RNTesterAppState.v2';
 
 const Header = ({ onBack, title }: { onBack?: () => mixed, title: string }) => (
-  <View style={styles.header}>
-    <View style={styles.headerCenter}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-    {onBack && <View style={styles.headerLeft}>
-      <Button title="Back" onPress={onBack} />
-    </View>}
-  </View>
+  // <View style={styles.header}>
+  //   <View style={styles.headerCenter}>
+  //     <Text style={styles.title}>{title}</Text>
+  //   </View>
+  //   // {onBack && <View style={styles.headerLeft}>
+  //   //   <Button title="Back" onPress={onBack} />
+  //   // </View>}
+  // </View>
+  <View/>
 );
-
-// class RNTesterApp extends React.Component {
-//   render() {
-//     return (
-//       <Image
-//         borderTopLeftRadius={20}
-//         source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
-//         style={{width: 100, height: 100}}
-//         testID={'testImage'}
-//         onLoadStart={() => console.log("Image.onLoadStart()")}
-//         onLoadEnd={() => console.log("Image.onLoadEnd()")}
-//         onLoad={() => console.log("Image.onLoad()")}
-//         onError={() => console.log("Image.onError()")}
-//         onProgress={() => console.log("Image.onProgress()")}
-//         />
-//     );
-//   }
-// }
 
 class RNTesterApp extends React.Component {
   props: Props;
   state: RNTesterNavigationState;
-  //state: RNTesterNavigationState{ openExample: 'ImageExample'}
 
   componentWillMount() {
     //BackHandler.addEventListener('hardwareBackPress', this._handleBack);
