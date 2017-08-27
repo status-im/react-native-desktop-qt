@@ -33,8 +33,8 @@ namespace {
 static QMap<ReactImageLoader::Event, QString> eventNames{
   { ReactImageLoader::Event_LoadStart, "onLoadStart" },
   { ReactImageLoader::Event_Progress, "onProgress" },
-  { ReactImageLoader::Event_Error, "onError" },
-  { ReactImageLoader::Event_Load, "onLoad" },
+  { ReactImageLoader::Event_LoadError, "onError" },
+  { ReactImageLoader::Event_LoadSuccess, "onLoad" },
   { ReactImageLoader::Event_LoadEnd, "onLoadEnd" }
 };
 }
@@ -57,6 +57,7 @@ class ImagePropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(bool onError READ onError WRITE setOnError)
   Q_PROPERTY(bool onLoad READ onLoad WRITE setOnLoad)
   Q_PROPERTY(bool onLoadEnd READ onLoadEnd WRITE setOnLoadEnd)
+  Q_PROPERTY(bool onLayout READ onLayout WRITE setOnLayout)
   Q_PROPERTY(QString testID READ testID WRITE setTestID)
 
 public:
@@ -95,11 +96,14 @@ public:
   void setOnLoad(bool onLoad);
   bool onLoadEnd() const;
   void setOnLoadEnd(bool onLoadEnd);
+  bool onLayout() const;
+  void setOnLayout(bool onLayout);
   QString testID() const;
   void setTestID(const QString& testID);
 private:
   ReactBridge* m_bridge;
-  QMap<ReactImageLoader::Event, bool> m_events;
+  QMap<ReactImageLoader::Event, bool> m_onLoadEvents;
+  bool m_onLayout=false;
 };
 
 QColor ImagePropertyHandler::backgroundColor() const
@@ -156,10 +160,10 @@ void ImagePropertyHandler::setSource(const QVariantMap& imageSource)
     source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
 
   m_bridge->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data) {
-      if (event == ReactImageLoader::Event_Load) {
+      if (event == ReactImageLoader::Event_LoadSuccess) {
         m_object->setProperty("source", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
       }
-      if (m_events[event]) {
+      if (m_onLoadEvents[event]) {
         int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(m_object))->tag();
         m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                                 QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
@@ -229,52 +233,65 @@ void ImagePropertyHandler::setBorderColor(const QColor& borderColor)
 
 bool ImagePropertyHandler::onLoadStart() const
 {
-  return m_events[ReactImageLoader::Event_LoadStart];
+  return m_onLoadEvents[ReactImageLoader::Event_LoadStart];
 }
 
 void ImagePropertyHandler::setOnLoadStart(bool onLoadStart)
 {
-  m_events[ReactImageLoader::Event_LoadStart] = onLoadStart;
+  m_onLoadEvents[ReactImageLoader::Event_LoadStart] = onLoadStart;
 }
 
 bool ImagePropertyHandler::onProgress() const
 {
-  return m_events[ReactImageLoader::Event_Progress];
+  return m_onLoadEvents[ReactImageLoader::Event_Progress];
 }
 
 void ImagePropertyHandler::setOnProgress(bool onProgress)
 {
-  m_events[ReactImageLoader::Event_Progress] = onProgress;
+  m_onLoadEvents[ReactImageLoader::Event_Progress] = onProgress;
 }
 
 bool ImagePropertyHandler::onError() const
 {
-  return m_events[ReactImageLoader::Event_Error];
+  return m_onLoadEvents[ReactImageLoader::Event_LoadError];
 }
 
 void ImagePropertyHandler::setOnError(bool onError)
 {
-  m_events[ReactImageLoader::Event_Error] = onError;
+  m_onLoadEvents[ReactImageLoader::Event_LoadError] = onError;
 }
 
 bool ImagePropertyHandler::onLoad() const
 {
-  return m_events[ReactImageLoader::Event_Load];
+  return m_onLoadEvents[ReactImageLoader::Event_LoadSuccess];
 }
 
 void ImagePropertyHandler::setOnLoad(bool onLoad)
 {
-  m_events[ReactImageLoader::Event_Load] = onLoad;
+  m_onLoadEvents[ReactImageLoader::Event_LoadSuccess] = onLoad;
 }
 
 bool ImagePropertyHandler::onLoadEnd() const
 {
-  return m_events[ReactImageLoader::Event_LoadEnd];
+  return m_onLoadEvents[ReactImageLoader::Event_LoadEnd];
 }
 
 void ImagePropertyHandler::setOnLoadEnd(bool onLoadEnd)
 {
-  m_events[ReactImageLoader::Event_LoadEnd] = onLoadEnd;
+  m_onLoadEvents[ReactImageLoader::Event_LoadEnd] = onLoadEnd;
+}
+
+bool ImagePropertyHandler::onLayout() const
+{
+  return m_onLayout;
+}
+
+void ImagePropertyHandler::setOnLayout(bool onLayout)
+{
+  if(onLayout == m_onLayout)
+    return;
+
+  m_onLayout = onLayout;
 }
 
 QString ImagePropertyHandler::testID() const
@@ -348,6 +365,7 @@ React.Item {
   property alias resizeMode: image%1.fillMode
   property alias tintColor: colorOverlay%1.color
   property string testID
+  property double blurRadius: 0
   objectName: testID
 
   onTintColorChanged: {

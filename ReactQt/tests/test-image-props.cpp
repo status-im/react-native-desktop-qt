@@ -36,6 +36,8 @@ private slots:
   void checkOnLoad();
   void checkOnError();
   void checkOnProgress();
+  void checkBlurRadius();
+  void checkOnLayout();
 
 private:
   QVariant valueOfProperty(const QString& propertyName);
@@ -119,6 +121,16 @@ void TestImageProps::checkOnError()
 void TestImageProps::checkOnProgress()
 {
   QCOMPARE(valueOfProperty("onProgress").toBool(), true);
+}
+
+void TestImageProps::checkBlurRadius()
+{
+  QCOMPARE(valueOfProperty("blurRadius").toInt(), 30);
+}
+
+void TestImageProps::checkOnLayout()
+{
+  QCOMPARE(valueOfProperty("onLayout").toBool(), true);
 }
 
 
