@@ -42,6 +42,8 @@ Rectangle {
    }
    color: 'white'
    font.pointSize: 18
+   wrapMode: Text.WordWrap
+   onTextChanged: console.log("redbox message:", text)
  }
 
  ListView {
