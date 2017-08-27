@@ -18,7 +18,6 @@
 #include "reactflexlayout.h"
 #include "reacttextproperties.h"
 
-const char* ReactItem::layout_index_property = "layoutIndex";
 
 namespace {
 Qt::PenStyle borderStyleToPenStyle(const QString& borderStyle)

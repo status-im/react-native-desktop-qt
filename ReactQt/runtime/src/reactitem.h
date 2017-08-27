@@ -125,7 +125,6 @@ public:
   double shadowRadius() const;
   void setShadowRadius(double shadowRadius);
 
-  static const char* layout_index_property;
 Q_SIGNALS:
   void backfaceVisibilityChanged();
   void backgroundColorChanged();

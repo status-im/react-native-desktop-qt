@@ -130,7 +130,7 @@ void ReactUIManager::setChildren
   //TODO: This is a simple implementation which fixes a broken example. It's not properly tested and may need revisiting
   QList<int> indices;
   for(int i = 0; i < childrenTags.size(); ++i) {
-    indices.append(i); //Incrementing per each child. Similar to iOS. See the comment in manageChildren
+    indices.append(i);
   }
   manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices,  QList<int>());
 }
@@ -191,7 +191,6 @@ void ReactUIManager::manageChildren
         vm->addChildItem(container, child, i);
       } else {
         child->setParentItem(container);
-        child->setProperty(ReactItem::layout_index_property, i);
       }
 
       // Add to layout
@@ -219,7 +218,7 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag)
   QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
   Q_ASSERT(parent != nullptr);
 
-  int itemIndex = item->property(ReactItem::layout_index_property).toUInt();
+  int itemIndex = ReactFlexLayout::get(parent)->getChildIndex(item);
 
   manageChildren(ReactAttachedProperties::get(parent)->tag(),
                   QList<int>(),
