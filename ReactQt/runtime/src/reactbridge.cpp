@@ -429,9 +429,6 @@ void ReactBridge::processResult(const QJsonDocument& doc)
   QVariantList methodIDs = requests[FieldMethodIDs].toList();
   QVariantList paramArrays = requests[FieldParams].toList();
 
-  qDebug()<<"ZZZZZZZZZZZzz:";
-  qDebug()<<requests;
-
   // qDebug() << "moduleIDs" << moduleIDs;
   // qDebug() << "methodIDs" << methodIDs;
   // qDebug() << "paramArrays" << paramArrays;
