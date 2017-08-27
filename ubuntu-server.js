@@ -54,6 +54,10 @@ function rnUbuntuServer(readable, writable) {
     sendResponsePacket(stringifiedResult);
   }
 
+  readable.on('error', function (exc) {
+    console.warn("ignoring exception: " + exc);
+  });
+
   readable.on('data', function(chunk) {
     DEBUG > 2 && console.error("-- Data received from RN Client: state = " + state)
     DEBUG > 2 && console.error("-- chunk length: " + chunk.length)
