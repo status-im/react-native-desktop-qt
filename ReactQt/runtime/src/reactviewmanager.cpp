@@ -128,7 +128,6 @@ void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, in
     ReactTextProperties::get(child)->hookLayout();
   }
   child->setParentItem(container);
-  child->setZ(position);
 }
 
 namespace {

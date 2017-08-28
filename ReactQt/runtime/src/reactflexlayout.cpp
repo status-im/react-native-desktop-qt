@@ -815,6 +815,14 @@ void ReactFlexLayout::insertChild(int position, QQuickItem* child)
   d->children.insert(position, child);
 }
 
+int ReactFlexLayout::getChildIndex(QQuickItem* child)
+{
+  Q_D(ReactFlexLayout);
+  int index = d->children.indexOf(child);
+  Q_ASSERT(index >= 0);
+  return index;
+}
+
 QList<QQuickItem*> ReactFlexLayout::removeChildren(const QList<int>& children)
 {
   Q_D(ReactFlexLayout);

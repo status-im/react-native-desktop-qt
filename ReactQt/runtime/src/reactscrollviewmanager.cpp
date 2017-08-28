@@ -25,6 +25,7 @@
 #include "reactuimanager.h"
 #include "reactpropertyhandler.h"
 #include "reactevents.h"
+#include "reactitem.h"
 
 
 class ScrollViewPropertyHandler : public ReactPropertyHandler {
@@ -117,9 +118,7 @@ void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* ch
   // add to parents content item
   QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
   Q_ASSERT(contentItem != nullptr);
-
   child->setParentItem(contentItem);
-  child->setZ(position);
 }
 
 namespace {
