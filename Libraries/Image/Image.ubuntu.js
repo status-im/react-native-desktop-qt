@@ -43,6 +43,8 @@ var Image = React.createClass({
     onLoad: PropTypes.func,
     onLoadEnd: PropTypes.func,
     testID: PropTypes.string,
+    blurRadius: PropTypes.number,
+    onLayout: PropTypes.func,
   },
 
   statics: {

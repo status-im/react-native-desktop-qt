@@ -23,6 +23,8 @@ export default class ImageReactNative extends Component {
         source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
         style={{width: 100, height: 100}}
         testID={'testImage'}
+        blurRadius={30}
+        onLayout={() => console.log("Image.onLayout()")}
         />
     );
   }

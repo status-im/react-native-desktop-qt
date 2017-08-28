@@ -63,7 +63,7 @@ public:
     if (isCached(source)) {
       // TODO: need to cycle through events?
       ec(ReactImageLoader::Event_LoadStart, *data);
-      ec(ReactImageLoader::Event_Load, *data);
+      ec(ReactImageLoader::Event_LoadSuccess, *data);
       ec(ReactImageLoader::Event_LoadEnd, *data);
       return;
     }
@@ -81,14 +81,14 @@ public:
       });
     QObject::connect(reply, static_cast<void(QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error), [=](QNetworkReply::NetworkError code) {
         data->insert("error", reply->errorString());
-        ec(ReactImageLoader::Event_Error, *data);
+        ec(ReactImageLoader::Event_LoadError, *data);
       });
     QObject::connect(reply, &QNetworkReply::finished, [=]() {
         reply->deleteLater();
         if (reply->error() == QNetworkReply::NoError) {
           if (!source.isLocalFile())
             markCached(source);
-          ec(ReactImageLoader::Event_Load, *data);
+          ec(ReactImageLoader::Event_LoadSuccess, *data);
         }
         ec(ReactImageLoader::Event_LoadEnd, *data);
       });

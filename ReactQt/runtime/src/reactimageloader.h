@@ -36,7 +36,15 @@ class ReactImageLoader
   Q_DECLARE_PRIVATE(ReactImageLoader)
 
 public:
-  enum Event { Event_LoadStart, Event_Progress, Event_Error, Event_Load, Event_LoadEnd };
+  enum Event
+  {
+    Event_LoadStart,
+    Event_Progress,
+    Event_LoadError,
+    Event_LoadSuccess,
+    Event_LoadEnd
+  };
+
   typedef std::function<void(Event, const QVariantMap&)> LoadEventCallback;
 
   ReactImageLoader(QObject* parent = 0);
