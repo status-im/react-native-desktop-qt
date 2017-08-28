@@ -32,6 +32,7 @@ public:
 
   virtual QList<QMetaProperty> availableProperties();
   virtual void applyProperties(const QVariantMap& properties);
+  QVariant value(const QString& propertyName);
 
 protected:
   bool m_exposeQmlProperties;
