@@ -18,6 +18,7 @@ enable_testing()
 
 add_subdirectory(ReactQt)
 add_subdirectory(Examples)
+add_subdirectory(RNTester)
 
 add_custom_target(
   "watch"

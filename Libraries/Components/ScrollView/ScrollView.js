@@ -644,6 +644,7 @@ const ScrollView = createReactClass({
       ScrollContentContainerViewClass = View;
     } else if (Platform.OS === 'ubuntu') {
       ScrollViewClass = UbuntuScrollView;
+      ScrollContentContainerViewClass = View;
     }
 
     invariant(
