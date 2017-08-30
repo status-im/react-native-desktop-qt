@@ -95,6 +95,7 @@ public:
 
 QString ReactItem::backfaceVisibility() const
 {
+  return QString();
 }
 
 void ReactItem::setBackfaceVisibility(const QString& backfaceVisibility)
@@ -405,6 +406,7 @@ void ReactItem::setOverflow(const QString& overflow)
 
 QColor ReactItem::shadowColor() const
 {
+  return QColor();
 }
 
 void ReactItem::setShadowColor(const QColor& shadowColor)
@@ -413,6 +415,7 @@ void ReactItem::setShadowColor(const QColor& shadowColor)
 
 QSize ReactItem::shadowOffset() const
 {
+  return QSize();
 }
 
 void ReactItem::setShadowOffset(const QSize& shadowOffset)
@@ -421,6 +424,7 @@ void ReactItem::setShadowOffset(const QSize& shadowOffset)
 
 double ReactItem::shadowOpacity() const
 {
+  return 1;
 }
 
 void ReactItem::setShadowOpacity(double shadowOpacity)
@@ -429,6 +433,7 @@ void ReactItem::setShadowOpacity(double shadowOpacity)
 
 double ReactItem::shadowRadius() const
 {
+  return 0;
 }
 
 void ReactItem::setShadowRadius(double shadowRadius)
