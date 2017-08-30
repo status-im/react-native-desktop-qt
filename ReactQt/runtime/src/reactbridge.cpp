@@ -456,6 +456,9 @@ void ReactBridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant>
     return;
   }
 
+  //readable log of methods invoked via bridge
+  //qDebug()<<"INVOKE: "<<moduleData->name()<<"::"<<method->name()<<"( "<<args<<" )";
+
   method->invoke(args);
 }
 
