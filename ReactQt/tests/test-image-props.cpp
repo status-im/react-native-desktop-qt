@@ -73,6 +73,7 @@ void TestImageProps::initTestCase()
   ReactTestCase::initTestCase();
   loadQML(QUrl("qrc:/TestImageProps.qml"));
   waitAndVerifyJsAppStarted();
+
 }
 
 

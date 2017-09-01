@@ -8,7 +8,7 @@ React.Item {
 
   property alias resizeMode: image.fillMode
   property alias tintColor: colorOverlay.color
-  property string prop_testID
+  property string p_testID
 
   property var p_source;
   property bool p_onLoadStart: false
@@ -27,7 +27,7 @@ React.Item {
     imageManager.loadSourceForImage(p_source, imageRect);
   }
 
-  objectName: prop_testID
+  objectName: p_testID
 
   onTintColorChanged: {
     image.visible = false

@@ -69,14 +69,14 @@ add_library(
   react-native STATIC
   ${SRC}
   ${QML}
-  resources.qrc
+  react_resources.qrc
 )
 else()
 add_library(
   react-native SHARED
   ${SRC}
   ${QML}
-  resources.qrc
+  react_resources.qrc
 )
 set_target_properties(
   react-native
