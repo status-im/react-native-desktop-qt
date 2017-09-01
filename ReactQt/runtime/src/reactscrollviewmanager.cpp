@@ -129,6 +129,9 @@ import QtQuick.Controls 1.4
 Flickable {
  id: scrollView
  clip: true
+ anchors.fill: parent
+ contentHeight: contentItem.childrenRect.height
+ contentWidth: contentItem.childrenRect.width
 }
 
 )COMPONENT";
