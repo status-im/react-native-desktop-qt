@@ -50,22 +50,6 @@ ReactViewManager* ReactComponentData::manager() const
   return m_moduleInterface->viewManager();
 }
 
-QList<QMetaProperty> findProperties(QObject* object)
-{
-  QList<QMetaProperty> properties;
-
-  const QMetaObject* metaObject = object->metaObject();
-  const int propertyCount = metaObject->propertyCount();
-
-  for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
-    QMetaProperty p = metaObject->property(i);
-    if (p.isScriptable())
-      properties.push_back(p);
-  }
-
-  return properties;
-}
-
 QVariantMap ReactComponentData::viewConfig() const
 {
   // qDebug() << __PRETTY_FUNCTION__ << name();
@@ -87,11 +71,14 @@ QVariantMap ReactComponentData::viewConfig() const
   QStringList bubblingEvents;
 
   // {{{ propTypes
-  QList<QMetaProperty> properties = ph->availableProperties();
+ QMap<QString, QMetaProperty> properties = ph->availableProperties();
 
   // XXX: sort out the callback events..
   QVariantMap propTypes;
-  for (auto& p : properties) {
+  for (auto& propName : properties.keys()) {
+    auto pName = propName;
+    auto p = properties.value(propName);
+
     if (p.userType() == qMetaTypeId<ReactModuleInterface::BubblingEventBlock>()) {
       propTypes.insert(p.name(), "bool");
       bubblingEvents << p.name();
@@ -99,7 +86,7 @@ QVariantMap ReactComponentData::viewConfig() const
       propTypes.insert(p.name(), "bool");
       directEvents << p.name();
     } else {
-      propTypes.insert(p.name(), p.typeName());
+      propTypes.insert(pName, p.typeName());
     }
   }
 

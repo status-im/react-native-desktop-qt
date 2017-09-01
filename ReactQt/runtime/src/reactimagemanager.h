@@ -41,10 +41,15 @@ public:
 
   QQuickItem* view(const QVariantMap& properties) const override;
 
+public slots:
+  void loadSourceForImage(const QVariantMap& imageSource, QObject* image);
+
+
 private:
   void configureView(QQuickItem* view) const;
 
   static int m_id;
 };
+
 
 #endif // REACTIMAGEMANAGER_H

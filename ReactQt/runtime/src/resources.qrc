@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/ReactImage.qml</file>
+    </qresource>
+</RCC>

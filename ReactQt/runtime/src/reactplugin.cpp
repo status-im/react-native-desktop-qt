@@ -19,6 +19,7 @@
 #include "reactflexlayout.h"
 #include "reacttextproperties.h"
 #include "reactrawtextproperties.h"
+#include "reactimagemanager.h"
 #include "reactitem.h"
 #include "reactview.h"
 
@@ -31,4 +32,5 @@ void ReactPlugin::registerTypes(const char* uri)
   qmlRegisterUncreatableType<ReactRawTextProperties>("React", 0, 1, "RawText", "Text is not meant to be created directly");
   qmlRegisterType<ReactItem>("React", 0, 1, "Item");
   qmlRegisterType<ReactView>("React", 0, 1, "RootView");
+  qmlRegisterUncreatableType<ReactImageManager>("React", 0, 1, "ReactImageManager", "ReactImageManager is not meant to be created directly");
 }

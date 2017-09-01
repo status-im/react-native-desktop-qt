@@ -30,20 +30,21 @@ public:
   ReactPropertyHandler(QObject* object, bool exposeQmlProperties = true);
   virtual ~ReactPropertyHandler();
 
-  virtual QList<QMetaProperty> availableProperties();
+  virtual QMap<QString, QMetaProperty> availableProperties();
   virtual void applyProperties(const QVariantMap& properties);
   QVariant value(const QString& propertyName);
+
+protected:
+  virtual void buildPropertyMap();
+  void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
 
 protected:
   bool m_exposeQmlProperties;
   bool m_cached = false;
   QObject* m_object;
-  QMap<QString, QMetaProperty> m_coreProperties;
-  QMap<QString, QMetaProperty> m_extraProperties;
+  QMap<QString, QMetaProperty> m_qmlProperties;
+  QMap<QString, QMetaProperty> m_HandlerProperties;
 
-private:
-  void buildPropertyMap();
-  void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
 };
 
 #endif // REACTPROPERTYHANDLER_H
