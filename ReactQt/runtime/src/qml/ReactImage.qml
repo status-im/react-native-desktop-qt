@@ -3,8 +3,8 @@ import QtGraphicalEffects 1.0
 import React 0.1 as React
 
 React.Item {
-  id: imageRect
-  backgroundColor: 'transparent'
+  id: root
+  p_backgroundColor: 'transparent'
 
   property alias resizeMode: image.fillMode
   property alias tintColor: colorOverlay.color
@@ -18,13 +18,17 @@ React.Item {
   property bool p_onProgress: false
   property bool p_onLayout: false
   property double p_blurRadius: 0
+  property string p_resizeMode: 'cover'
 
   property var imageManager: null
-  property string cachedSource
+  property string managedSource
 
   onP_sourceChanged: {
-    //Manager will load image and set "cachedSource" property to a new url
-    imageManager.loadSourceForImage(p_source, imageRect);
+    //Manager will load image and set correct url to "managedSource" property
+    imageManager.manageSource(p_source, root);
+  }
+  onP_resizeModeChanged: {
+    image.fillMode = fillModeFromResizeMode(root.p_resizeMode)
   }
 
   objectName: p_testID
@@ -34,28 +38,38 @@ React.Item {
     colorOverlay.visible = true
   }
 
-
-
   Image {
     id: image
     visible: true
     anchors.fill: parent
-    layer.enabled: imageRect.borderRadius > 0
-    fillMode: Image.PreserveAspectCrop
-    source: imageRect.cachedSource
+    layer.enabled: root.borderRadius > 0
+    fillMode: fillModeFromResizeMode(root.p_resizeMode)
+    source: root.managedSource
 
     layer.effect: OpacityMask {
       maskSource: Rectangle {
         width: image.width
         height: image.height
-        radius: imageRect.borderRadius
+        radius: root.borderRadius
       }
     }
   }
+
   ColorOverlay {
     visible: false
     anchors.fill: image
     id: colorOverlay
     source: image
+  }
+
+  function fillModeFromResizeMode(resizeMode) {
+    switch (resizeMode) {
+        case "cover": return Image.PreserveAspectCrop;
+        case "contain": return Image.PreserveAspectFit;
+        case "stretch": return Image.Stretch;
+        case "repeat": return Image.Tile;
+        case "center": return Image.Center;
+        default: return Image.PreserveAspectCrop;
+    }
   }
 }

@@ -26,7 +26,7 @@ class QmlPropertyHandler : public ReactPropertyHandler
   Q_OBJECT
 
 public:
-  QmlPropertyHandler(QObject* object, bool exposeQmlProperties = true);
+  QmlPropertyHandler(QObject* object);
 
 private:
   virtual void buildPropertyMap() override;

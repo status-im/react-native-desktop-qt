@@ -537,7 +537,7 @@ QVariantMap ReactUIManager::constantsToExport()
   QVariantMap bubblingEvents;
 
   for (const ReactComponentData* componentData : m_componentData) {
-    // qDebug() << "Checking" << componentData->name();
+    qDebug() << "Checking" << componentData->name();
 
     QVariantMap managerInfo;
 

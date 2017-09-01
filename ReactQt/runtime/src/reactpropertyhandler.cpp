@@ -94,7 +94,13 @@ void ReactPropertyHandler::buildPropertyMap()
     for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
       QMetaProperty p = metaObject->property(i);
       if (p.isScriptable())
+      {
+        if(QString(p.name()).startsWith("p_"))
+        {
+          qDebug()<<"!!! ADDED PROP: "<<p.name();
+        }
         m_qmlProperties.insert(p.name(), p);
+      }
     }
   }
 
@@ -106,7 +112,9 @@ void ReactPropertyHandler::buildPropertyMap()
   for (int i = 1; i < propertyCount; ++i) {
     QMetaProperty p = metaObject->property(i);
     if (p.isScriptable())
+    {
       m_HandlerProperties.insert(p.name(), p);
+    }
   }
   }
   m_cached = true;

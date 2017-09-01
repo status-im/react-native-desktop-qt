@@ -62,6 +62,7 @@ set(
 set(
   QML
   qml/ReactImage.qml
+  qml/ReactView.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

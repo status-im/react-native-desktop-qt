@@ -38,6 +38,7 @@ private slots:
   void checkOnProgress();
   void checkBlurRadius();
   void checkOnLayout();
+  void checkResizeMode();
 
 private:
   QVariant valueOfProperty(const QString& propertyName);
@@ -132,6 +133,11 @@ void TestImageProps::checkBlurRadius()
 void TestImageProps::checkOnLayout()
 {
   QCOMPARE(valueOfProperty("onLayout").toBool(), true);
+}
+
+void TestImageProps::checkResizeMode()
+{
+  QCOMPARE(valueOfProperty("resizeMode").toString(), QString("center"));
 }
 
 

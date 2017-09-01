@@ -43,7 +43,6 @@ static QMap<ReactImageLoader::Event, QString> eventNames{
 
 class ImagePropertyHandler : public ReactPropertyHandler {
   Q_OBJECT
-  Q_PROPERTY(QString resizeMode READ resizeMode WRITE setResizeMode)
   Q_PROPERTY(QString backfaceVisibility READ backfaceVisibility WRITE setBackfaceVisibility)
   Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
   Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
@@ -55,13 +54,11 @@ class ImagePropertyHandler : public ReactPropertyHandler {
   Q_PROPERTY(QVariantMap source READ source WRITE setSource)
 
 public:
-  enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
   ImagePropertyHandler(QObject* object, ReactBridge* bridge)
     : ReactPropertyHandler(object)
     , m_bridge(bridge) {
     }
-  QString resizeMode() const;
-  void setResizeMode(const QString& resizeMode);
+
   QString backfaceVisibility() const;
   void setBackfaceVisibility(const QString& backfaceVisibility);
   QColor backgroundColor() const;
@@ -95,43 +92,6 @@ QColor ImagePropertyHandler::backgroundColor() const
 void ImagePropertyHandler::setBackgroundColor(const QColor& backgroundColor)
 {
   m_object->setProperty("backgroundColor", backgroundColor);
-}
-
-QString ImagePropertyHandler::resizeMode() const
-{
-  int resizeMode = m_object->property("fillMode").toInt();
-  switch (resizeMode) {
-    case Stretch: return "stretch";
-    case PreserveAspectFit: return "contain";
-    case PreserveAspectCrop: return "cover";
-    case Tile: return "repeat";
-    default: return "";
-  }
-  return "";
-}
-
-void ImagePropertyHandler::setResizeMode(const QString& resizeMode)
-{  
-  if (resizeMode == "cover")
-  {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectCrop)));
-  }
-  else if (resizeMode == "contain")
-  {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectFit)));
-  }
-  else if (resizeMode == "stretch")
-  {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(Stretch)));
-  }
-  else if (resizeMode == "repeat")
-  {
-     m_object->setProperty("resizeMode", QVariant::fromValue(int(Tile)));
-  }
-  else if (resizeMode == "center")
-  {
-
-  }
 }
 
 QString ImagePropertyHandler::backfaceVisibility() const
@@ -235,7 +195,7 @@ ReactViewManager* ReactImageManager::viewManager()
 ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
 {
   //return new ImagePropertyHandler(object, m_bridge);
-  return new QmlPropertyHandler(object, m_bridge);
+  return new QmlPropertyHandler(object);
 }
 
 QString ReactImageManager::moduleName()
@@ -280,7 +240,7 @@ QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
   return item;
 }
 
-void ReactImageManager::loadSourceForImage(const QVariantMap& imageSource, QObject* image)
+void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image)
 {
   QUrl source = imageSource["uri"].toUrl();
   if (source.isRelative())
@@ -292,7 +252,7 @@ void ReactImageManager::loadSourceForImage(const QVariantMap& imageSource, QObje
   {
       if (event == ReactImageLoader::Event_LoadSuccess)
       {
-        image->setProperty("cachedSource", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
+        image->setProperty("managedSource", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
       }
       if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
       {

@@ -42,7 +42,7 @@ public:
   QQuickItem* view(const QVariantMap& properties) const override;
 
 public slots:
-  void loadSourceForImage(const QVariantMap& imageSource, QObject* image);
+  void manageSource(const QVariantMap& imageSource, QObject* image);
 
 
 private:

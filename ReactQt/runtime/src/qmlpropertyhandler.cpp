@@ -13,7 +13,7 @@
 #include "qmlpropertyhandler.h"
 #include "reactvaluecoercion.h"
 
-QmlPropertyHandler::QmlPropertyHandler(QObject* object, bool exposeQmlProperties)
+QmlPropertyHandler::QmlPropertyHandler(QObject* object)
   : ReactPropertyHandler(object, true)
 {
 
@@ -47,6 +47,7 @@ void QmlPropertyHandler::buildPropertyMap()
 
 void QmlPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject)
 {
+  //qDebug()<<"----------getProperties-------";
   //we get all prefixed properties from object and its parents
   const int propertyCount = metaObject->propertyCount();
   for (int i = 0 /*metaObject->propertyOffset()*/; i < propertyCount; ++i) {
@@ -54,6 +55,7 @@ void QmlPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObje
     QString qmlPropName = p.name();
     if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX))
     {
+      //qDebug()<<"exposed: "<<qmlPropName;
       QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
       m_qmlProperties.insert(nameWithoutPrefix, p);
     }

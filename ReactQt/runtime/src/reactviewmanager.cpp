@@ -24,6 +24,7 @@
 #include "reactflexlayout.h"
 #include "reactpropertyhandler.h"
 #include "reacttextproperties.h"
+#include "qmlpropertyhandler.h"
 
 
 class MatrixTransform : public QQuickTransform {
@@ -87,7 +88,8 @@ ReactViewManager* ReactViewManager::viewManager()
 
 ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
 {
-  return new ViewPropertyHandler(object);
+  //return new ViewPropertyHandler(object);
+  return new QmlPropertyHandler(object);
 }
 
 QString ReactViewManager::moduleName()
@@ -130,19 +132,11 @@ void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, in
   child->setParentItem(container);
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-import React 0.1 as React
-React.Item {
-}
-)COMPONENT";
-}
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
   QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(component_qml, QUrl());
+  component.loadUrl(QUrl::fromLocalFile(":/qml/ReactView.qml"));
   if (!component.isReady())
     qCritical() << "React.Item is not ready!" << component.errors();
 
