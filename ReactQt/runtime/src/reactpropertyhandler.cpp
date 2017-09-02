@@ -95,10 +95,6 @@ void ReactPropertyHandler::buildPropertyMap()
       QMetaProperty p = metaObject->property(i);
       if (p.isScriptable())
       {
-        if(QString(p.name()).startsWith("p_"))
-        {
-          qDebug()<<"!!! ADDED PROP: "<<p.name();
-        }
         m_qmlProperties.insert(p.name(), p);
       }
     }

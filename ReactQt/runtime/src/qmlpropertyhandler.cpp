@@ -31,8 +31,7 @@ void QmlPropertyHandler::buildPropertyMap()
     getPropertiesFromMetaObject(metaObject);
   }
 
-  // All properties on the handlers (extras)
-  {
+  // Get all properties on the handlers (extras)
   const QMetaObject* metaObject = this->metaObject();
   const int propertyCount = metaObject->propertyCount();
 
@@ -41,7 +40,7 @@ void QmlPropertyHandler::buildPropertyMap()
     if (p.isScriptable())
       m_HandlerProperties.insert(p.name(), p);
   }
-  }
+
   m_cached = true;
 }
 
