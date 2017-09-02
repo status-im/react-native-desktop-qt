@@ -63,6 +63,10 @@ set(
   QML
   qml/ReactImage.qml
   qml/ReactView.qml
+  qml/ReactNavigator.qml
+  qml/ReactScrollView.qml
+  qml/ReactRedboxItem.qml
+
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

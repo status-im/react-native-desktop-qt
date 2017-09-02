@@ -20,7 +20,6 @@
 #include <QDebug>
 
 #include "reactimagemanager.h"
-#include "reactpropertyhandler.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"
@@ -38,139 +37,6 @@ static QMap<ReactImageLoader::Event, QString> eventNames{
   { ReactImageLoader::Event_LoadSuccess, "onLoad" },
   { ReactImageLoader::Event_LoadEnd, "onLoadEnd" }
 };
-}
-
-
-class ImagePropertyHandler : public ReactPropertyHandler {
-  Q_OBJECT
-  Q_PROPERTY(QString backfaceVisibility READ backfaceVisibility WRITE setBackfaceVisibility)
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
-  Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
-  Q_PROPERTY(double borderWidth READ borderWidth WRITE setBorderWidth)
-  Q_PROPERTY(double borderRadius READ borderRadius WRITE setBorderRadius)
-  Q_PROPERTY(QString overflow READ overflow WRITE setOverflow)
-  Q_PROPERTY(QColor tintColor READ tintColor WRITE setTintColor)
-  Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
-  Q_PROPERTY(QVariantMap source READ source WRITE setSource)
-
-public:
-  ImagePropertyHandler(QObject* object, ReactBridge* bridge)
-    : ReactPropertyHandler(object)
-    , m_bridge(bridge) {
-    }
-
-  QString backfaceVisibility() const;
-  void setBackfaceVisibility(const QString& backfaceVisibility);
-  QColor backgroundColor() const;
-  void setBackgroundColor(const QColor& backgroundColor);
-  QColor tintColor() const;
-  void setTintColor(const QColor& tintColor);
-  double opacity() const;
-  void setOpacity(double opacity);
-  double borderWidth() const;
-  void setBorderWidth(double borderWidth);
-  double borderRadius() const;
-  void setBorderRadius(double borderRadius);
-  QString overflow() const;
-  void setOverflow(const QString& overdlow);
-  QColor borderColor() const;
-  void setBorderColor(const QColor& borderColor);
-  QVariantMap source() const;
-  void setSource(const QVariantMap& source);
-
-private:
-  ReactBridge* m_bridge;
-  QMap<ReactImageLoader::Event, bool> m_onLoadEvents;
-  bool m_onLayout=false;
-};
-
-QColor ImagePropertyHandler::backgroundColor() const
-{
-  m_object->property("backgroundColor").value<QColor>();
-}
-
-void ImagePropertyHandler::setBackgroundColor(const QColor& backgroundColor)
-{
-  m_object->setProperty("backgroundColor", backgroundColor);
-}
-
-QString ImagePropertyHandler::backfaceVisibility() const
-{
-  return QString();
-}
-
-void ImagePropertyHandler::setBackfaceVisibility(const QString& backfaceVisibility)
-{
-}
-
-QVariantMap ImagePropertyHandler::source() const
-{
-  return QVariantMap{};
-}
-
-void ImagePropertyHandler::setSource(const QVariantMap& imageSource)
-{
-
-}
-
-QColor ImagePropertyHandler::tintColor() const
-{
-  return m_object->property("tintColor").value<QColor>();
-}
-
-void ImagePropertyHandler::setTintColor(const QColor& tintColor)
-{
-  m_object->setProperty("tintColor", tintColor);
-}
-
-double ImagePropertyHandler::opacity() const
-{
-  return m_object->property("opacity").value<double>();
-}
-
-void ImagePropertyHandler::setOpacity(double opacity)
-{
-  m_object->setProperty("opacity", opacity);
-}
-
-double ImagePropertyHandler::borderRadius() const
-{
-  return m_object->property("borderRadius").value<double>();
-}
-
-void ImagePropertyHandler::setBorderRadius(double borderRadius)
-{
-  m_object->setProperty("borderRadius", borderRadius);
-}
-
-QString ImagePropertyHandler::overflow() const
-{
-  return QString();
-}
-
-void ImagePropertyHandler::setOverflow(const QString& overflow)
-{
-  const bool clip = overflow == "hidden";
-  m_object->setProperty("clip", clip);
-}
-double ImagePropertyHandler::borderWidth() const
-{
-  return m_object->property("borderWidth").value<double>();
-}
-
-void ImagePropertyHandler::setBorderWidth(double borderWidth)
-{
-  QQmlProperty(m_object, "borderWidth").write(borderWidth);
-}
-
-QColor ImagePropertyHandler::borderColor() const
-{
-  return m_object->property("borderColor").value<QColor>();
-}
-
-void ImagePropertyHandler::setBorderColor(const QColor& borderColor)
-{
-  QQmlProperty(m_object, "borderColor").write(borderColor);
 }
 
 ReactImageManager::ReactImageManager(QObject* parent)
@@ -194,7 +60,6 @@ ReactViewManager* ReactImageManager::viewManager()
 
 ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
 {
-  //return new ImagePropertyHandler(object, m_bridge);
   return new QmlPropertyHandler(object);
 }
 
@@ -224,19 +89,11 @@ QStringList ReactImageManager::customDirectEventTypes()
 
 QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
 {
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.loadUrl(QUrl::fromLocalFile(":/qml/ReactImage.qml"));
-  if (!component.isReady())
-    qCritical() << "Component for RCTImageViewManager not ready" << component.errors();
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTImageViewManager";
-    return nullptr;
+  QQuickItem* item = createViewFromFile(":/qml/ReactImage.qml");
+  if(item)
+  {
+    configureView(item);
   }
-
-  configureView(item);
-
   return item;
 }
 

@@ -17,6 +17,7 @@ export default class ImageReactNative extends Component {
       <Image
         source={{uri: '/home/parallels/work/Qt/Docs/Qt-5.9.1/qtquick/images/edge4.png'}}
         style={styles.base}
+        resizeMode={'center'}
       />
     );
   }
@@ -24,8 +25,13 @@ export default class ImageReactNative extends Component {
 
 var styles = StyleSheet.create({
   base: {
-    width:  100,
-    height: 100,
+    width:  300,
+    height: 300,
+    transform: [
+      { perspective: 850 },
+      { translateX: - 20 },
+      { rotateY: '60deg'},
+    ],
   },
   progress: {
     flex: 1,

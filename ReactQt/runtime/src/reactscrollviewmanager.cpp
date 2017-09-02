@@ -23,34 +23,9 @@
 #include "reactscrollviewmanager.h"
 #include "reactbridge.h"
 #include "reactuimanager.h"
-#include "reactpropertyhandler.h"
+#include "qmlpropertyhandler.h"
 #include "reactevents.h"
 #include "reactitem.h"
-
-
-class ScrollViewPropertyHandler : public ReactPropertyHandler {
-  Q_OBJECT
-  Q_PROPERTY(bool onScroll READ onScroll WRITE setOnScroll)
-public:
-  ScrollViewPropertyHandler(QObject* object)
-    : ReactPropertyHandler(object) {
-      m_onScroll = false;
-    }
-  bool onScroll() const;
-  void setOnScroll(bool backButtonPress);
-
-  bool m_onScroll;
-};
-
-bool ScrollViewPropertyHandler::onScroll() const
-{
-  return m_onScroll;
-}
-
-void ScrollViewPropertyHandler::setOnScroll(bool onScroll)
-{
-  m_onScroll = onScroll;
-}
 
 
 void ReactScrollViewManager::scrollTo(
@@ -89,7 +64,7 @@ ReactViewManager* ReactScrollViewManager::viewManager()
 ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new ScrollViewPropertyHandler(object);
+  return new QmlPropertyHandler(object);
 }
 
 QString ReactScrollViewManager::moduleName()
@@ -121,37 +96,13 @@ void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* ch
   child->setParentItem(contentItem);
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-import QtQuick.Controls 1.4
-
-Flickable {
- id: scrollView
- clip: true
- anchors.fill: parent
- contentHeight: contentItem.childrenRect.height
- contentWidth: contentItem.childrenRect.width
-}
-
-)COMPONENT";
-}
-
 QQuickItem* ReactScrollViewManager::view(const QVariantMap& properties) const
 {
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(component_qml, QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for ReactScrollView not ready";
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for ReactScrollViewManager";
-    return nullptr;
+  QQuickItem* item = createViewFromFile(":/qml/ReactScrollView.qml");
+  if(item)
+  {
+    configureView(item);
   }
-
-  configureView(item);
-
   return item;
 }
 
@@ -199,12 +150,10 @@ void ReactScrollViewManager::scroll()
     qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
     return;
   }
-  ScrollViewPropertyHandler* ph = qobject_cast<ScrollViewPropertyHandler*>(ap->propertyHandler());
-  if (ph == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "failed to find ScrollViewPropertyHandler";
-    return;
-  }
-  if (ph->onScroll()) {
+
+  bool scrollFlagSet = item->property("p_onScroll").toBool();
+
+  if (scrollFlagSet) {
     m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                             QVariantList{ap->tag(),
                                          normalizeInputEventName("onScroll"),

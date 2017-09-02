@@ -6,10 +6,8 @@ React.Item {
   id: root
   p_backgroundColor: 'transparent'
 
-  property alias resizeMode: image.fillMode
-  property alias tintColor: colorOverlay.color
+  property color p_tintColor
   property string p_testID
-
   property var p_source;
   property bool p_onLoadStart: false
   property bool p_onLoadEnd: false
@@ -33,7 +31,7 @@ React.Item {
 
   objectName: p_testID
 
-  onTintColorChanged: {
+  onP_tintColorChanged: {
     image.visible = false
     colorOverlay.visible = true
   }
@@ -42,7 +40,7 @@ React.Item {
     id: image
     visible: true
     anchors.fill: parent
-    layer.enabled: root.borderRadius > 0
+    layer.enabled: root.p_borderRadius > 0
     fillMode: fillModeFromResizeMode(root.p_resizeMode)
     source: root.managedSource
 
@@ -50,7 +48,7 @@ React.Item {
       maskSource: Rectangle {
         width: image.width
         height: image.height
-        radius: root.borderRadius
+        radius: root.p_borderRadius
       }
     }
   }
@@ -60,16 +58,17 @@ React.Item {
     anchors.fill: image
     id: colorOverlay
     source: image
+    color: root.p_tintColor
   }
 
   function fillModeFromResizeMode(resizeMode) {
     switch (resizeMode) {
-        case "cover": return Image.PreserveAspectCrop;
+        case "cover":   return Image.PreserveAspectCrop;
         case "contain": return Image.PreserveAspectFit;
         case "stretch": return Image.Stretch;
-        case "repeat": return Image.Tile;
-        case "center": return Image.Center;
-        default: return Image.PreserveAspectCrop;
+        case "repeat":  return Image.Tile;
+        case "center":  return Image.Center;
+        default:        return Image.PreserveAspectCrop;
     }
   }
 }
