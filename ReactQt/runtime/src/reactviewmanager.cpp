@@ -141,6 +141,12 @@ QQuickItem*ReactViewManager::createViewFromFile(const QString& fileName) const
   return item;
 }
 
+ReactBridge*ReactViewManager::bridge()
+{
+  Q_ASSERT(m_bridge);
+  return m_bridge;
+}
+
 
 void ReactViewManager::manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object)
 {

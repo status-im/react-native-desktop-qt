@@ -33,11 +33,6 @@ ReactRawTextManager::~ReactRawTextManager()
 {
 }
 
-void ReactRawTextManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
-
 // TODO: this doesnt seem right
 ReactViewManager* ReactRawTextManager::viewManager()
 {
@@ -70,35 +65,13 @@ bool ReactRawTextManager::shouldLayout() const
   return false;
 }
 
-// TODO: this is a virtual node, not a real text node
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-
-Text {
-  visible: false
-}
-)COMPONENT";
-}
-
 QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
 {
-  QString componentString = QString(component_qml);
-
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for RCTRawTextManager not ready";
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTRawTextManager";
-    return nullptr;
+  QQuickItem* item = createViewFromFile(":/qml/ReactRawText.qml");
+  if(item)
+  {
+    item->setEnabled(false);
   }
-
-  //
-  item->setEnabled(false);
-
   return item;
 }
 

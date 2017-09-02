@@ -54,12 +54,13 @@ public:
 
 protected:
   QQuickItem* createViewFromFile(const QString& fileName) const;
+  ReactBridge* bridge();
 
 public slots:
   void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);
 
-protected:
-  ReactBridge* m_bridge;
+private:
+  ReactBridge* m_bridge = nullptr;
 };
 
 #endif // REACTVIEWMANAGER_H

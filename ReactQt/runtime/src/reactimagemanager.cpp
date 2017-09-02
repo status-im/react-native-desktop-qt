@@ -48,11 +48,6 @@ ReactImageManager::~ReactImageManager()
 {
 }
 
-void ReactImageManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
-
 ReactViewManager* ReactImageManager::viewManager()
 {
   return this;
@@ -105,16 +100,16 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
     source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
   }
 
-  m_bridge->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data)
+  bridge()->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data)
   {
       if (event == ReactImageLoader::Event_LoadSuccess)
       {
-        image->setProperty("managedSource", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
+        image->setProperty("managedSource", bridge()->imageLoader()->provideUriFromSourceUrl(source));
       }
       if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
       {
         int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
-        m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+        bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                                 QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
       }
     });

@@ -34,7 +34,7 @@ void ReactScrollViewManager::scrollTo(
   double offsetY,
   bool animated
 ) {
-  QQuickItem* item = m_bridge->uiManager()->viewForTag(reactTag);
+  QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
   Q_ASSERT(item != nullptr);
 
   QQmlProperty(item, "contentX").write(offsetX);
@@ -49,11 +49,6 @@ ReactScrollViewManager::ReactScrollViewManager(QObject* parent)
 
 ReactScrollViewManager::~ReactScrollViewManager()
 {
-}
-
-void ReactScrollViewManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
 }
 
 ReactViewManager* ReactScrollViewManager::viewManager()
@@ -119,7 +114,7 @@ void ReactScrollViewManager::scrollBeginDrag()
   }
   int reactTag = rap->tag();
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                           QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
 }
 
@@ -136,7 +131,7 @@ void ReactScrollViewManager::scrollEndDrag()
   }
   int reactTag = rap->tag();
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                           QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
 }
 
@@ -154,7 +149,7 @@ void ReactScrollViewManager::scroll()
   bool scrollFlagSet = item->property("p_onScroll").toBool();
 
   if (scrollFlagSet) {
-    m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                             QVariantList{ap->tag(),
                                          normalizeInputEventName("onScroll"),
                                          buildEventData(item)});
@@ -174,7 +169,7 @@ void ReactScrollViewManager::momentumScrollBegin()
   }
   int reactTag = rap->tag();
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                           QVariantList{reactTag,
                                        normalizeInputEventName("momentumScrollBegin"),
                                        buildEventData(item)});
@@ -193,7 +188,7 @@ void ReactScrollViewManager::momentumScrollEnd()
   }
   int reactTag = rap->tag();
 
-  m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                           QVariantList{reactTag,
                                        normalizeInputEventName("momentumScrollEnd"),
                                        buildEventData(item)});

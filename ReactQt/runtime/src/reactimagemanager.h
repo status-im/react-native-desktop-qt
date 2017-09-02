@@ -28,8 +28,6 @@ public:
   ReactImageManager(QObject* parent = 0);
   ~ReactImageManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
 

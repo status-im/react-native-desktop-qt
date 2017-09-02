@@ -66,7 +66,8 @@ set(
   qml/ReactNavigator.qml
   qml/ReactScrollView.qml
   qml/ReactRedboxItem.qml
-
+  qml/ReactText.qml
+  qml/ReactRawText.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

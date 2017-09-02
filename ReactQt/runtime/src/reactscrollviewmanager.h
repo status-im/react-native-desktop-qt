@@ -33,8 +33,6 @@ public:
   ReactScrollViewManager(QObject* parent = 0);
   ~ReactScrollViewManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
 

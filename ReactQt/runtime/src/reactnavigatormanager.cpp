@@ -28,8 +28,8 @@
 
 void ReactNavigatorManager::push(int containerTag, int viewTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
-  QQuickItem* view = m_bridge->uiManager()->viewForTag(viewTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
+  QQuickItem* view = bridge()->uiManager()->viewForTag(viewTag);
   if (container == nullptr || view == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -40,7 +40,7 @@ void ReactNavigatorManager::push(int containerTag, int viewTag)
 
 void ReactNavigatorManager::pop(int containerTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -50,7 +50,7 @@ void ReactNavigatorManager::pop(int containerTag)
 
 void ReactNavigatorManager::clear(int containerTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -67,11 +67,6 @@ ReactNavigatorManager::ReactNavigatorManager(QObject* parent)
 
 ReactNavigatorManager::~ReactNavigatorManager()
 {
-}
-
-void ReactNavigatorManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
 }
 
 ReactViewManager* ReactNavigatorManager::viewManager()
@@ -129,7 +124,7 @@ void ReactNavigatorManager::backTriggered()
   bool backButtonPressFlagSet = viewItem->property("p_onBackButtonPress").toBool();
 
   if (backButtonPressFlagSet) {
-    m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                             QVariantList{ap->tag(),
                                          normalizeInputEventName("onBackButtonPress"),
                                          QVariantMap{}});

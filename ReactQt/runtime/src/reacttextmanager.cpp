@@ -34,11 +34,6 @@ ReactTextManager::~ReactTextManager()
 {
 }
 
-void ReactTextManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
-
 ReactViewManager* ReactTextManager::viewManager()
 {
   return this;
@@ -65,17 +60,6 @@ QVariantMap ReactTextManager::constantsToExport()
   return QVariantMap{};
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-
-Text {
-  textFormat: Text.RichText
-  wrapMode: Text.WordWrap
-}
-)COMPONENT";
-}
-
 bool ReactTextManager::shouldLayout() const
 {
   return true;
@@ -83,18 +67,10 @@ bool ReactTextManager::shouldLayout() const
 
 QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
 {
-  QString componentString = QString(component_qml);
-
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for RCTTextManager not ready" << component.errors();
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTTextManager";
-    return nullptr;
+  QQuickItem* item = createViewFromFile(":/qml/ReactText.qml");
+  if(item)
+  {
+    item->setEnabled(false);
   }
-
   return item;
 }

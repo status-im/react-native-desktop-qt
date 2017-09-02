@@ -28,8 +28,6 @@ public:
   ReactTextManager(QObject* parent = 0);
   ~ReactTextManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
 

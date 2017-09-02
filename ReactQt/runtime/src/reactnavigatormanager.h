@@ -36,8 +36,6 @@ public:
   ReactNavigatorManager(QObject* parent = 0);
   ~ReactNavigatorManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object);
 

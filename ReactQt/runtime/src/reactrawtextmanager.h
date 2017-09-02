@@ -32,8 +32,6 @@ public:
   ReactRawTextManager(QObject *parent = 0);
   ~ReactRawTextManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   // TODO: this doesnt seem right
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
@@ -46,8 +44,6 @@ public:
 
   QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
 
-protected:
-  ReactBridge* m_bridge;
 };
 
 #endif // REACTRAWTEXTMANAGER_H
