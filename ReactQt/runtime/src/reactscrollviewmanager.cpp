@@ -91,16 +91,6 @@ void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* ch
   child->setParentItem(contentItem);
 }
 
-QQuickItem* ReactScrollViewManager::view(const QVariantMap& properties) const
-{
-  QQuickItem* item = createViewFromFile(":/qml/ReactScrollView.qml");
-  if(item)
-  {
-    configureView(item);
-  }
-  return item;
-}
-
 void ReactScrollViewManager::scrollBeginDrag()
 {
   // qDebug() << __PRETTY_FUNCTION__;
@@ -225,6 +215,7 @@ QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const
 
 void ReactScrollViewManager::configureView(QQuickItem* view) const
 {
+  ReactViewManager::configureView(view);
   // This would be prettier with a Functor version, but connect doesnt support it
   connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
   connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
@@ -232,6 +223,11 @@ void ReactScrollViewManager::configureView(QQuickItem* view) const
 
   connect(view, SIGNAL(flickStarted()), SLOT(momentumScrollBegin()));
   connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
+}
+
+QString ReactScrollViewManager::qmlComponentFile() const
+{
+  return ":/qml/ReactScrollView.qml";
 }
 
 #include "reactscrollviewmanager.moc"

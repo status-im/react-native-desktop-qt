@@ -37,7 +37,7 @@ public:
 
   bool shouldLayout() const override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
+  virtual QString qmlComponentFile() const;
 };
 
 #endif // REACTTEXTMANAGER_H

@@ -42,7 +42,10 @@ public:
 
   bool shouldLayout() const override;
 
-  QQuickItem* view(const QVariantMap& properties = QVariantMap()) const override;
+private:
+
+  virtual void configureView(QQuickItem* view) const;
+  virtual QString qmlComponentFile() const;
 
 };
 

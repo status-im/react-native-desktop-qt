@@ -82,16 +82,6 @@ QStringList ReactImageManager::customDirectEventTypes()
                      normalizeInputEventName("onLoadEnd")};
 }
 
-QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
-{
-  QQuickItem* item = createViewFromFile(":/qml/ReactImage.qml");
-  if(item)
-  {
-    configureView(item);
-  }
-  return item;
-}
-
 void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image)
 {
   QUrl source = imageSource["uri"].toUrl();
@@ -117,8 +107,14 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
 
 void ReactImageManager::configureView(QQuickItem* view) const
 {
+  ReactViewManager::configureView(view);
   view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
   view->setEnabled(false);
+}
+
+QString ReactImageManager::qmlComponentFile() const
+{
+  return ":/qml/ReactImage.qml";
 }
 
 #include "reactimagemanager.moc"

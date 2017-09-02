@@ -115,28 +115,37 @@ void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, in
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
-  QQuickItem* item = createViewFromFile(":/qml/ReactView.qml");
-  if(item)
+  QQuickItem* newView = createView();
+  if(newView)
   {
-    item->setProperty("imageManager", QVariant::fromValue((QObject*)this));
+    configureView(newView);
   }
-  return item;
+  return newView;
 }
 
+void ReactViewManager::configureView(QQuickItem* view) const
+{
+  view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
+}
 
-QQuickItem*ReactViewManager::createViewFromFile(const QString& fileName) const
+QString ReactViewManager::qmlComponentFile() const
+{
+  return ":/qml/ReactView.qml";
+}
+
+QQuickItem*ReactViewManager::createView() const
 {
   QQmlComponent component(m_bridge->qmlEngine());
-  component.loadUrl(QUrl::fromLocalFile(fileName));
+  component.loadUrl(QUrl::fromLocalFile(qmlComponentFile()));
   if (!component.isReady())
   {
-    qCritical() << QString("Component for %1 is not ready!").arg(fileName) << component.errors();
+    qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
     return nullptr;
   }
 
   QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
   if (item == nullptr) {
-    qCritical() << QString("Unable to construct item from component %1").arg(fileName);
+    qCritical() << QString("Unable to construct item from component %1").arg(qmlComponentFile());
   }
   return item;
 }

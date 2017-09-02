@@ -100,16 +100,6 @@ QStringList ReactNavigatorManager::customBubblingEventTypes()
   return QStringList{ normalizeInputEventName("onBackButtonPress") };
 }
 
-QQuickItem* ReactNavigatorManager::view(const QVariantMap& properties) const
-{
-  QQuickItem* item = createViewFromFile(":/qml/ReactNavigator.qml");
-  if(item)
-  {
-    configureView(item);
-  }
-  return item;
-}
-
 void ReactNavigatorManager::backTriggered()
 {
   QQuickItem* viewItem = qobject_cast<QQuickItem*>(sender());
@@ -133,7 +123,13 @@ void ReactNavigatorManager::backTriggered()
 
 void ReactNavigatorManager::configureView(QQuickItem* view) const
 {
+  ReactViewManager::configureView(view);
   connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
+}
+
+QString ReactNavigatorManager::qmlComponentFile() const
+{
+  return ":/qml/ReactNavigator.qml";
 }
 
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())

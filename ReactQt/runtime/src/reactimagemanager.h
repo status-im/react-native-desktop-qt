@@ -37,14 +37,12 @@ public:
 
   QStringList customDirectEventTypes() override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
-
 public slots:
   void manageSource(const QVariantMap& imageSource, QObject* image);
 
-
 private:
-  void configureView(QQuickItem* view) const;
+  virtual void configureView(QQuickItem* view) const;
+  virtual QString qmlComponentFile() const;
 
   static int m_id;
 };

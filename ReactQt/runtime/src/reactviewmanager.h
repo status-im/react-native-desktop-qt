@@ -53,8 +53,10 @@ public:
   virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 
 protected:
-  QQuickItem* createViewFromFile(const QString& fileName) const;
+  QQuickItem* createView() const;
   ReactBridge* bridge();
+  virtual void configureView(QQuickItem* view) const;
+  virtual QString qmlComponentFile() const;
 
 public slots:
   void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);

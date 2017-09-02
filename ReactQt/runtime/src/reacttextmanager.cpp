@@ -65,12 +65,7 @@ bool ReactTextManager::shouldLayout() const
   return true;
 }
 
-QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
+QString ReactTextManager::qmlComponentFile() const
 {
-  QQuickItem* item = createViewFromFile(":/qml/ReactText.qml");
-  if(item)
-  {
-    item->setEnabled(false);
-  }
-  return item;
+  return ":/qml/ReactText.qml";
 }

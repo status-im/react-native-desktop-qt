@@ -65,13 +65,14 @@ bool ReactRawTextManager::shouldLayout() const
   return false;
 }
 
-QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
+void ReactRawTextManager::configureView(QQuickItem* view) const
 {
-  QQuickItem* item = createViewFromFile(":/qml/ReactRawText.qml");
-  if(item)
-  {
-    item->setEnabled(false);
-  }
-  return item;
+  ReactViewManager::configureView(view);
+  view->setEnabled(false);
+}
+
+QString ReactRawTextManager::qmlComponentFile() const
+{
+  return ":/qml/ReactRawText.qml";
 }
 

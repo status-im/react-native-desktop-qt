@@ -44,8 +44,6 @@ public:
 
   void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
-
 private Q_SLOTS:
   void scrollBeginDrag();
   void scrollEndDrag();
@@ -56,7 +54,8 @@ private Q_SLOTS:
 
 private:
   QVariantMap buildEventData(QQuickItem* item) const;
-  void configureView(QQuickItem* view) const;
+  virtual void configureView(QQuickItem* view) const;
+  virtual QString qmlComponentFile() const;
 };
 
 #endif // REACTSCROLLVIEWMANAGER_H
