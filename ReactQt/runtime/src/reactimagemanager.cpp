@@ -11,348 +11,276 @@
  *
  */
 
+#include <QQmlComponent>
+#include <QQmlProperty>
+#include <QQuickItem>
 #include <QString>
 #include <QVariant>
-#include <QQmlComponent>
-#include <QQuickItem>
-#include <QQmlProperty>
 
 #include <QDebug>
 
-#include "reactimagemanager.h"
-#include "reactpropertyhandler.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"
 #include "reactimageloader.h"
+#include "reactimagemanager.h"
+#include "reactpropertyhandler.h"
 
 int ReactImageManager::m_id = 0;
 
-
-namespace {
-static QMap<ReactImageLoader::Event, QString> eventNames{
-  { ReactImageLoader::Event_LoadStart, "onLoadStart" },
-  { ReactImageLoader::Event_Progress, "onProgress" },
-  { ReactImageLoader::Event_LoadError, "onError" },
-  { ReactImageLoader::Event_LoadSuccess, "onLoad" },
-  { ReactImageLoader::Event_LoadEnd, "onLoadEnd" }
-};
+namespace
+{
+static QMap<ReactImageLoader::Event, QString> eventNames{{ReactImageLoader::Event_LoadStart, "onLoadStart"},
+                                                         {ReactImageLoader::Event_Progress, "onProgress"},
+                                                         {ReactImageLoader::Event_LoadError, "onError"},
+                                                         {ReactImageLoader::Event_LoadSuccess, "onLoad"},
+                                                         {ReactImageLoader::Event_LoadEnd, "onLoadEnd"}};
 }
 
-
-class ImagePropertyHandler : public ReactPropertyHandler {
-  Q_OBJECT
-  Q_PROPERTY(QString resizeMode READ resizeMode WRITE setResizeMode)
-  Q_PROPERTY(QString backfaceVisibility READ backfaceVisibility WRITE setBackfaceVisibility)
-  Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
-  Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
-  Q_PROPERTY(double borderWidth READ borderWidth WRITE setBorderWidth)
-  Q_PROPERTY(double borderRadius READ borderRadius WRITE setBorderRadius)
-  Q_PROPERTY(QString overflow READ overflow WRITE setOverflow)
-  Q_PROPERTY(QColor tintColor READ tintColor WRITE setTintColor)
-  Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
-  Q_PROPERTY(QVariantMap source READ source WRITE setSource)
-  Q_PROPERTY(bool onLoadStart READ onLoadStart WRITE setOnLoadStart)
-  Q_PROPERTY(bool onProgress READ onProgress WRITE setOnProgress)
-  Q_PROPERTY(bool onError READ onError WRITE setOnError)
-  Q_PROPERTY(bool onLoad READ onLoad WRITE setOnLoad)
-  Q_PROPERTY(bool onLoadEnd READ onLoadEnd WRITE setOnLoadEnd)
-  Q_PROPERTY(bool onLayout READ onLayout WRITE setOnLayout)
-  Q_PROPERTY(QString testID READ testID WRITE setTestID)
+class ImagePropertyHandler : public ReactPropertyHandler
+{
+    Q_OBJECT
+    Q_PROPERTY(QString resizeMode READ resizeMode WRITE setResizeMode)
+    Q_PROPERTY(QString backfaceVisibility READ backfaceVisibility WRITE setBackfaceVisibility)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor);
+    Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor)
+    Q_PROPERTY(double borderWidth READ borderWidth WRITE setBorderWidth)
+    Q_PROPERTY(double borderRadius READ borderRadius WRITE setBorderRadius)
+    Q_PROPERTY(QString overflow READ overflow WRITE setOverflow)
+    Q_PROPERTY(QColor tintColor READ tintColor WRITE setTintColor)
+    Q_PROPERTY(double opacity READ opacity WRITE setOpacity)
+    Q_PROPERTY(QVariantMap source READ source WRITE setSource)
+    Q_PROPERTY(bool onLoadStart READ onLoadStart WRITE setOnLoadStart)
+    Q_PROPERTY(bool onProgress READ onProgress WRITE setOnProgress)
+    Q_PROPERTY(bool onError READ onError WRITE setOnError)
+    Q_PROPERTY(bool onLoad READ onLoad WRITE setOnLoad)
+    Q_PROPERTY(bool onLoadEnd READ onLoadEnd WRITE setOnLoadEnd)
+    Q_PROPERTY(bool onLayout READ onLayout WRITE setOnLayout)
+    Q_PROPERTY(QString testID READ testID WRITE setTestID)
 
 public:
-  enum FillMode { Stretch, PreserveAspectFit, PreserveAspectCrop, Tile, TileVertically, TileHorizontally, Pad };
-  ImagePropertyHandler(QObject* object, ReactBridge* bridge)
-    : ReactPropertyHandler(object)
-    , m_bridge(bridge) {
-    }
-  QString resizeMode() const;
-  void setResizeMode(const QString& resizeMode);
-  QString backfaceVisibility() const;
-  void setBackfaceVisibility(const QString& backfaceVisibility);
-  QColor backgroundColor() const;
-  void setBackgroundColor(const QColor& backgroundColor);
-  QColor tintColor() const;
-  void setTintColor(const QColor& tintColor);
-  double opacity() const;
-  void setOpacity(double opacity);
-  double borderWidth() const;
-  void setBorderWidth(double borderWidth);
-  double borderRadius() const;
-  void setBorderRadius(double borderRadius);
-  QString overflow() const;
-  void setOverflow(const QString& overdlow);
-  QColor borderColor() const;
-  void setBorderColor(const QColor& borderColor);
-  QVariantMap source() const;
-  void setSource(const QVariantMap& source);
-  bool onLoadStart() const;
-  void setOnLoadStart(bool onLoadStart);
-  bool onProgress() const;
-  void setOnProgress(bool onProgress);
-  bool onError() const;
-  void setOnError(bool onError);
-  bool onLoad() const;
-  void setOnLoad(bool onLoad);
-  bool onLoadEnd() const;
-  void setOnLoadEnd(bool onLoadEnd);
-  bool onLayout() const;
-  void setOnLayout(bool onLayout);
-  QString testID() const;
-  void setTestID(const QString& testID);
+    enum FillMode
+    {
+        Stretch,
+        PreserveAspectFit,
+        PreserveAspectCrop,
+        Tile,
+        TileVertically,
+        TileHorizontally,
+        Pad
+    };
+    ImagePropertyHandler(QObject* object, ReactBridge* bridge) : ReactPropertyHandler(object), m_bridge(bridge) {}
+    QString resizeMode() const;
+    void setResizeMode(const QString& resizeMode);
+    QString backfaceVisibility() const;
+    void setBackfaceVisibility(const QString& backfaceVisibility);
+    QColor backgroundColor() const;
+    void setBackgroundColor(const QColor& backgroundColor);
+    QColor tintColor() const;
+    void setTintColor(const QColor& tintColor);
+    double opacity() const;
+    void setOpacity(double opacity);
+    double borderWidth() const;
+    void setBorderWidth(double borderWidth);
+    double borderRadius() const;
+    void setBorderRadius(double borderRadius);
+    QString overflow() const;
+    void setOverflow(const QString& overdlow);
+    QColor borderColor() const;
+    void setBorderColor(const QColor& borderColor);
+    QVariantMap source() const;
+    void setSource(const QVariantMap& source);
+    bool onLoadStart() const;
+    void setOnLoadStart(bool onLoadStart);
+    bool onProgress() const;
+    void setOnProgress(bool onProgress);
+    bool onError() const;
+    void setOnError(bool onError);
+    bool onLoad() const;
+    void setOnLoad(bool onLoad);
+    bool onLoadEnd() const;
+    void setOnLoadEnd(bool onLoadEnd);
+    bool onLayout() const;
+    void setOnLayout(bool onLayout);
+    QString testID() const;
+    void setTestID(const QString& testID);
+
 private:
-  ReactBridge* m_bridge;
-  QMap<ReactImageLoader::Event, bool> m_onLoadEvents;
-  bool m_onLayout=false;
+    ReactBridge* m_bridge;
+    QMap<ReactImageLoader::Event, bool> m_onLoadEvents;
+    bool m_onLayout = false;
 };
 
-QColor ImagePropertyHandler::backgroundColor() const
-{
-  m_object->property("backgroundColor").value<QColor>();
-}
+QColor ImagePropertyHandler::backgroundColor() const { m_object->property("backgroundColor").value<QColor>(); }
 
 void ImagePropertyHandler::setBackgroundColor(const QColor& backgroundColor)
 {
-  m_object->setProperty("backgroundColor", backgroundColor);
+    m_object->setProperty("backgroundColor", backgroundColor);
 }
 
 QString ImagePropertyHandler::resizeMode() const
 {
-  int resizeMode = m_object->property("fillMode").toInt();
-  switch (resizeMode) {
-    case Stretch: return "stretch";
-   case PreserveAspectFit: return "contain";
-    case PreserveAspectCrop: return "cover";
-    default: return "";
-  }
-  return "";
+    int resizeMode = m_object->property("fillMode").toInt();
+    switch (resizeMode)
+    {
+    case Stretch:
+        return "stretch";
+    case PreserveAspectFit:
+        return "contain";
+    case PreserveAspectCrop:
+        return "cover";
+    default:
+        return "";
+    }
+    return "";
 }
 
 void ImagePropertyHandler::setResizeMode(const QString& resizeMode)
 {
-  if (resizeMode == "stretch") {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(Stretch)));
-  } else if (resizeMode == "contain") {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectFit)));
-  } else if (resizeMode == "cover") {
-    m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectCrop)));
-  }
+    if (resizeMode == "stretch")
+    {
+        m_object->setProperty("resizeMode", QVariant::fromValue(int(Stretch)));
+    }
+    else if (resizeMode == "contain")
+    {
+        m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectFit)));
+    }
+    else if (resizeMode == "cover")
+    {
+        m_object->setProperty("resizeMode", QVariant::fromValue(int(PreserveAspectCrop)));
+    }
 }
 
-QString ImagePropertyHandler::backfaceVisibility() const
-{
-  return QString();
-}
+QString ImagePropertyHandler::backfaceVisibility() const { return QString(); }
 
-void ImagePropertyHandler::setBackfaceVisibility(const QString& backfaceVisibility)
-{
-}
+void ImagePropertyHandler::setBackfaceVisibility(const QString& backfaceVisibility) {}
 
-QVariantMap ImagePropertyHandler::source() const
-{
-  return QVariantMap{};
-}
+QVariantMap ImagePropertyHandler::source() const { return QVariantMap{}; }
 
 void ImagePropertyHandler::setSource(const QVariantMap& imageSource)
 {
-  QUrl source = imageSource["uri"].toUrl();
-  if (source.isRelative())
-    source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
+    QUrl source = imageSource["uri"].toUrl();
+    if (source.isRelative())
+        source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
 
-  m_bridge->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data) {
-      if (event == ReactImageLoader::Event_LoadSuccess) {
-        m_object->setProperty("source", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
-      }
-      if (m_onLoadEvents[event]) {
-        int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(m_object))->tag();
-        m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                                QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
-      }
+    m_bridge->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+        if (event == ReactImageLoader::Event_LoadSuccess)
+        {
+            m_object->setProperty("source", m_bridge->imageLoader()->provideUriFromSourceUrl(source));
+        }
+        if (m_onLoadEvents[event])
+        {
+            int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(m_object))->tag();
+            m_bridge->enqueueJSCall("RCTEventEmitter",
+                                    "receiveEvent",
+                                    QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
+        }
     });
 }
 
-QColor ImagePropertyHandler::tintColor() const
-{
-  return m_object->property("tintColor").value<QColor>();
-}
+QColor ImagePropertyHandler::tintColor() const { return m_object->property("tintColor").value<QColor>(); }
 
-void ImagePropertyHandler::setTintColor(const QColor& tintColor)
-{
-  m_object->setProperty("tintColor", tintColor);
-}
+void ImagePropertyHandler::setTintColor(const QColor& tintColor) { m_object->setProperty("tintColor", tintColor); }
 
-double ImagePropertyHandler::opacity() const
-{
-  return m_object->property("opacity").value<double>();
-}
+double ImagePropertyHandler::opacity() const { return m_object->property("opacity").value<double>(); }
 
-void ImagePropertyHandler::setOpacity(double opacity)
-{
-  m_object->setProperty("opacity", opacity);
-}
+void ImagePropertyHandler::setOpacity(double opacity) { m_object->setProperty("opacity", opacity); }
 
-double ImagePropertyHandler::borderRadius() const
-{
-  return m_object->property("borderRadius").value<double>();
-}
+double ImagePropertyHandler::borderRadius() const { return m_object->property("borderRadius").value<double>(); }
 
-void ImagePropertyHandler::setBorderRadius(double borderRadius)
-{
-  m_object->setProperty("borderRadius", borderRadius);
-}
+void ImagePropertyHandler::setBorderRadius(double borderRadius) { m_object->setProperty("borderRadius", borderRadius); }
 
-QString ImagePropertyHandler::overflow() const
-{
-  return QString();
-}
+QString ImagePropertyHandler::overflow() const { return QString(); }
 
 void ImagePropertyHandler::setOverflow(const QString& overflow)
 {
-  const bool clip = overflow == "hidden";
-  m_object->setProperty("clip", clip);
+    const bool clip = overflow == "hidden";
+    m_object->setProperty("clip", clip);
 }
-double ImagePropertyHandler::borderWidth() const
-{
-  return m_object->property("borderWidth").value<double>();
-}
+double ImagePropertyHandler::borderWidth() const { return m_object->property("borderWidth").value<double>(); }
 
 void ImagePropertyHandler::setBorderWidth(double borderWidth)
 {
-  QQmlProperty(m_object, "borderWidth").write(borderWidth);
+    QQmlProperty(m_object, "borderWidth").write(borderWidth);
 }
 
-QColor ImagePropertyHandler::borderColor() const
-{
-  return m_object->property("borderColor").value<QColor>();
-}
+QColor ImagePropertyHandler::borderColor() const { return m_object->property("borderColor").value<QColor>(); }
 
 void ImagePropertyHandler::setBorderColor(const QColor& borderColor)
 {
-  QQmlProperty(m_object, "borderColor").write(borderColor);
+    QQmlProperty(m_object, "borderColor").write(borderColor);
 }
 
-bool ImagePropertyHandler::onLoadStart() const
-{
-  return m_onLoadEvents[ReactImageLoader::Event_LoadStart];
-}
+bool ImagePropertyHandler::onLoadStart() const { return m_onLoadEvents[ReactImageLoader::Event_LoadStart]; }
 
 void ImagePropertyHandler::setOnLoadStart(bool onLoadStart)
 {
-  m_onLoadEvents[ReactImageLoader::Event_LoadStart] = onLoadStart;
+    m_onLoadEvents[ReactImageLoader::Event_LoadStart] = onLoadStart;
 }
 
-bool ImagePropertyHandler::onProgress() const
-{
-  return m_onLoadEvents[ReactImageLoader::Event_Progress];
-}
+bool ImagePropertyHandler::onProgress() const { return m_onLoadEvents[ReactImageLoader::Event_Progress]; }
 
 void ImagePropertyHandler::setOnProgress(bool onProgress)
 {
-  m_onLoadEvents[ReactImageLoader::Event_Progress] = onProgress;
+    m_onLoadEvents[ReactImageLoader::Event_Progress] = onProgress;
 }
 
-bool ImagePropertyHandler::onError() const
-{
-  return m_onLoadEvents[ReactImageLoader::Event_LoadError];
-}
+bool ImagePropertyHandler::onError() const { return m_onLoadEvents[ReactImageLoader::Event_LoadError]; }
 
-void ImagePropertyHandler::setOnError(bool onError)
-{
-  m_onLoadEvents[ReactImageLoader::Event_LoadError] = onError;
-}
+void ImagePropertyHandler::setOnError(bool onError) { m_onLoadEvents[ReactImageLoader::Event_LoadError] = onError; }
 
-bool ImagePropertyHandler::onLoad() const
-{
-  return m_onLoadEvents[ReactImageLoader::Event_LoadSuccess];
-}
+bool ImagePropertyHandler::onLoad() const { return m_onLoadEvents[ReactImageLoader::Event_LoadSuccess]; }
 
-void ImagePropertyHandler::setOnLoad(bool onLoad)
-{
-  m_onLoadEvents[ReactImageLoader::Event_LoadSuccess] = onLoad;
-}
+void ImagePropertyHandler::setOnLoad(bool onLoad) { m_onLoadEvents[ReactImageLoader::Event_LoadSuccess] = onLoad; }
 
-bool ImagePropertyHandler::onLoadEnd() const
-{
-  return m_onLoadEvents[ReactImageLoader::Event_LoadEnd];
-}
+bool ImagePropertyHandler::onLoadEnd() const { return m_onLoadEvents[ReactImageLoader::Event_LoadEnd]; }
 
-void ImagePropertyHandler::setOnLoadEnd(bool onLoadEnd)
-{
-  m_onLoadEvents[ReactImageLoader::Event_LoadEnd] = onLoadEnd;
-}
+void ImagePropertyHandler::setOnLoadEnd(bool onLoadEnd) { m_onLoadEvents[ReactImageLoader::Event_LoadEnd] = onLoadEnd; }
 
-bool ImagePropertyHandler::onLayout() const
-{
-  return m_onLayout;
-}
+bool ImagePropertyHandler::onLayout() const { return m_onLayout; }
 
 void ImagePropertyHandler::setOnLayout(bool onLayout)
 {
-  if(onLayout == m_onLayout)
-    return;
+    if (onLayout == m_onLayout)
+        return;
 
-  m_onLayout = onLayout;
+    m_onLayout = onLayout;
 }
 
-QString ImagePropertyHandler::testID() const
-{
-  return m_object->property("testID").toString();
-}
+QString ImagePropertyHandler::testID() const { return m_object->property("testID").toString(); }
 
-void ImagePropertyHandler::setTestID(const QString& testID)
-{
-  m_object->setProperty("testID", testID);
-}
+void ImagePropertyHandler::setTestID(const QString& testID) { m_object->setProperty("testID", testID); }
 
-ReactImageManager::ReactImageManager(QObject* parent)
-  : ReactViewManager(parent)
-{
-}
+ReactImageManager::ReactImageManager(QObject* parent) : ReactViewManager(parent) {}
 
-ReactImageManager::~ReactImageManager()
-{
-}
+ReactImageManager::~ReactImageManager() {}
 
-void ReactImageManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
+void ReactImageManager::setBridge(ReactBridge* bridge) { m_bridge = bridge; }
 
-ReactViewManager* ReactImageManager::viewManager()
-{
-  return this;
-}
+ReactViewManager* ReactImageManager::viewManager() { return this; }
 
 ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
 {
-  return new ImagePropertyHandler(object, m_bridge);
+    return new ImagePropertyHandler(object, m_bridge);
 }
 
-QString ReactImageManager::moduleName()
-{
-  return "RCTImageViewManager";
-}
+QString ReactImageManager::moduleName() { return "RCTImageViewManager"; }
 
-QList<ReactModuleMethod*> ReactImageManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
+QList<ReactModuleMethod*> ReactImageManager::methodsToExport() { return QList<ReactModuleMethod*>{}; }
 
-QVariantMap ReactImageManager::constantsToExport()
-{
-  return QVariantMap{};
-}
+QVariantMap ReactImageManager::constantsToExport() { return QVariantMap{}; }
 
 QStringList ReactImageManager::customDirectEventTypes()
 {
-  return QStringList{normalizeInputEventName("onLoadStart"),
-                     normalizeInputEventName("onProgress"),
-                     normalizeInputEventName("onError"),
-                     normalizeInputEventName("onLoad"),
-                     normalizeInputEventName("onLoadEnd")};
+    return QStringList{normalizeInputEventName("onLoadStart"),
+                       normalizeInputEventName("onProgress"),
+                       normalizeInputEventName("onError"),
+                       normalizeInputEventName("onLoad"),
+                       normalizeInputEventName("onLoadEnd")};
 }
 
-namespace {
+namespace
+{
 static const char* component_qml = R"COMPONENT(
 import QtQuick 2.4
 import QtGraphicalEffects 1.0
@@ -397,27 +325,25 @@ React.Item {
 
 QQuickItem* ReactImageManager::view(const QVariantMap& properties) const
 {
-  QString componentString = QString(component_qml).arg(m_id++);
+    QString componentString = QString(component_qml).arg(m_id++);
 
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for RCTImageViewManager not ready" << component.errors();
+    QQmlComponent component(m_bridge->qmlEngine());
+    component.setData(componentString.toLocal8Bit(), QUrl());
+    if (!component.isReady())
+        qCritical() << "Component for RCTImageViewManager not ready" << component.errors();
 
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTImageViewManager";
-    return nullptr;
-  }
+    QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
+    if (item == nullptr)
+    {
+        qCritical() << "Unable to create component for RCTImageViewManager";
+        return nullptr;
+    }
 
-  configureView(item);
+    configureView(item);
 
-  return item;
+    return item;
 }
 
-void ReactImageManager::configureView(QQuickItem* view) const
-{
-  view->setEnabled(false);
-}
+void ReactImageManager::configureView(QQuickItem* view) const { view->setEnabled(false); }
 
 #include "reactimagemanager.moc"

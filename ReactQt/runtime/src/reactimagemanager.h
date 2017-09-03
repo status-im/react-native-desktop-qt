@@ -16,35 +16,34 @@
 
 #include "reactviewmanager.h"
 
-
 class ReactPropertyHandler;
 
 class ReactImageManager : public ReactViewManager
 {
-  Q_OBJECT
-  Q_INTERFACES(ReactModuleInterface)
+    Q_OBJECT
+    Q_INTERFACES(ReactModuleInterface)
 
 public:
-  ReactImageManager(QObject* parent = 0);
-  ~ReactImageManager();
+    ReactImageManager(QObject* parent = 0);
+    ~ReactImageManager();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object) override;
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  QStringList customDirectEventTypes() override;
+    QStringList customDirectEventTypes() override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
+    QQuickItem* view(const QVariantMap& properties) const override;
 
 private:
-  void configureView(QQuickItem* view) const;
+    void configureView(QQuickItem* view) const;
 
-  static int m_id;
+    static int m_id;
 };
 
 #endif // REACTIMAGEMANAGER_H
