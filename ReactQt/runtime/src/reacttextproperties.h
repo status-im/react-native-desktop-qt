@@ -101,6 +101,7 @@ public:
 
   static ReactTextProperties* get(QQuickItem* item, bool create = true);
   static ReactTextProperties* qmlAttachedProperties(QObject* object);
+  static QString decorateTextFromProperties(const QString& text, const QVariantMap& properties);
 
 private:
   QScopedPointer<ReactTextPropertiesPrivate> d_ptr;

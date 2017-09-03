@@ -39,8 +39,6 @@ public:
   QString text() const;
   void setText(const QString& text);
 
-  QString textWithProperties(const QVariantMap& properties) const;
-
   static ReactRawTextProperties* get(QQuickItem* item, bool create = true);
   static ReactRawTextProperties* qmlAttachedProperties(QObject* object);
 

@@ -53,6 +53,8 @@ public:
     fl->setMeasureFunction([=](double width, FlexMeasureMode widthMode, double height, FlexMeasureMode heightMode) {
       if (dirty) {
         QString ts = textWithProperties(property_map());
+        qDebug()<<"========== TEXT =============";
+        qDebug()<<ts;
         item->setProperty("text", ts);
         dirty = false;
       }
@@ -125,7 +127,7 @@ public:
     for (auto& c : item->childItems()) {
       ReactRawTextProperties* tp = ReactRawTextProperties::get(c, false);
       if (tp != nullptr) {
-        text += tp->textWithProperties(QMap<QString, QVariant>(mp));
+        text += ReactTextProperties::decorateTextFromProperties(tp->text(), QMap<QString, QVariant>(mp));
       } else {
         text += ReactTextPropertiesPrivate::get(ReactTextProperties::get(c))->textWithProperties(mp);
       }
@@ -327,4 +329,29 @@ ReactTextProperties* ReactTextProperties::get(QQuickItem* item, bool create)
 ReactTextProperties* ReactTextProperties::qmlAttachedProperties(QObject* object)
 {
   return new ReactTextProperties(object);
+}
+
+
+QString ReactTextProperties::decorateTextFromProperties(const QString& text, const QVariantMap& properties)
+{
+  QString decoratedText = "<span style=\"";
+
+  for (const QString& key : properties.keys()) {
+    QString value = properties.value(key).value<QString>();
+    if (key == "fontFamily") {
+      decoratedText += QString("font-family:%1;").arg(value);
+    } else if (key == "fontSize") {
+      decoratedText += QString("font-size:%1pt;").arg(value);
+    } else if (key == "color") {
+      decoratedText += QString("color:%1;").arg(properties.value(key).value<QColor>().name());
+    } else if (key == "fontStyle") {
+      decoratedText += QString("font-style:%1;").arg(value);
+    } else if (key == "fontWeight") {
+      decoratedText += QString("font-weight:%1;").arg(value);
+    } else if (key == "textDecorationLine") {
+      decoratedText += QString("text-decoration:%1;").arg(value);
+    }
+  }
+  decoratedText += "\">" + text.toHtmlEscaped() + "</span>";
+  return decoratedText;
 }

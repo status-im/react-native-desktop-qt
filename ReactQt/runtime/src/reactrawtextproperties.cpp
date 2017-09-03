@@ -68,29 +68,6 @@ void ReactRawTextProperties::setText(const QString& text)
   d->setDirty(true);
 }
 
-QString ReactRawTextProperties::textWithProperties(const QVariantMap& properties) const
-{
-  QString text = "<span style=\"";
-
-  for (const QString& key : properties.keys()) {
-    QString value = properties.value(key).value<QString>();
-    if (key == "fontFamily") {
-      text += QString("font-family:%1;").arg(value);
-    } else if (key == "fontSize") {
-      text += QString("font-size:%1pt;").arg(value);
-    } else if (key == "color") {
-      text += QString("color:%1;").arg(properties.value(key).value<QColor>().name());
-    } else if (key == "fontStyle") {
-      text += QString("font-style:%1;").arg(value);
-    } else if (key == "fontWeight") {
-      text += QString("font-weight:%1;").arg(value);
-    } else if (key == "textDecorationLine") {
-      text += QString("text-decoration:%1;").arg(value);
-    }
-  }
-  text += "\">" + d_func()->text.toHtmlEscaped() + "</span>";
-  return text;
-}
 
 ReactRawTextProperties* ReactRawTextProperties::get(QQuickItem* item, bool create)
 {

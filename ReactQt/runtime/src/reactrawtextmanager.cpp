@@ -21,9 +21,6 @@
 #include "reactbridge.h"
 #include "reactrawtextproperties.h"
 
-
-
-
 ReactRawTextManager::ReactRawTextManager(QObject *parent)
   : ReactViewManager(parent)
 {
