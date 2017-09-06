@@ -18,7 +18,6 @@
 #include <QDebug>
 
 #include "reacttextproperties.h"
-#include "reactrawtextproperties.h"
 #include "reactflexlayout.h"
 
 

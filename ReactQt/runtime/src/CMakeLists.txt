@@ -49,7 +49,6 @@ set(
   reactattachedproperties.cpp
   reactflexlayout.cpp
   reacttextproperties.cpp
-  reactrawtextproperties.cpp
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp
