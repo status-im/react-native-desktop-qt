@@ -19,6 +19,7 @@
 #include <QObject>
 #include <QtQml>
 #include <QScopedPointer>
+#include <QQuickItem>
 
 #include "reactpropertyhandler.h"
 
@@ -43,8 +44,6 @@ class ReactTextProperties : public ReactPropertyHandler
   Q_PROPERTY(QString textDecorationStyle READ textDecorationStyle WRITE setTextDecorationStyle)
   Q_PROPERTY(QColor textDecorationColor READ textDecorationColor WRITE setTextDecorationColor)
   Q_PROPERTY(QString writingDirection READ writingDirection WRITE setWritingDirection)
-
-  Q_DECLARE_PRIVATE(ReactTextProperties);
 
 public:
   ReactTextProperties(QObject* parent = 0);
@@ -97,14 +96,40 @@ public:
 
   void setDirty(bool dirty);
 
-  void hookLayout();
+  void hookLayout(QQuickItem* textItem);
 
   static ReactTextProperties* get(QQuickItem* item, bool create = true);
   static ReactTextProperties* qmlAttachedProperties(QObject* object);
-  static QString decorateTextFromProperties(const QString& text, const QVariantMap& properties);
+  static QString convertPropsToHtml(const QString& text, const QVariantMap& properties);
 
 private:
-  QScopedPointer<ReactTextPropertiesPrivate> d_ptr;
+
+   template<typename VT>
+   VT value(const char* key, const VT& defaulValue = VT()) const {
+     property_map::const_iterator it = properties.find(key);
+     if (it == properties.end())
+       return defaulValue;
+     return (*it).second.value<VT>();
+   }
+
+   template<typename VT>
+   void setValue(const char* key, const VT& value) {
+     properties[key] = value;
+     setDirty(true);
+   }
+
+  typedef std::map<QString, QVariant> property_map;
+  QString textWithProperties(const property_map& properties);
+
+  QVariantMap getItemProperties();
+
+private:
+
+
+  bool dirty;
+  property_map properties;
+  QQuickItem* item;
+
 };
 
 QML_DECLARE_TYPEINFO(ReactTextProperties, QML_HAS_ATTACHED_PROPERTIES)

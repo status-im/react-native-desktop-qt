@@ -17,35 +17,12 @@
 #include "reactrawtextproperties.h"
 
 
-class ReactRawTextPropertiesPrivate
-{
-public:
-  bool dirty;
-  QQuickItem* item;
-  QString text;
-
-  void setDirty(bool dirty) {
-    this->dirty = true;
-    ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
-    if (tp != nullptr) {
-      tp->setDirty(dirty);
-    }
-  }
-
-  static ReactRawTextPropertiesPrivate* get(ReactRawTextProperties* rtp) {
-    return rtp->d_func();
-  }
-};
-
-
 ReactRawTextProperties::ReactRawTextProperties(QObject* parent)
   : ReactPropertyHandler(parent)
-  , d_ptr(new ReactRawTextPropertiesPrivate)
 {
-  Q_D(ReactRawTextProperties);
-  d->dirty = false;
-  d->item = qobject_cast<QQuickItem*>(parent);
-  if (d->item == nullptr) {
+  dirty = false;
+  item = qobject_cast<QQuickItem*>(parent);
+  if (item == nullptr) {
     qCritical() << "ReactRawTextProperties only applies to visual items";
   }
 }
@@ -54,18 +31,26 @@ ReactRawTextProperties::~ReactRawTextProperties()
 {
 }
 
+void ReactRawTextProperties::setDirty(bool dirty)
+{
+  this->dirty = true;
+  ReactTextProperties* tp = ReactTextProperties::get(item->parentItem(), false);
+  if (tp != nullptr) {
+    tp->setDirty(dirty);
+  }
+}
+
 QString ReactRawTextProperties::text() const
 {
-  return d_func()->text;
+  return textString;
 }
 
 void ReactRawTextProperties::setText(const QString& text)
 {
-  Q_D(ReactRawTextProperties);
-  if (d->text == text)
+  if (textString == text)
     return;
-  d->text = text;
-  d->setDirty(true);
+  textString = text;
+  setDirty(true);
 }
 
 

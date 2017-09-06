@@ -37,7 +37,11 @@ public:
 
   bool shouldLayout() const override;
 
+  static void hookLayout(QQuickItem* textItem);
+
+private:
   virtual QString qmlComponentFile() const;
+  virtual void configureView(QQuickItem* view) const;
 };
 
 #endif // REACTTEXTMANAGER_H

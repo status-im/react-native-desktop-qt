@@ -65,7 +65,37 @@ bool ReactTextManager::shouldLayout() const
   return true;
 }
 
+void ReactTextManager::hookLayout(QQuickItem* textItem)
+{
+  ReactFlexLayout* fl = ReactFlexLayout::get(textItem);
+  fl->setMeasureFunction([=](double width, FlexMeasureMode widthMode, double height, FlexMeasureMode heightMode) {
+
+//    QString ts = textWithProperties(property_map());
+//    qDebug()<<"========== TEXT =============";
+//    qDebug()<<ts;
+//    textItem->setProperty("text", ts);
+
+    double contentWidth = textItem->property("contentWidth").value<double>();
+    double sw = 0;
+    if (std::isnan(width)) {
+      sw = contentWidth;
+    } else {
+      sw = contentWidth == 0 ? width : qMin(contentWidth, width);
+    }
+
+    textItem->setWidth(sw);
+
+    return std::make_pair(float(sw), textItem->property("contentHeight").value<float>());
+  });
+}
+
 QString ReactTextManager::qmlComponentFile() const
 {
   return ":/qml/ReactText.qml";
+}
+
+void ReactTextManager::configureView(QQuickItem* view) const
+{
+  ReactRawTextManager::configureView(view);
+  view->setProperty("textManager", QVariant::fromValue((QObject*)this));
 }

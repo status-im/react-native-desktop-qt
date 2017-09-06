@@ -24,6 +24,7 @@
 #include "reactflexlayout.h"
 #include "reacttextproperties.h"
 #include "qmlpropertyhandler.h"
+#include "reacttextmanager.h"
 
 
 class MatrixTransform : public QQuickTransform {
@@ -105,12 +106,14 @@ bool ReactViewManager::shouldLayout() const
 
 void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const
 {
-  // XXX: remove this
-  if ((ReactTextProperties::get(container, false) == nullptr) &&
-      (ReactTextProperties::get(child, false) != nullptr)) {
-    ReactTextProperties::get(child)->hookLayout();
-  }
   child->setParentItem(container);
+
+  bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
+  if (childIsTopReactTextInTextHierarchy) {
+    //ReactTextManager::hookLayout(child);
+    ReactTextProperties::get(child)->hookLayout(child);
+  }
+
 }
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
@@ -125,7 +128,7 @@ QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 
 void ReactViewManager::configureView(QQuickItem* view) const
 {
-  view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
+  view->setProperty("viewManager", QVariant::fromValue((QObject*)this));
 }
 
 QString ReactViewManager::qmlComponentFile() const

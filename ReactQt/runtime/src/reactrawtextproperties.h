@@ -30,7 +30,6 @@ class ReactRawTextProperties : public ReactPropertyHandler
 {
   Q_OBJECT
   Q_PROPERTY(QString text READ text WRITE setText)
-  Q_DECLARE_PRIVATE(ReactRawTextProperties);
 
 public:
   ReactRawTextProperties(QObject* parent = 0);
@@ -41,9 +40,14 @@ public:
 
   static ReactRawTextProperties* get(QQuickItem* item, bool create = true);
   static ReactRawTextProperties* qmlAttachedProperties(QObject* object);
+  void setDirty(bool dirty);
 
 private:
-  QScopedPointer<ReactRawTextPropertiesPrivate> d_ptr;
+
+  bool dirty;
+  QQuickItem* item;
+  QString textString;
+
 };
 
 QML_DECLARE_TYPEINFO(ReactRawTextProperties, QML_HAS_ATTACHED_PROPERTIES)

@@ -42,7 +42,7 @@ public:
 
   bool shouldLayout() const override;
 
-private:
+protected:
 
   virtual void configureView(QQuickItem* view) const;
   virtual QString qmlComponentFile() const;

@@ -25,9 +25,7 @@ React.Item {
     //Manager will load image and set correct url to "managedSource" property
     imageManager.manageSource(p_source, root);
   }
-  onP_resizeModeChanged: {
-    image.fillMode = fillModeFromResizeMode(root.p_resizeMode)
-  }
+
 
   objectName: p_testID
 
