@@ -48,7 +48,6 @@ set(
   reactimageloader.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
-  reacttextproperties.cpp
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp

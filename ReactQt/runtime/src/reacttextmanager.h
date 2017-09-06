@@ -37,7 +37,12 @@ public:
 
   bool shouldLayout() const override;
 
+
   static void hookLayout(QQuickItem* textItem);
+  typedef std::map<QString, QVariant> PropertyMap;
+  static QString textWithProperties(QQuickItem* item, const PropertyMap& properties);
+  static QString convertPropsToHtml(const QString& text, const QVariantMap& properties);
+  static PropertyMap props(QQuickItem* item);
 
 private:
   virtual QString qmlComponentFile() const;

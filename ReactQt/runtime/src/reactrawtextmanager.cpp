@@ -16,7 +16,6 @@
 #include <QQuickItem>
 #include <QQmlProperty>
 
-#include "reacttextproperties.h"
 #include "reactrawtextmanager.h"
 #include "reactbridge.h"
 #include "qmlpropertyhandler.h"

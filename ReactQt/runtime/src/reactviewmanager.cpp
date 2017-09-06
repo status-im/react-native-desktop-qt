@@ -22,7 +22,6 @@
 #include "reactbridge.h"
 #include "reactvaluecoercion.h"
 #include "reactflexlayout.h"
-#include "reacttextproperties.h"
 #include "qmlpropertyhandler.h"
 #include "reacttextmanager.h"
 
@@ -109,11 +108,10 @@ void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, in
   child->setParentItem(container);
 
   bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
-  if (childIsTopReactTextInTextHierarchy) {
-    //ReactTextManager::hookLayout(child);
-    ReactTextProperties::get(child)->hookLayout(child);
+  if (childIsTopReactTextInTextHierarchy)
+  {
+    ReactTextManager::hookLayout(child);
   }
-
 }
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const

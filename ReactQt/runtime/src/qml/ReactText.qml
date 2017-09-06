@@ -51,6 +51,22 @@ Text {
     };
   }
 
+
+//  property string decoratedText: "<span style=\"";
+
+
+
+//"font-family:"+p_fontFamily+";"
+
+//      "font-size:"+p_fontSize+"pt;"
+//      "color:"+p_color+";"
+//      "font-style:"+p_fontStyle+";"
+//      "font-weight:"+p_fontWeight+";"
+//      "text-decoration:"+p_textDecorationLine+";"
+// "\">" + text.toHtmlEscaped() + "</span>";
+//  return decoratedText;
+
+
   textFormat: Text.RichText
   wrapMode: Text.WordWrap
 }
