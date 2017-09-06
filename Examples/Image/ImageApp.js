@@ -15,36 +15,74 @@ export default class ImageReactNative extends Component {
   render() {
     return (
       <Image
-        borderTopLeftRadius={20}
-        source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
-        style={{width: 100, height: 100}}
-        testID={'testImage'}
-        onLoadStart={() => console.log("Image.onLoadStart()")}
-        onLoadEnd={() => console.log("Image.onLoadEnd()")}
-        onLoad={() => console.log("Image.onLoad()")}
-        onError={() => console.log("Image.onError()")}
-        onProgress={() => console.log("Image.onProgress()")}
-        />
+        source={{uri: '/home/parallels/work/Qt/Docs/Qt-5.9.1/qtquick/images/edge4.png'}}
+        style={styles.base}
+        resizeMode={'center'}
+      />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
+var styles = StyleSheet.create({
+  base: {
+    width:  300,
+    height: 300,
+    transform: [
+      { perspective: 850 },
+      { translateX: - 20 },
+      { rotateY: '60deg'},
+    ],
+  },
+  progress: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    flexDirection: 'row',
+    width: 100
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  leftMargin: {
+    marginLeft: 10,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  background: {
+    backgroundColor: '#222222'
+  },
+  sectionText: {
+    marginVertical: 6,
+  },
+  nestedText: {
+    marginLeft: 12,
+    marginTop: 20,
+    backgroundColor: 'transparent',
+    color: 'white'
+  },
+  resizeMode: {
+    width: 90,
+    height: 60,
+    borderWidth: 0.5,
+    borderColor: 'black'
+  },
+  resizeModeText: {
+    fontSize: 11,
+    marginBottom: 3,
+  },
+  icon: {
+    width: 15,
+    height: 15,
+  },
+  horizontal: {
+    flexDirection: 'row',
+  },
+  gif: {
+    flex: 1,
+    height: 200,
+  },
+  base64: {
+    flex: 1,
+    height: 50,
+    resizeMode: 'contain',
+  },
+  touchableText: {
+    fontWeight: '500',
+    color: 'blue',
   },
 });
 

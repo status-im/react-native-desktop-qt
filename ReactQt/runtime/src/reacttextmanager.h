@@ -28,8 +28,6 @@ public:
   ReactTextManager(QObject* parent = 0);
   ~ReactTextManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
 
@@ -39,7 +37,7 @@ public:
 
   bool shouldLayout() const override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
+  virtual QString qmlComponentFile() const;
 };
 
 #endif // REACTTEXTMANAGER_H

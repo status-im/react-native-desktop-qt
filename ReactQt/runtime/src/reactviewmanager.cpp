@@ -22,8 +22,8 @@
 #include "reactbridge.h"
 #include "reactvaluecoercion.h"
 #include "reactflexlayout.h"
-#include "reactpropertyhandler.h"
 #include "reacttextproperties.h"
+#include "qmlpropertyhandler.h"
 
 
 class MatrixTransform : public QQuickTransform {
@@ -45,23 +45,6 @@ public:
   }
   QMatrix4x4 m_transformMatrix;
   QQuickItem* m_item;
-};
-
-class ViewPropertyHandler : public ReactPropertyHandler {
-  Q_OBJECT
-  Q_PROPERTY(QVector<float> transformMatrix READ transformMatrix WRITE setTransformMatrix)
-public:
-  ViewPropertyHandler(QObject* object)
-    : ReactPropertyHandler(object)
-    {}
-  QVector<float> transformMatrix() const {
-    return QVector<float>{};
-  }
-  void setTransformMatrix(const QVector<float>& transformMatrix) {
-    QQmlListReference r(m_object, "transform");
-    r.clear();
-    r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(m_object)));
-  }
 };
 
 
@@ -87,7 +70,7 @@ ReactViewManager* ReactViewManager::viewManager()
 
 ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
 {
-  return new ViewPropertyHandler(object);
+  return new QmlPropertyHandler(object);
 }
 
 QString ReactViewManager::moduleName()
@@ -130,29 +113,55 @@ void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, in
   child->setParentItem(container);
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-import React 0.1 as React
-React.Item {
-}
-)COMPONENT";
-}
-
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
 {
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(component_qml, QUrl());
-  if (!component.isReady())
-    qCritical() << "React.Item is not ready!" << component.errors();
+  QQuickItem* newView = createView();
+  if(newView)
+  {
+    configureView(newView);
+  }
+  return newView;
+}
 
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to construct React.Item";
+void ReactViewManager::configureView(QQuickItem* view) const
+{
+  view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
+}
+
+QString ReactViewManager::qmlComponentFile() const
+{
+  return ":/qml/ReactView.qml";
+}
+
+QQuickItem*ReactViewManager::createView() const
+{
+  QQmlComponent component(m_bridge->qmlEngine());
+  component.loadUrl(QUrl::fromLocalFile(qmlComponentFile()));
+  if (!component.isReady())
+  {
+    qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
     return nullptr;
   }
 
+  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
+  if (item == nullptr) {
+    qCritical() << QString("Unable to construct item from component %1").arg(qmlComponentFile());
+  }
   return item;
+}
+
+ReactBridge*ReactViewManager::bridge()
+{
+  Q_ASSERT(m_bridge);
+  return m_bridge;
+}
+
+
+void ReactViewManager::manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object)
+{
+  QQmlListReference r(object, "transform");
+  r.clear();
+  r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(object)));
 }
 
 

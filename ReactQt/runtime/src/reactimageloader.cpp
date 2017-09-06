@@ -23,8 +23,12 @@
 #include "reactbridge.h"
 
 
+
+
 class ReactImageLoaderPrivate {
+
 public:
+
   class ImageProvider : public QQuickImageProvider {
   public:
     ImageProvider(ReactImageLoaderPrivate* priv):QQuickImageProvider(QQuickImageProvider::Image), p(priv) {}
@@ -93,6 +97,7 @@ public:
         ec(ReactImageLoader::Event_LoadEnd, *data);
       });
   }
+
   QMap<QUrl, QByteArray> cacheIds;
   ReactBridge* bridge = nullptr;
   ImageProvider* provider = nullptr;
