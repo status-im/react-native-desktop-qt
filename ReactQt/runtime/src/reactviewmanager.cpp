@@ -106,7 +106,6 @@ bool ReactViewManager::shouldLayout() const
 void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const
 {
   child->setParentItem(container);
-
   bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
   if (childIsTopReactTextInTextHierarchy)
   {

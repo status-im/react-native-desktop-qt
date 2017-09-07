@@ -24,12 +24,15 @@ class QQuickItem;
 
 const QString QML_PROPERTY_PREFIX = "p_";
 
+
+using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
+
 class ReactPropertyHandler : public QObject
 {
   Q_OBJECT
 
 public:
-  ReactPropertyHandler(QObject* object);
+  ReactPropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
   virtual ~ReactPropertyHandler();
 
   virtual QMap<QString, QMetaProperty> availableProperties();
@@ -47,6 +50,7 @@ private:
   QObject* m_object;
   QMap<QString, QMetaProperty> m_qmlProperties;
   QMap<QString, QMetaProperty> m_HandlerProperties;
+  SetPropertyCallback m_setPropertyCallback;
 
 };
 

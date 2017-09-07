@@ -17,9 +17,10 @@
 #include "reactvaluecoercion.h"
 
 
-ReactPropertyHandler::ReactPropertyHandler(QObject* object)
-  : QObject(object)
-  , m_object(object)
+ReactPropertyHandler::ReactPropertyHandler(QObject* object, SetPropertyCallback callback) :
+  QObject(object),
+  m_object(object),
+  m_setPropertyCallback(callback)
 {
 
 }
@@ -124,4 +125,8 @@ void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaOb
 void ReactPropertyHandler::setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value)
 {
   property.write(object, reactCoerceValue(value, property.userType()));
+  if(m_setPropertyCallback)
+  {
+    m_setPropertyCallback(object, property, value);
+  }
 }

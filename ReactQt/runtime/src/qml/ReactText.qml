@@ -3,21 +3,22 @@ import QtQuick 2.4
 Text {
   id: textRoot
 
-  property bool p_allowFontScaling: (parent && parent.p_allowFontScaling && parent.p_allowFontScaling !== false) ? parent.p_allowFontScaling : p_allowFontScaling
-  property string p_fontFamily: (parent && parent.p_fontFamily) ? parent.p_fontFamily : p_fontFamily
-  property double p_fontSize: (parent && parent.p_fontSize && parent.p_fontSize !== font.pointSize) ? parent.p_fontSize : p_fontSize
-  property bool p_highlighted: (parent && parent.p_highlighted && parent.p_highlighted !== false) ? parent.p_highlighted : p_highlighted
-  property color p_color: (parent && parent.p_color && parent.p_color !== Qt.rgba(0, 0, 0, 1)) ? parent.p_color : Qt.rgba(0, 0, 0, 1)
-  property string p_fontStyle: (parent && parent.p_fontStyle) ? parent.p_fontStyle : p_fontStyle
-  property string p_fontWeight: (parent && parent.p_fontWeight) ? parent.p_fontWeight : p_fontWeight
-  property double p_letterSpacing: (parent && parent.p_letterSpacing) ? parent.p_letterSpacing : p_letterSpacing
-  property double p_lineHeight: (parent && parent.p_lineHeight) ? parent.p_lineHeight : p_lineHeight
-  property string p_textAlign: (parent && parent.p_textAlign) ? parent.p_textAlign : p_textAlign
-  property string p_textDecorationLine: (parent && parent.p_textDecorationLine) ? parent.p_textDecorationLine : p_textDecorationLine
-  property string p_textDecorationStyle: (parent && parent.p_textDecorationStyle) ? parent.p_textDecorationStyle : p_textDecorationStyle
-  property color p_textDecorationColor: (parent && parent.p_textDecorationColor /*&& parent.p_textDecorationColor !== color("#000000")*/) ? parent.p_textDecorationColor : p_textDecorationColor
-  property string p_writingDirection: (parent && parent.p_writingDirection) ? parent.p_writingDirection : p_writingDirection
-  property int p_numberOfLines: (parent && parent.p_numberOfLines && parent.p_numberOfLines !== 1000000) ? parent.p_numberOfLines : 1000000
+  property bool p_allowFontScaling: false
+  property string p_fontFamily
+  property double p_fontSize: font.pointSize
+  property bool p_highlighted: false
+  property color p_color
+  property string p_fontStyle
+  property string p_fontWeight
+  property double p_letterSpacing
+  property double p_lineHeight
+  property string p_textAlign: "left"
+  property string p_textDecorationLine
+  property string p_textDecorationStyle
+  property color p_textDecorationColor
+  property string p_writingDirection
+  property int p_numberOfLines: 1000000
+
 
   property string typeName: "ReactText"
   property var textManager: null
@@ -56,6 +57,7 @@ Text {
     subscribeToChildrenTextChanges()
     updateHtmlText()
   }
+  onParentChanged: updateHtmlText()
 
 
   function subscribeToChildrenTextChanges() {
@@ -83,12 +85,20 @@ Text {
   }
 
   function textToHtml(textString) {
-    return "<span style=\"" + (p_fontFamily ? ("font-family:"+p_fontFamily+";") : "")
-                            + (p_fontSize ? ("font-size:"+p_fontSize+"pt;") : "")
-                            + (p_color ? ("color:"+p_color+";") : "")
-                            + (p_fontStyle ? ("font-style:"+p_fontStyle+";") : "")
-                            + (p_fontWeight ? ("font-weight:"+p_fontWeight+";") : "")
-                            + (p_textDecorationLine ? ("text-decoration:"+p_textDecorationLine+";") : "")
+
+    var fontFamily = textManager.nestedPropertyValue(textRoot, "p_fontFamily")
+    var color = textManager.nestedPropertyValue(textRoot, "p_color")
+    var fontWeight = textManager.nestedPropertyValue(textRoot, "p_fontWeight")
+    var fontSize = textManager.nestedPropertyValue(textRoot, "p_fontSize")
+    var fontStyle = textManager.nestedPropertyValue(textRoot, "p_fontStyle")
+    var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")
+
+    return "<span style=\"" + (fontFamily ? ("font-family:"+fontFamily+";") : "")
+                            + (fontSize? ("font-size:"+fontSize+"pt;") : "")
+                            + (color ? ("color:"+color+";") : "")
+                            + (fontStyle ? ("font-style:"+fontStyle+";") : "")
+                            + (fontWeight ? ("font-weight:"+fontWeight+";") : "")
+                            + (textDecorLine ? ("text-decoration:"+textDecorLine+";") : "")
                             + "\">"
                             + textString + "</span>";
   }
