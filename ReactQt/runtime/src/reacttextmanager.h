@@ -40,9 +40,7 @@ public:
 
   static void hookLayout(QQuickItem* textItem);
   typedef std::map<QString, QVariant> PropertyMap;
-  static QString textWithProperties(QQuickItem* item, const PropertyMap& properties);
-  static QString convertPropsToHtml(const QString& text, const QVariantMap& properties);
-  static PropertyMap props(QQuickItem* item);
+  static void resizeToWidth(QQuickItem* textItem, double width);
 
 private:
   virtual QString qmlComponentFile() const;

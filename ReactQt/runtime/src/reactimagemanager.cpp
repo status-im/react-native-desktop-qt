@@ -24,7 +24,7 @@
 #include "reactbridge.h"
 #include "reactevents.h"
 #include "reactimageloader.h"
-#include "qmlpropertyhandler.h"
+#include "reactpropertyhandler.h"
 
 int ReactImageManager::m_id = 0;
 
@@ -55,7 +55,7 @@ ReactViewManager* ReactImageManager::viewManager()
 
 ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
 {
-  return new QmlPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactImageManager::moduleName()

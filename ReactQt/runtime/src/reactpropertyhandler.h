@@ -22,24 +22,27 @@
 class QQuickItem;
 
 
+const QString QML_PROPERTY_PREFIX = "p_";
+
 class ReactPropertyHandler : public QObject
 {
   Q_OBJECT
 
 public:
-  ReactPropertyHandler(QObject* object, bool exposeQmlProperties = true);
+  ReactPropertyHandler(QObject* object);
   virtual ~ReactPropertyHandler();
 
   virtual QMap<QString, QMetaProperty> availableProperties();
   virtual void applyProperties(const QVariantMap& properties);
   QVariant value(const QString& propertyName);
 
-protected:
-  virtual void buildPropertyMap();
+private:
+  void buildPropertyMap();
   void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
+  void getPropertiesFromMetaObject(const QMetaObject* metaObject);
 
-protected:
-  bool m_exposeQmlProperties;
+private:
+  bool m_exposeQmlProperties = true;
   bool m_cached = false;
   QObject* m_object;
   QMap<QString, QMetaProperty> m_qmlProperties;

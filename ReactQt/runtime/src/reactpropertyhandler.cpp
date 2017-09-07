@@ -17,9 +17,8 @@
 #include "reactvaluecoercion.h"
 
 
-ReactPropertyHandler::ReactPropertyHandler(QObject* object, bool exposeQmlProperties)
+ReactPropertyHandler::ReactPropertyHandler(QObject* object)
   : QObject(object)
-  , m_exposeQmlProperties(exposeQmlProperties)
   , m_object(object)
 {
 
@@ -86,35 +85,41 @@ void ReactPropertyHandler::buildPropertyMap()
     return;
   }
 
-  // Class properties on the qml object
+  // Get qml properties of current object (and its parents)
   if (m_exposeQmlProperties) {
     const QMetaObject* metaObject = m_object->metaObject();
-    const int propertyCount = metaObject->propertyCount();
-
-    for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
-      QMetaProperty p = metaObject->property(i);
-      if (p.isScriptable())
-      {
-        m_qmlProperties.insert(p.name(), p);
-      }
-    }
+    getPropertiesFromMetaObject(metaObject);
   }
 
-  // All properties on the handlers
-  {
+  // Get all properties on the handlers (extras)
   const QMetaObject* metaObject = this->metaObject();
   const int propertyCount = metaObject->propertyCount();
 
   for (int i = 1; i < propertyCount; ++i) {
     QMetaProperty p = metaObject->property(i);
     if (p.isScriptable())
-    {
       m_HandlerProperties.insert(p.name(), p);
-    }
   }
-  }
+
   m_cached = true;
 }
+
+
+void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject)
+{
+  //we get all prefixed properties from object and its parents
+  const int propertyCount = metaObject->propertyCount();
+  for (int i = 0; i < propertyCount; ++i) {
+    QMetaProperty p = metaObject->property(i);
+    QString qmlPropName = p.name();
+    if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX))
+    {
+      QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
+      m_qmlProperties.insert(nameWithoutPrefix, p);
+    }
+  }
+}
+
 
 void ReactPropertyHandler::setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value)
 {

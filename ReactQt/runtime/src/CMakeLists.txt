@@ -53,7 +53,6 @@ set(
   reactexceptionsmanager.cpp
   reactscrollviewmanager.cpp
   reactnavigatormanager.cpp
-  qmlpropertyhandler.cpp
   ../../../React/Layout/Layout.c
 )
 

@@ -18,7 +18,7 @@
 
 #include "reactrawtextmanager.h"
 #include "reactbridge.h"
-#include "qmlpropertyhandler.h"
+#include "reactpropertyhandler.h"
 
 ReactRawTextManager::ReactRawTextManager(QObject *parent)
   : ReactViewManager(parent)
@@ -38,7 +38,7 @@ ReactViewManager* ReactRawTextManager::viewManager()
 ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new QmlPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactRawTextManager::moduleName()

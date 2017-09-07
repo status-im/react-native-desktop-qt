@@ -2,7 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.4
 
 Rectangle {
- id: redboxRect
+ id: redboxRoot
  color: 'red'
  anchors.fill: parent
 
@@ -16,7 +16,7 @@ Rectangle {
    id: textMessage
    visible: message.length > 0
    anchors {
-     centerIn: redboxRect
+     centerIn: redboxRoot
      margins: 40
    }
    color: 'white'
@@ -82,7 +82,7 @@ Rectangle {
        target: textMessage
        anchors.left: undefined
        anchors.top: undefined
-       anchors.centerIn: redboxRect
+       anchors.centerIn: redboxRoot
      }
      PropertyChanges {
        target: stackListView
@@ -94,8 +94,8 @@ Rectangle {
      PropertyChanges {
        target: textMessage
        anchors.centerIn: undefined
-       anchors.left: redboxRect.left
-       anchors.top: redboxRect.top
+       anchors.left: redboxRoot.left
+       anchors.top: redboxRoot.top
      }
      PropertyChanges {
        target: stackListView

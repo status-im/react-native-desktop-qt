@@ -22,7 +22,7 @@
 #include "reactbridge.h"
 #include "reactvaluecoercion.h"
 #include "reactflexlayout.h"
-#include "qmlpropertyhandler.h"
+#include "reactpropertyhandler.h"
 #include "reacttextmanager.h"
 
 
@@ -70,7 +70,7 @@ ReactViewManager* ReactViewManager::viewManager()
 
 ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
 {
-  return new QmlPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactViewManager::moduleName()
