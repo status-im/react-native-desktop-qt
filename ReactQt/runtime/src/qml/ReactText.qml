@@ -86,6 +86,7 @@ Text {
 
   function textToHtml(textString) {
 
+    //get props values, own or nested
     var fontFamily = textManager.nestedPropertyValue(textRoot, "p_fontFamily")
     var color = textManager.nestedPropertyValue(textRoot, "p_color")
     var fontWeight = textManager.nestedPropertyValue(textRoot, "p_fontWeight")
