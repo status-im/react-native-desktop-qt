@@ -118,11 +118,11 @@ void ReactImageLoader::getSize(const QString& url,
     {
       QSize size;
       d->provider->requestImage(d->cacheIds.value(url), &size, size);
-      d->bridge->invokeCallback(success, QVariantList{ QVariantMap{{"height", size.height()}, {"width", size.width()}} });
+      d->bridge->invokePromiseCallback(success, QVariantList{ QVariantMap{{"height", size.height()}, {"width", size.width()}} });
     }
     if (event == ReactImageLoader::Event_LoadError)
     {
-      d->bridge->invokeCallback(error, QVariantList{});
+      d->bridge->invokePromiseCallback(error, QVariantList{});
     }
   });
 }

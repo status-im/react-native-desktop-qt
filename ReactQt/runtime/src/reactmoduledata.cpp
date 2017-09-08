@@ -134,10 +134,6 @@ QVariant ReactModuleData::info() const
   config.push_back(promiseMethodsList);
   config.push_back(syncMethodsList);
 
-
-//  qDebug()<<" ================= module config =================";
-//  qDebug()<<config;
-
   return config;
 }
 

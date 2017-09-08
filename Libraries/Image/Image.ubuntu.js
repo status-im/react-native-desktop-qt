@@ -55,8 +55,6 @@ var Image = React.createClass({
       success: (width: number, height: number) => void,
       failure?: (error: any) => void,
     ) {
-      //debugger;
-
       return ImageLoader.getSize(url)
         .then(function(sizes) {
           success(sizes.width, sizes.height);

@@ -31,6 +31,7 @@ function genModule(config: ?ModuleConfig, moduleID: number): ?{name: string, mod
   if (!config) {
     return null;
   }
+  
   const [moduleName, constants, methods, promiseMethods, syncMethods] = config;
   invariant(!moduleName.startsWith('RCT') && !moduleName.startsWith('RK'),
     'Module name prefixes should\'ve been stripped by the native side ' +

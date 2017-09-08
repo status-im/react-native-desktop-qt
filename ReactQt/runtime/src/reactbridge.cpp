@@ -163,7 +163,7 @@ void ReactBridge::enqueueJSCall(const QString& module, const QString& method, co
                                     });
 }
 
-void ReactBridge::invokeCallback(double callbackCode, const QVariantList& args)
+void ReactBridge::invokePromiseCallback(double callbackCode, const QVariantList& args)
 {
   d_func()->executor->executeJSCall("invokeCallbackAndReturnFlushedQueue",
                                     QVariantList{callbackCode, args},

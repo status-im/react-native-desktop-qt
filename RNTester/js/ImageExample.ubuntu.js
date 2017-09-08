@@ -135,8 +135,8 @@ var NetworkImageExample = createReactClass({
 var ImageSizeExample = createReactClass({
   getInitialState: function() {
     return {
-      width: 20,
-      height: 30,
+      width: 0,
+      height: 0,
     };
   },
   componentDidMount: function() {
