@@ -22,17 +22,26 @@
 
 class ReactBridge;
 
+enum class NativeMethodType
+{
+  Async,
+  Promise,
+  Sync
+};
+
 
 class ReactModuleMethod
 {
+
 public:
+
   typedef std::function<QObject* (QVariantList&)> ObjectFunction;
 
   ReactModuleMethod(const QMetaMethod& metaMethod, const ObjectFunction& objectFunction);
   ~ReactModuleMethod();
 
   QString name() const;
-  QString type() const;
+  NativeMethodType type() const;
 
   void invoke(const QVariantList& args);
 

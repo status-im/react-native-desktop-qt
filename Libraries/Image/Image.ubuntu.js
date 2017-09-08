@@ -49,6 +49,25 @@ var Image = React.createClass({
 
   statics: {
     resizeMode: ImageResizeMode,
+
+    getSize(
+      url: string,
+      success: (width: number, height: number) => void,
+      failure?: (error: any) => void,
+    ) {
+      //debugger;
+
+      return ImageLoader.getSize(url)
+        .then(function(sizes) {
+          console.log("ZZZZZZZZZZ: getSize(): ", sizes)
+          success(sizes.width, sizes.height);
+        })
+        .catch(failure || function() {
+          console.warn('ZZZZZZZZZZ: Failed to get size for image: ' + url);
+        });
+    },
+
+
     prefetch(url: string) {
       return ImageLoader.prefetchImage(url);
     },

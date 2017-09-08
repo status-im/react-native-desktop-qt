@@ -105,19 +105,29 @@ public:
 
 
 void ReactImageLoader::prefetchImage(
-  const QString& url,
-  const ReactModuleInterface::ListArgumentBlock& resolve,
-  const ReactModuleInterface::ListArgumentBlock& reject
-) {
+  const QString& url) {
   Q_D(ReactImageLoader);
-  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
-    if (event == Event_LoadEnd) {
-      if (data.contains("error"))
-        reject(d->bridge, QVariantList{data});
-      else
-        resolve(d->bridge, QVariantList{true});
-    }
-  });
+  qDebug()<<"PREFETCH CALLED";
+  d->fetchImage(url, [=](ReactImageLoader::Event, const QVariantMap&) {});
+}
+
+void ReactImageLoader::getSize(const QString& url,
+                                double success,
+                                double error)
+{
+  Q_D(ReactImageLoader);
+//  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+//    if (event == Event_LoadEnd) {
+//      if (data.contains("error"))
+//        reject(d->bridge, QVariantList{data});
+//      else
+//        resolve(d->bridge, QVariantList{QSize(100,200)});
+//    }
+//  });
+
+  d->bridge->invokeCallback(success, QVariantList{ QVariantMap{{"height",100}, {"width", 200}} });
+
+  //return QSize(100,200);
 }
 
 
@@ -162,9 +172,7 @@ QUrl ReactImageLoader::provideUriFromSourceUrl(const QUrl& source)
   return source;
 }
 
-void ReactImageLoader::loadImage(
-  const QUrl& source,
-  const LoadEventCallback& loadEventCallback
-) {
+void ReactImageLoader::loadImage(const QUrl& source, const LoadEventCallback& loadEventCallback)
+{
   d_func()->fetchImage(source, loadEventCallback);
 }
