@@ -59,6 +59,12 @@ React.Item {
     color: imageRoot.p_tintColor
   }
 
+  FastBlur {
+    anchors.fill: image
+    source: image
+    radius: p_blurRadius
+  }
+
   function fillModeFromResizeMode(resizeMode) {
     switch (resizeMode) {
         case "cover":   return Image.PreserveAspectCrop;
