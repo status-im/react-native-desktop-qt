@@ -47,7 +47,6 @@ function genModule(config: ?ModuleConfig, moduleID: number): ?{name: string, mod
     const isSync = syncMethods && arrayContains(syncMethods, methodID);
     invariant(!isPromise || !isSync, 'Cannot have a method that is both async and a sync hook');
     const methodType = isPromise ? 'promise' : isSync ? 'sync' : 'async';
-    console.log("METHOD: ", moduleName, "::", methodName, " - ", methodType, " id: ", methodID)
     module[methodName] = genMethod(moduleID, methodID, methodType);
   });
   Object.assign(module, constants);

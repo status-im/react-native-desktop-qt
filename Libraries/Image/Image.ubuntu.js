@@ -59,11 +59,10 @@ var Image = React.createClass({
 
       return ImageLoader.getSize(url)
         .then(function(sizes) {
-          console.log("ZZZZZZZZZZ: getSize(): ", sizes)
           success(sizes.width, sizes.height);
         })
         .catch(failure || function() {
-          console.warn('ZZZZZZZZZZ: Failed to get size for image: ' + url);
+          console.warn('Failed to get size for image: ' + url);
         });
     },
 
