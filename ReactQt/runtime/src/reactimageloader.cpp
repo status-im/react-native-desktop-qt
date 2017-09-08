@@ -22,9 +22,6 @@
 #include "reactimageloader.h"
 #include "reactbridge.h"
 
-
-
-
 class ReactImageLoaderPrivate {
 
 public:
@@ -52,7 +49,8 @@ public:
     provider = new ImageProvider(this);
   }
   void markCached(const QUrl& source) {
-    cacheIds.insert(source, QCryptographicHash::hash(source.toEncoded(), QCryptographicHash::Sha1).toBase64());
+    QByteArray hash = QCryptographicHash::hash(source.toEncoded(), QCryptographicHash::Sha1).toBase64();
+    cacheIds.insert(source, hash);
   }
   bool isCached(const QUrl& source) {
     return cacheIds.contains(source);
@@ -107,7 +105,6 @@ public:
 void ReactImageLoader::prefetchImage(
   const QString& url) {
   Q_D(ReactImageLoader);
-  qDebug()<<"PREFETCH CALLED";
   d->fetchImage(url, [=](ReactImageLoader::Event, const QVariantMap&) {});
 }
 
@@ -116,18 +113,18 @@ void ReactImageLoader::getSize(const QString& url,
                                 double error)
 {
   Q_D(ReactImageLoader);
-//  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
-//    if (event == Event_LoadEnd) {
-//      if (data.contains("error"))
-//        reject(d->bridge, QVariantList{data});
-//      else
-//        resolve(d->bridge, QVariantList{QSize(100,200)});
-//    }
-//  });
-
-  d->bridge->invokeCallback(success, QVariantList{ QVariantMap{{"height",100}, {"width", 200}} });
-
-  //return QSize(100,200);
+  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+    if (event == ReactImageLoader::Event_LoadSuccess)
+    {
+      QSize size;
+      d->provider->requestImage(d->cacheIds.value(url), &size, size);
+      d->bridge->invokeCallback(success, QVariantList{ QVariantMap{{"height", size.height()}, {"width", size.width()}} });
+    }
+    if (event == ReactImageLoader::Event_LoadError)
+    {
+      d->bridge->invokeCallback(error, QVariantList{});
+    }
+  });
 }
 
 

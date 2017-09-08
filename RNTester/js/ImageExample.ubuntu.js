@@ -135,16 +135,18 @@ var NetworkImageExample = createReactClass({
 var ImageSizeExample = createReactClass({
   getInitialState: function() {
     return {
-      width: 0,
-      height: 0,
+      width: 20,
+      height: 30,
     };
   },
   componentDidMount: function() {
     Image.getSize(this.props.source.uri, (width, height) => {
+      console.log("this.setState: ", width, height)
       this.setState({width, height});
     });
   },
   render: function() {
+    console.log(" >>>>>>>>>>>> render, this.size =",this.state.width, ",", this.state.height )
     return (
       <View style={{flexDirection: 'row'}}>
         <Image
