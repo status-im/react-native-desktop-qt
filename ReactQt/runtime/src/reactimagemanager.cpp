@@ -26,8 +26,6 @@
 #include "reactimageloader.h"
 #include "reactpropertyhandler.h"
 
-int ReactImageManager::m_id = 0;
-
 
 namespace {
 static QMap<ReactImageLoader::Event, QString> eventNames{
@@ -39,13 +37,24 @@ static QMap<ReactImageLoader::Event, QString> eventNames{
 };
 }
 
+
+class ReactImageManagerPrivate {
+
+public:
+  bool isBase64ImageUrl(const QUrl& url) const;
+  void setSource(QObject* image, const QUrl& url);
+};
+
+
 ReactImageManager::ReactImageManager(QObject* parent)
-  : ReactViewManager(parent)
+  : ReactViewManager(parent),
+    d_ptr(new ReactImageManagerPrivate)
 {
 }
 
 ReactImageManager::~ReactImageManager()
 {
+
 }
 
 ReactViewManager* ReactImageManager::viewManager()
@@ -84,7 +93,16 @@ QStringList ReactImageManager::customDirectEventTypes()
 
 void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image)
 {
+  Q_D(ReactImageManager);
+
   QUrl source = imageSource["uri"].toUrl();
+
+  if(d->isBase64ImageUrl(source))
+  {
+    d->setSource(image, source);
+    return;
+  }
+
   if (source.isRelative())
   {
     source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
@@ -94,7 +112,7 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
   {
       if (event == ReactImageLoader::Event_LoadSuccess)
       {
-        image->setProperty("managedSource", bridge()->imageLoader()->provideUriFromSourceUrl(source));
+        d->setSource(image,  bridge()->imageLoader()->provideUriFromSourceUrl(source));
       }
       if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
       {
@@ -116,5 +134,16 @@ QString ReactImageManager::qmlComponentFile() const
 {
   return ":/qml/ReactImage.qml";
 }
+
+bool ReactImageManagerPrivate::isBase64ImageUrl(const QUrl& url) const
+{
+  return url.toString().startsWith("data:image/png;base64");
+}
+
+void ReactImageManagerPrivate::setSource(QObject* image, const QUrl& url)
+{
+   image->setProperty("managedSource", url);
+}
+
 
 #include "reactimagemanager.moc"

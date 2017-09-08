@@ -586,18 +586,17 @@ exports.examples = [
   //   },
   //   platform: 'ios',
   // },
-  // {
-  //   title: 'Base64 image',
-  //   render: function() {
-  //     return (
-  //       <Image
-  //         style={styles.base64}
-  //         source={{uri: base64Icon, scale: 3}}
-  //       />
-  //     );
-  //   },
-  //   platform: 'ios',
-  // },
+  {
+    title: 'Base64 image',
+    render: function() {
+      return (
+        <Image
+          style={styles.base64}
+          source={{uri: base64Icon, scale: 3}}
+        />
+      );
+    },
+  },
   // {
   //   title: 'Cap Insets',
   //   description:
