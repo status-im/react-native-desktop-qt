@@ -16,7 +16,6 @@
 
 #include "reactitem.h"
 #include "reactflexlayout.h"
-#include "reacttextproperties.h"
 
 
 namespace {

@@ -16,13 +16,9 @@
 #include <QQuickItem>
 #include <QQmlProperty>
 
-#include "reacttextproperties.h"
 #include "reactrawtextmanager.h"
 #include "reactbridge.h"
-#include "reactrawtextproperties.h"
-
-
-
+#include "reactpropertyhandler.h"
 
 ReactRawTextManager::ReactRawTextManager(QObject *parent)
   : ReactViewManager(parent)
@@ -42,7 +38,7 @@ ReactViewManager* ReactRawTextManager::viewManager()
 ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return ReactRawTextProperties::get(qobject_cast<QQuickItem*>(object));
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactRawTextManager::moduleName()

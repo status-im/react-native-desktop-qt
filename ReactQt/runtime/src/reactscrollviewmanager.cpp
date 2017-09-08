@@ -23,7 +23,7 @@
 #include "reactscrollviewmanager.h"
 #include "reactbridge.h"
 #include "reactuimanager.h"
-#include "qmlpropertyhandler.h"
+#include "reactpropertyhandler.h"
 #include "reactevents.h"
 #include "reactitem.h"
 
@@ -59,7 +59,7 @@ ReactViewManager* ReactScrollViewManager::viewManager()
 ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new QmlPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactScrollViewManager::moduleName()

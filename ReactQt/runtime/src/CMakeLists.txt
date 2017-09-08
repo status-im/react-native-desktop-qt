@@ -48,14 +48,11 @@ set(
   reactimageloader.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
-  reacttextproperties.cpp
-  reactrawtextproperties.cpp
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp
   reactscrollviewmanager.cpp
   reactnavigatormanager.cpp
-  qmlpropertyhandler.cpp
   ../../../React/Layout/Layout.c
 )
 

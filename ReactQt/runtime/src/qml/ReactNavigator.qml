@@ -3,7 +3,7 @@ import QtQuick.Controls 1.4
 
 
 Item {
- id: root
+ id: navigatorRoot
 
  property bool p_onBackButtonPress: false
 
@@ -14,7 +14,7 @@ Item {
  Component {
    id: pageBackAction
    Action {
-     iconName: root.numberPages > 1 ? "back" : ""
+     iconName: navigatorRoot.numberPages > 1 ? "back" : ""
    }
  }
 
@@ -27,12 +27,12 @@ Item {
    item.head.backAction = pageBackAction.createObject(item);
    item.head.backAction.onTriggered.connect(backTriggered);
    pageStack.push(item);
-   root.numberPages += 1;
+   navigatorRoot.numberPages += 1;
  }
 
  function pop() {
    pageStack.pop();
-   root.numberPages -= 1;
+   navigatorRoot.numberPages -= 1;
  }
 
  function clear() {

@@ -3,7 +3,7 @@ import QtGraphicalEffects 1.0
 import React 0.1 as React
 
 React.Item {
-  id: root
+  id: imageRoot
   p_backgroundColor: 'transparent'
 
   property color p_tintColor
@@ -23,11 +23,9 @@ React.Item {
 
   onP_sourceChanged: {
     //Manager will load image and set correct url to "managedSource" property
-    imageManager.manageSource(p_source, root);
+    imageManager.manageSource(p_source, imageRoot);
   }
-  onP_resizeModeChanged: {
-    image.fillMode = fillModeFromResizeMode(root.p_resizeMode)
-  }
+
 
   objectName: p_testID
 
@@ -40,15 +38,15 @@ React.Item {
     id: image
     visible: true
     anchors.fill: parent
-    layer.enabled: root.p_borderRadius > 0
-    fillMode: fillModeFromResizeMode(root.p_resizeMode)
-    source: root.managedSource
+    layer.enabled: imageRoot.p_borderRadius > 0
+    fillMode: fillModeFromResizeMode(imageRoot.p_resizeMode)
+    source: imageRoot.managedSource
 
     layer.effect: OpacityMask {
       maskSource: Rectangle {
         width: image.width
         height: image.height
-        radius: root.p_borderRadius
+        radius: imageRoot.p_borderRadius
       }
     }
   }
@@ -58,7 +56,7 @@ React.Item {
     anchors.fill: image
     id: colorOverlay
     source: image
-    color: root.p_tintColor
+    color: imageRoot.p_tintColor
   }
 
   function fillModeFromResizeMode(resizeMode) {

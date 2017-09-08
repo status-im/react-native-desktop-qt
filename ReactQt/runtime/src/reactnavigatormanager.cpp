@@ -22,7 +22,7 @@
 #include "reactbridge.h"
 #include "reactuimanager.h"
 #include "reactattachedproperties.h"
-#include "qmlpropertyhandler.h"
+#include "reactpropertyhandler.h"
 #include "reactevents.h"
 
 
@@ -77,7 +77,7 @@ ReactViewManager* ReactNavigatorManager::viewManager()
 ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new QmlPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactNavigatorManager::moduleName()
