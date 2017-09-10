@@ -7,5 +7,6 @@
         <file>qml/ReactRedboxItem.qml</file>
         <file>qml/ReactRawText.qml</file>
         <file>qml/ReactText.qml</file>
+        <file>qml/ReactActivityIndicator.qml</file>
     </qresource>
 </RCC>

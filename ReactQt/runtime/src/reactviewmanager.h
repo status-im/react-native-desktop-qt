@@ -31,15 +31,14 @@ public:
     ReactViewManager(QObject* parent = 0);
     ~ReactViewManager();
 
-    void setBridge(ReactBridge* bridge) override;
+    virtual void setBridge(ReactBridge* bridge) override;
 
     // TODO: this doesnt seem right
-    ReactViewManager* viewManager() override;
-    ReactPropertyHandler* propertyHandler(QObject* object) override;
-
-    QString moduleName() override;
-    QList<ReactModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
+    virtual ReactViewManager* viewManager() override;
+    virtual ReactPropertyHandler* propertyHandler(QObject* object) override;
+    virtual QString moduleName() override;
+    virtual QList<ReactModuleMethod*> methodsToExport() override;
+    virtual QVariantMap constantsToExport() override;
 
     virtual QStringList customDirectEventTypes();
     virtual QStringList customBubblingEventTypes();

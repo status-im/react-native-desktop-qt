@@ -1,31 +1,29 @@
 
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * Author: Justin McPherson <justin.mcpherson@canonical.com>
- *
  */
 
-#ifndef REACTIMAGEMANAGER_H
-#define REACTIMAGEMANAGER_H
+#ifndef REACTATCTIVITYINDICATORMANAGER_H
+#define REACTATCTIVITYINDICATORMANAGER_H
 
 #include "reactviewmanager.h"
 
 class ReactPropertyHandler;
-class ReactImageManagerPrivate;
-class ReactImageManager : public ReactViewManager {
+class ReactActivityIndicatorManagerPrivate;
+class ReactActivityIndicatorManager : public ReactViewManager {
     Q_OBJECT
     Q_INTERFACES(ReactModuleInterface)
-    Q_DECLARE_PRIVATE(ReactImageManager)
+    Q_DECLARE_PRIVATE(ReactActivityIndicatorManager)
 
 public:
-    ReactImageManager(QObject* parent = 0);
-    virtual ~ReactImageManager();
+    ReactActivityIndicatorManager(QObject* parent = 0);
+    virtual ~ReactActivityIndicatorManager();
 
     virtual ReactViewManager* viewManager() override;
     virtual ReactPropertyHandler* propertyHandler(QObject* object) override;
@@ -34,15 +32,12 @@ public:
     virtual QVariantMap constantsToExport() override;
     virtual QStringList customDirectEventTypes() override;
 
-public slots:
-    void manageSource(const QVariantMap& imageSource, QObject* image);
-
 private:
     virtual void configureView(QQuickItem* view) const override;
     virtual QString qmlComponentFile() const override;
 
 private:
-    QScopedPointer<ReactImageManagerPrivate> d_ptr;
+    QScopedPointer<ReactActivityIndicatorManagerPrivate> d_ptr;
 };
 
-#endif // REACTIMAGEMANAGER_H
+#endif // REACTATCTIVITYINDICATORMANAGER_H
