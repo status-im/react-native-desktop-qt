@@ -16,24 +16,21 @@
 
 #include <QObject>
 
-
 class ReactBridge;
 
-
 class ReactEventDispatcherPrivate;
-class ReactEventDispatcher : public QObject
-{
-  Q_OBJECT
-  Q_DECLARE_PRIVATE(ReactEventDispatcher);
+class ReactEventDispatcher : public QObject {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(ReactEventDispatcher);
 
 public:
-  ReactEventDispatcher(ReactBridge* bridge);
-  ~ReactEventDispatcher();
+    ReactEventDispatcher(ReactBridge* bridge);
+    ~ReactEventDispatcher();
 
-  void sendDeviceEvent(const QString& name, const QVariantList& args);
+    void sendDeviceEvent(const QString& name, const QVariantList& args);
 
 private:
-  QScopedPointer<ReactEventDispatcherPrivate> d_ptr;
+    QScopedPointer<ReactEventDispatcherPrivate> d_ptr;
 };
 
 #endif // REACTEVENTDISPATCHER_H

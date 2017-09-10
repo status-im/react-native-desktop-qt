@@ -16,27 +16,24 @@
 #include <QVariantMap>
 
 class ReactBlobProviderPrivate;
-class ReactBlobProvider
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  Q_INTERFACES(ReactModuleInterface)
+class ReactBlobProvider : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_DECLARE_PRIVATE(ReactBlobProvider)
+    Q_DECLARE_PRIVATE(ReactBlobProvider)
 
 public:
-  ReactBlobProvider(QObject* parent = 0);
-  ~ReactBlobProvider();
+    ReactBlobProvider(QObject* parent = 0);
+    ~ReactBlobProvider();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
 private:
-  QScopedPointer<ReactBlobProviderPrivate> d_ptr;
+    QScopedPointer<ReactBlobProviderPrivate> d_ptr;
 };
 
 #endif // REACTBLOBPROVIDER_H

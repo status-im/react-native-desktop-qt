@@ -16,31 +16,29 @@
 
 #include <functional>
 
-#include <QVariant>
 #include <QObject>
+#include <QVariant>
 
-class ReactExecutor : public QObject
-{
-  Q_OBJECT
+class ReactExecutor : public QObject {
+    Q_OBJECT
 
 public:
-  typedef std::function<void(const QJsonDocument&)> ExecuteCallback;
+    typedef std::function<void(const QJsonDocument&)> ExecuteCallback;
 
-  ReactExecutor(QObject* parent);
-  ~ReactExecutor();
+    ReactExecutor(QObject* parent);
+    ~ReactExecutor();
 
-  virtual void init() = 0;
+    virtual void init() = 0;
 
-  virtual void injectJson(const QString& name, const QVariant& data) = 0;
-  virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) = 0;
-  virtual void executeJSCall(const QString& method,
-                             const QVariantList& args = QVariantList(),
-                             const ExecuteCallback& callback = ExecuteCallback()
-                            ) = 0;
+    virtual void injectJson(const QString& name, const QVariant& data) = 0;
+    virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) = 0;
+    virtual void executeJSCall(const QString& method,
+                               const QVariantList& args = QVariantList(),
+                               const ExecuteCallback& callback = ExecuteCallback()) = 0;
 
 Q_SIGNALS:
-  //TODO: KOZIEIEV: remove from ReactExecutor. Maybe in Bridge. Executor shouldn't know about app-related things.
-  void applicationScriptDone();
+    // TODO: KOZIEIEV: remove from ReactExecutor. Maybe in Bridge. Executor shouldn't know about app-related things.
+    void applicationScriptDone();
 };
 
 #endif // REACTEXECUTOR_H

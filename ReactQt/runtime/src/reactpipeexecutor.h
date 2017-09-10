@@ -16,42 +16,40 @@
 
 #include "reactexecutor.h"
 
-
 class ReactPipeExecutorPrivate;
-class ReactPipeExecutor : public ReactExecutor
-{
-  Q_OBJECT
-  Q_PROPERTY(QString nodePath READ nodePath WRITE setNodePath)
-  Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
-  Q_PROPERTY(bool logErrors READ logErrors WRITE setLogErrors)
+class ReactPipeExecutor : public ReactExecutor {
+    Q_OBJECT
+    Q_PROPERTY(QString nodePath READ nodePath WRITE setNodePath)
+    Q_PROPERTY(QStringList arguments READ arguments WRITE setArguments)
+    Q_PROPERTY(bool logErrors READ logErrors WRITE setLogErrors)
 
-  Q_DECLARE_PRIVATE(ReactPipeExecutor)
+    Q_DECLARE_PRIVATE(ReactPipeExecutor)
 
 public:
-  Q_INVOKABLE ReactPipeExecutor(QObject* parent = 0);
-  ~ReactPipeExecutor();
+    Q_INVOKABLE ReactPipeExecutor(QObject* parent = 0);
+    ~ReactPipeExecutor();
 
-  QString nodePath() const;
-  void setNodePath(const QString& nodePath);
+    QString nodePath() const;
+    void setNodePath(const QString& nodePath);
 
-  QStringList arguments() const;
-  void setArguments(const QStringList& arguments);
+    QStringList arguments() const;
+    void setArguments(const QStringList& arguments);
 
-  bool logErrors() const;
-  void setLogErrors(bool logErrors);
+    bool logErrors() const;
+    void setLogErrors(bool logErrors);
 
-  void init() override;
+    void init() override;
 
-  void injectJson(const QString& name, const QVariant& data) override;
-  void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
-  void executeJSCall(const QString& method,
-                     const QVariantList& args = QVariantList(),
-                     const ExecuteCallback& callback = ExecuteCallback()) override;
+    void injectJson(const QString& name, const QVariant& data) override;
+    void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
+    void executeJSCall(const QString& method,
+                       const QVariantList& args = QVariantList(),
+                       const ExecuteCallback& callback = ExecuteCallback()) override;
 
 private:
-  void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
+    void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
 
-  QScopedPointer<ReactPipeExecutorPrivate> d_ptr;
+    QScopedPointer<ReactPipeExecutorPrivate> d_ptr;
 };
 
 #endif // REACTPIPEEXECUTOR_H

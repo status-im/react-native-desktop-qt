@@ -23,26 +23,23 @@ class ReactViewManager;
 class ReactModuleInterface;
 class ReactModuleMethod;
 
-
-class ReactComponentData
-{
+class ReactComponentData {
 public:
-  ReactComponentData(ReactModuleData* moduleData);
-  ~ReactComponentData();
+    ReactComponentData(ReactModuleData* moduleData);
+    ~ReactComponentData();
 
-  QString name() const;
-  ReactViewManager* manager() const;
+    QString name() const;
+    ReactViewManager* manager() const;
 
-  QVariantMap viewConfig() const;
+    QVariantMap viewConfig() const;
 
-  QQuickItem* createView(int tag, const QVariantMap& properties);
+    QQuickItem* createView(int tag, const QVariantMap& properties);
 
-  ReactModuleMethod* method(int id) const;
+    ReactModuleMethod* method(int id) const;
 
 private:
-  ReactModuleData* m_moduleData;
-  ReactModuleInterface* m_moduleInterface;
+    ReactModuleData* m_moduleData;
+    ReactModuleInterface* m_moduleInterface;
 };
-
 
 #endif // REACTCOMPONENTDATA_H

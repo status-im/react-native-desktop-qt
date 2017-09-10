@@ -16,39 +16,35 @@
 
 #include "reactviewmanager.h"
 
-
 class ReactPropertyHandler;
 class ReactImageManagerPrivate;
-class ReactImageManager : public ReactViewManager
-{
-  Q_OBJECT
-  Q_INTERFACES(ReactModuleInterface)
-  Q_DECLARE_PRIVATE(ReactImageManager)
+class ReactImageManager : public ReactViewManager {
+    Q_OBJECT
+    Q_INTERFACES(ReactModuleInterface)
+    Q_DECLARE_PRIVATE(ReactImageManager)
 
 public:
-  ReactImageManager(QObject* parent = 0);
-  virtual ~ReactImageManager();
+    ReactImageManager(QObject* parent = 0);
+    virtual ~ReactImageManager();
 
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object) override;
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  QStringList customDirectEventTypes() override;
+    QStringList customDirectEventTypes() override;
 
 public slots:
-  void manageSource(const QVariantMap& imageSource, QObject* image);
+    void manageSource(const QVariantMap& imageSource, QObject* image);
 
 private:
-  virtual void configureView(QQuickItem* view) const;
-  virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const;
+    virtual QString qmlComponentFile() const;
 
 private:
-  QScopedPointer<ReactImageManagerPrivate> d_ptr;
-
+    QScopedPointer<ReactImageManagerPrivate> d_ptr;
 };
-
 
 #endif // REACTIMAGEMANAGER_H

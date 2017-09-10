@@ -14,51 +14,47 @@
 #ifndef REACTNAVIGATORMANAGER_H
 #define REACTNAVIGATORMANAGER_H
 
-#include <QString>
 #include <QMap>
+#include <QString>
 
 #include "reactviewmanager.h"
 
-
 class QQuickItem;
 
-class ReactNavigatorManager : public ReactViewManager
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactNavigatorManager : public ReactViewManager {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE void push(int containerTag, int viewTag);
-  Q_INVOKABLE void pop(int containerTag);
-  Q_INVOKABLE void clear(int containerTag);
+    Q_INVOKABLE void push(int containerTag, int viewTag);
+    Q_INVOKABLE void pop(int containerTag);
+    Q_INVOKABLE void clear(int containerTag);
 
 public:
-  ReactNavigatorManager(QObject* parent = 0);
-  ~ReactNavigatorManager();
+    ReactNavigatorManager(QObject* parent = 0);
+    ~ReactNavigatorManager();
 
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object);
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object);
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  QStringList customBubblingEventTypes() override;
+    QStringList customBubblingEventTypes() override;
 
 private Q_SLOTS:
-  void backTriggered();
+    void backTriggered();
 
 private:
-  virtual void configureView(QQuickItem* view) const;
-  virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const;
+    virtual QString qmlComponentFile() const;
 
-  void invokeMethod(const QString& methodSignature,
-                    QQuickItem* item,
-                    const QVariantList& args = QVariantList{});
-  QMetaMethod findMethod(const QString& methodSignature, QQuickItem* item);
+    void invokeMethod(const QString& methodSignature, QQuickItem* item, const QVariantList& args = QVariantList{});
+    QMetaMethod findMethod(const QString& methodSignature, QQuickItem* item);
 
-  mutable int m_id;
-  QMap<QPair<QString, QQuickItem*>, QMetaMethod> m_methodCache;
+    mutable int m_id;
+    QMap<QPair<QString, QQuickItem*>, QMetaMethod> m_methodCache;
 };
 
 #endif // UBUNTUNAVIGATORMANAGER_H

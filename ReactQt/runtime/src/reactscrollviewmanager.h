@@ -18,44 +18,40 @@
 
 // #define QT_STATICPLUGIN
 
-class ReactScrollViewManager : public ReactViewManager
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactScrollViewManager : public ReactViewManager {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE void scrollTo(int reactTag,
-                            double offsetX,
-                            double offsetY,
-                            bool animated);
+    Q_INVOKABLE void scrollTo(int reactTag, double offsetX, double offsetY, bool animated);
 
 public:
-  ReactScrollViewManager(QObject* parent = 0);
-  ~ReactScrollViewManager();
+    ReactScrollViewManager(QObject* parent = 0);
+    ~ReactScrollViewManager();
 
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object) override;
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  QStringList customDirectEventTypes() override;
+    QStringList customDirectEventTypes() override;
 
-  void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
+    void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
 
 private Q_SLOTS:
-  void scrollBeginDrag();
-  void scrollEndDrag();
-  void scroll();
+    void scrollBeginDrag();
+    void scrollEndDrag();
+    void scroll();
 
-  void momentumScrollBegin();
-  void momentumScrollEnd();
+    void momentumScrollBegin();
+    void momentumScrollEnd();
 
 private:
-  QVariantMap buildEventData(QQuickItem* item) const;
-  virtual void configureView(QQuickItem* view) const;
-  virtual QString qmlComponentFile() const;
+    QVariantMap buildEventData(QQuickItem* item) const;
+    virtual void configureView(QQuickItem* view) const;
+    virtual QString qmlComponentFile() const;
 };
 
 #endif // REACTSCROLLVIEWMANAGER_H

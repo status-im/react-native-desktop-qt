@@ -21,40 +21,33 @@
 
 #include "reactmoduleinterface.h"
 
-
 class ReactNetworkingPrivate;
-class ReactNetworking
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactNetworking : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE void sendRequest(int requestId,
-                               const QString& method,
-                               const QUrl& url,
-                               const QVariantMap& headers,
-                               const QByteArray& data);
-  Q_INVOKABLE void abortRequest(int requestId);
+    Q_INVOKABLE void sendRequest(
+        int requestId, const QString& method, const QUrl& url, const QVariantMap& headers, const QByteArray& data);
+    Q_INVOKABLE void abortRequest(int requestId);
 
-  Q_DECLARE_PRIVATE(ReactNetworking);
+    Q_DECLARE_PRIVATE(ReactNetworking);
 
 public:
-  ReactNetworking(QObject* parent = 0);
-  ~ReactNetworking();
+    ReactNetworking(QObject* parent = 0);
+    ~ReactNetworking();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  // TODO: this doesnt seem right
-  ReactViewManager* viewManager() override;
+    // TODO: this doesnt seem right
+    ReactViewManager* viewManager() override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
 private:
-  QScopedPointer<ReactNetworkingPrivate> d_ptr;
+    QScopedPointer<ReactNetworkingPrivate> d_ptr;
 };
 
 #endif // REACTNETWORKING_H

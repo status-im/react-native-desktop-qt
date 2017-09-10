@@ -11,64 +11,50 @@
  *
  */
 
+#include <QQmlProperty>
+#include <QQuickItem>
 #include <QString>
 #include <QVariant>
-#include <QQuickItem>
-#include <QQmlProperty>
 
-#include "reactrawtextmanager.h"
 #include "reactbridge.h"
 #include "reactpropertyhandler.h"
+#include "reactrawtextmanager.h"
 
-ReactRawTextManager::ReactRawTextManager(QObject *parent)
-  : ReactViewManager(parent)
-{
-}
+ReactRawTextManager::ReactRawTextManager(QObject* parent) : ReactViewManager(parent) {}
 
-ReactRawTextManager::~ReactRawTextManager()
-{
-}
+ReactRawTextManager::~ReactRawTextManager() {}
 
 // TODO: this doesnt seem right
-ReactViewManager* ReactRawTextManager::viewManager()
-{
-  return this;
+ReactViewManager* ReactRawTextManager::viewManager() {
+    return this;
 }
 
-ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object)
-{
-  Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new ReactPropertyHandler(object);
+ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object) {
+    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
+    return new ReactPropertyHandler(object);
 }
 
-QString ReactRawTextManager::moduleName()
-{
-  return "RCTRawTextManager";
+QString ReactRawTextManager::moduleName() {
+    return "RCTRawTextManager";
 }
 
-QList<ReactModuleMethod*> ReactRawTextManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
+QList<ReactModuleMethod*> ReactRawTextManager::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QVariantMap ReactRawTextManager::constantsToExport()
-{
-  return QVariantMap{};
+QVariantMap ReactRawTextManager::constantsToExport() {
+    return QVariantMap{};
 }
 
-bool ReactRawTextManager::shouldLayout() const
-{
-  return false;
+bool ReactRawTextManager::shouldLayout() const {
+    return false;
 }
 
-void ReactRawTextManager::configureView(QQuickItem* view) const
-{
-  ReactViewManager::configureView(view);
-  view->setEnabled(false);
+void ReactRawTextManager::configureView(QQuickItem* view) const {
+    ReactViewManager::configureView(view);
+    view->setEnabled(false);
 }
 
-QString ReactRawTextManager::qmlComponentFile() const
-{
-  return ":/qml/ReactRawText.qml";
+QString ReactRawTextManager::qmlComponentFile() const {
+    return ":/qml/ReactRawText.qml";
 }
-

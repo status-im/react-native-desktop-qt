@@ -13,31 +13,22 @@
 
 #include <QVariant>
 
-#include "reacteventdispatcher.h"
 #include "reactbridge.h"
-
+#include "reacteventdispatcher.h"
 
 class ReactEventDispatcherPrivate {
 public:
-  ReactBridge* bridge;
+    ReactBridge* bridge;
 };
 
-
 ReactEventDispatcher::ReactEventDispatcher(ReactBridge* bridge)
-  : QObject(bridge)
-  , d_ptr(new ReactEventDispatcherPrivate)
-{
-  Q_D(ReactEventDispatcher);
-  d->bridge = bridge;
+    : QObject(bridge), d_ptr(new ReactEventDispatcherPrivate) {
+    Q_D(ReactEventDispatcher);
+    d->bridge = bridge;
 }
 
-ReactEventDispatcher::~ReactEventDispatcher()
-{
-}
+ReactEventDispatcher::~ReactEventDispatcher() {}
 
-void ReactEventDispatcher::sendDeviceEvent(const QString& name, const QVariantList& args)
-{
-  d_func()->bridge->enqueueJSCall("RCTDeviceEventEmitter",
-                                  "emit",
-                                  QVariantList{name, args});
+void ReactEventDispatcher::sendDeviceEvent(const QString& name, const QVariantList& args) {
+    d_func()->bridge->enqueueJSCall("RCTDeviceEventEmitter", "emit", QVariantList{name, args});
 }

@@ -13,22 +13,19 @@
 
 #include <QQuickItem>
 
-
 class ReactBridge;
 
-
 class ReactRedboxItemPrivate;
-class ReactRedboxItem : public QQuickItem
-{
-  Q_DECLARE_PRIVATE(ReactRedboxItem)
+class ReactRedboxItem : public QQuickItem {
+    Q_DECLARE_PRIVATE(ReactRedboxItem)
 
 public:
-  ReactRedboxItem(ReactBridge* bridge);
-  ~ReactRedboxItem();
+    ReactRedboxItem(ReactBridge* bridge);
+    ~ReactRedboxItem();
 
-  void showErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
-  void updateErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
+    void showErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
+    void updateErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
 
 private:
-  QScopedPointer<ReactRedboxItemPrivate> d_ptr;
+    QScopedPointer<ReactRedboxItemPrivate> d_ptr;
 };

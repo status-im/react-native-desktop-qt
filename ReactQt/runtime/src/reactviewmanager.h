@@ -22,47 +22,44 @@ class QQuickItem;
 
 // #define QT_STATICPLUGIN
 
-class ReactViewManager
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactViewManager : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
 public:
-  ReactViewManager(QObject *parent = 0);
-  ~ReactViewManager();
+    ReactViewManager(QObject* parent = 0);
+    ~ReactViewManager();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  // TODO: this doesnt seem right
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object) override;
+    // TODO: this doesnt seem right
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  virtual QStringList customDirectEventTypes();
-  virtual QStringList customBubblingEventTypes();
+    virtual QStringList customDirectEventTypes();
+    virtual QStringList customBubblingEventTypes();
 
-  virtual bool shouldLayout() const;
-  virtual void addChildItem(QQuickItem* parent, QQuickItem* child, int position) const;
+    virtual bool shouldLayout() const;
+    virtual void addChildItem(QQuickItem* parent, QQuickItem* child, int position) const;
 
-  virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
+    virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
 
 protected:
-  QQuickItem* createView() const;
-  ReactBridge* bridge();
-  virtual void configureView(QQuickItem* view) const;
-  virtual QString qmlComponentFile() const;
+    QQuickItem* createView() const;
+    ReactBridge* bridge();
+    virtual void configureView(QQuickItem* view) const;
+    virtual QString qmlComponentFile() const;
 
 public slots:
-  void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);
+    void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);
 
 private:
-  ReactBridge* m_bridge = nullptr;
+    ReactBridge* m_bridge = nullptr;
 };
 
 #endif // REACTVIEWMANAGER_H

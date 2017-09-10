@@ -16,41 +16,28 @@
 
 class ReactTestModulePrivate {
 public:
-
-  ReactBridge* bridge = nullptr;
+    ReactBridge* bridge = nullptr;
 };
 
-ReactTestModule::ReactTestModule(QObject* parent)
-  : QObject(parent)
-  , d_ptr(new ReactTestModulePrivate)
-{
+ReactTestModule::ReactTestModule(QObject* parent) : QObject(parent), d_ptr(new ReactTestModulePrivate) {}
+
+ReactTestModule::~ReactTestModule() {}
+
+void ReactTestModule::setBridge(ReactBridge* bridge) {
+    Q_D(ReactTestModule);
+    d->bridge = bridge;
 }
 
-ReactTestModule::~ReactTestModule()
-{
+QString ReactTestModule::moduleName() {
+    return "TestModule";
 }
 
-void ReactTestModule::setBridge(ReactBridge* bridge)
-{
-  Q_D(ReactTestModule);
-  d->bridge = bridge;
+QList<ReactModuleMethod*> ReactTestModule::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactTestModule::moduleName()
-{
-  return "TestModule";
-}
+QVariantMap ReactTestModule::constantsToExport() {}
 
-QList<ReactModuleMethod*> ReactTestModule::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactTestModule::constantsToExport()
-{
-}
-
-void ReactTestModule::markTestCompleted()
-{
-  emit testCompleted();
+void ReactTestModule::markTestCompleted() {
+    emit testCompleted();
 }

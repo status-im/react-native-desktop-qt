@@ -11,141 +11,113 @@
  *
  */
 
+#include <QQmlComponent>
+#include <QQmlProperty>
+#include <QQuickItem>
 #include <QString>
 #include <QVariant>
-#include <QQmlComponent>
-#include <QQuickItem>
-#include <QQmlProperty>
 
 #include <QDebug>
 
-#include "reactimagemanager.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"
 #include "reactimageloader.h"
+#include "reactimagemanager.h"
 #include "reactpropertyhandler.h"
 
-
 namespace {
-static QMap<ReactImageLoader::Event, QString> eventNames{
-  { ReactImageLoader::Event_LoadStart, "onLoadStart" },
-  { ReactImageLoader::Event_Progress, "onProgress" },
-  { ReactImageLoader::Event_LoadError, "onError" },
-  { ReactImageLoader::Event_LoadSuccess, "onLoad" },
-  { ReactImageLoader::Event_LoadEnd, "onLoadEnd" }
-};
+static QMap<ReactImageLoader::Event, QString> eventNames{{ReactImageLoader::Event_LoadStart, "onLoadStart"},
+                                                         {ReactImageLoader::Event_Progress, "onProgress"},
+                                                         {ReactImageLoader::Event_LoadError, "onError"},
+                                                         {ReactImageLoader::Event_LoadSuccess, "onLoad"},
+                                                         {ReactImageLoader::Event_LoadEnd, "onLoadEnd"}};
 }
-
 
 class ReactImageManagerPrivate {
 
 public:
-  bool isBase64ImageUrl(const QUrl& url) const;
-  void setSource(QObject* image, const QUrl& url);
+    bool isBase64ImageUrl(const QUrl& url) const;
+    void setSource(QObject* image, const QUrl& url);
 };
 
+ReactImageManager::ReactImageManager(QObject* parent) : ReactViewManager(parent), d_ptr(new ReactImageManagerPrivate) {}
 
-ReactImageManager::ReactImageManager(QObject* parent)
-  : ReactViewManager(parent),
-    d_ptr(new ReactImageManagerPrivate)
-{
+ReactImageManager::~ReactImageManager() {}
+
+ReactViewManager* ReactImageManager::viewManager() {
+    return this;
 }
 
-ReactImageManager::~ReactImageManager()
-{
-
+ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object) {
+    return new ReactPropertyHandler(object);
 }
 
-ReactViewManager* ReactImageManager::viewManager()
-{
-  return this;
+QString ReactImageManager::moduleName() {
+    return "RCTImageViewManager";
 }
 
-ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object)
-{
-  return new ReactPropertyHandler(object);
+QList<ReactModuleMethod*> ReactImageManager::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactImageManager::moduleName()
-{
-  return "RCTImageViewManager";
+QVariantMap ReactImageManager::constantsToExport() {
+    return QVariantMap{};
 }
 
-QList<ReactModuleMethod*> ReactImageManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
+QStringList ReactImageManager::customDirectEventTypes() {
+    return QStringList{normalizeInputEventName("onLoadStart"),
+                       normalizeInputEventName("onProgress"),
+                       normalizeInputEventName("onError"),
+                       normalizeInputEventName("onLoad"),
+                       normalizeInputEventName("onLoadEnd")};
 }
 
-QVariantMap ReactImageManager::constantsToExport()
-{
-  return QVariantMap{};
-}
+void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image) {
+    Q_D(ReactImageManager);
 
-QStringList ReactImageManager::customDirectEventTypes()
-{
-  return QStringList{normalizeInputEventName("onLoadStart"),
-                     normalizeInputEventName("onProgress"),
-                     normalizeInputEventName("onError"),
-                     normalizeInputEventName("onLoad"),
-                     normalizeInputEventName("onLoadEnd")};
-}
+    auto imageLoader = bridge()->imageLoader();
 
-void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image)
-{
-  Q_D(ReactImageManager);
+    QUrl source = imageSource["uri"].toUrl();
 
-  auto imageLoader = bridge()->imageLoader();
-
-  QUrl source = imageSource["uri"].toUrl();
-
-  if(d->isBase64ImageUrl(source))
-  {
-    d->setSource(image, source);
-    return;
-  }
-
-  if (source.isRelative())
-  {
-    source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
-  }
-
-  imageLoader->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data)
-  {
-    if (event == ReactImageLoader::Event_LoadSuccess)
-    {
-      d->setSource(image, source);
+    if (d->isBase64ImageUrl(source)) {
+        d->setSource(image, source);
+        return;
     }
-    if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
-    {
-      int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
-      bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                              QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
+
+    if (source.isRelative()) {
+        source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
     }
-  });
+
+    imageLoader->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+        if (event == ReactImageLoader::Event_LoadSuccess) {
+            d->setSource(image, source);
+        }
+        if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool()) {
+            int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
+            bridge()->enqueueJSCall("RCTEventEmitter",
+                                    "receiveEvent",
+                                    QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
+        }
+    });
 }
 
-void ReactImageManager::configureView(QQuickItem* view) const
-{
-  ReactViewManager::configureView(view);
-  view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
-  view->setEnabled(false);
+void ReactImageManager::configureView(QQuickItem* view) const {
+    ReactViewManager::configureView(view);
+    view->setProperty("imageManager", QVariant::fromValue((QObject*)this));
+    view->setEnabled(false);
 }
 
-QString ReactImageManager::qmlComponentFile() const
-{
-  return ":/qml/ReactImage.qml";
+QString ReactImageManager::qmlComponentFile() const {
+    return ":/qml/ReactImage.qml";
 }
 
-bool ReactImageManagerPrivate::isBase64ImageUrl(const QUrl& url) const
-{
-  return url.toString().startsWith("data:image/png;base64");
+bool ReactImageManagerPrivate::isBase64ImageUrl(const QUrl& url) const {
+    return url.toString().startsWith("data:image/png;base64");
 }
 
-void ReactImageManagerPrivate::setSource(QObject* image, const QUrl& url)
-{
-   image->setProperty("managedSource", url);
+void ReactImageManagerPrivate::setSource(QObject* image, const QUrl& url) {
+    image->setProperty("managedSource", url);
 }
-
 
 #include "reactimagemanager.moc"

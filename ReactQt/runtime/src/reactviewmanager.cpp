@@ -11,158 +11,137 @@
  *
  */
 
+#include <QMatrix4x4>
+#include <QQmlProperty>
+#include <QQuickItem>
 #include <QString>
 #include <QVariant>
-#include <QQuickItem>
-#include <QQmlProperty>
-#include <QMatrix4x4>
 
-#include "reactviewmanager.h"
-#include "reactitem.h"
 #include "reactbridge.h"
-#include "reactvaluecoercion.h"
 #include "reactflexlayout.h"
+#include "reactitem.h"
 #include "reactpropertyhandler.h"
 #include "reacttextmanager.h"
-
+#include "reactvaluecoercion.h"
+#include "reactviewmanager.h"
 
 class MatrixTransform : public QQuickTransform {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
-    : QQuickTransform(parent)
-    , m_item(qobject_cast<QQuickItem*>(parent))
-  {
-    memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
-    m_transformMatrix.optimize();
-  }
-  void applyTo(QMatrix4x4 *matrix) const override {
-    if (m_transformMatrix.isIdentity())
-      return;
-    matrix->translate(m_item->width() / 2, m_item->height() / 2);
-    *matrix *= m_transformMatrix;
-    matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
-  }
-  QMatrix4x4 m_transformMatrix;
-  QQuickItem* m_item;
+    MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
+        : QQuickTransform(parent), m_item(qobject_cast<QQuickItem*>(parent)) {
+        memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
+        m_transformMatrix.optimize();
+    }
+    void applyTo(QMatrix4x4* matrix) const override {
+        if (m_transformMatrix.isIdentity())
+            return;
+        matrix->translate(m_item->width() / 2, m_item->height() / 2);
+        *matrix *= m_transformMatrix;
+        matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
+    }
+    QMatrix4x4 m_transformMatrix;
+    QQuickItem* m_item;
 };
 
+ReactViewManager::ReactViewManager(QObject* parent) : QObject(parent) {}
 
-ReactViewManager::ReactViewManager(QObject *parent)
-  : QObject(parent)
-{
-}
+ReactViewManager::~ReactViewManager() {}
 
-ReactViewManager::~ReactViewManager()
-{
-}
-
-void ReactViewManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
+void ReactViewManager::setBridge(ReactBridge* bridge) {
+    m_bridge = bridge;
 }
 
 // TODO: this doesnt seem right
-ReactViewManager* ReactViewManager::viewManager()
-{
-  return this;
+ReactViewManager* ReactViewManager::viewManager() {
+    return this;
 }
 
-ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object)
-{
-  return new ReactPropertyHandler(object);
+ReactPropertyHandler* ReactViewManager::propertyHandler(QObject* object) {
+    return new ReactPropertyHandler(object);
 }
 
-QString ReactViewManager::moduleName()
-{
-  return "RCTViewManager";
+QString ReactViewManager::moduleName() {
+    return "RCTViewManager";
 }
 
-QList<ReactModuleMethod*> ReactViewManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
+QList<ReactModuleMethod*> ReactViewManager::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QVariantMap ReactViewManager::constantsToExport()
-{
-  return QVariantMap{};
+QVariantMap ReactViewManager::constantsToExport() {
+    return QVariantMap{};
 }
 
-QStringList ReactViewManager::customDirectEventTypes()
-{
-  return QStringList{};
+QStringList ReactViewManager::customDirectEventTypes() {
+    return QStringList{};
 }
 
-QStringList ReactViewManager::customBubblingEventTypes()
-{
-  return QStringList{"press", "change", "focus", "blur", "submitEditing", "endEditing", "touchStart", "touchMove", "touchCancel", "touchEnd"};
+QStringList ReactViewManager::customBubblingEventTypes() {
+    return QStringList{"press",
+                       "change",
+                       "focus",
+                       "blur",
+                       "submitEditing",
+                       "endEditing",
+                       "touchStart",
+                       "touchMove",
+                       "touchCancel",
+                       "touchEnd"};
 }
 
-bool ReactViewManager::shouldLayout() const
-{
-  return true;
+bool ReactViewManager::shouldLayout() const {
+    return true;
 }
 
-void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const
-{
-  child->setParentItem(container);
-  bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
-  if (childIsTopReactTextInTextHierarchy)
-  {
-    ReactTextManager::hookLayout(child);
-  }
+void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const {
+    child->setParentItem(container);
+    bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
+    if (childIsTopReactTextInTextHierarchy) {
+        ReactTextManager::hookLayout(child);
+    }
 }
 
-QQuickItem* ReactViewManager::view(const QVariantMap& properties) const
-{
-  QQuickItem* newView = createView();
-  if(newView)
-  {
-    configureView(newView);
-  }
-  return newView;
+QQuickItem* ReactViewManager::view(const QVariantMap& properties) const {
+    QQuickItem* newView = createView();
+    if (newView) {
+        configureView(newView);
+    }
+    return newView;
 }
 
-void ReactViewManager::configureView(QQuickItem* view) const
-{
-  view->setProperty("viewManager", QVariant::fromValue((QObject*)this));
+void ReactViewManager::configureView(QQuickItem* view) const {
+    view->setProperty("viewManager", QVariant::fromValue((QObject*)this));
 }
 
-QString ReactViewManager::qmlComponentFile() const
-{
-  return ":/qml/ReactView.qml";
+QString ReactViewManager::qmlComponentFile() const {
+    return ":/qml/ReactView.qml";
 }
 
-QQuickItem*ReactViewManager::createView() const
-{
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.loadUrl(QUrl::fromLocalFile(qmlComponentFile()));
-  if (!component.isReady())
-  {
-    qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
-    return nullptr;
-  }
+QQuickItem* ReactViewManager::createView() const {
+    QQmlComponent component(m_bridge->qmlEngine());
+    component.loadUrl(QUrl::fromLocalFile(qmlComponentFile()));
+    if (!component.isReady()) {
+        qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
+        return nullptr;
+    }
 
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << QString("Unable to construct item from component %1").arg(qmlComponentFile());
-  }
-  return item;
+    QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
+    if (item == nullptr) {
+        qCritical() << QString("Unable to construct item from component %1").arg(qmlComponentFile());
+    }
+    return item;
 }
 
-ReactBridge*ReactViewManager::bridge()
-{
-  Q_ASSERT(m_bridge);
-  return m_bridge;
+ReactBridge* ReactViewManager::bridge() {
+    Q_ASSERT(m_bridge);
+    return m_bridge;
 }
 
-
-void ReactViewManager::manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object)
-{
-  QQmlListReference r(object, "transform");
-  r.clear();
-  r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(object)));
+void ReactViewManager::manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object) {
+    QQmlListReference r(object, "transform");
+    r.clear();
+    r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(object)));
 }
-
 
 #include "reactviewmanager.moc"

@@ -11,48 +11,37 @@
  *
  */
 
-#include <QMetaObject>
 #include <QMetaMethod>
+#include <QMetaObject>
 #include <QNetworkAccessManager>
-#include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QNetworkRequest>
 
-#include "reacttiming.h"
 #include "reactbridge.h"
+#include "reacttiming.h"
 
+ReactTiming::ReactTiming(QObject* parent) : QObject(parent) {}
 
-ReactTiming::ReactTiming(QObject* parent)
-  : QObject(parent)
-{
+ReactTiming::~ReactTiming() {}
+
+void ReactTiming::setBridge(ReactBridge* bridge) {
+    m_bridge = bridge;
 }
 
-ReactTiming::~ReactTiming()
-{
+ReactViewManager* ReactTiming::viewManager() {
+    return nullptr;
 }
 
-void ReactTiming::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
+QString ReactTiming::moduleName() {
+    return "RCTTiming";
 }
 
-ReactViewManager* ReactTiming::viewManager()
-{
-  return nullptr;
+QList<ReactModuleMethod*> ReactTiming::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactTiming::moduleName()
-{
-  return "RCTTiming";
-}
-
-QList<ReactModuleMethod*> ReactTiming::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactTiming::constantsToExport()
-{
-  return QVariantMap{};
+QVariantMap ReactTiming::constantsToExport() {
+    return QVariantMap{};
 }
 
 /*
@@ -79,49 +68,40 @@ QVariantMap ReactTiming::constantsToExport()
     scene graph to properly sync (especially re: animations)
 */
 
-void ReactTiming::createTimer
-(
-    int callbackId,
-    int duration/*ms*/,
-    const QDateTime& jsSchedulingTime,
-    bool repeats
-)
-{
-  // qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
-  if (duration == 0 && !repeats) {
-    // XXX: enqueueJSCall should enqueue
-    QTimer::singleShot(0, [=] {
-        m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
-      });
-    return;
-  }
+void ReactTiming::createTimer(int callbackId, int duration /*ms*/, const QDateTime& jsSchedulingTime, bool repeats) {
+    // qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
+    if (duration == 0 && !repeats) {
+        // XXX: enqueueJSCall should enqueue
+        QTimer::singleShot(
+            0, [=] { m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}}); });
+        return;
+    }
 
-  QTimer *timer = new QTimer(this);
-  timer->setTimerType(Qt::PreciseTimer);
-  timer->setSingleShot(!repeats);
-  QObject::connect(timer, &QTimer::timeout, [=]() {
-      if (m_bridge)
-        m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
-      if (!repeats)
-        deleteTimer(callbackId);
+    QTimer* timer = new QTimer(this);
+    timer->setTimerType(Qt::PreciseTimer);
+    timer->setSingleShot(!repeats);
+    QObject::connect(timer, &QTimer::timeout, [=]() {
+        if (m_bridge)
+            m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
+        if (!repeats)
+            deleteTimer(callbackId);
     });
-  m_activeTimers[callbackId] = timer;
-  if (duration < 18) {
-    // XXX: mimicking RN behavior via timeouts
-    timer->start((1.0 / 60) * 1000);
-  } else {
-    timer->start(duration);
-  }
+    m_activeTimers[callbackId] = timer;
+    if (duration < 18) {
+        // XXX: mimicking RN behavior via timeouts
+        timer->start((1.0 / 60) * 1000);
+    } else {
+        timer->start(duration);
+    }
 }
 
-void ReactTiming::deleteTimer(int timerId)
-{
-  // qDebug() << __PRETTY_FUNCTION__ << timerId;
-  QMap<int, QTimer*>::iterator it = m_activeTimers.find(timerId);
-  if (it == m_activeTimers.end())
-    return;
+void ReactTiming::deleteTimer(int timerId) {
+    // qDebug() << __PRETTY_FUNCTION__ << timerId;
+    QMap<int, QTimer*>::iterator it = m_activeTimers.find(timerId);
+    if (it == m_activeTimers.end())
+        return;
 
-  (*it)->stop();
-  (*it)->deleteLater();
-  m_activeTimers.erase(it);
+    (*it)->stop();
+    (*it)->deleteLater();
+    m_activeTimers.erase(it);
 }

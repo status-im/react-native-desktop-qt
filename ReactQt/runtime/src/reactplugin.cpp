@@ -11,24 +11,25 @@
  *
  */
 
-#include <QtQml>
 #include <QMetaType>
+#include <QtQml>
 
-#include "reactplugin.h"
 #include "reactattachedproperties.h"
 #include "reactflexlayout.h"
 #include "reactimagemanager.h"
-#include "reactviewmanager.h"
 #include "reactitem.h"
+#include "reactplugin.h"
 #include "reactview.h"
+#include "reactviewmanager.h"
 
-
-void ReactPlugin::registerTypes(const char* uri)
-{
-  qmlRegisterUncreatableType<ReactAttachedProperties>("React", 0, 1, "React", "React is not meant to be created directly");
-  qmlRegisterUncreatableType<ReactFlexLayout>("React", 0, 1, "Flex", "Flex is not meant to be created directly");
-  qmlRegisterType<ReactItem>("React", 0, 1, "Item");
-  qmlRegisterType<ReactView>("React", 0, 1, "RootView");
-  qmlRegisterUncreatableType<ReactImageManager>("React", 0, 1, "ReactImageManager", "ReactImageManager is not meant to be created directly");
-  qmlRegisterUncreatableType<ReactViewManager>("React", 0, 1, "ReactViewManager", "ReactViewManager is not meant to be created directly");
+void ReactPlugin::registerTypes(const char* uri) {
+    qmlRegisterUncreatableType<ReactAttachedProperties>(
+        "React", 0, 1, "React", "React is not meant to be created directly");
+    qmlRegisterUncreatableType<ReactFlexLayout>("React", 0, 1, "Flex", "Flex is not meant to be created directly");
+    qmlRegisterType<ReactItem>("React", 0, 1, "Item");
+    qmlRegisterType<ReactView>("React", 0, 1, "RootView");
+    qmlRegisterUncreatableType<ReactImageManager>(
+        "React", 0, 1, "ReactImageManager", "ReactImageManager is not meant to be created directly");
+    qmlRegisterUncreatableType<ReactViewManager>(
+        "React", 0, 1, "ReactViewManager", "ReactViewManager is not meant to be created directly");
 }

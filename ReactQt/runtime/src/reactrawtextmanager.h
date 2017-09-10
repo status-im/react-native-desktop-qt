@@ -22,31 +22,28 @@ class QQuickItem;
 class ReactPropertyHandler;
 // #define QT_STATICPLUGIN
 
-class ReactRawTextManager : public ReactViewManager
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactRawTextManager : public ReactViewManager {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
 public:
-  ReactRawTextManager(QObject *parent = 0);
-  ~ReactRawTextManager();
+    ReactRawTextManager(QObject* parent = 0);
+    ~ReactRawTextManager();
 
-  // TODO: this doesnt seem right
-  ReactViewManager* viewManager() override;
-  ReactPropertyHandler* propertyHandler(QObject* object) override;
+    // TODO: this doesnt seem right
+    ReactViewManager* viewManager() override;
+    ReactPropertyHandler* propertyHandler(QObject* object) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  bool shouldLayout() const override;
+    bool shouldLayout() const override;
 
 protected:
-
-  virtual void configureView(QQuickItem* view) const;
-  virtual QString qmlComponentFile() const;
-
+    virtual void configureView(QQuickItem* view) const;
+    virtual QString qmlComponentFile() const;
 };
 
 #endif // REACTRAWTEXTMANAGER_H

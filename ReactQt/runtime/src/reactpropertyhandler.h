@@ -15,43 +15,38 @@
 #define REACTPROPERTYHANDLER_H
 
 #include <QMap>
-#include <QObject>
 #include <QMetaProperty>
-
+#include <QObject>
 
 class QQuickItem;
 
-
 const QString QML_PROPERTY_PREFIX = "p_";
-
 
 using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
 
-class ReactPropertyHandler : public QObject
-{
-  Q_OBJECT
+class ReactPropertyHandler : public QObject {
+    Q_OBJECT
 
 public:
-  ReactPropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
-  virtual ~ReactPropertyHandler();
+    ReactPropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
+    virtual ~ReactPropertyHandler();
 
-  virtual QMap<QString, QMetaProperty> availableProperties();
-  virtual void applyProperties(const QVariantMap& properties);
-  QVariant value(const QString& propertyName);
-
-private:
-  void buildPropertyMap();
-  void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
-  void getPropertiesFromMetaObject(const QMetaObject* metaObject);
+    virtual QMap<QString, QMetaProperty> availableProperties();
+    virtual void applyProperties(const QVariantMap& properties);
+    QVariant value(const QString& propertyName);
 
 private:
-  bool m_exposeQmlProperties = true;
-  bool m_cached = false;
-  QObject* m_object;
-  QMap<QString, QMetaProperty> m_qmlProperties;
-  QMap<QString, QMetaProperty> m_HandlerProperties;
-  SetPropertyCallback m_setPropertyCallback;
+    void buildPropertyMap();
+    void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
+    void getPropertiesFromMetaObject(const QMetaObject* metaObject);
 
+private:
+    bool m_exposeQmlProperties = true;
+    bool m_cached = false;
+    QObject* m_object;
+    QMap<QString, QMetaProperty> m_qmlProperties;
+    QMap<QString, QMetaProperty> m_HandlerProperties;
+    SetPropertyCallback m_setPropertyCallback;
 };
 
 #endif // REACTPROPERTYHANDLER_H

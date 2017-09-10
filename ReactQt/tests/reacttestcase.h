@@ -3,40 +3,37 @@
 
 #include <QObject>
 #include <QTest>
-#include <QtQuick/QQuickView>
 #include <QTimer>
+#include <QtQuick/QQuickView>
 #include <functional>
 
 class ReactView;
 class ReactBridge;
 
-class ReactTestCase : public QObject
-{
-  Q_OBJECT
+class ReactTestCase : public QObject {
+    Q_OBJECT
 public:
-  explicit ReactTestCase(QObject *parent = nullptr);
+    explicit ReactTestCase(QObject* parent = nullptr);
 
 signals:
 
 protected:
-
-  void initTestCase();
-  void cleanupTestCase();
-  void loadQML(const QUrl& qmlUrl);
-  ReactView* rootView();
-  ReactBridge* bridge();
-  void showView();
-  void waitAndVerifyBridgeReady();
-  void waitAndVerifyJsAppStarted();
-  void waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage);
-
-private:
-  void registerReactQtTypes();
+    void initTestCase();
+    void cleanupTestCase();
+    void loadQML(const QUrl& qmlUrl);
+    ReactView* rootView();
+    ReactBridge* bridge();
+    void showView();
+    void waitAndVerifyBridgeReady();
+    void waitAndVerifyJsAppStarted();
+    void waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage);
 
 private:
+    void registerReactQtTypes();
 
-  QQuickView* m_quickView = nullptr;
-  QTimer timeoutTimer;
+private:
+    QQuickView* m_quickView = nullptr;
+    QTimer timeoutTimer;
 };
 
 #endif // REACTTESTCASE_H

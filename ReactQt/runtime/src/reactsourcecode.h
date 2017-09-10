@@ -19,60 +19,54 @@
 
 #include "reactmoduleinterface.h"
 
-
 class QNetworkAccessManager;
 
-
 class ReactSourceCodePrivate;
-class ReactSourceCode
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactSourceCode : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_PROPERTY(QUrl scriptURL READ scriptUrl CONSTANT)
-  Q_PROPERTY(QByteArray sourceCode READ sourceCode NOTIFY sourceCodeChanged SCRIPTABLE false)
-  Q_PROPERTY(int retryCount READ retryCount WRITE setRetryCount NOTIFY retryCountChanged SCRIPTABLE false)
+    Q_PROPERTY(QUrl scriptURL READ scriptUrl CONSTANT)
+    Q_PROPERTY(QByteArray sourceCode READ sourceCode NOTIFY sourceCodeChanged SCRIPTABLE false)
+    Q_PROPERTY(int retryCount READ retryCount WRITE setRetryCount NOTIFY retryCountChanged SCRIPTABLE false)
 
-  Q_INVOKABLE REACT_PROMISE
-    void getScriptText(const ReactModuleInterface::ListArgumentBlock& resolve,
-                       const ReactModuleInterface::ListArgumentBlock& reject);
+    Q_INVOKABLE REACT_PROMISE void getScriptText(const ReactModuleInterface::ListArgumentBlock& resolve,
+                                                 const ReactModuleInterface::ListArgumentBlock& reject);
 
-  Q_DECLARE_PRIVATE(ReactSourceCode);
+    Q_DECLARE_PRIVATE(ReactSourceCode);
 
 public:
-  ReactSourceCode(QObject* parent = 0);
-  ~ReactSourceCode();
+    ReactSourceCode(QObject* parent = 0);
+    ~ReactSourceCode();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  // TODO: this doesnt seem right
-  ReactViewManager* viewManager() override;
+    // TODO: this doesnt seem right
+    ReactViewManager* viewManager() override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  QUrl scriptUrl() const;
-  void setScriptUrl(const QUrl& source);
+    QUrl scriptUrl() const;
+    void setScriptUrl(const QUrl& source);
 
-  QByteArray sourceCode() const;
+    QByteArray sourceCode() const;
 
-  int retryCount() const;
-  void setRetryCount(int retryCount);
+    int retryCount() const;
+    void setRetryCount(int retryCount);
 
-  void loadSource(QNetworkAccessManager* nam);
+    void loadSource(QNetworkAccessManager* nam);
 
 Q_SIGNALS:
-  void scriptUrlChanged();
-  void sourceCodeChanged();
-  void retryCountChanged();
-  void loadFailed();
+    void scriptUrlChanged();
+    void sourceCodeChanged();
+    void retryCountChanged();
+    void loadFailed();
 
 private:
-  QScopedPointer<ReactSourceCodePrivate> d_ptr;
+    QScopedPointer<ReactSourceCodePrivate> d_ptr;
 };
 
 #endif // REACTSOURCECODE_H

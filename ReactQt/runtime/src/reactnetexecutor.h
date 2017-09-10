@@ -16,34 +16,32 @@
 
 #include "reactexecutor.h"
 
-
 class ReactNetExecutorPrivate;
-class ReactNetExecutor : public ReactExecutor
-{
-  Q_OBJECT
-  Q_PROPERTY(QString serverHost READ serverHost WRITE setServerHost)
+class ReactNetExecutor : public ReactExecutor {
+    Q_OBJECT
+    Q_PROPERTY(QString serverHost READ serverHost WRITE setServerHost)
 
-  Q_DECLARE_PRIVATE(ReactNetExecutor)
+    Q_DECLARE_PRIVATE(ReactNetExecutor)
 
 public:
-  Q_INVOKABLE ReactNetExecutor(QObject* parent = 0);
-  ~ReactNetExecutor();
+    Q_INVOKABLE ReactNetExecutor(QObject* parent = 0);
+    ~ReactNetExecutor();
 
-  QString serverHost() const;
-  void setServerHost(const QString& serverHost);
+    QString serverHost() const;
+    void setServerHost(const QString& serverHost);
 
-  void init() override;
+    void init() override;
 
-  void injectJson(const QString& name, const QVariant& data) override;
-  void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
-  void executeJSCall(const QString& method,
-                     const QVariantList& args = QVariantList(),
-                     const ExecuteCallback& callback = ExecuteCallback()) override;
+    void injectJson(const QString& name, const QVariant& data) override;
+    void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) override;
+    void executeJSCall(const QString& method,
+                       const QVariantList& args = QVariantList(),
+                       const ExecuteCallback& callback = ExecuteCallback()) override;
 
 private:
-  void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
+    void processRequest(const QByteArray& request, const ExecuteCallback& callback = ExecuteCallback());
 
-  QScopedPointer<ReactNetExecutorPrivate> d_ptr;
+    QScopedPointer<ReactNetExecutorPrivate> d_ptr;
 };
 
 #endif // REACTNETEXECUTOR_H

@@ -17,116 +17,106 @@
 
 #include <QDebug>
 
-#include "reactevents.h"
-#include "reactcomponentdata.h"
-#include "reactmoduledata.h"
-#include "reactviewmanager.h"
 #include "reactattachedproperties.h"
+#include "reactcomponentdata.h"
+#include "reactevents.h"
+#include "reactmoduledata.h"
 #include "reactpropertyhandler.h"
+#include "reactviewmanager.h"
 
-
-ReactComponentData::ReactComponentData(ReactModuleData* moduleData)
-  : m_moduleData(moduleData)
-{
-  m_moduleInterface = m_moduleData->viewManager();
+ReactComponentData::ReactComponentData(ReactModuleData* moduleData) : m_moduleData(moduleData) {
+    m_moduleInterface = m_moduleData->viewManager();
 }
 
-ReactComponentData::~ReactComponentData()
-{
+ReactComponentData::~ReactComponentData() {}
+
+QString ReactComponentData::name() const {
+    QString mn = m_moduleInterface->viewManager()->moduleName();
+    int mi = mn.indexOf("Manager");
+    if (mi != -1)
+        return mn.left(mi);
+
+    return mn;
 }
 
-QString ReactComponentData::name() const
-{
-  QString mn = m_moduleInterface->viewManager()->moduleName();
-  int mi = mn.indexOf("Manager");
-  if (mi != -1)
-    return mn.left(mi);
-
-  return mn;
+ReactViewManager* ReactComponentData::manager() const {
+    return m_moduleInterface->viewManager();
 }
 
-ReactViewManager* ReactComponentData::manager() const
-{
-  return m_moduleInterface->viewManager();
-}
+QVariantMap ReactComponentData::viewConfig() const {
+    // qDebug() << __PRETTY_FUNCTION__ << name();
 
-QVariantMap ReactComponentData::viewConfig() const
-{
-  // qDebug() << __PRETTY_FUNCTION__ << name();
+    QVariantMap rc;
 
-  QVariantMap rc;
-
-  // Create a temporary view to inspect, oh well
-  QQuickItem* view = m_moduleInterface->viewManager()->view();
-  if (view == nullptr) {
-    qWarning() << name() << "has no view for inspecting!";
-    return rc;
-  }
-  view->deleteLater();
-
-  ReactPropertyHandler* ph = m_moduleInterface->propertyHandler(view);
-  ph->deleteLater(); // XXX:
-
-  QStringList directEvents;
-  QStringList bubblingEvents;
-
-  // {{{ propTypes
- QMap<QString, QMetaProperty> properties = ph->availableProperties();
-
-  // XXX: sort out the callback events..
-  QVariantMap propTypes;
-  for (auto& propName : properties.keys()) {
-    auto pName = propName;
-    auto p = properties.value(propName);
-
-    if (p.userType() == qMetaTypeId<ReactModuleInterface::BubblingEventBlock>()) {
-      propTypes.insert(p.name(), "bool");
-      bubblingEvents << p.name();
-    } else if (p.userType() == qMetaTypeId<ReactModuleInterface::DirectEventBlock>()) {
-      propTypes.insert(p.name(), "bool");
-      directEvents << p.name();
-    } else {
-      propTypes.insert(pName, p.typeName());
+    // Create a temporary view to inspect, oh well
+    QQuickItem* view = m_moduleInterface->viewManager()->view();
+    if (view == nullptr) {
+        qWarning() << name() << "has no view for inspecting!";
+        return rc;
     }
-  }
+    view->deleteLater();
 
-  rc.insert("propTypes", propTypes);
-  // }}}
+    ReactPropertyHandler* ph = m_moduleInterface->propertyHandler(view);
+    ph->deleteLater(); // XXX:
 
-  // Events
-  directEvents << m_moduleInterface->viewManager()->customDirectEventTypes();
-  QStringList dep;
-  std::transform(directEvents.begin(), directEvents.end(),
-                 std::back_inserter(dep),
-                 [](const QString& name) { return normalizeInputEventName(name); });
-  rc.insert("directEvents", dep);
+    QStringList directEvents;
+    QStringList bubblingEvents;
 
-  bubblingEvents << m_moduleInterface->viewManager()->customBubblingEventTypes();
-  dep.clear();
-  std::transform(bubblingEvents.begin(), bubblingEvents.end(),
-                 std::back_inserter(dep),
-                 [](const QString& name) { return normalizeInputEventName(name); });
-  rc.insert("bubblingEvents", dep);
+    // {{{ propTypes
+    QMap<QString, QMetaProperty> properties = ph->availableProperties();
 
-  return rc;
+    // XXX: sort out the callback events..
+    QVariantMap propTypes;
+    for (auto& propName : properties.keys()) {
+        auto pName = propName;
+        auto p = properties.value(propName);
+
+        if (p.userType() == qMetaTypeId<ReactModuleInterface::BubblingEventBlock>()) {
+            propTypes.insert(p.name(), "bool");
+            bubblingEvents << p.name();
+        } else if (p.userType() == qMetaTypeId<ReactModuleInterface::DirectEventBlock>()) {
+            propTypes.insert(p.name(), "bool");
+            directEvents << p.name();
+        } else {
+            propTypes.insert(pName, p.typeName());
+        }
+    }
+
+    rc.insert("propTypes", propTypes);
+    // }}}
+
+    // Events
+    directEvents << m_moduleInterface->viewManager()->customDirectEventTypes();
+    QStringList dep;
+    std::transform(directEvents.begin(), directEvents.end(), std::back_inserter(dep), [](const QString& name) {
+        return normalizeInputEventName(name);
+    });
+    rc.insert("directEvents", dep);
+
+    bubblingEvents << m_moduleInterface->viewManager()->customBubblingEventTypes();
+    dep.clear();
+    std::transform(bubblingEvents.begin(), bubblingEvents.end(), std::back_inserter(dep), [](const QString& name) {
+        return normalizeInputEventName(name);
+    });
+    rc.insert("bubblingEvents", dep);
+
+    return rc;
 }
 
-QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& properties)
-{
-  ReactViewManager* viewManager = m_moduleInterface->viewManager();
+QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& properties) {
+    ReactViewManager* viewManager = m_moduleInterface->viewManager();
 
-  QQuickItem* view = viewManager->view(properties);
+    QQuickItem* view = viewManager->view(properties);
 
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(view);
-  rap->setTag(tag);
-  rap->setShouldLayout(viewManager->shouldLayout());
-  rap->setViewManager(viewManager);
-  rap->setPropertyHandler(m_moduleInterface->propertyHandler(view));
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(view);
+    rap->setTag(tag);
+    rap->setShouldLayout(viewManager->shouldLayout());
+    rap->setViewManager(viewManager);
+    rap->setPropertyHandler(m_moduleInterface->propertyHandler(view));
 
-  return view;
+    return view;
 }
 
-ReactModuleMethod* ReactComponentData::method(int id) const
-{
-  return m_moduleData->method(id);
+ReactModuleMethod* ReactComponentData::method(int id) const {
+    return m_moduleData->method(id);
 }
