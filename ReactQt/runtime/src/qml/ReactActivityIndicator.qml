@@ -14,7 +14,6 @@ BusyIndicator {
 
     style: BusyIndicatorStyle {
         indicator: Item {
-
             property bool isRunning: control.running
 
             Image {

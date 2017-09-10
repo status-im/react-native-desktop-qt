@@ -10,8 +10,6 @@
 
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactimagemanager.h"
-#include "reactpropertyhandler.h"
 #include "reacttestcase.h"
 #include "reactview.h"
 #include <QDebug>
@@ -42,7 +40,6 @@ private slots:
 
 private:
     QVariant valueOfProperty(const QString& propertyName);
-    ReactImageManager m_ImageManager;
 };
 
 QQuickItem* TestImageProps::qmlImage() {
@@ -76,45 +73,43 @@ void TestImageProps::cleanupTestCase() {
 }
 
 QVariant TestImageProps::valueOfProperty(const QString& propertyName) {
-    auto attachedProperties = ReactAttachedProperties::get(qmlImage());
-    auto imagePropertyHandler = attachedProperties->propertyHandler();
-    return imagePropertyHandler->value(propertyName);
+    return qmlImage()->property(propertyName.toStdString().c_str());
 }
 
 void TestImageProps::checkTestIDProp() {
-    QCOMPARE(valueOfProperty("testID").toString(), QString("testImage"));
+    QCOMPARE(valueOfProperty("p_testID").toString(), QString("testImage"));
 }
 
 void TestImageProps::checkOnLoadStart() {
-    QCOMPARE(valueOfProperty("onLoadStart").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onLoadStart").toBool(), true);
 }
 
 void TestImageProps::checkOnLoadEnd() {
-    QCOMPARE(valueOfProperty("onLoadEnd").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onLoadEnd").toBool(), true);
 }
 
 void TestImageProps::checkOnLoad() {
-    QCOMPARE(valueOfProperty("onLoad").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onLoad").toBool(), true);
 }
 
 void TestImageProps::checkOnError() {
-    QCOMPARE(valueOfProperty("onError").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onError").toBool(), true);
 }
 
 void TestImageProps::checkOnProgress() {
-    QCOMPARE(valueOfProperty("onProgress").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onProgress").toBool(), true);
 }
 
 void TestImageProps::checkBlurRadius() {
-    QCOMPARE(valueOfProperty("blurRadius").toInt(), 30);
+    QCOMPARE(valueOfProperty("p_blurRadius").toInt(), 30);
 }
 
 void TestImageProps::checkOnLayout() {
-    QCOMPARE(valueOfProperty("onLayout").toBool(), true);
+    QCOMPARE(valueOfProperty("p_onLayout").toBool(), true);
 }
 
 void TestImageProps::checkResizeMode() {
-    QCOMPARE(valueOfProperty("resizeMode").toString(), QString("center"));
+    QCOMPARE(valueOfProperty("p_resizeMode").toString(), QString("center"));
 }
 
 QTEST_MAIN(TestImageProps)

@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>TestModuleTest.qml</file>
         <file>TestImageProps.qml</file>
+        <file>TestActivityIndicatorProps.qml</file>
     </qresource>
 </RCC>
