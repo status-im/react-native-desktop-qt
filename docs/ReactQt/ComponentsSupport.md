@@ -6,7 +6,7 @@
 | DatePickerIOS                 | ?                      |                  |
 | DrawerLayoutAndroid           |                        |                  |
 | FlatList                      |                        |                  |
-| Image                         | ?                      |                  |
+| Image                         | +/-                    | +/-              |
 | KeyboardAvoidingView          |                        |                  |
 | ListView                      |                        |                  |
 | Modal                         |                        |                  |
@@ -16,7 +16,7 @@
 | ProgressBarAndroid            |                        |                  |
 | ProgressViewIOS               |                        |                  |
 | RefreshControl                |                        |                  |
-| ScrollView                    | ?                      |                  |
+| ScrollView                    | ?                      | +/-              |
 | SectionList                   |                        |                  |
 | SegmentedControlIOS           |                        |                  |
 | Slider                        |                        |                  |
@@ -25,8 +25,8 @@
 | Switch                        |                        |                  |
 | TabBarIOS                     |                        |                  |
 | TabBarIOS.Item                |                        |                  |
-| Text                          | ?                      |                  |
-| TextInput                     | ?                      |                  |
+| Text                          | ?                      | +/-              |
+| TextInput                     |                        |                  |
 | ToolbarAndroid                |                        |                  |
 | TouchableHighlight            | ?                      |                  |
 | TouchableNativeFeedback       | ?                      |                  |
