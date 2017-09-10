@@ -26,7 +26,6 @@ public:
     virtual ~ReactActivityIndicatorManager();
 
     virtual ReactViewManager* viewManager() override;
-    virtual ReactPropertyHandler* propertyHandler(QObject* object) override;
     virtual QString moduleName() override;
     virtual QList<ReactModuleMethod*> methodsToExport() override;
     virtual QVariantMap constantsToExport() override;

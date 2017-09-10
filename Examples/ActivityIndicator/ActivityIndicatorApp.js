@@ -7,8 +7,10 @@ import {
 export default class ActivityIndicatorReactNative extends Component {
   render() {
     return (
-        <ActivityIndicator size='large' color='#00FF00'>
-        </ActivityIndicator>
+        <ActivityIndicator  size='large'
+                            color='#0000FF'
+                            animating={true}
+        />
     );
   }
 }

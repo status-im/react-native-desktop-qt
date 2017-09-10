@@ -29,11 +29,6 @@ ReactViewManager* ReactRawTextManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object) {
-    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactRawTextManager::moduleName() {
     return "RCTRawTextManager";
 }

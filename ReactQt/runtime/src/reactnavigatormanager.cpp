@@ -62,11 +62,6 @@ ReactViewManager* ReactNavigatorManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object) {
-    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactNavigatorManager::moduleName() {
     return "RCTNavigatorManager";
 }

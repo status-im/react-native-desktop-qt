@@ -35,7 +35,6 @@ public:
     ~ReactNavigatorManager();
 
     ReactViewManager* viewManager() override;
-    ReactPropertyHandler* propertyHandler(QObject* object);
 
     QString moduleName() override;
     QList<ReactModuleMethod*> methodsToExport() override;

@@ -34,10 +34,6 @@ ReactViewManager* ReactActivityIndicatorManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactActivityIndicatorManager::propertyHandler(QObject* object) {
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactActivityIndicatorManager::moduleName() {
     return "RCTActivityIndicatorViewManager";
 }

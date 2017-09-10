@@ -49,10 +49,6 @@ ReactViewManager* ReactImageManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object) {
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactImageManager::moduleName() {
     return "RCTImageViewManager";
 }
