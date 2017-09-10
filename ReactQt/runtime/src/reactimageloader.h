@@ -28,7 +28,9 @@ class ReactImageLoader
   // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
   Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE void prefetchImage(const QString& url);
+  Q_INVOKABLE REACT_PROMISE void prefetchImage(const QString& url,
+                                               double success,
+                                               double error);
 
   Q_INVOKABLE REACT_PROMISE void getSize(const QString& url,
                                           double success,
@@ -57,7 +59,6 @@ public:
   QList<ReactModuleMethod*> methodsToExport() override;
   QVariantMap constantsToExport() override;
 
-  QUrl provideUriFromSourceUrl(const QUrl& source);
   void loadImage(const QUrl& source, const LoadEventCallback& ec = LoadEventCallback());
 
 private:

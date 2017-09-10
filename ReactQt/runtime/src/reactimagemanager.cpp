@@ -95,6 +95,8 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
 {
   Q_D(ReactImageManager);
 
+  auto imageLoader = bridge()->imageLoader();
+
   QUrl source = imageSource["uri"].toUrl();
 
   if(d->isBase64ImageUrl(source))
@@ -108,19 +110,19 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
     source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
   }
 
-  bridge()->imageLoader()->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data)
+  imageLoader->loadImage(source, [=](ReactImageLoader::Event event, const QVariantMap& data)
   {
-      if (event == ReactImageLoader::Event_LoadSuccess)
-      {
-        d->setSource(image,  bridge()->imageLoader()->provideUriFromSourceUrl(source));
-      }
-      if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
-      {
-        int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
-        bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                                QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
-      }
-    });
+    if (event == ReactImageLoader::Event_LoadSuccess)
+    {
+      d->setSource(image, source);
+    }
+    if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool())
+    {
+      int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
+      bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+                              QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
+    }
+  });
 }
 
 void ReactImageManager::configureView(QQuickItem* view) const

@@ -255,15 +255,15 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Image Loading Events',
-  //   render: function() {
-  //     return (
-  //       <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
-  //         prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Image Loading Events',
+    render: function() {
+      return (
+        <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
+          prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
+      );
+    },
+  },
   // {
   //   title: 'Error Handler',
   //   render: function() {

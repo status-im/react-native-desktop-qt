@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.7
 import QtGraphicalEffects 1.0
 import React 0.1 as React
 

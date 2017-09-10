@@ -26,38 +26,17 @@ class ReactImageLoaderPrivate {
 
 public:
 
-  class ImageProvider : public QQuickImageProvider {
-  public:
-    ImageProvider(ReactImageLoaderPrivate* priv):QQuickImageProvider(QQuickImageProvider::Image), p(priv) {}
-    QImage requestImage(const QString& id,  QSize* size, const QSize& requestedSize) override {
-      auto cache = qobject_cast<QNetworkDiskCache*>(p->bridge->networkAccessManager()->cache());
-      auto idev = cache->data(p->cacheIds.key(id.toLocal8Bit()));
-      if (idev == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Could not obtain cache entry for" << id;
-        return QImage();
-      }
-      idev->deleteLater();
-      QImage image = QImage::fromData(idev->readAll());
-      if (size != nullptr)
-        *size = image.size();
-      return image;
-    }
-    ReactImageLoaderPrivate* p = nullptr;
-  };
+  QIODevice* cachedData(const QUrl& source) {
+    auto cache = qobject_cast<QNetworkDiskCache*>(bridge->networkAccessManager()->cache());
+    return cache->data(source);
+  }
 
-  ReactImageLoaderPrivate() {
-    provider = new ImageProvider(this);
-  }
-  void markCached(const QUrl& source) {
-    QByteArray hash = QCryptographicHash::hash(source.toEncoded(), QCryptographicHash::Sha1).toBase64();
-    cacheIds.insert(source, hash);
-  }
   bool isCached(const QUrl& source) {
-    return cacheIds.contains(source);
+    auto cached = cachedData(source);
+    cached->deleteLater();
+    return (cached != nullptr);
   }
-  QUrl cachedUrl(const QUrl& source) {
-    return QUrl("image://react/" + cacheIds.value(source));
-  }
+
   void fetchImage(const QUrl& source, const ReactImageLoader::LoadEventCallback& ec) {
     auto data = std::make_shared<QVariantMap>(QVariantMap{});
 
@@ -86,26 +65,33 @@ public:
         ec(ReactImageLoader::Event_LoadError, *data);
       });
     QObject::connect(reply, &QNetworkReply::finished, [=]() {
-        reply->deleteLater();
-        if (reply->error() == QNetworkReply::NoError) {
-          if (!source.isLocalFile())
-            markCached(source);
-          ec(ReactImageLoader::Event_LoadSuccess, *data);
-        }
-        ec(ReactImageLoader::Event_LoadEnd, *data);
-      });
+      reply->deleteLater();
+      if (reply->error() == QNetworkReply::NoError) {
+        ec(ReactImageLoader::Event_LoadSuccess, *data);
+      } else {
+        qDebug()<<"ERROR: "<<reply->errorString();
+      }
+      ec(ReactImageLoader::Event_LoadEnd, *data);
+    });
   }
 
-  QMap<QUrl, QByteArray> cacheIds;
   ReactBridge* bridge = nullptr;
-  ImageProvider* provider = nullptr;
 };
 
 
-void ReactImageLoader::prefetchImage(
-  const QString& url) {
+void ReactImageLoader::prefetchImage( const QString& url, double success, double error) {
   Q_D(ReactImageLoader);
-  d->fetchImage(url, [=](ReactImageLoader::Event, const QVariantMap&) {});
+
+  d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
+    if (event == ReactImageLoader::Event_LoadSuccess)
+    {
+      d->bridge->invokePromiseCallback(success, QVariantList{});
+    }
+    if (event == ReactImageLoader::Event_LoadError)
+    {
+      d->bridge->invokePromiseCallback(error, QVariantList{});
+    }
+  });
 }
 
 void ReactImageLoader::getSize(const QString& url,
@@ -116,9 +102,18 @@ void ReactImageLoader::getSize(const QString& url,
   d->fetchImage(url, [=](ReactImageLoader::Event event, const QVariantMap& data) {
     if (event == ReactImageLoader::Event_LoadSuccess)
     {
-      QSize size;
-      d->provider->requestImage(d->cacheIds.value(url), &size, size);
-      d->bridge->invokePromiseCallback(success, QVariantList{ QVariantMap{{"height", size.height()}, {"width", size.width()}} });
+      if(d->isCached(url))
+      {
+        QSize size;
+        auto data = d->cachedData(url);
+        data->deleteLater();
+        size = QImage::fromData(data->readAll()).size();
+        d->bridge->invokePromiseCallback(success, QVariantList{ QVariantMap{{"height", size.height()}, {"width", size.width()}} });
+      }
+      else
+      {
+        d->bridge->invokePromiseCallback(error, QVariantList{});
+      }
     }
     if (event == ReactImageLoader::Event_LoadError)
     {
@@ -142,7 +137,6 @@ void ReactImageLoader::setBridge(ReactBridge* bridge)
 {
   Q_D(ReactImageLoader);
   d->bridge = bridge;
-  d->bridge->qmlEngine()->addImageProvider("react", d->provider);
 }
 
 QString ReactImageLoader::moduleName()
@@ -158,15 +152,6 @@ QList<ReactModuleMethod*> ReactImageLoader::methodsToExport()
 QVariantMap ReactImageLoader::constantsToExport()
 {
   return QVariantMap{};
-}
-
-QUrl ReactImageLoader::provideUriFromSourceUrl(const QUrl& source)
-{
-  Q_D(ReactImageLoader);
-  if (d->isCached(source))
-    return d->cachedUrl(source);
-
-  return source;
 }
 
 void ReactImageLoader::loadImage(const QUrl& source, const LoadEventCallback& loadEventCallback)
