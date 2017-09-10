@@ -3,39 +3,38 @@ import QtQuick.Controls 1.4
 
 
 Item {
- id: navigatorRoot
+    id: navigatorRoot
 
- property bool p_onBackButtonPress: false
+    property bool p_onBackButtonPress: false
+    property int numberPages: 0
 
- property int numberPages: 0
+    signal backTriggered();
 
- signal backTriggered();
+    Component {
+        id: pageBackAction
+        Action {
+            iconName: navigatorRoot.numberPages > 1 ? "back" : ""
+        }
+    }
 
- Component {
-   id: pageBackAction
-   Action {
-     iconName: navigatorRoot.numberPages > 1 ? "back" : ""
-   }
- }
+    StackView {
+        id: pageStack
+        anchors.fill: parent
+    }
 
- StackView {
-   id: pageStack
-   anchors.fill: parent
- }
+    function push(item) {
+        item.head.backAction = pageBackAction.createObject(item);
+        item.head.backAction.onTriggered.connect(backTriggered);
+        pageStack.push(item);
+        navigatorRoot.numberPages += 1;
+    }
 
- function push(item) {
-   item.head.backAction = pageBackAction.createObject(item);
-   item.head.backAction.onTriggered.connect(backTriggered);
-   pageStack.push(item);
-   navigatorRoot.numberPages += 1;
- }
+    function pop() {
+        pageStack.pop();
+        navigatorRoot.numberPages -= 1;
+    }
 
- function pop() {
-   pageStack.pop();
-   navigatorRoot.numberPages -= 1;
- }
-
- function clear() {
-   pageStack.clear();
- }
+    function clear() {
+        pageStack.clear();
+    }
 }

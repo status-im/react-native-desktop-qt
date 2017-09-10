@@ -12,15 +12,15 @@ import QtQuick 2.4
 import React 0.1 as React
 
 Rectangle {
-  id: root
-  width: 640; height: 480;
-  color: "red"
+    id: root
+    width: 640; height: 480;
+    color: "red"
 
-  React.RootView {
-    objectName: "rootView"
-    anchors.fill: parent
+    React.RootView {
+        objectName: "rootView"
+        anchors.fill: parent
 
-    moduleName: "TestModuleTest"
-    codeLocation: "http://localhost:8081/IntegrationTests/TestModuleTest.bundle?platform=ubuntu&dev=true"
-  }
+        moduleName: "TestModuleTest"
+        codeLocation: "http://localhost:8081/IntegrationTests/TestModuleTest.bundle?platform=ubuntu&dev=true"
+    }
 }
