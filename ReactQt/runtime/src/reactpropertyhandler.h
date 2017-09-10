@@ -22,28 +22,36 @@
 class QQuickItem;
 
 
+const QString QML_PROPERTY_PREFIX = "p_";
+
+
+using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
+
 class ReactPropertyHandler : public QObject
 {
   Q_OBJECT
 
 public:
-  ReactPropertyHandler(QObject* object, bool exposeQmlProperties = true);
+  ReactPropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
   virtual ~ReactPropertyHandler();
 
-  virtual QList<QMetaProperty> availableProperties();
+  virtual QMap<QString, QMetaProperty> availableProperties();
   virtual void applyProperties(const QVariantMap& properties);
   QVariant value(const QString& propertyName);
-
-protected:
-  bool m_exposeQmlProperties;
-  bool m_cached = false;
-  QObject* m_object;
-  QMap<QString, QMetaProperty> m_coreProperties;
-  QMap<QString, QMetaProperty> m_extraProperties;
 
 private:
   void buildPropertyMap();
   void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
+  void getPropertiesFromMetaObject(const QMetaObject* metaObject);
+
+private:
+  bool m_exposeQmlProperties = true;
+  bool m_cached = false;
+  QObject* m_object;
+  QMap<QString, QMetaProperty> m_qmlProperties;
+  QMap<QString, QMetaProperty> m_HandlerProperties;
+  SetPropertyCallback m_setPropertyCallback;
+
 };
 
 #endif // REACTPROPERTYHANDLER_H

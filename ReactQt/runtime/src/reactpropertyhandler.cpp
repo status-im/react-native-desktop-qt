@@ -17,10 +17,10 @@
 #include "reactvaluecoercion.h"
 
 
-ReactPropertyHandler::ReactPropertyHandler(QObject* object, bool exposeQmlProperties)
-  : QObject(object)
-  , m_exposeQmlProperties(exposeQmlProperties)
-  , m_object(object)
+ReactPropertyHandler::ReactPropertyHandler(QObject* object, SetPropertyCallback callback) :
+  QObject(object),
+  m_object(object),
+  m_setPropertyCallback(callback)
 {
 
 }
@@ -29,11 +29,14 @@ ReactPropertyHandler::~ReactPropertyHandler()
 {
 }
 
-QList<QMetaProperty> ReactPropertyHandler::availableProperties()
+QMap<QString, QMetaProperty> ReactPropertyHandler::availableProperties()
 {
   buildPropertyMap();
 
-  return m_coreProperties.values() + m_extraProperties.values();
+  QMap<QString, QMetaProperty> allProperties;
+  allProperties.unite(m_qmlProperties);
+  allProperties.unite(m_HandlerProperties);
+  return allProperties;
 }
 
 void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
@@ -43,14 +46,14 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties)
 
   for (const QString& key : properties.keys()) {
     QVariant propertyValue = properties.value(key);
-    QMap<QString, QMetaProperty>::iterator it = m_extraProperties.find(key);
+    QMap<QString, QMetaProperty>::iterator it = m_HandlerProperties.find(key);
     // Extras get first shot
-    if (it != m_extraProperties.end()) {
+    if (it != m_HandlerProperties.end()) {
       QMetaProperty property = it.value();
       setValueToObjectProperty(this, property, propertyValue);
     } else if (m_exposeQmlProperties) {
-      it = m_coreProperties.find(key);
-      if (it != m_coreProperties.end()) {
+      it = m_qmlProperties.find(key);
+      if (it != m_qmlProperties.end()) {
         QMetaProperty property = it.value();
         setValueToObjectProperty(m_object, property, propertyValue);
       }
@@ -65,13 +68,13 @@ QVariant ReactPropertyHandler::value(const QString& propertyName)
 
   QVariant value;
 
-  if(m_extraProperties.contains(propertyName))
+  if(m_HandlerProperties.contains(propertyName))
   {
-    value = m_extraProperties[propertyName].read(this);
+    value = m_HandlerProperties[propertyName].read(this);
   }
-  else if(m_exposeQmlProperties && m_coreProperties.contains(propertyName))
+  else if(m_exposeQmlProperties && m_qmlProperties.contains(propertyName))
   {
-    value = m_coreProperties[propertyName].read(m_object);
+    value = m_qmlProperties[propertyName].read(m_object);
   }
   return value;
 }
@@ -83,33 +86,47 @@ void ReactPropertyHandler::buildPropertyMap()
     return;
   }
 
-  // Class properties on the actual object (core object)
+  // Get qml properties of current object (and its parents)
   if (m_exposeQmlProperties) {
     const QMetaObject* metaObject = m_object->metaObject();
-    const int propertyCount = metaObject->propertyCount();
-
-    for (int i = metaObject->propertyOffset(); i < propertyCount; ++i) {
-      QMetaProperty p = metaObject->property(i);
-      if (p.isScriptable())
-        m_coreProperties.insert(p.name(), p);
-    }
+    getPropertiesFromMetaObject(metaObject);
   }
 
-  // All properties on the handlers (extras)
-  {
+  // Get all properties on the handlers (extras)
   const QMetaObject* metaObject = this->metaObject();
   const int propertyCount = metaObject->propertyCount();
 
   for (int i = 1; i < propertyCount; ++i) {
     QMetaProperty p = metaObject->property(i);
     if (p.isScriptable())
-      m_extraProperties.insert(p.name(), p);
+      m_HandlerProperties.insert(p.name(), p);
   }
-  }
+
   m_cached = true;
 }
+
+
+void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject)
+{
+  //we get all prefixed properties from object and its parents
+  const int propertyCount = metaObject->propertyCount();
+  for (int i = 0; i < propertyCount; ++i) {
+    QMetaProperty p = metaObject->property(i);
+    QString qmlPropName = p.name();
+    if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX))
+    {
+      QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
+      m_qmlProperties.insert(nameWithoutPrefix, p);
+    }
+  }
+}
+
 
 void ReactPropertyHandler::setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value)
 {
   property.write(object, reactCoerceValue(value, property.userType()));
+  if(m_setPropertyCallback)
+  {
+    m_setPropertyCallback(object, property, value);
+  }
 }

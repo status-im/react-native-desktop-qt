@@ -36,8 +36,6 @@ public:
   ReactNavigatorManager(QObject* parent = 0);
   ~ReactNavigatorManager();
 
-  void setBridge(ReactBridge* bridge) override;
-
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object);
 
@@ -47,13 +45,13 @@ public:
 
   QStringList customBubblingEventTypes() override;
 
-  QQuickItem* view(const QVariantMap& properties) const override;
-
 private Q_SLOTS:
   void backTriggered();
 
 private:
-  void configureView(QQuickItem* view) const;
+  virtual void configureView(QQuickItem* view) const;
+  virtual QString qmlComponentFile() const;
+
   void invokeMethod(const QString& methodSignature,
                     QQuickItem* item,
                     const QVariantList& args = QVariantList{});

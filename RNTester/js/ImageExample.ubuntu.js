@@ -255,15 +255,15 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Image Loading Events',
-  //   render: function() {
-  //     return (
-  //       <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
-  //         prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Image Loading Events',
+    render: function() {
+      return (
+        <NetworkImageCallbackExample source={{uri: 'http://origami.design/public/images/bird-logo.png?r=1&t=' + Date.now()}}
+          prefetchedSource={{uri: IMAGE_PREFETCH_URL}}/>
+      );
+    },
+  },
   // {
   //   title: 'Error Handler',
   //   render: function() {
@@ -586,18 +586,17 @@ exports.examples = [
   //   },
   //   platform: 'ios',
   // },
-  // {
-  //   title: 'Base64 image',
-  //   render: function() {
-  //     return (
-  //       <Image
-  //         style={styles.base64}
-  //         source={{uri: base64Icon, scale: 3}}
-  //       />
-  //     );
-  //   },
-  //   platform: 'ios',
-  // },
+  {
+    title: 'Base64 image',
+    render: function() {
+      return (
+        <Image
+          style={styles.base64}
+          source={{uri: base64Icon, scale: 3}}
+        />
+      );
+    },
+  },
   // {
   //   title: 'Cap Insets',
   //   description:
@@ -610,12 +609,12 @@ exports.examples = [
   //   },
   //   platform: 'ios',
   // },
-  // {
-  //   title: 'Image Size',
-  //   render: function() {
-  //     return <ImageSizeExample source={fullImage} />;
-  //   },
-  // },
+  {
+    title: 'Image Size',
+    render: function() {
+      return <ImageSizeExample source={fullImage} />;
+    },
+  },
   // {
   //   title: 'MultipleSourcesExample',
   //   description:

@@ -26,36 +26,10 @@
 #include "reactevents.h"
 
 
-class NavigatorPropertyHandler : public ReactPropertyHandler {
-  Q_OBJECT
-  Q_PROPERTY(bool onBackButtonPress READ onBackButtonPress WRITE setOnBackButtonPress)
-public:
-  NavigatorPropertyHandler(QObject* object)
-    : ReactPropertyHandler(object)
-    , m_backButtonPress(false) {
-    }
-  bool onBackButtonPress() const;
-  void setOnBackButtonPress(bool backButtonPress);
-
-  bool m_backButtonPress;
-};
-
-bool NavigatorPropertyHandler::onBackButtonPress() const
-{
-  return m_backButtonPress;
-}
-
-void NavigatorPropertyHandler::setOnBackButtonPress(bool backButtonPress)
-{
-  m_backButtonPress = backButtonPress;
-}
-
-
-
 void ReactNavigatorManager::push(int containerTag, int viewTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
-  QQuickItem* view = m_bridge->uiManager()->viewForTag(viewTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
+  QQuickItem* view = bridge()->uiManager()->viewForTag(viewTag);
   if (container == nullptr || view == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -66,7 +40,7 @@ void ReactNavigatorManager::push(int containerTag, int viewTag)
 
 void ReactNavigatorManager::pop(int containerTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -76,7 +50,7 @@ void ReactNavigatorManager::pop(int containerTag)
 
 void ReactNavigatorManager::clear(int containerTag)
 {
-  QQuickItem* container = m_bridge->uiManager()->viewForTag(containerTag);
+  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
   if (container == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
     return;
@@ -95,11 +69,6 @@ ReactNavigatorManager::~ReactNavigatorManager()
 {
 }
 
-void ReactNavigatorManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
-
 ReactViewManager* ReactNavigatorManager::viewManager()
 {
   return this;
@@ -108,7 +77,7 @@ ReactViewManager* ReactNavigatorManager::viewManager()
 ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new NavigatorPropertyHandler(object);
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactNavigatorManager::moduleName()
@@ -131,84 +100,21 @@ QStringList ReactNavigatorManager::customBubblingEventTypes()
   return QStringList{ normalizeInputEventName("onBackButtonPress") };
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-import QtQuick.Controls 1.4
-
-
-Item {
- id: mainView%1
- property int numberPages: 0
- signal backTriggered();
-
- Component {
-   id: pageBackAction%1
-   Action {
-     iconName: mainView%1.numberPages > 1 ? "back" : ""
-   }
- }
-
- StackView {
-   id: pageStack%1
-   anchors.fill: parent
- }
-
- function push(item) {
-   item.head.backAction = pageBackAction%1.createObject(item);
-   item.head.backAction.onTriggered.connect(backTriggered);
-   pageStack%1.push(item);
-   mainView%1.numberPages += 1;
- }
-
- function pop() {
-   pageStack%1.pop();
-   mainView%1.numberPages -= 1;
- }
-
- function clear() {
-   pageStack%1.clear();
- }
-}
-
-)COMPONENT";
-}
-
-QQuickItem* ReactNavigatorManager::view(const QVariantMap& properties) const
-{
-  QString componentString = QString(component_qml).arg(m_id++);
-
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for UbuntuNavigatorManager not ready" <<
-              componentString << component.errors();
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for UbuntuNavigatorManager";
-    return nullptr;
-  }
-
-  configureView(item);
-
-  return item;
-}
-
 void ReactNavigatorManager::backTriggered()
 {
-  ReactAttachedProperties* ap = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(sender()));
+  QQuickItem* viewItem = qobject_cast<QQuickItem*>(sender());
+  ReactAttachedProperties* ap = ReactAttachedProperties::get(viewItem);
+
   if (ap == nullptr) {
     qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
     return;
   }
-  NavigatorPropertyHandler* ph = qobject_cast<NavigatorPropertyHandler*>(ap->propertyHandler());
-  if (ph == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "failed to find NavigatorPropertyHandler";
-    return;
-  }
-  if (ph->onBackButtonPress()) {
-    m_bridge->enqueueJSCall("RCTEventEmitter", "receiveEvent",
+
+
+  bool backButtonPressFlagSet = viewItem->property("p_onBackButtonPress").toBool();
+
+  if (backButtonPressFlagSet) {
+    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
                             QVariantList{ap->tag(),
                                          normalizeInputEventName("onBackButtonPress"),
                                          QVariantMap{}});
@@ -217,7 +123,13 @@ void ReactNavigatorManager::backTriggered()
 
 void ReactNavigatorManager::configureView(QQuickItem* view) const
 {
+  ReactViewManager::configureView(view);
   connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
+}
+
+QString ReactNavigatorManager::qmlComponentFile() const
+{
+  return ":/qml/ReactNavigator.qml";
 }
 
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())

@@ -19,10 +19,10 @@
 
 #include <QDebug>
 
-#include "reacttextproperties.h"
 #include "reacttextmanager.h"
 #include "reactbridge.h"
 #include "reactflexlayout.h"
+#include "reactpropertyhandler.h"
 
 
 ReactTextManager::ReactTextManager(QObject* parent)
@@ -34,11 +34,6 @@ ReactTextManager::~ReactTextManager()
 {
 }
 
-void ReactTextManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
-}
-
 ReactViewManager* ReactTextManager::viewManager()
 {
   return this;
@@ -47,7 +42,12 @@ ReactViewManager* ReactTextManager::viewManager()
 ReactPropertyHandler* ReactTextManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return ReactTextProperties::get(qobject_cast<QQuickItem*>(object));
+
+  //we keep track of all assigned properties because if property not assigned explicitly,
+  //it should be taken from parent
+  return new ReactPropertyHandler(object, [&](QObject* object, QMetaProperty property, const QVariant& value) {
+    m_explicitlySetProps[object].insert(property.name());
+  });
 }
 
 QString ReactTextManager::moduleName()
@@ -65,36 +65,96 @@ QVariantMap ReactTextManager::constantsToExport()
   return QVariantMap{};
 }
 
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-
-Text {
-  textFormat: Text.RichText
-  wrapMode: Text.WordWrap
-}
-)COMPONENT";
-}
-
 bool ReactTextManager::shouldLayout() const
 {
   return true;
 }
 
-QQuickItem* ReactTextManager::view(const QVariantMap& properties) const
+QString ReactTextManager::qmlComponentFile() const
 {
-  QString componentString = QString(component_qml);
+  return ":/qml/ReactText.qml";
+}
 
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for RCTTextManager not ready" << component.errors();
+void ReactTextManager::configureView(QQuickItem* view) const
+{
+  ReactRawTextManager::configureView(view);
+  view->setProperty("textManager", QVariant::fromValue((QObject*)this));
+}
 
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTTextManager";
-    return nullptr;
+
+void ReactTextManager::hookLayout(QQuickItem* textItem)
+{
+  ReactFlexLayout* fl = ReactFlexLayout::get(textItem);
+  fl->setMeasureFunction([=](double width, FlexMeasureMode widthMode, double height, FlexMeasureMode heightMode) {
+
+    resizeToWidth(textItem, width);
+
+    double w = textItem->width();
+    double ch = textItem->property("contentHeight").toDouble();
+    return std::make_pair(w, ch);
+  });
+}
+
+void ReactTextManager::resizeToWidth(QQuickItem* textItem, double width)
+{
+  double contentWidth = textItem->property("contentWidth").value<double>();
+  double sw = 0;
+  if (std::isnan(width))
+  {
+    sw = contentWidth;
+  }
+  else
+  {
+    sw = contentWidth == 0 ? width : qMin(contentWidth, width);
+  }
+  textItem->setWidth(sw);
+}
+
+QVariant ReactTextManager::nestedPropertyValue(QQuickItem* item, const QString& propertyName)
+{
+  //return value if it is explicitly set on current item
+  if(propertyExplicitlySet(item, propertyName))
+  {
+    return item->property(propertyName.toStdString().c_str());
   }
 
-  return item;
+  //check if any of text parents has this property explicitly set
+  QQuickItem* parent = parentTextItem(item);
+  while(parent)
+  {
+    if(propertyExplicitlySet(parent, propertyName))
+    {
+      return parent->property(propertyName.toStdString().c_str());
+    }
+    parent = parentTextItem(parent);
+  }
+
+  //no parents has this property explicitly set, so we use default value
+  return item->property(propertyName.toStdString().c_str());
+}
+
+QQuickItem* ReactTextManager::parentTextItem(QQuickItem* textItem)
+{
+  if(!textItem)
+    return nullptr;
+
+  auto visualParent = textItem->parentItem();
+  if(!visualParent)
+    return nullptr;
+
+  QVariant typeName = visualParent->property("typeName");
+  if(!typeName.isValid())
+    return nullptr;
+
+  return (typeName.toString() == "ReactText") ? static_cast<QQuickItem*>(visualParent) : nullptr;
+
+}
+
+bool ReactTextManager::propertyExplicitlySet(QQuickItem* item, const QString& propertyName)
+{
+  if(m_explicitlySetProps.contains(item))
+  {
+    return m_explicitlySetProps[item].contains(propertyName);
+  }
+  return false;
 }

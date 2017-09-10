@@ -8,6 +8,7 @@
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
@@ -47,8 +48,6 @@ set(
   reactimageloader.cpp
   reactattachedproperties.cpp
   reactflexlayout.cpp
-  reacttextproperties.cpp
-  reactrawtextproperties.cpp
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp
@@ -57,15 +56,30 @@ set(
   ../../../React/Layout/Layout.c
 )
 
+set(
+  QML
+  qml/ReactImage.qml
+  qml/ReactView.qml
+  qml/ReactNavigator.qml
+  qml/ReactScrollView.qml
+  qml/ReactRedboxItem.qml
+  qml/ReactText.qml
+  qml/ReactRawText.qml
+)
+
 if(DEFINED REACT_BUILD_STATIC_LIB)
 add_library(
   react-native STATIC
   ${SRC}
+  ${QML}
+  react_resources.qrc
 )
 else()
 add_library(
   react-native SHARED
   ${SRC}
+  ${QML}
+  react_resources.qrc
 )
 set_target_properties(
   react-native

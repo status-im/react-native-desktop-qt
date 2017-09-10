@@ -56,6 +56,10 @@ node_modules
 moc_*.cpp
 *_automoc.cpp
 *.moc
+*.qmlc
+
+# Meld (merge tool)
+*.orig
 
 # Emacs
 *~

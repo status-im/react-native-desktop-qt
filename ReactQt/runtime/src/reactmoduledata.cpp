@@ -111,18 +111,28 @@ QVariant ReactModuleData::info() const
   Q_D(const ReactModuleData);
 
   QVariantList config;
+  QVariantList asyncMethodsList;
+  QVariantList promiseMethodsList;
+  QVariantList syncMethodsList;
+
+
+  for (int i = 0; i < d->methods.size(); ++i) {
+    auto method = d->methods.at(i);
+    asyncMethodsList.push_back(method->name());
+
+    if(method->type() == NativeMethodType::Promise)
+    {
+      promiseMethodsList.push_back(i);
+    }
+  }
+
 
   // TODO: renaming of modules is required, since RCT prefix is not supported by react-native
   config.push_back(name().replace("RCT", ""));
-
   config.push_back(d->constants.isEmpty() ? QVariant() : d->constants);
-
-  QVariantList methodConfig;
-  for (int i = 0; i < d->methods.size(); ++i) {
-      methodConfig.push_back(d->methods.at(i)->name());
-  }
-
-  config.push_back(methodConfig);
+  config.push_back(asyncMethodsList);
+  config.push_back(promiseMethodsList);
+  config.push_back(syncMethodsList);
 
   return config;
 }

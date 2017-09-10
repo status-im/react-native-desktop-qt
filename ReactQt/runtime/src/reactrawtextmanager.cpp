@@ -16,13 +16,9 @@
 #include <QQuickItem>
 #include <QQmlProperty>
 
-#include "reacttextproperties.h"
 #include "reactrawtextmanager.h"
 #include "reactbridge.h"
-#include "reactrawtextproperties.h"
-
-
-
+#include "reactpropertyhandler.h"
 
 ReactRawTextManager::ReactRawTextManager(QObject *parent)
   : ReactViewManager(parent)
@@ -31,11 +27,6 @@ ReactRawTextManager::ReactRawTextManager(QObject *parent)
 
 ReactRawTextManager::~ReactRawTextManager()
 {
-}
-
-void ReactRawTextManager::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
 }
 
 // TODO: this doesnt seem right
@@ -47,7 +38,7 @@ ReactViewManager* ReactRawTextManager::viewManager()
 ReactPropertyHandler* ReactRawTextManager::propertyHandler(QObject* object)
 {
   Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return ReactRawTextProperties::get(qobject_cast<QQuickItem*>(object));
+  return new ReactPropertyHandler(object);
 }
 
 QString ReactRawTextManager::moduleName()
@@ -70,35 +61,14 @@ bool ReactRawTextManager::shouldLayout() const
   return false;
 }
 
-// TODO: this is a virtual node, not a real text node
-namespace {
-static const char* component_qml = R"COMPONENT(
-import QtQuick 2.4
-
-Text {
-  visible: false
-}
-)COMPONENT";
-}
-
-QQuickItem* ReactRawTextManager::view(const QVariantMap& properties) const
+void ReactRawTextManager::configureView(QQuickItem* view) const
 {
-  QString componentString = QString(component_qml);
+  ReactViewManager::configureView(view);
+  view->setEnabled(false);
+}
 
-  QQmlComponent component(m_bridge->qmlEngine());
-  component.setData(componentString.toLocal8Bit(), QUrl());
-  if (!component.isReady())
-    qCritical() << "Component for RCTRawTextManager not ready";
-
-  QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-  if (item == nullptr) {
-    qCritical() << "Unable to create component for RCTRawTextManager";
-    return nullptr;
-  }
-
-  //
-  item->setEnabled(false);
-
-  return item;
+QString ReactRawTextManager::qmlComponentFile() const
+{
+  return ":/qml/ReactRawText.qml";
 }
 

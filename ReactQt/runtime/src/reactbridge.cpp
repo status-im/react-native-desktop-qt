@@ -163,6 +163,15 @@ void ReactBridge::enqueueJSCall(const QString& module, const QString& method, co
                                     });
 }
 
+void ReactBridge::invokePromiseCallback(double callbackCode, const QVariantList& args)
+{
+  d_func()->executor->executeJSCall("invokeCallbackAndReturnFlushedQueue",
+                                    QVariantList{callbackCode, args},
+                                    [=](const QJsonDocument& doc) {
+                                      processResult(doc);
+                                    });
+}
+
 void ReactBridge::invokeAndProcess(const QString& method, const QVariantList &args)
 {
   d_func()->executor->executeJSCall(method, args, [=](const QJsonDocument& doc) { processResult(doc); });
