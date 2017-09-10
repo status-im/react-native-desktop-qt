@@ -6,7 +6,7 @@ React.Item {
   id: imageRoot
   p_backgroundColor: 'transparent'
 
-  property color p_tintColor
+  property color p_tintColor: 'transparent'
   property string p_testID
   property var p_source;
   property bool p_onLoadStart: false
@@ -26,44 +26,43 @@ React.Item {
     imageManager.manageSource(p_source, imageRoot);
   }
 
-
   objectName: p_testID
-
-  onP_tintColorChanged: {
-    image.visible = false
-    colorOverlay.visible = true
-  }
 
   Image {
     id: image
-    visible: true
     anchors.fill: parent
-    layer.enabled: imageRoot.p_borderRadius > 0
     fillMode: fillModeFromResizeMode(imageRoot.p_resizeMode)
     source: imageRoot.managedSource
+    visible: false //image not visible, because it is followed by effects and last effect is visible
+  }
 
-    layer.effect: OpacityMask {
-      maskSource: Rectangle {
-        width: image.width
-        height: image.height
-        radius: imageRoot.p_borderRadius
-      }
+  FastBlur {
+    id: blurEffect
+    visible: false
+    anchors.fill: image
+    source: image
+    radius: imageRoot.p_blurRadius
+  }
+
+  OpacityMask {
+    id: borderRadiusEffect
+    anchors.fill: image
+    source: blurEffect
+    maskSource: Rectangle {
+      width: image.width
+      height: image.height
+      visible: false
+      radius: imageRoot.p_borderRadius
     }
   }
 
   ColorOverlay {
-    visible: false
+    id: tintEffect
     anchors.fill: image
-    id: colorOverlay
-    source: image
+    source: borderRadiusEffect
     color: imageRoot.p_tintColor
   }
 
-  FastBlur {
-    anchors.fill: image
-    source: image
-    radius: p_blurRadius
-  }
 
   function fillModeFromResizeMode(resizeMode) {
     switch (resizeMode) {
