@@ -8,12 +8,9 @@
  *
  */
 
-#include "reactattachedproperties.h"
-#include "reactbridge.h"
 #include "reactpropertytestcase.h"
 #include "reactview.h"
 #include <QDebug>
-#include <QSignalSpy>
 #include <QTest>
 #include <QtQuick/QQuickView>
 
