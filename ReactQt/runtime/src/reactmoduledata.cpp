@@ -128,3 +128,7 @@ ReactModuleMethod* ReactModuleData::method(int id) const {
 ReactViewManager* ReactModuleData::viewManager() const {
     return qobject_cast<ReactModuleInterface*>(d_func()->moduleImpl)->viewManager();
 }
+
+void ReactModuleData::resetModuleIdCounter() {
+    nextModuleId = 0;
+}

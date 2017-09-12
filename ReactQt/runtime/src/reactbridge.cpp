@@ -140,7 +140,6 @@ void ReactBridge::reload() {
         delete md;
     }
     d->modules.clear();
-
     initModules();
     injectModules();
     loadSource();

@@ -37,6 +37,7 @@ public:
 
     ReactViewManager* viewManager() const;
 
+  static void resetModuleIdCounter();
 private:
     QScopedPointer<ReactModuleDataPrivate> d_ptr;
 };
