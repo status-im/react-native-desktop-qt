@@ -18,15 +18,16 @@
 
 
 class ReactPropertyHandler;
-
+class ReactImageManagerPrivate;
 class ReactImageManager : public ReactViewManager
 {
   Q_OBJECT
   Q_INTERFACES(ReactModuleInterface)
+  Q_DECLARE_PRIVATE(ReactImageManager)
 
 public:
   ReactImageManager(QObject* parent = 0);
-  ~ReactImageManager();
+  virtual ~ReactImageManager();
 
   ReactViewManager* viewManager() override;
   ReactPropertyHandler* propertyHandler(QObject* object) override;
@@ -44,7 +45,9 @@ private:
   virtual void configureView(QQuickItem* view) const;
   virtual QString qmlComponentFile() const;
 
-  static int m_id;
+private:
+  QScopedPointer<ReactImageManagerPrivate> d_ptr;
+
 };
 
 

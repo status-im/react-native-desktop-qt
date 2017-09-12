@@ -56,6 +56,7 @@ public:
   void init();
   void reload();
 
+  void invokePromiseCallback(double callbackCode, const QVariantList& args);
   void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
   void invokeAndProcess(const QString& method, const QVariantList &args);
   void executeSourceCode(const QByteArray& sourceCode);

@@ -34,10 +34,14 @@ QString ReactModuleMethod::name() const
   return m_metaMethod.name();
 }
 
-QString ReactModuleMethod::type() const
+NativeMethodType ReactModuleMethod::type() const
 {
-  return QByteArray(m_metaMethod.tag()) == "REACT_PROMISE"
-              ? "remoteAsync" : "remote";
+  if(QString(m_metaMethod.tag()) == "REACT_PROMISE")
+  {
+    return NativeMethodType::Promise;
+  }
+
+  return NativeMethodType::Async;
 }
 
 // meh

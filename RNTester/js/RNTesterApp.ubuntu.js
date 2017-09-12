@@ -65,10 +65,9 @@ class RNTesterApp extends React.Component {
   }
 
   componentDidMount() {
-    console.log('!!! set new state')
-    let action = RNTesterActions.ExampleAction('TextExample');
+    let action = RNTesterActions.ExampleAction('ImageExample');
     const newState = RNTesterNavigationReducer({
-      openExample: 'TextExample',
+      openExample: 'ImageExample',
     }, action);
     this.setState(
       newState,
@@ -134,7 +133,6 @@ class RNTesterApp extends React.Component {
   // }
 
   render() {
-    console.log('!!!! render state:', this.state)
     if (!this.state) {
       return null;
     }
