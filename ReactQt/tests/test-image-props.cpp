@@ -27,6 +27,7 @@ private slots:
 
     void initTestCase();
     void cleanupTestCase();
+    void checkImageLoaded();
 
     void checkTestIDProp();
     void checkOnLoadStart();
@@ -74,6 +75,11 @@ void TestImageProps::cleanupTestCase() {
 
 QVariant TestImageProps::valueOfProperty(const QString& propertyName) {
     return qmlImage()->property(propertyName.toStdString().c_str());
+}
+
+void TestImageProps::checkImageLoaded() {
+    waitAndVerifyCondition([=]() { return valueOfProperty("imageReady").toBool(); }, "Image can't load source");
+    QCOMPARE(valueOfProperty("imageReady").toBool(), true);
 }
 
 void TestImageProps::checkTestIDProp() {

@@ -21,6 +21,11 @@ React.Item {
     property var imageManager: null
     property string managedSource
 
+    //It appeared that closing application while image still loading its source
+    //leads to a crash. So in quick tests we can use this property to prevent closing
+    //until image source loaded
+    property bool imageReady: image.status != Image.Loading
+
     onP_sourceChanged: {
         //Manager will load image and set correct url to "managedSource" property
         imageManager.manageSource(p_source, imageRoot);
