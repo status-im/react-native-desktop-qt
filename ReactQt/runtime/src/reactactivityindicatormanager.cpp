@@ -38,18 +38,6 @@ QString ReactActivityIndicatorManager::moduleName() {
     return "RCTActivityIndicatorViewManager";
 }
 
-QList<ReactModuleMethod*> ReactActivityIndicatorManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactActivityIndicatorManager::constantsToExport() {
-    return QVariantMap{};
-}
-
-QStringList ReactActivityIndicatorManager::customDirectEventTypes() {
-    return QStringList{};
-}
-
 void ReactActivityIndicatorManager::configureView(QQuickItem* view) const {
     ReactViewManager::configureView(view);
 }

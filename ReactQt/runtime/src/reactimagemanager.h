@@ -29,8 +29,7 @@ public:
 
     virtual ReactViewManager* viewManager() override;
     virtual QString moduleName() override;
-    virtual QList<ReactModuleMethod*> methodsToExport() override;
-    virtual QVariantMap constantsToExport() override;
+
     virtual QStringList customDirectEventTypes() override;
 
 public slots:

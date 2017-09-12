@@ -66,14 +66,6 @@ QString ReactNavigatorManager::moduleName() {
     return "RCTNavigatorManager";
 }
 
-QList<ReactModuleMethod*> ReactNavigatorManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactNavigatorManager::constantsToExport() {
-    return QVariantMap{};
-}
-
 QStringList ReactNavigatorManager::customBubblingEventTypes() {
     return QStringList{normalizeInputEventName("onBackButtonPress")};
 }

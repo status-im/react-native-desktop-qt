@@ -31,8 +31,6 @@ public:
 
     ReactViewManager* viewManager() override;
     QString moduleName() override;
-    QList<ReactModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
 
     QStringList customDirectEventTypes() override;
 

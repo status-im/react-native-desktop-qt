@@ -53,14 +53,6 @@ QString ReactImageManager::moduleName() {
     return "RCTImageViewManager";
 }
 
-QList<ReactModuleMethod*> ReactImageManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactImageManager::constantsToExport() {
-    return QVariantMap{};
-}
-
 QStringList ReactImageManager::customDirectEventTypes() {
     return QStringList{normalizeInputEventName("onLoadStart"),
                        normalizeInputEventName("onProgress"),

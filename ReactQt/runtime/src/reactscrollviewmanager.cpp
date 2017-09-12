@@ -47,14 +47,6 @@ QString ReactScrollViewManager::moduleName() {
     return "RCTScrollViewManager";
 }
 
-QList<ReactModuleMethod*> ReactScrollViewManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactScrollViewManager::constantsToExport() {
-    return QVariantMap{};
-}
-
 QStringList ReactScrollViewManager::customDirectEventTypes() {
     return QStringList{"scrollBeginDrag",
                        normalizeInputEventName("onScroll"),

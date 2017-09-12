@@ -46,14 +46,6 @@ QString ReactTextManager::moduleName() {
     return "RCTTextManager";
 }
 
-QList<ReactModuleMethod*> ReactTextManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactTextManager::constantsToExport() {
-    return QVariantMap{};
-}
-
 bool ReactTextManager::shouldLayout() const {
     return true;
 }

@@ -37,9 +37,6 @@ public:
     ReactViewManager* viewManager() override;
 
     QString moduleName() override;
-    QList<ReactModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
-
     QStringList customBubblingEventTypes() override;
 
 private Q_SLOTS:
