@@ -38,10 +38,6 @@ QString ReactActivityIndicatorManager::moduleName() {
     return "RCTActivityIndicatorViewManager";
 }
 
-void ReactActivityIndicatorManager::configureView(QQuickItem* view) const {
-    ReactViewManager::configureView(view);
-}
-
 QString ReactActivityIndicatorManager::qmlComponentFile() const {
     return ":/qml/ReactActivityIndicator.qml";
 }

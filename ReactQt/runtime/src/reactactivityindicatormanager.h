@@ -29,7 +29,6 @@ public:
     virtual QString moduleName() override;
 
 private:
-    virtual void configureView(QQuickItem* view) const override;
     virtual QString qmlComponentFile() const override;
 
 private:
