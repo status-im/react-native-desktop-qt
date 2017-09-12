@@ -18,51 +18,36 @@
 
 #include "reactmoduleinterface.h"
 
-
 class ReactImageLoaderPrivate;
-class ReactImageLoader
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactImageLoader : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE REACT_PROMISE void prefetchImage(const QString& url,
-                                               double success,
-                                               double error);
+    Q_INVOKABLE REACT_PROMISE void prefetchImage(const QString& url, double success, double error);
 
-  Q_INVOKABLE REACT_PROMISE void getSize(const QString& url,
-                                          double success,
-                                          double error);
+    Q_INVOKABLE REACT_PROMISE void getSize(const QString& url, double success, double error);
 
-  Q_DECLARE_PRIVATE(ReactImageLoader)
+    Q_DECLARE_PRIVATE(ReactImageLoader)
 
 public:
-  enum Event
-  {
-    Event_LoadStart,
-    Event_Progress,
-    Event_LoadError,
-    Event_LoadSuccess,
-    Event_LoadEnd
-  };
+    enum Event { Event_LoadStart, Event_Progress, Event_LoadError, Event_LoadSuccess, Event_LoadEnd };
 
-  typedef std::function<void(Event, const QVariantMap&)> LoadEventCallback;
+    typedef std::function<void(Event, const QVariantMap&)> LoadEventCallback;
 
-  ReactImageLoader(QObject* parent = 0);
-  ~ReactImageLoader();
+    ReactImageLoader(QObject* parent = 0);
+    ~ReactImageLoader();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  void loadImage(const QUrl& source, const LoadEventCallback& ec = LoadEventCallback());
+    void loadImage(const QUrl& source, const LoadEventCallback& ec = LoadEventCallback());
 
 private:
-  QScopedPointer<ReactImageLoaderPrivate> d_ptr;
+    QScopedPointer<ReactImageLoaderPrivate> d_ptr;
 };
 
 #endif // REACTIMAGELOADER_H

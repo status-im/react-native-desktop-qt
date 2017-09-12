@@ -16,7 +16,6 @@
 
 #include <QString>
 
-
 QString normalizeInputEventName(const QString& eventName);
 
 #endif

@@ -16,32 +16,29 @@
 #include <QVariantMap>
 
 class ReactTestModulePrivate;
-class ReactTestModule
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  Q_INTERFACES(ReactModuleInterface)
+class ReactTestModule : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_DECLARE_PRIVATE(ReactTestModule)
+    Q_DECLARE_PRIVATE(ReactTestModule)
 
 public:
-  ReactTestModule(QObject* parent = 0);
-  ~ReactTestModule();
+    ReactTestModule(QObject* parent = 0);
+    ~ReactTestModule();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
-  Q_INVOKABLE void markTestCompleted();
+    Q_INVOKABLE void markTestCompleted();
 
 signals:
-  void testCompleted();
+    void testCompleted();
 
 private:
-  QScopedPointer<ReactTestModulePrivate> d_ptr;
+    QScopedPointer<ReactTestModulePrivate> d_ptr;
 };
 
 #endif // REACTTESTMODULE_H

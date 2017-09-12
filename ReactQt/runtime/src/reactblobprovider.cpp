@@ -13,37 +13,26 @@
 
 class ReactBlobProviderPrivate {
 public:
-
-  ReactBridge* bridge = nullptr;
+    ReactBridge* bridge = nullptr;
 };
 
-ReactBlobProvider::ReactBlobProvider(QObject* parent)
-  : QObject(parent)
-  , d_ptr(new ReactBlobProviderPrivate)
-{
+ReactBlobProvider::ReactBlobProvider(QObject* parent) : QObject(parent), d_ptr(new ReactBlobProviderPrivate) {}
+
+ReactBlobProvider::~ReactBlobProvider() {}
+
+void ReactBlobProvider::setBridge(ReactBridge* bridge) {
+    Q_D(ReactBlobProvider);
+    d->bridge = bridge;
 }
 
-ReactBlobProvider::~ReactBlobProvider()
-{
+QString ReactBlobProvider::moduleName() {
+    return "RCTBlobModule";
 }
 
-void ReactBlobProvider::setBridge(ReactBridge* bridge)
-{
-  Q_D(ReactBlobProvider);
-  d->bridge = bridge;
+QList<ReactModuleMethod*> ReactBlobProvider::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactBlobProvider::moduleName()
-{
-  return "RCTBlobModule";
-}
-
-QList<ReactModuleMethod*> ReactBlobProvider::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactBlobProvider::constantsToExport()
-{
-  return QVariantMap{};
+QVariantMap ReactBlobProvider::constantsToExport() {
+    return QVariantMap{};
 }

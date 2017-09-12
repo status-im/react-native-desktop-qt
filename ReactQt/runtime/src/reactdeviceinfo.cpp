@@ -14,44 +14,30 @@
 
 class ReactDeviceInfoPrivate {
 public:
-
-  ReactBridge* bridge = nullptr;
+    ReactBridge* bridge = nullptr;
 };
 
-ReactDeviceInfo::ReactDeviceInfo(QObject* parent)
-  : QObject(parent)
-  , d_ptr(new ReactDeviceInfoPrivate)
-{
+ReactDeviceInfo::ReactDeviceInfo(QObject* parent) : QObject(parent), d_ptr(new ReactDeviceInfoPrivate) {}
+
+ReactDeviceInfo::~ReactDeviceInfo() {}
+
+void ReactDeviceInfo::setBridge(ReactBridge* bridge) {
+    Q_D(ReactDeviceInfo);
+    d->bridge = bridge;
 }
 
-ReactDeviceInfo::~ReactDeviceInfo()
-{
+QString ReactDeviceInfo::moduleName() {
+    return "RCTDeviceInfo";
 }
 
-void ReactDeviceInfo::setBridge(ReactBridge* bridge)
-{
-  Q_D(ReactDeviceInfo);
-  d->bridge = bridge;
+QList<ReactModuleMethod*> ReactDeviceInfo::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactDeviceInfo::moduleName()
-{
-  return "RCTDeviceInfo";
-}
+QVariantMap ReactDeviceInfo::constantsToExport() {
+    // TODO: Populate Dimensions with real data
+    QVariantMap values{{"fontScale", 1}, {"width", 375}, {"height", 667}, {"scale", 2}};
+    QVariantMap screenValues{{"screen", values}, {"window", values}};
 
-QList<ReactModuleMethod*> ReactDeviceInfo::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactDeviceInfo::constantsToExport()
-{
-  // TODO: Populate Dimensions with real data
-  QVariantMap values{{"fontScale", 1}, {"width", 375}, {"height", 667}, {"scale", 2}};
-  QVariantMap screenValues{{"screen", values}, {"window", values}};
-
-  return QVariantMap{
-      {"Dimensions", screenValues
-          }
-  };
+    return QVariantMap{{"Dimensions", screenValues}};
 }

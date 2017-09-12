@@ -16,27 +16,24 @@
 #include <QVariantMap>
 
 class ReactDeviceInfoPrivate;
-class ReactDeviceInfo
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  Q_INTERFACES(ReactModuleInterface)
+class ReactDeviceInfo : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_DECLARE_PRIVATE(ReactDeviceInfo)
+    Q_DECLARE_PRIVATE(ReactDeviceInfo)
 
 public:
-  ReactDeviceInfo(QObject* parent = 0);
-  ~ReactDeviceInfo();
+    ReactDeviceInfo(QObject* parent = 0);
+    ~ReactDeviceInfo();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
 private:
-  QScopedPointer<ReactDeviceInfoPrivate> d_ptr;
+    QScopedPointer<ReactDeviceInfoPrivate> d_ptr;
 };
 
 #endif // REACTDEVICEINFO_H

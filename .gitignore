@@ -58,6 +58,9 @@ moc_*.cpp
 *.moc
 *.qmlc
 
+# Meld (merge tool)
+*.orig
+
 # Emacs
 *~
 # Test generated files

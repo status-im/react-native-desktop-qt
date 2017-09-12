@@ -17,63 +17,45 @@
 
 #include "reactappstate.h"
 
-
 namespace {
-QString reactAppState(Qt::ApplicationState state)
-{
-  switch (state) {
-  case Qt::ApplicationSuspended:
-  case Qt::ApplicationHidden:
-    return "background";
-  case Qt::ApplicationInactive:
-    return "inactive";
-  case Qt::ApplicationActive:
-    return "active";
-  }
+QString reactAppState(Qt::ApplicationState state) {
+    switch (state) {
+    case Qt::ApplicationSuspended:
+    case Qt::ApplicationHidden:
+        return "background";
+    case Qt::ApplicationInactive:
+        return "inactive";
+    case Qt::ApplicationActive:
+        return "active";
+    }
 }
 }
 
-
-void ReactAppState::getCurrentAppState(
- const ReactModuleInterface::ListArgumentBlock& success,
- const ReactModuleInterface::MapArgumentBlock& error
-)
-{
-  success(m_bridge, QVariantList{QVariantMap{{"app_state", reactAppState(QGuiApplication::applicationState())}}});
+void ReactAppState::getCurrentAppState(const ReactModuleInterface::ListArgumentBlock& success,
+                                       const ReactModuleInterface::MapArgumentBlock& error) {
+    success(m_bridge, QVariantList{QVariantMap{{"app_state", reactAppState(QGuiApplication::applicationState())}}});
 }
 
-ReactAppState::ReactAppState(QObject* parent)
-  : QObject(parent)
-{
+ReactAppState::ReactAppState(QObject* parent) : QObject(parent) {}
+
+ReactAppState::~ReactAppState() {}
+
+void ReactAppState::setBridge(ReactBridge* bridge) {
+    m_bridge = bridge;
 }
 
-ReactAppState::~ReactAppState()
-{
+ReactViewManager* ReactAppState::viewManager() {
+    return nullptr;
 }
 
-
-void ReactAppState::setBridge(ReactBridge* bridge)
-{
-  m_bridge = bridge;
+QString ReactAppState::moduleName() {
+    return "RCTAppState";
 }
 
-ReactViewManager* ReactAppState::viewManager()
-{
-  return nullptr;
+QList<ReactModuleMethod*> ReactAppState::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactAppState::moduleName()
-{
-  return "RCTAppState";
+QVariantMap ReactAppState::constantsToExport() {
+    return QVariantMap{};
 }
-
-QList<ReactModuleMethod*> ReactAppState::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactAppState::constantsToExport()
-{
-  return QVariantMap{};
-}
-

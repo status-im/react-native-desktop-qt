@@ -8,48 +8,47 @@
  *
  */
 
+#include <QSignalSpy>
 #include <QTest>
 #include <QtQuick/QQuickView>
-#include <QSignalSpy>
 
+#include "reactbridge.h"
 #include "reacttestcase.h"
 #include "reacttestmodule.h"
-#include "reactbridge.h"
 
 class TestIntegration : public ReactTestCase {
-  Q_OBJECT
-
+    Q_OBJECT
 
 private slots:
 
-  void initTestCase();
-  void cleanupTestCase();
+    void initTestCase();
+    void cleanupTestCase();
 
-  void testTestModuleMarkTestCompleted();
+    void testTestModuleMarkTestCompleted();
 };
 
-
-void TestIntegration::initTestCase()
-{
-  ReactTestCase::initTestCase();
-  loadQML(QUrl("qrc:/TestModuleTest.qml"));
-  waitAndVerifyBridgeReady();
+void TestIntegration::initTestCase() {
+    ReactTestCase::initTestCase();
+    loadQML(QUrl("qrc:/TestModuleTest.qml"));
+    waitAndVerifyBridgeReady();
 }
 
-
-void TestIntegration::cleanupTestCase()
-{
-  ReactTestCase::cleanupTestCase();
+void TestIntegration::cleanupTestCase() {
+    ReactTestCase::cleanupTestCase();
 }
 
-void TestIntegration::testTestModuleMarkTestCompleted()
-{
-  ReactTestModule* testModule = bridge()->testModule();
-  QVERIFY(testModule);
-  QSignalSpy spy(testModule, &ReactTestModule::testCompleted);
+void TestIntegration::testTestModuleMarkTestCompleted() {
+    ReactTestModule* testModule = bridge()->testModule();
+    QVERIFY(testModule);
+    QSignalSpy spy(testModule, &ReactTestModule::testCompleted);
 
-  showView();
-  waitAndVerifyCondition([&](){ qDebug()<<"spycount="<<spy.count(); return spy.count();}, "Application running timeout");
+    showView();
+    waitAndVerifyCondition(
+        [&]() {
+            qDebug() << "spycount=" << spy.count();
+            return spy.count();
+        },
+        "Application running timeout");
 }
 
 QTEST_MAIN(TestIntegration)

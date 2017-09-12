@@ -14,10 +14,9 @@
 #ifndef REACTBRIDGE_H
 #define REACTBRIDGE_H
 
-#include <QUrl>
 #include <QObject>
 #include <QScopedPointer>
-
+#include <QUrl>
 
 class QQuickItem;
 class QQmlEngine;
@@ -30,88 +29,87 @@ class ReactRedboxItem;
 class ReactTestModule;
 
 class ReactBridgePrivate;
-class ReactBridge : public QObject
-{
-  Q_OBJECT
-  Q_PROPERTY(bool ready READ ready WRITE setReady NOTIFY readyChanged)
-  Q_PROPERTY(bool jsAppStarted READ jsAppStarted NOTIFY jsAppStartedChanged)
-  Q_PROPERTY(QQuickItem* visualParent READ visualParent WRITE setVisualParent)
-  Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
-  Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
-  Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
-  Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath)
-  Q_PROPERTY(QString executorName READ executorName WRITE setExecutorName)
-  Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
-  Q_PROPERTY(ReactUIManager* uiManager READ uiManager)
-  Q_PROPERTY(ReactImageLoader* imageLoader READ imageLoader)
+class ReactBridge : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(bool ready READ ready WRITE setReady NOTIFY readyChanged)
+    Q_PROPERTY(bool jsAppStarted READ jsAppStarted NOTIFY jsAppStartedChanged)
+    Q_PROPERTY(QQuickItem* visualParent READ visualParent WRITE setVisualParent)
+    Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
+    Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
+    Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
+    Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath)
+    Q_PROPERTY(QString executorName READ executorName WRITE setExecutorName)
+    Q_PROPERTY(QList<ReactModuleData*> modules READ modules)
+    Q_PROPERTY(ReactUIManager* uiManager READ uiManager)
+    Q_PROPERTY(ReactImageLoader* imageLoader READ imageLoader)
 
-  enum Fields { FieldRequestModuleIDs, FieldMethodIDs, FieldParams };
+    enum Fields { FieldRequestModuleIDs, FieldMethodIDs, FieldParams };
 
-  Q_DECLARE_PRIVATE(ReactBridge)
+    Q_DECLARE_PRIVATE(ReactBridge)
 
 public:
-  ReactBridge(QObject* parent = 0);
-  ~ReactBridge();
+    ReactBridge(QObject* parent = 0);
+    ~ReactBridge();
 
-  void init();
-  void reload();
+    void init();
+    void reload();
 
-  void invokePromiseCallback(double callbackCode, const QVariantList& args);
-  void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
-  void invokeAndProcess(const QString& method, const QVariantList &args);
-  void executeSourceCode(const QByteArray& sourceCode);
-  void enqueueRunAppCall(const QVariantList& args);
+    void invokePromiseCallback(double callbackCode, const QVariantList& args);
+    void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
+    void invokeAndProcess(const QString& method, const QVariantList& args);
+    void executeSourceCode(const QByteArray& sourceCode);
+    void enqueueRunAppCall(const QVariantList& args);
 
-  // XXX: maybe rename
-  bool ready() const;
-  void setReady(bool ready);
+    // XXX: maybe rename
+    bool ready() const;
+    void setReady(bool ready);
 
-  bool jsAppStarted() const;
+    bool jsAppStarted() const;
 
-  QQuickItem* visualParent() const;
-  void setVisualParent(QQuickItem* item);
+    QQuickItem* visualParent() const;
+    void setVisualParent(QQuickItem* item);
 
-  QQmlEngine* qmlEngine() const;
-  void setQmlEngine(QQmlEngine* qmlEngine);
+    QQmlEngine* qmlEngine() const;
+    void setQmlEngine(QQmlEngine* qmlEngine);
 
-  QNetworkAccessManager* networkAccessManager() const;
-  void setNetworkAccessManager(QNetworkAccessManager* nam);
+    QNetworkAccessManager* networkAccessManager() const;
+    void setNetworkAccessManager(QNetworkAccessManager* nam);
 
-  QUrl bundleUrl() const;
-  void setBundleUrl(const QUrl& bundleUrl);
+    QUrl bundleUrl() const;
+    void setBundleUrl(const QUrl& bundleUrl);
 
-  QString pluginsPath() const;
-  void setPluginsPath(const QString& pluginsPath);
+    QString pluginsPath() const;
+    void setPluginsPath(const QString& pluginsPath);
 
-  QString executorName() const;
-  void setExecutorName(const QString& executorName);
+    QString executorName() const;
+    void setExecutorName(const QString& executorName);
 
-  ReactEventDispatcher* eventDispatcher() const;
-  QList<ReactModuleData*> modules() const;
-  ReactUIManager* uiManager() const;
-  ReactTestModule* testModule() const;
-  ReactImageLoader* imageLoader() const;
-  ReactRedboxItem* redbox();
+    ReactEventDispatcher* eventDispatcher() const;
+    QList<ReactModuleData*> modules() const;
+    ReactUIManager* uiManager() const;
+    ReactTestModule* testModule() const;
+    ReactImageLoader* imageLoader() const;
+    ReactRedboxItem* redbox();
 
 Q_SIGNALS:
-  void readyChanged();
-  void jsAppStartedChanged();
+    void readyChanged();
+    void jsAppStartedChanged();
 
 private Q_SLOTS:
-  void sourcesFinished();
-  void sourcesLoadFailed();
-  void applicationScriptDone();
+    void sourcesFinished();
+    void sourcesLoadFailed();
+    void applicationScriptDone();
 
 private:
-  void loadSource();
-  void initModules();
-  void injectModules();
-  void processResult(const QJsonDocument& document);
-  void setupExecutor();
-  void setJsAppStarted(bool started);
-  void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
+    void loadSource();
+    void initModules();
+    void injectModules();
+    void processResult(const QJsonDocument& document);
+    void setupExecutor();
+    void setJsAppStarted(bool started);
+    void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
 
-  QScopedPointer<ReactBridgePrivate> d_ptr;
+    QScopedPointer<ReactBridgePrivate> d_ptr;
 };
 
 #endif // REACTBRIDGE_H

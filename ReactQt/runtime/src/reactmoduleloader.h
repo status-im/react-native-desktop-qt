@@ -16,12 +16,11 @@
 
 #include <QObject>
 
-class ReactModuleLoader
-{
+class ReactModuleLoader {
 public:
-  virtual ~ReactModuleLoader() {}
+    virtual ~ReactModuleLoader() {}
 
-  virtual QObjectList availableModules() = 0;
+    virtual QObjectList availableModules() = 0;
 };
 
 #define ReactModuleLoader_IID "com.canonical.ReactNative.ModuleLoader"

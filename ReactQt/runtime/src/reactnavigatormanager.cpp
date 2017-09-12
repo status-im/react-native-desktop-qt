@@ -11,173 +11,142 @@
  *
  */
 
-#include <QString>
-#include <QVariant>
 #include <QQmlComponent>
 #include <QQuickItem>
+#include <QString>
+#include <QVariant>
 
 #include <QDebug>
 
-#include "reactnavigatormanager.h"
-#include "reactbridge.h"
-#include "reactuimanager.h"
 #include "reactattachedproperties.h"
-#include "reactpropertyhandler.h"
+#include "reactbridge.h"
 #include "reactevents.h"
+#include "reactnavigatormanager.h"
+#include "reactpropertyhandler.h"
+#include "reactuimanager.h"
 
+void ReactNavigatorManager::push(int containerTag, int viewTag) {
+    QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
+    QQuickItem* view = bridge()->uiManager()->viewForTag(viewTag);
+    if (container == nullptr || view == nullptr) {
+        qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
+        return;
+    }
 
-void ReactNavigatorManager::push(int containerTag, int viewTag)
-{
-  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
-  QQuickItem* view = bridge()->uiManager()->viewForTag(viewTag);
-  if (container == nullptr || view == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
-    return;
-  }
-
-  invokeMethod("push(QVariant)", container, QVariantList{QVariant::fromValue(view)});
+    invokeMethod("push(QVariant)", container, QVariantList{QVariant::fromValue(view)});
 }
 
-void ReactNavigatorManager::pop(int containerTag)
-{
-  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
-  if (container == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
-    return;
-  }
-  invokeMethod("pop()", container);
+void ReactNavigatorManager::pop(int containerTag) {
+    QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
+    if (container == nullptr) {
+        qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
+        return;
+    }
+    invokeMethod("pop()", container);
 }
 
-void ReactNavigatorManager::clear(int containerTag)
-{
-  QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
-  if (container == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
-    return;
-  }
-  invokeMethod("clear()", container);
+void ReactNavigatorManager::clear(int containerTag) {
+    QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
+    if (container == nullptr) {
+        qCritical() << __PRETTY_FUNCTION__ << "Invalid react tag passed";
+        return;
+    }
+    invokeMethod("clear()", container);
 }
 
+ReactNavigatorManager::ReactNavigatorManager(QObject* parent) : ReactViewManager(parent), m_id(0) {}
 
-ReactNavigatorManager::ReactNavigatorManager(QObject* parent)
-  : ReactViewManager(parent)
-  , m_id(0)
-{
+ReactNavigatorManager::~ReactNavigatorManager() {}
+
+ReactViewManager* ReactNavigatorManager::viewManager() {
+    return this;
 }
 
-ReactNavigatorManager::~ReactNavigatorManager()
-{
+ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object) {
+    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
+    return new ReactPropertyHandler(object);
 }
 
-ReactViewManager* ReactNavigatorManager::viewManager()
-{
-  return this;
+QString ReactNavigatorManager::moduleName() {
+    return "RCTNavigatorManager";
 }
 
-ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object)
-{
-  Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new ReactPropertyHandler(object);
+QList<ReactModuleMethod*> ReactNavigatorManager::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactNavigatorManager::moduleName()
-{
-  return "RCTNavigatorManager";
+QVariantMap ReactNavigatorManager::constantsToExport() {
+    return QVariantMap{};
 }
 
-QList<ReactModuleMethod*> ReactNavigatorManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
+QStringList ReactNavigatorManager::customBubblingEventTypes() {
+    return QStringList{normalizeInputEventName("onBackButtonPress")};
 }
 
-QVariantMap ReactNavigatorManager::constantsToExport()
-{
-  return QVariantMap{};
+void ReactNavigatorManager::backTriggered() {
+    QQuickItem* viewItem = qobject_cast<QQuickItem*>(sender());
+    ReactAttachedProperties* ap = ReactAttachedProperties::get(viewItem);
+
+    if (ap == nullptr) {
+        qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
+        return;
+    }
+
+    bool backButtonPressFlagSet = viewItem->property("p_onBackButtonPress").toBool();
+
+    if (backButtonPressFlagSet) {
+        bridge()->enqueueJSCall("RCTEventEmitter",
+                                "receiveEvent",
+                                QVariantList{ap->tag(), normalizeInputEventName("onBackButtonPress"), QVariantMap{}});
+    }
 }
 
-QStringList ReactNavigatorManager::customBubblingEventTypes()
-{
-  return QStringList{ normalizeInputEventName("onBackButtonPress") };
+void ReactNavigatorManager::configureView(QQuickItem* view) const {
+    ReactViewManager::configureView(view);
+    connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
 }
 
-void ReactNavigatorManager::backTriggered()
-{
-  QQuickItem* viewItem = qobject_cast<QQuickItem*>(sender());
-  ReactAttachedProperties* ap = ReactAttachedProperties::get(viewItem);
-
-  if (ap == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
-    return;
-  }
-
-
-  bool backButtonPressFlagSet = viewItem->property("p_onBackButtonPress").toBool();
-
-  if (backButtonPressFlagSet) {
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                            QVariantList{ap->tag(),
-                                         normalizeInputEventName("onBackButtonPress"),
-                                         QVariantMap{}});
-  }
-}
-
-void ReactNavigatorManager::configureView(QQuickItem* view) const
-{
-  ReactViewManager::configureView(view);
-  connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
-}
-
-QString ReactNavigatorManager::qmlComponentFile() const
-{
-  return ":/qml/ReactNavigator.qml";
+QString ReactNavigatorManager::qmlComponentFile() const {
+    return ":/qml/ReactNavigator.qml";
 }
 
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())
-void ReactNavigatorManager::invokeMethod
-(
-  const QString& methodSignature,
-  QQuickItem* item,
-  const QVariantList& args
-) {
-  QMetaMethod m = findMethod(methodSignature, item);
-  if (!m.isValid()) {
-    qCritical() << __PRETTY_FUNCTION__ << "Attempting to invoke unknown method";
-    return;
-  }
+void ReactNavigatorManager::invokeMethod(const QString& methodSignature, QQuickItem* item, const QVariantList& args) {
+    QMetaMethod m = findMethod(methodSignature, item);
+    if (!m.isValid()) {
+        qCritical() << __PRETTY_FUNCTION__ << "Attempting to invoke unknown method";
+        return;
+    }
 
-  // XXX: share this machinery somehow
-  switch (args.size()) {
+    // XXX: share this machinery somehow
+    switch (args.size()) {
     case 0:
-    m.invoke(item, Qt::DirectConnection);
-    break;
-  case 1:
-    m.invoke(item, Qt::DirectConnection, _R_ARG(args.at(0)));
-    break;
-  }
+        m.invoke(item, Qt::DirectConnection);
+        break;
+    case 1:
+        m.invoke(item, Qt::DirectConnection, _R_ARG(args.at(0)));
+        break;
+    }
 }
 
-QMetaMethod ReactNavigatorManager::findMethod
-(
-  const QString& methodSignature,
-  QQuickItem* item
-) {
-  QPair<QString, QQuickItem*> mp = qMakePair(methodSignature, item);
-  if (m_methodCache.find(mp) != m_methodCache.end()) {
-    return m_methodCache.value(mp);
-  } else {
-    const QMetaObject* metaObject = item->metaObject();
-    const int methodCount = metaObject->methodCount();
+QMetaMethod ReactNavigatorManager::findMethod(const QString& methodSignature, QQuickItem* item) {
+    QPair<QString, QQuickItem*> mp = qMakePair(methodSignature, item);
+    if (m_methodCache.find(mp) != m_methodCache.end()) {
+        return m_methodCache.value(mp);
+    } else {
+        const QMetaObject* metaObject = item->metaObject();
+        const int methodCount = metaObject->methodCount();
 
-    for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
-      QMetaMethod m = metaObject->method(i);
-      if (m.methodSignature() == methodSignature.toLocal8Bit()) {
-        m_methodCache.insert(qMakePair(methodSignature, item), m);
-        return m;
-      }
+        for (int i = metaObject->methodOffset(); i < methodCount; ++i) {
+            QMetaMethod m = metaObject->method(i);
+            if (m.methodSignature() == methodSignature.toLocal8Bit()) {
+                m_methodCache.insert(qMakePair(methodSignature, item), m);
+                return m;
+            }
+        }
     }
-  }
 
-  return QMetaMethod();
+    return QMetaMethod();
 }
 
 #include "reactnavigatormanager.moc"

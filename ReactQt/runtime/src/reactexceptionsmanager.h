@@ -19,55 +19,39 @@
 
 #include "reactmoduleinterface.h"
 
-
 class QNetworkAccessManager;
 
-
 class ReactExceptionsManagerPrivate;
-class ReactExceptionsManager
-  : public QObject
-  , public ReactModuleInterface
-{
-  Q_OBJECT
-  // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
-  Q_INTERFACES(ReactModuleInterface)
+class ReactExceptionsManager : public QObject, public ReactModuleInterface {
+    Q_OBJECT
+    // Q_PLUGIN_METADATA(IID ReactModuleInterface_IID)
+    Q_INTERFACES(ReactModuleInterface)
 
-  Q_INVOKABLE void reportSoftException(
-      const QString& message,
-      const QList<QVariantMap>& stack,
-      int exceptionId);
+    Q_INVOKABLE void reportSoftException(const QString& message, const QList<QVariantMap>& stack, int exceptionId);
 
-  Q_INVOKABLE void reportFatalException(
-      const QString& message,
-      const QList<QVariantMap>& stack,
-      int exceptionId);
+    Q_INVOKABLE void reportFatalException(const QString& message, const QList<QVariantMap>& stack, int exceptionId);
 
-  Q_INVOKABLE void updateExceptionMessage(
-      const QString& message,
-      const QList<QVariantMap>& stack,
-      int exceptionId);
+    Q_INVOKABLE void updateExceptionMessage(const QString& message, const QList<QVariantMap>& stack, int exceptionId);
 
-  Q_INVOKABLE void reportUnhandledException(
-      const QString& message,
-      const QList<QVariantMap>& stack);
+    Q_INVOKABLE void reportUnhandledException(const QString& message, const QList<QVariantMap>& stack);
 
-  Q_DECLARE_PRIVATE(ReactExceptionsManager)
+    Q_DECLARE_PRIVATE(ReactExceptionsManager)
 
 public:
-  ReactExceptionsManager(QObject* parent = 0);
-  ~ReactExceptionsManager();
+    ReactExceptionsManager(QObject* parent = 0);
+    ~ReactExceptionsManager();
 
-  void setBridge(ReactBridge* bridge) override;
+    void setBridge(ReactBridge* bridge) override;
 
-  // TODO: this doesnt seem right
-  ReactViewManager* viewManager() override;
+    // TODO: this doesnt seem right
+    ReactViewManager* viewManager() override;
 
-  QString moduleName() override;
-  QList<ReactModuleMethod*> methodsToExport() override;
-  QVariantMap constantsToExport() override;
+    QString moduleName() override;
+    QList<ReactModuleMethod*> methodsToExport() override;
+    QVariantMap constantsToExport() override;
 
 private:
-  QScopedPointer<ReactExceptionsManagerPrivate> d_ptr;
+    QScopedPointer<ReactExceptionsManagerPrivate> d_ptr;
 };
 
 #endif // REACTEXCEPTIONSMANAGER_H

@@ -16,39 +16,29 @@
 
 #include <functional>
 
-#include <QPointer>
 #include <QMetaMethod>
-
+#include <QPointer>
 
 class ReactBridge;
 
-enum class NativeMethodType
-{
-  Async,
-  Promise,
-  Sync
-};
+enum class NativeMethodType { Async, Promise, Sync };
 
-
-class ReactModuleMethod
-{
+class ReactModuleMethod {
 
 public:
+    typedef std::function<QObject*(QVariantList&)> ObjectFunction;
 
-  typedef std::function<QObject* (QVariantList&)> ObjectFunction;
+    ReactModuleMethod(const QMetaMethod& metaMethod, const ObjectFunction& objectFunction);
+    ~ReactModuleMethod();
 
-  ReactModuleMethod(const QMetaMethod& metaMethod, const ObjectFunction& objectFunction);
-  ~ReactModuleMethod();
+    QString name() const;
+    NativeMethodType type() const;
 
-  QString name() const;
-  NativeMethodType type() const;
-
-  void invoke(const QVariantList& args);
+    void invoke(const QVariantList& args);
 
 private:
-  ObjectFunction m_objectFunction;
-  QMetaMethod m_metaMethod;
+    ObjectFunction m_objectFunction;
+    QMetaMethod m_metaMethod;
 };
-
 
 #endif // REACTMODULEMETHOD_H

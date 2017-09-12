@@ -11,223 +11,197 @@
  *
  */
 
-#include <QString>
-#include <QVariant>
 #include <QQmlComponent>
 #include <QQuickItem>
+#include <QString>
+#include <QVariant>
 
 #include <QDebug>
 
 #include "reactattachedproperties.h"
-#include "reactevents.h"
-#include "reactscrollviewmanager.h"
 #include "reactbridge.h"
-#include "reactuimanager.h"
-#include "reactpropertyhandler.h"
+#include "reactevents.h"
 #include "reactevents.h"
 #include "reactitem.h"
+#include "reactpropertyhandler.h"
+#include "reactscrollviewmanager.h"
+#include "reactuimanager.h"
 
+void ReactScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
+    QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
+    Q_ASSERT(item != nullptr);
 
-void ReactScrollViewManager::scrollTo(
-  int reactTag,
-  double offsetX,
-  double offsetY,
-  bool animated
-) {
-  QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
-  Q_ASSERT(item != nullptr);
-
-  QQmlProperty(item, "contentX").write(offsetX);
-  QQmlProperty(item, "contentY").write(offsetY);
+    QQmlProperty(item, "contentX").write(offsetX);
+    QQmlProperty(item, "contentY").write(offsetY);
 }
 
+ReactScrollViewManager::ReactScrollViewManager(QObject* parent) : ReactViewManager(parent) {}
 
-ReactScrollViewManager::ReactScrollViewManager(QObject* parent)
-  : ReactViewManager(parent)
-{
+ReactScrollViewManager::~ReactScrollViewManager() {}
+
+ReactViewManager* ReactScrollViewManager::viewManager() {
+    return this;
 }
 
-ReactScrollViewManager::~ReactScrollViewManager()
-{
+ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object) {
+    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
+    return new ReactPropertyHandler(object);
 }
 
-ReactViewManager* ReactScrollViewManager::viewManager()
-{
-  return this;
+QString ReactScrollViewManager::moduleName() {
+    return "RCTScrollViewManager";
 }
 
-ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object)
-{
-  Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-  return new ReactPropertyHandler(object);
+QList<ReactModuleMethod*> ReactScrollViewManager::methodsToExport() {
+    return QList<ReactModuleMethod*>{};
 }
 
-QString ReactScrollViewManager::moduleName()
-{
-  return "RCTScrollViewManager";
+QVariantMap ReactScrollViewManager::constantsToExport() {
+    return QVariantMap{};
 }
 
-QList<ReactModuleMethod*> ReactScrollViewManager::methodsToExport()
-{
-  return QList<ReactModuleMethod*>{};
+QStringList ReactScrollViewManager::customDirectEventTypes() {
+    return QStringList{"scrollBeginDrag",
+                       normalizeInputEventName("onScroll"),
+                       "scrollEndDrag",
+                       "scrollAnimationEnd",
+                       "momentumScrollBegin",
+                       "momentumScrollEnd"};
 }
 
-QVariantMap ReactScrollViewManager::constantsToExport()
-{
-  return QVariantMap{};
+void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const {
+    // add to parents content item
+    QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
+    Q_ASSERT(contentItem != nullptr);
+    child->setParentItem(contentItem);
 }
 
-QStringList ReactScrollViewManager::customDirectEventTypes()
-{
-  return QStringList{"scrollBeginDrag", normalizeInputEventName("onScroll"), "scrollEndDrag", "scrollAnimationEnd",
-                     "momentumScrollBegin", "momentumScrollEnd"};
+void ReactScrollViewManager::scrollBeginDrag() {
+    // qDebug() << __PRETTY_FUNCTION__;
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
+
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
+    if (rap == nullptr) {
+        qCritical() << "Could not get reacTag for ScrollView!";
+        return;
+    }
+    int reactTag = rap->tag();
+
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
 }
 
-void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child , int position) const
-{
-  // add to parents content item
-  QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
-  Q_ASSERT(contentItem != nullptr);
-  child->setParentItem(contentItem);
+void ReactScrollViewManager::scrollEndDrag() {
+    // qDebug() << __PRETTY_FUNCTION__;
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
+
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
+    if (rap == nullptr) {
+        qCritical() << "Could not get reacTag for ScrollView!";
+        return;
+    }
+    int reactTag = rap->tag();
+
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
 }
 
-void ReactScrollViewManager::scrollBeginDrag()
-{
-  // qDebug() << __PRETTY_FUNCTION__;
-  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-  Q_ASSERT(item != nullptr);
+void ReactScrollViewManager::scroll() {
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
 
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-  if (rap == nullptr) {
-    qCritical() << "Could not get reacTag for ScrollView!";
-    return;
-  }
-  int reactTag = rap->tag();
+    ReactAttachedProperties* ap = ReactAttachedProperties::get(item);
+    if (ap == nullptr) {
+        qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
+        return;
+    }
 
-  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
+    bool scrollFlagSet = item->property("p_onScroll").toBool();
+
+    if (scrollFlagSet) {
+        bridge()->enqueueJSCall("RCTEventEmitter",
+                                "receiveEvent",
+                                QVariantList{ap->tag(), normalizeInputEventName("onScroll"), buildEventData(item)});
+    }
 }
 
-void ReactScrollViewManager::scrollEndDrag()
-{
-  // qDebug() << __PRETTY_FUNCTION__;
-  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-  Q_ASSERT(item != nullptr);
+void ReactScrollViewManager::momentumScrollBegin() {
+    // qDebug() << __PRETTY_FUNCTION__;
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
 
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-  if (rap == nullptr) {
-    qCritical() << "Could not get reacTag for ScrollView!";
-    return;
-  }
-  int reactTag = rap->tag();
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
+    if (rap == nullptr) {
+        qCritical() << "Could not get reacTag for ScrollView!";
+        return;
+    }
+    int reactTag = rap->tag();
 
-  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter",
+        "receiveEvent",
+        QVariantList{reactTag, normalizeInputEventName("momentumScrollBegin"), buildEventData(item)});
 }
 
-void ReactScrollViewManager::scroll()
-{
-  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-  Q_ASSERT(item != nullptr);
+void ReactScrollViewManager::momentumScrollEnd() {
+    // qDebug() << __PRETTY_FUNCTION__;
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
 
-  ReactAttachedProperties* ap = ReactAttachedProperties::get(item);
-  if (ap == nullptr) {
-    qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
-    return;
-  }
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
+    if (rap == nullptr) {
+        qCritical() << "Could not get reactTag for ScrollView!";
+        return;
+    }
+    int reactTag = rap->tag();
 
-  bool scrollFlagSet = item->property("p_onScroll").toBool();
-
-  if (scrollFlagSet) {
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                            QVariantList{ap->tag(),
-                                         normalizeInputEventName("onScroll"),
-                                         buildEventData(item)});
-  }
-}
-
-void ReactScrollViewManager::momentumScrollBegin()
-{
-  // qDebug() << __PRETTY_FUNCTION__;
-  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-  Q_ASSERT(item != nullptr);
-
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-  if (rap == nullptr) {
-    qCritical() << "Could not get reacTag for ScrollView!";
-    return;
-  }
-  int reactTag = rap->tag();
-
-  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag,
-                                       normalizeInputEventName("momentumScrollBegin"),
-                                       buildEventData(item)});
-}
-
-void ReactScrollViewManager::momentumScrollEnd()
-{
-  // qDebug() << __PRETTY_FUNCTION__;
-  QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-  Q_ASSERT(item != nullptr);
-
-  ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-  if (rap == nullptr) {
-    qCritical() << "Could not get reactTag for ScrollView!";
-    return;
-  }
-  int reactTag = rap->tag();
-
-  bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent",
-                          QVariantList{reactTag,
-                                       normalizeInputEventName("momentumScrollEnd"),
-                                       buildEventData(item)});
+    bridge()->enqueueJSCall("RCTEventEmitter",
+                            "receiveEvent",
+                            QVariantList{reactTag, normalizeInputEventName("momentumScrollEnd"), buildEventData(item)});
 }
 
 namespace {
-template<typename TP>
-TP propertyValue(QQuickItem* item, const QString& property)
-{
-  return QQmlProperty(item, property).read().value<TP>();
+template <typename TP> TP propertyValue(QQuickItem* item, const QString& property) {
+    return QQmlProperty(item, property).read().value<TP>();
 }
 }
 
-QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const
-{
-  QVariantMap ed;
-  ed.insert("contentOffset", QVariantMap{
-    { "x", propertyValue<double>(item, "contentX") },
-    { "y", propertyValue<double>(item, "contentY") },
-  });
-  // ed.insert("contentInset", QVariantMap{
-  // });
-  ed.insert("contentSize", QVariantMap{
-    { "width", propertyValue<double>(item, "contentWidth") },
-    { "height", propertyValue<double>(item, "contentHeight") },
-  });
-  ed.insert("layoutMeasurement", QVariantMap{
-    { "width", propertyValue<double>(item, "width") },
-    { "height", propertyValue<double>(item, "height") },
-  });
-  ed.insert("zoomScale", 1);
-  return ed;
+QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const {
+    QVariantMap ed;
+    ed.insert("contentOffset",
+              QVariantMap{
+                  {"x", propertyValue<double>(item, "contentX")}, {"y", propertyValue<double>(item, "contentY")},
+              });
+    // ed.insert("contentInset", QVariantMap{
+    // });
+    ed.insert("contentSize",
+              QVariantMap{
+                  {"width", propertyValue<double>(item, "contentWidth")},
+                  {"height", propertyValue<double>(item, "contentHeight")},
+              });
+    ed.insert("layoutMeasurement",
+              QVariantMap{
+                  {"width", propertyValue<double>(item, "width")}, {"height", propertyValue<double>(item, "height")},
+              });
+    ed.insert("zoomScale", 1);
+    return ed;
 }
 
-void ReactScrollViewManager::configureView(QQuickItem* view) const
-{
-  ReactViewManager::configureView(view);
-  // This would be prettier with a Functor version, but connect doesnt support it
-  connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
-  connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
-  connect(view, SIGNAL(movingChanged()), SLOT(scroll()));
+void ReactScrollViewManager::configureView(QQuickItem* view) const {
+    ReactViewManager::configureView(view);
+    // This would be prettier with a Functor version, but connect doesnt support it
+    connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
+    connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
+    connect(view, SIGNAL(movingChanged()), SLOT(scroll()));
 
-  connect(view, SIGNAL(flickStarted()), SLOT(momentumScrollBegin()));
-  connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
+    connect(view, SIGNAL(flickStarted()), SLOT(momentumScrollBegin()));
+    connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
 
-QString ReactScrollViewManager::qmlComponentFile() const
-{
-  return ":/qml/ReactScrollView.qml";
+QString ReactScrollViewManager::qmlComponentFile() const {
+    return ":/qml/ReactScrollView.qml";
 }
 
 #include "reactscrollviewmanager.moc"
