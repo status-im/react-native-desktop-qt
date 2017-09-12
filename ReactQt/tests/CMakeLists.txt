@@ -23,6 +23,7 @@ set(REACT_TESTCASE_JS
 set(
   REACT_TESTCASE_SRC
   reacttestcase.cpp
+  reactpropertytestcase.cpp
 )
 
 set(

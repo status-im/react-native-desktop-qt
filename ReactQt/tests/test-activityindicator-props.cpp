@@ -8,16 +8,12 @@
  *
  */
 
-#include "reactattachedproperties.h"
-#include "reactbridge.h"
-#include "reacttestcase.h"
+#include "reactpropertytestcase.h"
 #include "reactview.h"
-#include <QDebug>
-#include <QSignalSpy>
 #include <QTest>
 #include <QtQuick/QQuickView>
 
-class TestActivityIndicatorProps : public ReactTestCase {
+class TestActivityIndicatorProps : public ReactPropertyTestCase {
     Q_OBJECT
 
 private:
@@ -25,18 +21,14 @@ private:
 
 private slots:
 
-    void initTestCase();
-    void cleanupTestCase();
+    virtual void initTestCase() override;
 
-    void checkSizeProp();
-    void checkColorProp();
-    void checkAnimatingProp();
-
-private:
-    QVariant valueOfProperty(const QString& propertyName);
+protected:
+    virtual QQuickItem* control() const override;
+    virtual QVariantMap propValues() const override;
 };
 
-QQuickItem* TestActivityIndicatorProps::activityIndicator() {
+QQuickItem* TestActivityIndicatorProps::control() const {
     // Even when in JS we have only one <ActivityIndicator> component returned in render(),
     // it is wrapped in two <View> components implicitly, so we have hierarchy in QML:
     // ReactView
@@ -62,29 +54,13 @@ QQuickItem* TestActivityIndicatorProps::activityIndicator() {
 }
 
 void TestActivityIndicatorProps::initTestCase() {
-    ReactTestCase::initTestCase();
+    ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestActivityIndicatorProps.qml"));
     waitAndVerifyJsAppStarted();
 }
 
-void TestActivityIndicatorProps::cleanupTestCase() {
-    ReactTestCase::cleanupTestCase();
-}
-
-QVariant TestActivityIndicatorProps::valueOfProperty(const QString& propertyName) {
-    return activityIndicator()->property(propertyName.toStdString().c_str());
-}
-
-void TestActivityIndicatorProps::checkSizeProp() {
-    QCOMPARE(valueOfProperty("p_size").toString(), QString("large"));
-}
-
-void TestActivityIndicatorProps::checkColorProp() {
-    QCOMPARE(valueOfProperty("p_color").toString(), QString("#0000FF"));
-}
-
-void TestActivityIndicatorProps::checkAnimatingProp() {
-    QCOMPARE(valueOfProperty("p_size").toBool(), true);
+QVariantMap TestActivityIndicatorProps::propValues() const {
+    return {{"p_size", "large"}, {"p_color", "#0000FF"}, {"p_animating", true}};
 }
 
 QTEST_MAIN(TestActivityIndicatorProps)

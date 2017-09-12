@@ -32,7 +32,7 @@ void ReactTestCase::loadQML(const QUrl& qmlUrl) {
     }
 }
 
-ReactView* ReactTestCase::rootView() {
+ReactView* ReactTestCase::rootView() const {
     Q_ASSERT(m_quickView);
 
     QObject* root = m_quickView->rootObject();

@@ -14,14 +14,15 @@ class ReactTestCase : public QObject {
     Q_OBJECT
 public:
     explicit ReactTestCase(QObject* parent = nullptr);
+    virtual ~ReactTestCase() {}
 
 signals:
 
 protected:
-    void initTestCase();
-    void cleanupTestCase();
+    virtual void initTestCase();
+    virtual void cleanupTestCase();
     void loadQML(const QUrl& qmlUrl);
-    ReactView* rootView();
+    ReactView* rootView() const;
     ReactBridge* bridge();
     void showView();
     void waitAndVerifyBridgeReady();
