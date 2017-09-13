@@ -25,7 +25,7 @@ class ReactModuleData {
     Q_DECLARE_PRIVATE(ReactModuleData)
 
 public:
-    ReactModuleData(QObject* moduleImpl);
+    ReactModuleData(QObject* moduleImpl, int id);
     ~ReactModuleData();
 
     int id() const;
@@ -37,7 +37,6 @@ public:
 
     ReactViewManager* viewManager() const;
 
-  static void resetModuleIdCounter();
 private:
     QScopedPointer<ReactModuleDataPrivate> d_ptr;
 };

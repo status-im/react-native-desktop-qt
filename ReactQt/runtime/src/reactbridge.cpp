@@ -345,7 +345,7 @@ void ReactBridge::initModules() {
         ReactModuleInterface* module = qobject_cast<ReactModuleInterface*>(o);
         if (module != nullptr) {
             module->setBridge(this);
-            ReactModuleData* moduleData = new ReactModuleData(o);
+            ReactModuleData* moduleData = new ReactModuleData(o, d->modules.size());
             d->modules.insert(moduleData->id(), moduleData);
         } else {
             qWarning() << "A module loader exported an invalid module";

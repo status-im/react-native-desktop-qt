@@ -20,8 +20,8 @@
 #include "reactmoduleinterface.h"
 #include "reactmodulemethod.h"
 
-namespace {
-static int nextModuleId = 0;
+namespace
+{
 // TODO: sort out all the issues around methodsToExport
 
 QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl) {
@@ -72,9 +72,11 @@ public:
     QList<ReactModuleMethod*> methods;
 };
 
-ReactModuleData::ReactModuleData(QObject* moduleImpl) : d_ptr(new ReactModuleDataPrivate) {
+ReactModuleData::ReactModuleData(QObject* moduleImpl, int id)
+    : d_ptr(new ReactModuleDataPrivate)
+{
     Q_D(ReactModuleData);
-    d->id = nextModuleId++;
+    d->id = id;
     d->moduleImpl = moduleImpl;
     d->constants = buildConstantMap(moduleImpl);
     d->methods = buildMethodList(moduleImpl);
@@ -127,8 +129,4 @@ ReactModuleMethod* ReactModuleData::method(int id) const {
 
 ReactViewManager* ReactModuleData::viewManager() const {
     return qobject_cast<ReactModuleInterface*>(d_func()->moduleImpl)->viewManager();
-}
-
-void ReactModuleData::resetModuleIdCounter() {
-    nextModuleId = 0;
 }
