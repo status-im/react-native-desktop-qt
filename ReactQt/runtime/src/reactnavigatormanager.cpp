@@ -62,21 +62,8 @@ ReactViewManager* ReactNavigatorManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactNavigatorManager::propertyHandler(QObject* object) {
-    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactNavigatorManager::moduleName() {
     return "RCTNavigatorManager";
-}
-
-QList<ReactModuleMethod*> ReactNavigatorManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactNavigatorManager::constantsToExport() {
-    return QVariantMap{};
 }
 
 QStringList ReactNavigatorManager::customBubblingEventTypes() {

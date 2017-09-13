@@ -43,21 +43,8 @@ ReactViewManager* ReactScrollViewManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactScrollViewManager::propertyHandler(QObject* object) {
-    Q_ASSERT(qobject_cast<QQuickItem*>(object) != nullptr);
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactScrollViewManager::moduleName() {
     return "RCTScrollViewManager";
-}
-
-QList<ReactModuleMethod*> ReactScrollViewManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactScrollViewManager::constantsToExport() {
-    return QVariantMap{};
 }
 
 QStringList ReactScrollViewManager::customDirectEventTypes() {

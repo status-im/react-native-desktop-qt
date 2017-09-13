@@ -8,18 +8,13 @@
  *
  */
 
-#include "reactattachedproperties.h"
-#include "reactbridge.h"
-#include "reactimagemanager.h"
-#include "reactpropertyhandler.h"
-#include "reacttestcase.h"
+#include "reactpropertytestcase.h"
 #include "reactview.h"
 #include <QDebug>
-#include <QSignalSpy>
 #include <QTest>
 #include <QtQuick/QQuickView>
 
-class TestImageProps : public ReactTestCase {
+class TestImageProps : public ReactPropertyTestCase {
     Q_OBJECT
 
 private:
@@ -27,26 +22,14 @@ private:
 
 private slots:
 
-    void initTestCase();
-    void cleanupTestCase();
-    void checkImageLoaded();
+    virtual void initTestCase() override;
 
-    void checkTestIDProp();
-    void checkOnLoadStart();
-    void checkOnLoadEnd();
-    void checkOnLoad();
-    void checkOnError();
-    void checkOnProgress();
-    void checkBlurRadius();
-    void checkOnLayout();
-    void checkResizeMode();
-
-private:
-    QVariant valueOfProperty(const QString& propertyName);
-    ReactImageManager m_ImageManager;
+protected:
+    virtual QQuickItem* control() const override;
+    virtual QVariantMap propValues() const override;
 };
 
-QQuickItem* TestImageProps::qmlImage() {
+QQuickItem* TestImageProps::control() const {
     // Even when in JS we have only one <Image> component returned in render(),
     // it is wrapped in <View> component implicitly, so we have hierarchy in QML:
     // ReactView
@@ -67,58 +50,23 @@ QQuickItem* TestImageProps::qmlImage() {
 }
 
 void TestImageProps::initTestCase() {
-    ReactTestCase::initTestCase();
+    ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestImageProps.qml"));
     waitAndVerifyJsAppStarted();
-}
-
-void TestImageProps::cleanupTestCase() {
-    ReactTestCase::cleanupTestCase();
-}
-
-QVariant TestImageProps::valueOfProperty(const QString& propertyName) {
-    return qmlImage()->property(propertyName.toStdString().c_str());
-}
-
-void TestImageProps::checkImageLoaded() {
+    // wait when image loaded. otherwise we can get crash if app quites while loading in progress.
     waitAndVerifyCondition([=]() { return valueOfProperty("imageReady").toBool(); }, "Image can't load source");
-    QCOMPARE(valueOfProperty("imageReady").toBool(), true);
 }
 
-void TestImageProps::checkTestIDProp() {
-    QCOMPARE(valueOfProperty("p_testID").toString(), QString("testImage"));
-}
-
-void TestImageProps::checkOnLoadStart() {
-    QCOMPARE(valueOfProperty("p_onLoadStart").toBool(), true);
-}
-
-void TestImageProps::checkOnLoadEnd() {
-    QCOMPARE(valueOfProperty("p_onLoadEnd").toBool(), true);
-}
-
-void TestImageProps::checkOnLoad() {
-    QCOMPARE(valueOfProperty("p_onLoad").toBool(), true);
-}
-
-void TestImageProps::checkOnError() {
-    QCOMPARE(valueOfProperty("p_onError").toBool(), true);
-}
-
-void TestImageProps::checkOnProgress() {
-    QCOMPARE(valueOfProperty("p_onProgress").toBool(), true);
-}
-
-void TestImageProps::checkBlurRadius() {
-    QCOMPARE(valueOfProperty("p_blurRadius").toInt(), 30);
-}
-
-void TestImageProps::checkOnLayout() {
-    QCOMPARE(valueOfProperty("p_onLayout").toBool(), true);
-}
-
-void TestImageProps::checkResizeMode() {
-    QCOMPARE(valueOfProperty("p_resizeMode").toString(), QString("center"));
+QVariantMap TestImageProps::propValues() const {
+    return {{"p_testID", "testImage"},
+            {"p_onLoadStart", true},
+            {"p_onLoadEnd", true},
+            {"p_onLoad", true},
+            {"p_onError", true},
+            {"p_onProgress", true},
+            {"p_blurRadius", 30},
+            {"p_onLayout", true},
+            {"p_resizeMode", "center"}};
 }
 
 QTEST_MAIN(TestImageProps)

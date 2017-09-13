@@ -53,6 +53,7 @@ set(
   reactexceptionsmanager.cpp
   reactscrollviewmanager.cpp
   reactnavigatormanager.cpp
+  reactactivityindicatormanager.cpp
   ../../../React/Layout/Layout.c
 )
 
@@ -65,6 +66,7 @@ set(
   qml/ReactRedboxItem.qml
   qml/ReactText.qml
   qml/ReactRawText.qml
+  qml/ReactActivityIndicator.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

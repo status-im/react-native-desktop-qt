@@ -27,21 +27,17 @@ public:
     ReactImageManager(QObject* parent = 0);
     virtual ~ReactImageManager();
 
-    ReactViewManager* viewManager() override;
-    ReactPropertyHandler* propertyHandler(QObject* object) override;
+    virtual ReactViewManager* viewManager() override;
+    virtual QString moduleName() override;
 
-    QString moduleName() override;
-    QList<ReactModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
-
-    QStringList customDirectEventTypes() override;
+    virtual QStringList customDirectEventTypes() override;
 
 public slots:
     void manageSource(const QVariantMap& imageSource, QObject* image);
 
 private:
-    virtual void configureView(QQuickItem* view) const;
-    virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const override;
+    virtual QString qmlComponentFile() const override;
 
 private:
     QScopedPointer<ReactImageManagerPrivate> d_ptr;

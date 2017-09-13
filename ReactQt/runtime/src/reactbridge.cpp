@@ -29,6 +29,7 @@
 #include "reactnetexecutor.h"
 #include "reactsourcecode.h"
 
+#include "reactactivityindicatormanager.h"
 #include "reactappstate.h"
 #include "reactasynclocalstorage.h"
 #include "reactblobprovider.h"
@@ -84,6 +85,7 @@ public:
             new ReactExceptionsManager,
             new ReactScrollViewManager,
             new ReactNavigatorManager,
+            new ReactActivityIndicatorManager,
         };
     }
 };

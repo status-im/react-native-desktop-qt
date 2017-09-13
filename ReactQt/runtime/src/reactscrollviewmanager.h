@@ -30,11 +30,7 @@ public:
     ~ReactScrollViewManager();
 
     ReactViewManager* viewManager() override;
-    ReactPropertyHandler* propertyHandler(QObject* object) override;
-
     QString moduleName() override;
-    QList<ReactModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
 
     QStringList customDirectEventTypes() override;
 

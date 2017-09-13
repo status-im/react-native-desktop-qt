@@ -49,20 +49,8 @@ ReactViewManager* ReactImageManager::viewManager() {
     return this;
 }
 
-ReactPropertyHandler* ReactImageManager::propertyHandler(QObject* object) {
-    return new ReactPropertyHandler(object);
-}
-
 QString ReactImageManager::moduleName() {
     return "RCTImageViewManager";
-}
-
-QList<ReactModuleMethod*> ReactImageManager::methodsToExport() {
-    return QList<ReactModuleMethod*>{};
-}
-
-QVariantMap ReactImageManager::constantsToExport() {
-    return QVariantMap{};
 }
 
 QStringList ReactImageManager::customDirectEventTypes() {

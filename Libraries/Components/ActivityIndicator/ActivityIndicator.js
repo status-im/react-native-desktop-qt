@@ -139,6 +139,8 @@ if (Platform.OS === 'ios') {
       styleAttr: true,
     }},
   );
+} else if (Platform.OS === 'ubuntu') {
+  var RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
 }
 
 module.exports = ActivityIndicator;
