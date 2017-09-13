@@ -1,5 +1,5 @@
 
-set(EXAMPLE_NAME Image)
+set(EXAMPLE_NAME Button)
 
 configure_file(
   ../run-example.sh.in

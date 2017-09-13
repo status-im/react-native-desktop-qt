@@ -2,11 +2,11 @@
 set(EXAMPLE_NAME ScrollView)
 
 configure_file(
-  qml/run-example.sh.in
+  ../run-example.sh.in
   ${CMAKE_CURRENT_BINARY_DIR}/run-example.sh
 )
 
-add_custom_target(
-  copy-${EXAMPLE_NAME} ALL
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/qml/${EXAMPLE_NAME}.qml ${CMAKE_CURRENT_BINARY_DIR}
+configure_file(
+  ../Example.qml.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}.qml
 )
