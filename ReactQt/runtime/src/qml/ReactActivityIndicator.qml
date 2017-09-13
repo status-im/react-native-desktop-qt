@@ -1,6 +1,5 @@
 import QtQuick 2.9
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.0
 
 BusyIndicator {
@@ -12,31 +11,31 @@ BusyIndicator {
 
     running: p_animating
 
-    style: BusyIndicatorStyle {
-        indicator: Item {
-            property bool isRunning: control.running
 
-            Image {
-                id: indicatorImage
-                visible: false
-                source: "qrc:/images/spinner_medium.png"
-            }
+    contentItem: Item {
+        id: content
 
-            ColorOverlay {
-                id: tintEffect
-                visible: isRunning
-                anchors.fill: parent
-                source: indicatorImage
-                color: activityIndicatorRoot.p_color
+        Image {
+            id: indicatorImage
+            visible: false
+            source: "qrc:/images/spinner_medium.png"
+        }
 
-                RotationAnimator on rotation {
-                    running: isRunning
-                    loops: Animation.Infinite
-                    duration: 4000
-                    from: 0; to: 360
-                }
+        ColorOverlay {
+            id: tintEffect
+            visible: activityIndicatorRoot.running
+            anchors.fill: parent
+            source: indicatorImage
+            color: activityIndicatorRoot.p_color
+
+            RotationAnimator on rotation {
+                running: activityIndicatorRoot.running
+                loops: Animation.Infinite
+                duration: 4000
+                from: 0; to: 360
             }
         }
     }
+
 
 }
