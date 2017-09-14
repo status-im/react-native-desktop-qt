@@ -11,6 +11,21 @@ jobs:
 
       - checkout
 
+      # Clang-format sources check
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y clang-format-3.8
+          sudo ln -s /usr/bin/clang-format-3.8 /usr/bin/clang-format
+          SOURCE_FILES=`find ./ReactQt/ -name \*.cpp -type f -or -name \*.h -type f`
+          for SOURCE_FILE in $SOURCE_FILES
+          do
+            export FORMATTING_ISSUE_COUNT=`clang-format -output-replacements-xml $SOURCE_FILE | grep offset | wc -l`
+            if [ "$FORMATTING_ISSUE_COUNT" -gt "0" ]; then
+              echo "Source file $SOURCE_FILE contains formatting issues. Please use clang-format tool to resolve found issues."
+              exit 1
+            fi
+          done
+
       # Install and configure env with Qt
       - run: |
           sudo apt-get update -y
