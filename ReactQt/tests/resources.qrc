@@ -3,5 +3,6 @@
         <file>TestModuleTest.qml</file>
         <file>TestImageProps.qml</file>
         <file>TestActivityIndicatorProps.qml</file>
+        <file>TestButtonProps.qml</file>
     </qresource>
 </RCC>

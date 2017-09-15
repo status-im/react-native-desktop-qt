@@ -9,5 +9,6 @@
         <file>qml/ReactText.qml</file>
         <file>qml/ReactActivityIndicator.qml</file>
         <file>images/spinner_medium.png</file>
+        <file>qml/ReactButton.qml</file>
     </qresource>
 </RCC>

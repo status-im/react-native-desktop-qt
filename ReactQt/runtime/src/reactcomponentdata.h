@@ -38,6 +38,9 @@ public:
     ReactModuleMethod* method(int id) const;
 
 private:
+    void attachReactProperties(QQuickItem* view, int tag);
+
+private:
     ReactModuleData* m_moduleData;
     ReactModuleInterface* m_moduleInterface;
 };

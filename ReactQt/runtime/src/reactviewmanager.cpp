@@ -120,7 +120,8 @@ QString ReactViewManager::qmlComponentFile() const {
 
 QQuickItem* ReactViewManager::createView() const {
     QQmlComponent component(m_bridge->qmlEngine());
-    component.loadUrl(QUrl::fromLocalFile(qmlComponentFile()));
+    auto file = qmlComponentFile();
+    component.loadUrl(QUrl::fromLocalFile(file));
     if (!component.isReady()) {
         qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
         return nullptr;

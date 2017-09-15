@@ -54,6 +54,7 @@ set(
   reactscrollviewmanager.cpp
   reactnavigatormanager.cpp
   reactactivityindicatormanager.cpp
+  reactbuttonmanager.cpp
   ../../../React/Layout/Layout.c
 )
 
@@ -67,6 +68,7 @@ set(
   qml/ReactText.qml
   qml/ReactRawText.qml
   qml/ReactActivityIndicator.qml
+  qml/ReactButton.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

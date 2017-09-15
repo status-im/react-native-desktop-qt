@@ -18,6 +18,7 @@ find_package(Qt5Quick REQUIRED)
 set(REACT_TESTCASE_JS
   JS/TestImageProps.js
   JS/TestActivityIndicatorProps.js
+  JS/TestButtonProps.js
 )
 
 set(
@@ -35,14 +36,18 @@ set(
 add_executable(test-integration test-integration.cpp resources.qrc ${REACT_TESTCASE_SRC})
 add_executable(test-image-props test-image-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 add_executable(test-activityindicator-props test-activityindicator-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
+add_executable(test-button-props test-button-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
+
 
 add_test(test-integration test-integration)
 add_test(test-image-props test-image-props)
 add_test(test-activityindicator-props test-activityindicator-props)
+add_test(test-button-props test-button-props)
 
 target_link_libraries(test-integration ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-image-props ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-activityindicator-props ${REACT_TESTCASE_LIBRARIES})
+target_link_libraries(test-button-props ${REACT_TESTCASE_LIBRARIES})
 
 set_target_properties(
   test-integration

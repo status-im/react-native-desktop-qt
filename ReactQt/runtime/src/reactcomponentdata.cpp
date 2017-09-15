@@ -103,17 +103,19 @@ QVariantMap ReactComponentData::viewConfig() const {
     return rc;
 }
 
-QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& properties) {
-    ReactViewManager* viewManager = m_moduleInterface->viewManager();
-
-    QQuickItem* view = viewManager->view(properties);
+void ReactComponentData::attachReactProperties(QQuickItem* view, int tag) {
+    auto viewManager = m_moduleInterface->viewManager();
 
     ReactAttachedProperties* rap = ReactAttachedProperties::get(view);
     rap->setTag(tag);
     rap->setShouldLayout(viewManager->shouldLayout());
     rap->setViewManager(viewManager);
     rap->setPropertyHandler(m_moduleInterface->propertyHandler(view));
+}
 
+QQuickItem* ReactComponentData::createView(int tag, const QVariantMap& properties) {
+    QQuickItem* view = m_moduleInterface->viewManager()->view(properties);
+    attachReactProperties(view, tag);
     return view;
 }
 
