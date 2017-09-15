@@ -20,8 +20,7 @@
 #include "reactmoduleinterface.h"
 #include "reactmodulemethod.h"
 
-namespace
-{
+namespace {
 // TODO: sort out all the issues around methodsToExport
 
 QList<ReactModuleMethod*> buildMethodList(QObject* moduleImpl) {
@@ -72,9 +71,7 @@ public:
     QList<ReactModuleMethod*> methods;
 };
 
-ReactModuleData::ReactModuleData(QObject* moduleImpl, int id)
-    : d_ptr(new ReactModuleDataPrivate)
-{
+ReactModuleData::ReactModuleData(QObject* moduleImpl, int id) : d_ptr(new ReactModuleDataPrivate) {
     Q_D(ReactModuleData);
     d->id = id;
     d->moduleImpl = moduleImpl;
