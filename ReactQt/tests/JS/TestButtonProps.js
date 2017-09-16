@@ -33,12 +33,14 @@ export default class ButtonReactNative extends Component {
            onPress={this.changeButtonColor}
            title="Click me"
            color={this.state.buttonColor}
-           accessibilityLabel="Learn more about this purple button"
+           accessibilityLabel="Accessibility label"
            style={{width:120, height: 50}}
+           disabled={false}
+           testID="button"
         >
         </Button>
     );
   }
 }
 
-AppRegistry.registerComponent('ButtonApp', () => ButtonReactNative)
+AppRegistry.registerComponent('TestButtonProps', () => ButtonReactNative)

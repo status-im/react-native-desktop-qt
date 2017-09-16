@@ -65,9 +65,9 @@ class RNTesterApp extends React.Component {
   }
 
   componentDidMount() {
-    let action = RNTesterActions.ExampleAction('ImageExample');
+    let action = RNTesterActions.ExampleAction('ButtonExample');
     const newState = RNTesterNavigationReducer({
-      openExample: 'ImageExample',
+      openExample: 'ButtonExample',
     }, action);
     this.setState(
       newState,

@@ -33,6 +33,7 @@
 #include "reactappstate.h"
 #include "reactasynclocalstorage.h"
 #include "reactblobprovider.h"
+#include "reactbuttonmanager.h"
 #include "reactdeviceinfo.h"
 #include "reacteventdispatcher.h"
 #include "reactexceptionsmanager.h"
@@ -86,6 +87,7 @@ public:
             new ReactScrollViewManager,
             new ReactNavigatorManager,
             new ReactActivityIndicatorManager,
+            new ReactButtonManager,
         };
     }
 };
@@ -412,7 +414,7 @@ void ReactBridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant>
     }
 
     // readable log of methods invoked via bridge
-    // qDebug()<<"INVOKE: "<<moduleData->name()<<"::"<<method->name()<<"( "<<args<<" )";
+    // qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
 
     method->invoke(args);
 }

@@ -18,12 +18,20 @@ export type RNTesterExample = {
 
 const ComponentExamples: Array<RNTesterExample> = [
   {
+    key: 'ActivityIndicatorExample',
+    module: require('./ActivityIndicatorExample'),
+  },
+  {
     key: 'ImageExample',
     module: require('./ImageExample'),
   },
   {
     key: 'TextExample',
     module: require('./TextExample'),
+  },
+  {
+    key: 'ButtonExample',
+    module: require('./ButtonExample'),
   },
 ];
 
