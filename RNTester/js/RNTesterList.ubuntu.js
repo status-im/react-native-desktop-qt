@@ -33,6 +33,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'ButtonExample',
     module: require('./ButtonExample'),
   },
+  {
+    key: 'LayoutExample',
+    module: require('./LayoutExample'),
+  },
 ];
 
 const APIExamples: Array<RNTesterExample> = [

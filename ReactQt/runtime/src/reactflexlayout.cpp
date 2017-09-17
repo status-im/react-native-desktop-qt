@@ -164,10 +164,10 @@ public:
             p->cssNode->style.dimensions[CSS_HEIGHT] = p->item->height();
         }
         if (p->qmlImplicitWidth) {
-            p->cssNode->style.dimensions[CSS_WIDTH] = QQmlProperty(p->item, "implictWidth").read().value<double>();
+            p->cssNode->style.dimensions[CSS_WIDTH] = QQmlProperty(p->item, "implicitWidth").read().value<double>();
         }
         if (p->qmlImplicitHeight) {
-            p->cssNode->style.dimensions[CSS_HEIGHT] = QQmlProperty(p->item, "implictHeight").read().value<double>();
+            p->cssNode->style.dimensions[CSS_HEIGHT] = QQmlProperty(p->item, "implicitHeight").read().value<double>();
         }
 
         for (auto& c : p->children) {
@@ -309,6 +309,7 @@ QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p) {
 
 ReactFlexLayout::ReactFlexLayout(QObject* parent) : QObject(parent), d_ptr(new ReactFlexLayoutPrivate(this)) {
     Q_D(ReactFlexLayout);
+    // qDebug() << "Layout created for: " << parent;
     d->qmlAnchors = false;
     d->qmlImplicitWidth = false;
     d->qmlImplicitHeight = false;

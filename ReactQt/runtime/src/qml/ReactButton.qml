@@ -7,7 +7,7 @@ Button {
 
     property string p_accessibilityLabel
     property string p_title
-    property string p_color
+    property string p_color: "#e0e0e0"
     property bool p_disabled: false
     property bool p_onPress: false
     property string p_testID
@@ -17,10 +17,13 @@ Button {
     text: p_title
     objectName: p_testID
 
+    implicitHeight: 40
+    implicitWidth: 100
+
     background: Rectangle {
-        anchors.fill: parent
-        color: buttonRoot.p_color
-    }
+            color: buttonRoot.down ? Qt.darker(buttonRoot.p_color, 1.2) : buttonRoot.p_color
+            visible: !buttonRoot.flat || buttonRoot.down || buttonRoot.checked || buttonRoot.highlighted
+        }
 
     onPressed: buttonManager.sendPressedNotificationToJs(buttonRoot)
 }
