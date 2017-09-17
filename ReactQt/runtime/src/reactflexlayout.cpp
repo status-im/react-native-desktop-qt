@@ -309,7 +309,6 @@ QDebug operator<<(QDebug debug, const ReactFlexLayoutPrivate* p) {
 
 ReactFlexLayout::ReactFlexLayout(QObject* parent) : QObject(parent), d_ptr(new ReactFlexLayoutPrivate(this)) {
     Q_D(ReactFlexLayout);
-    // qDebug() << "Layout created for: " << parent;
     d->qmlAnchors = false;
     d->qmlImplicitWidth = false;
     d->qmlImplicitHeight = false;

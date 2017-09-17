@@ -21,9 +21,9 @@ Button {
     implicitWidth: 100
 
     background: Rectangle {
-            color: buttonRoot.down ? Qt.darker(buttonRoot.p_color, 1.2) : buttonRoot.p_color
-            visible: !buttonRoot.flat || buttonRoot.down || buttonRoot.checked || buttonRoot.highlighted
-        }
+        color: buttonRoot.down ? Qt.darker(buttonRoot.p_color, 1.2) : buttonRoot.p_color
+        visible: !buttonRoot.flat || buttonRoot.down || buttonRoot.checked || buttonRoot.highlighted
+    }
 
     onPressed: buttonManager.sendPressedNotificationToJs(buttonRoot)
 }
