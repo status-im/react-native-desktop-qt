@@ -21,8 +21,9 @@ class ReactModuleMethod;
 class ReactViewManager;
 
 class ReactModuleDataPrivate;
-class ReactModuleData {
+class ReactModuleData : public QObject {
     Q_DECLARE_PRIVATE(ReactModuleData)
+    Q_OBJECT
 
 public:
     ReactModuleData(QObject* moduleImpl, int id);

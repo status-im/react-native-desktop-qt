@@ -59,6 +59,8 @@ public:
 
     ReactBridge* bridge() const;
 
+    void loadBundle(const QString& moduleName, const QUrl& codeLocation);
+
 Q_SIGNALS:
     void liveReloadChanged();
     void moduleNameChanged();

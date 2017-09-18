@@ -437,9 +437,9 @@ void ReactUIManager::setBridge(ReactBridge* bridge) {
         }
     }
 
-    connect(m_bridge->visualParent(), SIGNAL(widthChanged()), SLOT(rootViewWidthChanged()));
-    connect(m_bridge->visualParent(), SIGNAL(heightChanged()), SLOT(rootViewHeightChanged()));
-    connect(m_bridge->visualParent(), SIGNAL(scaleChanged()), SLOT(rootViewScaleChanged()));
+    connect(m_bridge->visualParent(), SIGNAL(widthChanged()), SLOT(onRootViewWidthChanged()));
+    connect(m_bridge->visualParent(), SIGNAL(heightChanged()), SLOT(onRootViewHeightChanged()));
+    connect(m_bridge->visualParent(), SIGNAL(scaleChanged()), SLOT(onRootViewScaleChanged()));
 }
 
 QString ReactUIManager::moduleName() {
@@ -521,21 +521,21 @@ QQuickItem* ReactUIManager::viewForTag(int reactTag) {
     return m_views.value(reactTag);
 }
 
-void ReactUIManager::rootViewWidthChanged() {
+void ReactUIManager::onRootViewWidthChanged() {
     QQuickItem* root = m_bridge->visualParent();
     if (ReactAttachedProperties::get(root)->tag() == -1)
         return;
     root->polish();
 }
 
-void ReactUIManager::rootViewHeightChanged() {
+void ReactUIManager::onRootViewHeightChanged() {
     QQuickItem* root = m_bridge->visualParent();
     if (ReactAttachedProperties::get(root)->tag() == -1)
         return;
     root->polish();
 }
 
-void ReactUIManager::rootViewScaleChanged() {
+void ReactUIManager::onRootViewScaleChanged() {
     QQuickItem* root = m_bridge->visualParent();
     if (ReactAttachedProperties::get(root)->tag() == -1)
         return;

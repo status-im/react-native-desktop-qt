@@ -28,6 +28,8 @@ enum Roles {
 static QHash<int, QByteArray> roleData{
     {LineNumber, "lineNumber"}, {Column, "column"}, {File, "file"}, {MethodName, "methodName"},
 };
+
+const char REDBOX_MESSAGE_PROPERTY[] = "message";
 }
 
 class ReactRedboxItemPrivate : public QAbstractListModel {
@@ -116,7 +118,7 @@ ReactRedboxItem::~ReactRedboxItem() {}
 
 void ReactRedboxItem::showErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
     Q_D(ReactRedboxItem);
-    d->redbox->setProperty("message", message);
+    d->redbox->setProperty(REDBOX_MESSAGE_PROPERTY, message);
     d->setStack(stack);
 
     QQuickItem* rootView = d->bridge->visualParent();
@@ -130,8 +132,12 @@ void ReactRedboxItem::showErrorMessage(const QString& message, const QList<QVari
 
 void ReactRedboxItem::updateErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
     Q_D(ReactRedboxItem);
-    d->redbox->setProperty("message", message);
+    d->redbox->setProperty(REDBOX_MESSAGE_PROPERTY, message);
     d->setStack(stack);
+}
+
+QString ReactRedboxItem::errorMessage() const {
+    return d_func()->redbox->property(REDBOX_MESSAGE_PROPERTY).toString();
 }
 
 #include "reactredboxitem.moc"

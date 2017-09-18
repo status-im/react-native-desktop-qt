@@ -133,18 +133,24 @@ void ReactBridge::reload() {
     Q_D(ReactBridge);
 
     setReady(false);
+    setJsAppStarted(false);
 
     d->executor->deleteLater();
     setupExecutor();
 
     // d->uiManager->reset();
     for (auto& md : d->modules) {
-        delete md;
+        md->deleteLater();
     }
     d->modules.clear();
     initModules();
     injectModules();
     loadSource();
+}
+
+void ReactBridge::loadBundle(const QUrl& bundleUrl) {
+    setBundleUrl(bundleUrl);
+    reload();
 }
 
 void ReactBridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args) {

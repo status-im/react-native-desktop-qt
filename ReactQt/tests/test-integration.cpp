@@ -13,42 +13,41 @@
 #include <QtQuick/QQuickView>
 
 #include "reactbridge.h"
+#include "reactredboxitem.h"
 #include "reacttestcase.h"
 #include "reacttestmodule.h"
+#include "reactview.h"
 
 class TestIntegration : public ReactTestCase {
     Q_OBJECT
 
 private slots:
-
-    void initTestCase();
-    void cleanupTestCase();
+    INIT_TEST_CASE_DEFAULT(ReactTestCase)
+    CLEANUP_TEST_CASE_DEFAULT(ReactTestCase)
 
     void testTestModuleMarkTestCompleted();
+    void testJSExceptionReceived();
 };
 
-void TestIntegration::initTestCase() {
-    ReactTestCase::initTestCase();
+void TestIntegration::testTestModuleMarkTestCompleted() {
     loadQML(QUrl("qrc:/TestModuleTest.qml"));
     waitAndVerifyBridgeReady();
-}
 
-void TestIntegration::cleanupTestCase() {
-    ReactTestCase::cleanupTestCase();
-}
-
-void TestIntegration::testTestModuleMarkTestCompleted() {
     ReactTestModule* testModule = bridge()->testModule();
     QVERIFY(testModule);
     QSignalSpy spy(testModule, &ReactTestModule::testCompleted);
 
+    waitAndVerifyJsAppStarted();
+
     showView();
-    waitAndVerifyCondition(
-        [&]() {
-            qDebug() << "spycount=" << spy.count();
-            return spy.count();
-        },
-        "Application running timeout");
+    waitAndVerifyCondition([&]() { return spy.count(); }, "Application running timeout");
+}
+
+void TestIntegration::testJSExceptionReceived() {
+    loadJSBundle("TestJSException", "IntegrationTests/TestJSException");
+
+    waitAndVerifyJsAppStarted();
+    waitAndVerifyJSException("Exception on componentDidMount. File TestJSException.js");
 }
 
 QTEST_MAIN(TestIntegration)

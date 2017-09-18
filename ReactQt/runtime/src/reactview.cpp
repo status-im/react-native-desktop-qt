@@ -18,6 +18,7 @@
 #include "reactbridge.h"
 #include "reactevents.h"
 #include "reactflexlayout.h"
+#include "reactredboxitem.h"
 #include "reactuimanager.h"
 #include "reactview.h"
 
@@ -103,7 +104,7 @@ public:
     }
 
 private Q_SLOTS:
-    void liveReloadChanged() {
+    void onLiveReloadChanged() {
         if (!liveReload)
             return;
         if (bridge != nullptr && bridge->ready())
@@ -120,7 +121,7 @@ ReactView::ReactView(QQuickItem* parent) : ReactItem(parent), d_ptr(new ReactVie
     d->bridge = new ReactBridge(this);
     connect(d->bridge, SIGNAL(readyChanged()), SLOT(bridgeReady()));
 
-    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(liveReloadChanged()));
+    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(onLiveReloadChanged()));
 }
 
 ReactView::~ReactView() {}
@@ -198,6 +199,17 @@ void ReactView::setExecutor(const QString& executor) {
 
 ReactBridge* ReactView::bridge() const {
     return d_func()->bridge;
+}
+
+void ReactView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
+    Q_ASSERT(!moduleName.isEmpty() && !codeLocation.isEmpty());
+
+    setModuleName(moduleName);
+    setCodeLocation(codeLocation);
+
+    if (bridge()) {
+        bridge()->loadBundle(codeLocation);
+    }
 }
 
 void ReactView::bridgeReady() {
