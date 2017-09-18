@@ -36,7 +36,9 @@ QList<ReactModuleMethod*> ReactTestModule::methodsToExport() {
     return QList<ReactModuleMethod*>{};
 }
 
-QVariantMap ReactTestModule::constantsToExport() {}
+QVariantMap ReactTestModule::constantsToExport() {
+    return QVariantMap{};
+}
 
 void ReactTestModule::markTestCompleted() {
     emit testCompleted();

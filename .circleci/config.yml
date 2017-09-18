@@ -8,6 +8,9 @@ jobs:
 
     steps:
       - run: echo 'export PATH=/opt/qt59/bin/:$PATH' >> $BASH_ENV
+      - run: echo 'export QTDIR=/opt/qt59' >> $BASH_ENV
+      - run: echo 'export LD_LIBRARY_PATH=/opt/qt59/lib/x86_64-linux-gnu:/opt/qt59/lib:$LD_LIBRARY_PATH' >> $BASH_ENV
+      - run: echo 'export PKG_CONFIG_PATH=/opt/qt59/lib/pkgconfig:$PKG_CONFIG_PATH' >> $BASH_ENV
 
       - checkout
 

@@ -4,9 +4,11 @@
 #include "reactbridge.h"
 #include "reactflexlayout.h"
 #include "reactitem.h"
+#include "reactredboxitem.h"
 #include "reactview.h"
 
 const int TIMEOUT_INTERVAL = 30000;
+const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=ubuntu&dev=true";
 
 ReactTestCase::ReactTestCase(QObject* parent) : QObject(parent) {
     timeoutTimer.setSingleShot(true);
@@ -30,6 +32,15 @@ void ReactTestCase::loadQML(const QUrl& qmlUrl) {
     while (m_quickView->status() == QQuickView::Loading) {
         QCoreApplication::processEvents();
     }
+}
+
+void ReactTestCase::loadJSBundle(const QString& moduleName, const QString& bundlePath) {
+    Q_ASSERT(!moduleName.isEmpty() && !bundlePath.isEmpty());
+
+    ReactView* reactView = rootView();
+    Q_ASSERT(reactView);
+
+    reactView->loadBundle(moduleName, BUNDLE_URL.arg(bundlePath));
 }
 
 ReactView* ReactTestCase::rootView() const {
@@ -65,6 +76,11 @@ void ReactTestCase::waitAndVerifyBridgeReady() {
 
 void ReactTestCase::waitAndVerifyJsAppStarted() {
     waitAndVerifyCondition([=]() { return bridge()->jsAppStarted(); }, "js app not started, failed by timeout");
+}
+
+void ReactTestCase::waitAndVerifyJSException(const QString& exceptionMessage) {
+    waitAndVerifyCondition([=]() { return bridge()->redbox()->errorMessage() == exceptionMessage; },
+                           QString("Expected JS exception \"%1\" was not received").arg(exceptionMessage));
 }
 
 void ReactTestCase::waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage) {

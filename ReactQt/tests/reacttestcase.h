@@ -10,23 +10,36 @@
 class ReactView;
 class ReactBridge;
 
+#define INIT_TEST_CASE_DEFAULT(BaseClass)                                                                              \
+    virtual void initTestCase() override {                                                                             \
+        BaseClass::initTestCase();                                                                                     \
+    }
+
+#define CLEANUP_TEST_CASE_DEFAULT(BaseClass)                                                                           \
+    virtual void cleanupTestCase() override {                                                                          \
+        BaseClass::cleanupTestCase();                                                                                  \
+    }
+
 class ReactTestCase : public QObject {
     Q_OBJECT
 public:
     explicit ReactTestCase(QObject* parent = nullptr);
     virtual ~ReactTestCase() {}
 
+    virtual void initTestCase();
+    virtual void cleanupTestCase();
+
 signals:
 
 protected:
-    virtual void initTestCase();
-    virtual void cleanupTestCase();
     void loadQML(const QUrl& qmlUrl);
+    void loadJSBundle(const QString& moduleName, const QString& bundlePath);
     ReactView* rootView() const;
     ReactBridge* bridge();
     void showView();
     void waitAndVerifyBridgeReady();
     void waitAndVerifyJsAppStarted();
+    void waitAndVerifyJSException(const QString& exceptionMessage);
     void waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage);
 
 private:

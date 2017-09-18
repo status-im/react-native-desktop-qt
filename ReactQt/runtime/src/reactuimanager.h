@@ -86,9 +86,9 @@ public:
     QQuickItem* viewForTag(int reactTag);
 
 public Q_SLOTS:
-    void rootViewWidthChanged();
-    void rootViewHeightChanged();
-    void rootViewScaleChanged();
+    void onRootViewWidthChanged();
+    void onRootViewHeightChanged();
+    void onRootViewScaleChanged();
 
 private:
     static int m_nextRootTag;

@@ -26,6 +26,8 @@ public:
     void showErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
     void updateErrorMessage(const QString& message, const QList<QVariantMap>& stack = QList<QVariantMap>());
 
+    QString errorMessage() const;
+
 private:
     QScopedPointer<ReactRedboxItemPrivate> d_ptr;
 };
