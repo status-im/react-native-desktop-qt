@@ -34,7 +34,6 @@ export default class ButtonReactNative extends Component {
            title="Click me"
            color={this.state.buttonColor}
            accessibilityLabel="Learn more about this purple button"
-           style={{width:120, height: 50}}
         >
         </Button>
     );

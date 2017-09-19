@@ -6,6 +6,9 @@ React.Item {
 
     property var p_transformMatrix;
     property var viewManager: null
+    property string p_nativeID
+
+    objectName: p_nativeID
 
     onP_transformMatrixChanged: viewManager.manageTransforMatrix(p_transformMatrix, viewRoot)
 }

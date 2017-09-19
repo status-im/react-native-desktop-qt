@@ -21,6 +21,7 @@
 #include "reactbridge.h"
 #include "reactbuttonmanager.h"
 #include "reactevents.h"
+#include "reactflexlayout.h"
 #include "reactpropertyhandler.h"
 
 const QString EVENT_ONPRESSED = "onPress";
@@ -59,6 +60,13 @@ QString ReactButtonManager::qmlComponentFile() const {
 void ReactButtonManager::configureView(QQuickItem* view) const {
     ReactViewManager::configureView(view);
     view->setProperty("buttonManager", QVariant::fromValue((QObject*)this));
+    if (shouldLayout()) {
+        // In React Native <Button> should be visible even if we didn't
+        // specify height and width. So we tell flex layout system to take
+        // into account implicit values in ReactButton.qml
+        ReactFlexLayout::get(view)->setQmlImplicitWidth(true);
+        ReactFlexLayout::get(view)->setQmlImplicitHeight(true);
+    }
 }
 
 #include "reactbuttonmanager.moc"
