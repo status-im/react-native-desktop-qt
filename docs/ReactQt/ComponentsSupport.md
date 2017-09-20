@@ -1,8 +1,8 @@
 |React Native                   | React Native Canonical | React Native Qt  |
 | ----------------------------- |:----------------------:| :---------------:|
 | **Components**                |                        |                  |
-| ActivityIndicator             |                        |                  |
-| Button                        |                        |                  |
+| ActivityIndicator             |                        | +/-              |
+| Button                        |                        | +/-              |
 | DatePickerIOS                 | ?                      |                  |
 | DrawerLayoutAndroid           |                        |                  |
 | FlatList                      |                        |                  |
