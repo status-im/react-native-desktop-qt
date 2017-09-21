@@ -14,6 +14,8 @@
 #ifndef REACTPROPERTYHANDLER_H
 #define REACTPROPERTYHANDLER_H
 
+#include <functional>
+
 #include <QMap>
 #include <QMetaProperty>
 #include <QObject>
