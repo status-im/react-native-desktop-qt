@@ -47,6 +47,7 @@
 #include "reactscrollviewmanager.h"
 #include "reactslidermanager.h"
 #include "reacttestmodule.h"
+#include "reacttextinputmanager.h"
 #include "reacttextmanager.h"
 #include "reacttiming.h"
 #include "reactuimanager.h"
@@ -88,6 +89,7 @@ public:
             new ReactScrollViewManager,
             new ReactNavigatorManager,
             new ReactActivityIndicatorManager,
+            new ReactTextInputManager,
             new ReactButtonManager,
             new ReactSliderManager,
         };
