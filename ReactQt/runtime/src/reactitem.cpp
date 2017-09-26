@@ -13,7 +13,7 @@
 
 #include <QPainter>
 
-#include "reactflexlayout.h"
+#include "layout/flexbox.h"
 #include "reactitem.h"
 
 namespace {
@@ -558,8 +558,9 @@ void ReactItem::paint(QPainter* painter) {
 }
 
 void ReactItem::updatePolish() {
-    ReactFlexLayout::get(this)->setWidth(width());
-    ReactFlexLayout::get(this)->setHeight(height());
-
-    ReactFlexLayout::polish(this);
+    if (childItems().count() > 0) {
+        QQuickItem* view = childItems().at(0);
+        Flexbox* flexbox = Flexbox::findFlexbox(view);
+        flexbox->recalculateLayout(width(), height());
+    }
 }

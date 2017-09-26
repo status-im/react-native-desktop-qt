@@ -7,7 +7,7 @@
 #include <QtQuick/QQuickView>
 #include <functional>
 
-class ReactView;
+class RootView;
 class ReactBridge;
 
 #define INIT_TEST_CASE_DEFAULT(BaseClass)                                                                              \
@@ -33,8 +33,8 @@ signals:
 
 protected:
     void loadQML(const QUrl& qmlUrl);
+    RootView* rootView() const;
     void loadJSBundle(const QString& moduleName, const QString& bundlePath);
-    ReactView* rootView() const;
     ReactBridge* bridge();
     void showView();
     void waitAndVerifyBridgeReady();

@@ -11,8 +11,8 @@
  *
  */
 
-#ifndef REACTVIEW_H
-#define REACTVIEW_H
+#ifndef ROOTVIEW_H
+#define ROOTVIEW_H
 
 #include <QScopedPointer>
 #include <QString>
@@ -22,8 +22,8 @@
 
 class ReactBridge;
 
-class ReactViewPrivate;
-class ReactView : public ReactItem {
+class RootViewPrivate;
+class RootView : public ReactItem {
     Q_OBJECT
 
     Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
@@ -33,11 +33,11 @@ class ReactView : public ReactItem {
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
     Q_PROPERTY(QString executor READ executor WRITE setExecutor NOTIFY executorChanged)
 
-    Q_DECLARE_PRIVATE(ReactView)
+    Q_DECLARE_PRIVATE(RootView)
 
 public:
-    ReactView(QQuickItem* parent = 0);
-    ~ReactView();
+    RootView(QQuickItem* parent = 0);
+    ~RootView();
 
     bool liveReload() const;
     void setLiveReload(bool liveReload);
@@ -71,6 +71,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void bridgeReady();
+    void requestPolish();
 
 private:
     void componentComplete() override;
@@ -79,7 +80,7 @@ private:
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
 
-    QScopedPointer<ReactViewPrivate> d_ptr;
+    QScopedPointer<RootViewPrivate> d_ptr;
 };
 
-#endif // REACTVIEW_H
+#endif // ROOTVIEW_H

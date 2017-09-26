@@ -17,10 +17,8 @@
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"
-#include "reactflexlayout.h"
-#include "reactredboxitem.h"
 #include "reactuimanager.h"
-#include "reactview.h"
+#include "rootview.h"
 
 namespace {
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
@@ -65,9 +63,9 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QTouchEvent* event) {
 }
 }
 
-class ReactViewPrivate : public QObject {
+class RootViewPrivate : public QObject {
     Q_OBJECT
-    Q_DECLARE_PUBLIC(ReactView)
+    Q_DECLARE_PUBLIC(RootView)
 public:
     bool liveReload = false;
     QString moduleName;
@@ -76,9 +74,9 @@ public:
     QString pluginsPath;
     QString executor = "ReactNetExecutor";
     ReactBridge* bridge = nullptr;
-    ReactView* q_ptr;
+    RootView* q_ptr;
 
-    ReactViewPrivate(ReactView* q) : q_ptr(q) {}
+    RootViewPrivate(RootView* q) : q_ptr(q) {}
 
     void monitorChangeUrl() {
         if (codeLocation.scheme() != "http") {
@@ -112,8 +110,8 @@ private Q_SLOTS:
     }
 };
 
-ReactView::ReactView(QQuickItem* parent) : ReactItem(parent), d_ptr(new ReactViewPrivate(this)) {
-    Q_D(ReactView);
+RootView::RootView(QQuickItem* parent) : ReactItem(parent), d_ptr(new RootViewPrivate(this)) {
+    Q_D(RootView);
 
     setAcceptedMouseButtons(Qt::LeftButton);
     setFiltersChildMouseEvents(true);
@@ -121,17 +119,21 @@ ReactView::ReactView(QQuickItem* parent) : ReactItem(parent), d_ptr(new ReactVie
     d->bridge = new ReactBridge(this);
     connect(d->bridge, SIGNAL(readyChanged()), SLOT(bridgeReady()));
 
-    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(onLiveReloadChanged()));
+    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(liveReloadChanged()));
+
+    connect(this, SIGNAL(widthChanged()), this, SLOT(requestPolish()));
+    connect(this, SIGNAL(heightChanged()), this, SLOT(requestPolish()));
+    connect(this, SIGNAL(scaleChanged()), this, SLOT(requestPolish()));
 }
 
-ReactView::~ReactView() {}
+RootView::~RootView() {}
 
-bool ReactView::liveReload() const {
+bool RootView::liveReload() const {
     return d_func()->liveReload;
 }
 
-void ReactView::setLiveReload(bool liveReload) {
-    Q_D(ReactView);
+void RootView::setLiveReload(bool liveReload) {
+    Q_D(RootView);
     if (d->liveReload == liveReload)
         return;
 
@@ -139,69 +141,69 @@ void ReactView::setLiveReload(bool liveReload) {
     emit liveReloadChanged();
 }
 
-QString ReactView::moduleName() const {
+QString RootView::moduleName() const {
     return d_func()->moduleName;
 }
 
-void ReactView::setModuleName(const QString& moduleName) {
-    Q_D(ReactView);
+void RootView::setModuleName(const QString& moduleName) {
+    Q_D(RootView);
     if (d->moduleName != moduleName) {
         d->moduleName = moduleName;
         emit moduleNameChanged();
     }
 }
 
-QUrl ReactView::codeLocation() const {
+QUrl RootView::codeLocation() const {
     return d_func()->codeLocation;
 }
 
-void ReactView::setCodeLocation(const QUrl& codeLocation) {
-    Q_D(ReactView);
+void RootView::setCodeLocation(const QUrl& codeLocation) {
+    Q_D(RootView);
     if (d->codeLocation != codeLocation) {
         d->codeLocation = codeLocation;
         emit codeLocationChanged();
     }
 }
 
-QVariantMap ReactView::properties() const {
+QVariantMap RootView::properties() const {
     return d_func()->properties;
 }
 
-void ReactView::setProperties(const QVariantMap& properties) {
-    Q_D(ReactView);
+void RootView::setProperties(const QVariantMap& properties) {
+    Q_D(RootView);
     d->properties = properties;
     emit propertiesChanged();
 }
 
-QString ReactView::pluginsPath() const {
+QString RootView::pluginsPath() const {
     return d_func()->pluginsPath;
 }
 
-void ReactView::setPluginsPath(const QString& pluginsPath) {
-    Q_D(ReactView);
+void RootView::setPluginsPath(const QString& pluginsPath) {
+    Q_D(RootView);
     if (d->pluginsPath == pluginsPath)
         return;
     d->pluginsPath = pluginsPath;
     Q_EMIT pluginsPathChanged();
 }
 
-QString ReactView::executor() const {
+QString RootView::executor() const {
     return d_func()->executor;
 }
 
-void ReactView::setExecutor(const QString& executor) {
-    Q_D(ReactView);
+void RootView::setExecutor(const QString& executor) {
+    Q_D(RootView);
     if (d->executor == executor)
         return;
     d->executor = executor;
     Q_EMIT executorChanged();
 }
 
-ReactBridge* ReactView::bridge() const {
+ReactBridge* RootView::bridge() const {
     return d_func()->bridge;
 }
 
-void ReactView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
+void RootView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
     Q_ASSERT(!moduleName.isEmpty() && !codeLocation.isEmpty());
 
     setModuleName(moduleName);
@@ -212,8 +214,8 @@ void ReactView::loadBundle(const QString& moduleName, const QUrl& codeLocation) 
     }
 }
 
-void ReactView::bridgeReady() {
-    Q_D(ReactView);
+void RootView::bridgeReady() {
+    Q_D(RootView);
 
     if (!d->bridge->ready())
         return;
@@ -232,8 +234,14 @@ void ReactView::bridgeReady() {
     }
 }
 
-void ReactView::componentComplete() {
-    Q_D(ReactView);
+void RootView::requestPolish() {
+    if (ReactAttachedProperties::get(this)->tag() == -1)
+        return;
+    polish();
+}
+
+void RootView::componentComplete() {
+    Q_D(RootView);
 
     QQuickItem::componentComplete();
 
@@ -249,9 +257,9 @@ void ReactView::componentComplete() {
     });
 }
 
-void ReactView::mousePressEvent(QMouseEvent* event) {
+void RootView::mousePressEvent(QMouseEvent* event) {
     // qDebug() << __PRETTY_FUNCTION__;
-    Q_D(ReactView);
+    Q_D(RootView);
 
     QVariantMap e = makeReactTouchEvent(this, event);
     if (e.isEmpty())
@@ -264,8 +272,8 @@ void ReactView::mousePressEvent(QMouseEvent* event) {
 }
 
 // TODO: optimize this
-void ReactView::mouseMoveEvent(QMouseEvent* event) {
-    Q_D(ReactView);
+void RootView::mouseMoveEvent(QMouseEvent* event) {
+    Q_D(RootView);
 
     QVariantMap e = makeReactTouchEvent(this, event);
     if (e.isEmpty())
@@ -276,9 +284,9 @@ void ReactView::mouseMoveEvent(QMouseEvent* event) {
                              QVariantList{normalizeInputEventName("touchMove"), QVariantList{e}, QVariantList{0}});
 }
 
-void ReactView::mouseReleaseEvent(QMouseEvent* event) {
+void RootView::mouseReleaseEvent(QMouseEvent* event) {
     // qDebug() << __PRETTY_FUNCTION__;
-    Q_D(ReactView);
+    Q_D(RootView);
 
     QVariantMap e = makeReactTouchEvent(this, event);
     if (e.isEmpty())
@@ -290,9 +298,9 @@ void ReactView::mouseReleaseEvent(QMouseEvent* event) {
     event->setAccepted(true);
 }
 
-bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
+bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
     // qDebug() << __PRETTY_FUNCTION__ << item << event;
-    Q_D(ReactView);
+    Q_D(RootView);
 
     switch (event->type()) {
     // case QEvent::MouseButtonDblClick:
@@ -327,4 +335,4 @@ bool ReactView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
     return false;
 }
 
-#include "reactview.moc"
+#include "rootview.moc"

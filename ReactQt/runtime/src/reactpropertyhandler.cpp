@@ -13,21 +13,28 @@
 
 #include <QDebug>
 
+#include "layout/flexbox.h"
 #include "reactpropertyhandler.h"
 #include "reactvaluecoercion.h"
+#include <QQuickItem>
 
 ReactPropertyHandler::ReactPropertyHandler(QObject* object, SetPropertyCallback callback)
-    : QObject(object), m_object(object), m_setPropertyCallback(callback) {}
+    : QObject(object), m_object(object), m_setPropertyCallback(callback) {
+    Q_ASSERT(object);
+
+    m_flexbox = Flexbox::findFlexbox(static_cast<QQuickItem*>(object));
+}
 
 ReactPropertyHandler::~ReactPropertyHandler() {}
 
 QMap<QString, QMetaProperty> ReactPropertyHandler::availableProperties() {
     buildPropertyMap();
 
-    QMap<QString, QMetaProperty> allProperties;
-    allProperties.unite(m_qmlProperties);
-    allProperties.unite(m_HandlerProperties);
-    return allProperties;
+    QMap<QString, QMetaProperty> allProps;
+    allProps.unite(m_qmlProperties);
+    allProps.unite(m_flexboxProperties);
+
+    return allProps;
 }
 
 void ReactPropertyHandler::applyProperties(const QVariantMap& properties) {
@@ -36,17 +43,17 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties) {
 
     for (const QString& key : properties.keys()) {
         QVariant propertyValue = properties.value(key);
-        QMap<QString, QMetaProperty>::iterator it = m_HandlerProperties.find(key);
-        // Extras get first shot
-        if (it != m_HandlerProperties.end()) {
+
+        auto it = m_qmlProperties.find(key);
+        if (it != m_qmlProperties.end()) {
             QMetaProperty property = it.value();
-            setValueToObjectProperty(this, property, propertyValue);
-        } else if (m_exposeQmlProperties) {
-            it = m_qmlProperties.find(key);
-            if (it != m_qmlProperties.end()) {
-                QMetaProperty property = it.value();
-                setValueToObjectProperty(m_object, property, propertyValue);
-            }
+            setValueToObjectProperty(m_object, property, propertyValue);
+        }
+
+        it = m_flexboxProperties.find(key);
+        if (it != m_flexboxProperties.end() && m_flexbox) {
+            QMetaProperty property = it.value();
+            setValueToObjectProperty(m_flexbox, property, propertyValue);
         }
     }
 }
@@ -56,11 +63,14 @@ QVariant ReactPropertyHandler::value(const QString& propertyName) {
 
     QVariant value;
 
-    if (m_HandlerProperties.contains(propertyName)) {
-        value = m_HandlerProperties[propertyName].read(this);
-    } else if (m_exposeQmlProperties && m_qmlProperties.contains(propertyName)) {
+    if (m_qmlProperties.contains(propertyName)) {
         value = m_qmlProperties[propertyName].read(m_object);
     }
+
+    if (m_flexboxProperties.contains(propertyName) && m_flexbox) {
+        value = m_flexboxProperties[propertyName].read(m_flexbox);
+    }
+
     return value;
 }
 
@@ -70,25 +80,17 @@ void ReactPropertyHandler::buildPropertyMap() {
     }
 
     // Get qml properties of current object (and its parents)
-    if (m_exposeQmlProperties) {
-        const QMetaObject* metaObject = m_object->metaObject();
-        getPropertiesFromMetaObject(metaObject);
-    }
+    getPropertiesFromMetaObject(m_object->metaObject(), m_qmlProperties);
 
-    // Get all properties on the handlers (extras)
-    const QMetaObject* metaObject = this->metaObject();
-    const int propertyCount = metaObject->propertyCount();
-
-    for (int i = 1; i < propertyCount; ++i) {
-        QMetaProperty p = metaObject->property(i);
-        if (p.isScriptable())
-            m_HandlerProperties.insert(p.name(), p);
+    if (m_flexbox) {
+        getPropertiesFromMetaObject(m_flexbox->metaObject(), m_flexboxProperties);
     }
 
     m_cached = true;
 }
 
-void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject) {
+void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject,
+                                                       QMap<QString, QMetaProperty>& propertiesMap) {
     // we get all prefixed properties from object and its parents
     const int propertyCount = metaObject->propertyCount();
     for (int i = 0; i < propertyCount; ++i) {
@@ -96,7 +98,7 @@ void ReactPropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaOb
         QString qmlPropName = p.name();
         if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX)) {
             QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
-            m_qmlProperties.insert(nameWithoutPrefix, p);
+            propertiesMap.insert(nameWithoutPrefix, p);
         }
     }
 }

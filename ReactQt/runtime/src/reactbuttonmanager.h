@@ -30,10 +30,11 @@ public:
 
 public slots:
     void sendPressedNotificationToJs(QQuickItem* button);
+    void setCustomFlexboxMeasureFunctionToButtonText(QQuickItem* button) const;
 
 private:
     virtual QString qmlComponentFile() const override;
-    virtual void configureView(QQuickItem* view) const override;
+    virtual void configureView(QQuickItem* button) const override;
 
 private:
     QScopedPointer<ReactButtonManagerPrivate> d_ptr;

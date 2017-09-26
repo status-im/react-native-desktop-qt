@@ -7,6 +7,7 @@ React.Item {
     property var p_transformMatrix;
     property var viewManager: null
     property string p_nativeID
+    property var flexbox: React.Flexbox {control: viewRoot}
 
     objectName: p_nativeID
 

@@ -21,6 +21,8 @@ React.Item {
     property var imageManager: null
     property string managedSource
 
+    property var flexbox: React.Flexbox {control: imageRoot}
+
     //It appeared that closing application while image still loading its source
     //leads to a crash. So in quick tests we can use this property to prevent closing
     //until image source loaded

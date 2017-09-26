@@ -1,19 +1,20 @@
 
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * Author: Justin McPherson <justin.mcpherson@canonical.com>
- *
  */
 
-#include "reactplugin.h"
-#include "utilities.h"
+#ifndef UTILITIES
+#define UTILITIES
 
-void ReactPlugin::registerTypes(const char* uri) {
-    utilities::registerReactTypes();
+namespace utilities {
+
+void registerReactTypes();
 }
+
+#endif // UTILITIES

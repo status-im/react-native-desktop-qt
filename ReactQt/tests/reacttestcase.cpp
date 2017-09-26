@@ -2,10 +2,11 @@
 
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactflexlayout.h"
 #include "reactitem.h"
+#include "reactplugin.h"
 #include "reactredboxitem.h"
-#include "reactview.h"
+#include "rootview.h"
+#include "utilities.h"
 
 const int TIMEOUT_INTERVAL = 30000;
 const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=ubuntu&dev=true";
@@ -17,7 +18,7 @@ ReactTestCase::ReactTestCase(QObject* parent) : QObject(parent) {
 
 void ReactTestCase::initTestCase() {
     m_quickView = new QQuickView();
-    registerReactQtTypes();
+    utilities::registerReactTypes();
 }
 
 void ReactTestCase::cleanupTestCase() {
@@ -37,13 +38,13 @@ void ReactTestCase::loadQML(const QUrl& qmlUrl) {
 void ReactTestCase::loadJSBundle(const QString& moduleName, const QString& bundlePath) {
     Q_ASSERT(!moduleName.isEmpty() && !bundlePath.isEmpty());
 
-    ReactView* reactView = rootView();
+    RootView* reactView = rootView();
     Q_ASSERT(reactView);
 
     reactView->loadBundle(moduleName, BUNDLE_URL.arg(bundlePath));
 }
 
-ReactView* ReactTestCase::rootView() const {
+RootView* ReactTestCase::rootView() const {
     Q_ASSERT(m_quickView);
 
     QObject* root = m_quickView->rootObject();
@@ -52,7 +53,7 @@ ReactView* ReactTestCase::rootView() const {
     QQuickItem* rootView = root->findChild<QQuickItem*>("rootView");
     Q_ASSERT(rootView);
 
-    ReactView* reactView = qobject_cast<ReactView*>(rootView);
+    RootView* reactView = qobject_cast<RootView*>(rootView);
     Q_ASSERT(reactView);
 
     return reactView;
@@ -90,12 +91,4 @@ void ReactTestCase::waitAndVerifyCondition(std::function<bool()> condition, cons
         QCoreApplication::processEvents();
     }
     QVERIFY2(timeoutTimer.isActive(), qUtf8Printable(timeoutMessage));
-}
-
-void ReactTestCase::registerReactQtTypes() {
-    qmlRegisterUncreatableType<ReactAttachedProperties>(
-        "React", 0, 1, "React", "React is not meant to be created directly");
-    qmlRegisterUncreatableType<ReactFlexLayout>("React", 0, 1, "Flex", "Flex is not meant to be created directly");
-    qmlRegisterType<ReactItem>("React", 0, 1, "Item");
-    qmlRegisterType<ReactView>("React", 0, 1, "RootView");
 }

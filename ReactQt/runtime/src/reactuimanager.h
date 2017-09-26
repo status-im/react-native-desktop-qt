@@ -85,10 +85,8 @@ public:
 
     QQuickItem* viewForTag(int reactTag);
 
-public Q_SLOTS:
-    void onRootViewWidthChanged();
-    void onRootViewHeightChanged();
-    void onRootViewScaleChanged();
+private:
+    void removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices);
 
 private:
     static int m_nextRootTag;
