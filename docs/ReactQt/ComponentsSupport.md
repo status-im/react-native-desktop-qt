@@ -8,7 +8,7 @@
 | FlatList                      |                        |                     |                  |
 | Image                         | +/-                    | +                   | +/-              |
 | KeyboardAvoidingView          |                        | +                   |                  |
-| ListView                      |                        |                     |                  |
+| ListView                      |                        | +                   |                  |
 | Modal                         |                        | +                   |                  |
 | NavigatorIOS                  | ?                      |                     |                  |
 | Picker                        |                        | +                   |                  |
@@ -83,4 +83,3 @@
 | ImageStylePropTypes           |                        |                     |                  |
 | **From old React Native: **   |                        |                     |                  |   
 | Navigator                     |                        | +                   |                  |
-| ListView                      |                        | +                   |                  |
