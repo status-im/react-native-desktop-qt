@@ -83,8 +83,6 @@ void ReactUIManager::updateView(int reactTag, const QString& viewName, const QVa
     m_bridge->visualParent()->polish();
 }
 
-//-----------------------------------------------------------------------------
-
 void ReactUIManager::setChildren(int containerReactTag, const QList<int>& childrenTags) {
     // TODO: This is a simple implementation which fixes a broken example. It's not properly tested and may need
     // revisiting
@@ -95,9 +93,9 @@ void ReactUIManager::setChildren(int containerReactTag, const QList<int>& childr
     manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices, QList<int>());
 }
 
-//-----------------------------------------------------------------------------
-
 void ReactUIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices) {
+
+    Q_ASSERT(parent != nullptr);
 
     if (!removeAtIndices.isEmpty()) {
 
@@ -109,14 +107,12 @@ void ReactUIManager::removeChildren(QQuickItem* parent, const QList<int>& remove
         for (QQuickItem* child : itemsToRemove) {
             child->setParent(0);
             m_views.remove(ReactAttachedProperties::get(child)->tag());
-            delete child;
+            child->deleteLater();
         }
 
         Flexbox::findFlexbox(parent)->removeChilds(removeAtIndices);
     }
 }
-
-//-----------------------------------------------------------------------------
 
 void ReactUIManager::manageChildren(int containerReactTag,
                                     const QList<int>& moveFromIndicies,
@@ -166,8 +162,6 @@ void ReactUIManager::manageChildren(int containerReactTag,
     m_bridge->visualParent()->polish();
 }
 
-//-----------------------------------------------------------------------------
-
 void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
     QQuickItem* oldItem = m_views.value(reactTag);
     if (oldItem == nullptr) {
@@ -179,13 +173,7 @@ void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
     Q_ASSERT(parent != nullptr);
 
     int itemIndex = -1;
-    for (int i = 0; i < parent->childItems().count(); ++i) {
-        if (oldItem == parent->childItems().at(i)) {
-            itemIndex = i;
-            break;
-        }
-    }
-
+    itemIndex = parent->childItems().indexOf(oldItem);
     Q_ASSERT(itemIndex >= 0);
 
     manageChildren(ReactAttachedProperties::get(parent)->tag(),

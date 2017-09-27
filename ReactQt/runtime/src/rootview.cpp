@@ -14,6 +14,7 @@
 #include <QQmlEngine>
 #include <QTimer>
 
+#include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"
@@ -119,7 +120,7 @@ RootView::RootView(QQuickItem* parent) : ReactItem(parent), d_ptr(new RootViewPr
     d->bridge = new ReactBridge(this);
     connect(d->bridge, SIGNAL(readyChanged()), SLOT(bridgeReady()));
 
-    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(liveReloadChanged()));
+    connect(this, SIGNAL(liveReloadChanged()), d, SLOT(onLiveReloadChanged()));
 
     connect(this, SIGNAL(widthChanged()), this, SLOT(requestPolish()));
     connect(this, SIGNAL(heightChanged()), this, SLOT(requestPolish()));
@@ -214,6 +215,17 @@ void RootView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
     }
 }
 
+void RootView::updatePolish() {
+    if (childItems().count() > 0) {
+        Q_ASSERT(childItems().count() == 1);
+        auto view = childItems().at(0);
+        Flexbox* flexbox = Flexbox::findFlexbox(view);
+        if (flexbox) {
+            flexbox->recalculateLayout(width(), height());
+        }
+    }
+}
+
 void RootView::bridgeReady() {
     Q_D(RootView);
 
@@ -235,7 +247,7 @@ void RootView::bridgeReady() {
 }
 
 void RootView::requestPolish() {
-    if (ReactAttachedProperties::get(this)->tag() == -1)
+    if (!d_ptr->bridge->ready())
         return;
     polish();
 }

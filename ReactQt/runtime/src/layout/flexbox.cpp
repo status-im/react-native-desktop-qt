@@ -57,8 +57,6 @@ static QMap<QString, YGPositionType> positionByString{
 static QMap<QString, YGDirection> directionByString{
     {"inherit", YGDirectionInherit}, {"ltr", YGDirectionLTR}, {"rtl", YGDirectionRTL}};
 
-//-----------------------------------------------------------------------------
-
 class FlexboxPrivate {
 public:
     FlexboxPrivate() {
@@ -94,22 +92,15 @@ public:
 
 QMap<QQuickItem*, Flexbox*> FlexboxPrivate::m_FlexboxesForControls;
 
-//-----------------------------------------------------------------------------
-
 YGSize measure(YGNodeRef node, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode) {
     FlexboxPrivate* d = static_cast<FlexboxPrivate*>(YGNodeGetContext(node));
     auto nodeMeasureFunction = d->m_measureFunction;
     return nodeMeasureFunction(node, width, widthMode, height, heightMode);
 }
 
-//-----------------------------------------------------------------------------
 Flexbox::Flexbox(QObject* parent) : QObject(parent), d_ptr(new FlexboxPrivate()) {}
 
-//-----------------------------------------------------------------------------
-
 Flexbox::~Flexbox() {}
-
-//-----------------------------------------------------------------------------
 
 void Flexbox::recalculateLayout(float width, float height) {
     Q_D(Flexbox);
@@ -118,8 +109,6 @@ void Flexbox::recalculateLayout(float width, float height) {
     d->updatePropertiesForControlsTree(d->m_node);
 }
 
-//-----------------------------------------------------------------------------
-
 void Flexbox::setMeasureFunction(ygnode_measure_function measureFunction) {
     Q_D(Flexbox);
 
@@ -127,15 +116,11 @@ void Flexbox::setMeasureFunction(ygnode_measure_function measureFunction) {
     YGNodeSetMeasureFunc(d->m_node, measure);
 }
 
-//-----------------------------------------------------------------------------
-
 void Flexbox::addChild(int index, Flexbox* child) {
     Q_ASSERT(child);
 
     YGNodeInsertChild(d_ptr->m_node, child->d_ptr->m_node, index);
 }
-
-//-----------------------------------------------------------------------------
 
 void Flexbox::removeChilds(const QList<int>& indicesToRemove) {
     Q_D(Flexbox);
@@ -150,13 +135,9 @@ void Flexbox::removeChilds(const QList<int>& indicesToRemove) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 Flexbox* Flexbox::findFlexbox(QQuickItem* control) {
     return FlexboxPrivate::m_FlexboxesForControls[control];
 }
-
-//-----------------------------------------------------------------------------
 
 void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
     static int level = 1;
@@ -169,8 +150,6 @@ void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     auto qmlControl = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_control;
 
@@ -179,8 +158,6 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     qmlControl->setWidth(YGNodeLayoutGetWidth(node));
     qmlControl->setHeight(YGNodeLayoutGetHeight(node));
 }
-
-//-----------------------------------------------------------------------------
 
 void Flexbox::setControl(QQuickItem* value) {
     if (value != d_ptr->m_control) {
@@ -194,7 +171,6 @@ QQuickItem* Flexbox::control() {
     return d_ptr->m_control;
 }
 
-//-----------------------------------------------------------------------------
 float Flexbox::width() {
     return YGNodeStyleGetWidth(d_ptr->m_node).value;
 }
@@ -205,8 +181,6 @@ void Flexbox::setWidth(float value) {
         widthChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::height() {
     return YGNodeStyleGetHeight(d_ptr->m_node).value;
@@ -219,8 +193,6 @@ void Flexbox::setHeight(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 QString Flexbox::flexDirection() {
     return d_ptr->m_flexDirection;
 }
@@ -231,8 +203,6 @@ void Flexbox::setFlexDirection(const QString& value) {
         flexDirectionChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 QString Flexbox::justifyContent() {
     return d_ptr->m_justifyContent;
@@ -245,8 +215,6 @@ void Flexbox::setJustifyContent(const QString& value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::margin() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeAll).value;
 }
@@ -257,8 +225,6 @@ void Flexbox::setMargin(float value) {
         marginChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::marginTop() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeTop).value;
@@ -271,8 +237,6 @@ void Flexbox::setMarginTop(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::marginBottom() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeBottom).value;
 }
@@ -283,8 +247,6 @@ void Flexbox::setMarginBottom(float value) {
         marginBottomChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::marginLeft() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeLeft).value;
@@ -297,8 +259,6 @@ void Flexbox::setMarginLeft(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::marginRight() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeRight).value;
 }
@@ -309,8 +269,6 @@ void Flexbox::setMarginRight(float value) {
         marginRightChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::marginHorizontal() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeHorizontal).value;
@@ -323,8 +281,6 @@ void Flexbox::setMarginHorizontal(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::marginVertical() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeVertical).value;
 }
@@ -335,8 +291,6 @@ void Flexbox::setMarginVertical(float value) {
         marginVerticalChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::borderWidth() {
     return YGNodeStyleGetBorder(d_ptr->m_node, YGEdgeAll);
@@ -349,8 +303,6 @@ void Flexbox::setBorderWidth(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::borderTopWidth() {
     return YGNodeStyleGetBorder(d_ptr->m_node, YGEdgeTop);
 }
@@ -361,8 +313,6 @@ void Flexbox::setBorderTopWidth(float value) {
         borderTopWidthChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::borderBottomWidth() {
     return YGNodeStyleGetBorder(d_ptr->m_node, YGEdgeBottom);
@@ -375,8 +325,6 @@ void Flexbox::setBorderBottomWidth(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::borderLeftWidth() {
     return YGNodeStyleGetBorder(d_ptr->m_node, YGEdgeLeft);
 }
@@ -387,8 +335,6 @@ void Flexbox::setBorderLeftWidth(float value) {
         borderLeftWidthChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::borderRightWidth() {
     return YGNodeStyleGetBorder(d_ptr->m_node, YGEdgeRight);
@@ -401,8 +347,6 @@ void Flexbox::setBorderRightWidth(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 QString Flexbox::alignItems() {
     return d_ptr->m_alignItems;
 }
@@ -414,8 +358,6 @@ void Flexbox::setAlignItems(const QString& value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 QString Flexbox::alignContent() {
     return d_ptr->m_alignContent;
 }
@@ -426,8 +368,6 @@ void Flexbox::setAlignContent(const QString& value) {
         alignContentChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 QString Flexbox::alignSelf() {
     return d_ptr->m_alignSelf;
@@ -451,8 +391,6 @@ void Flexbox::setAspectRatio(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::top() {
     return YGNodeLayoutGetTop(d_ptr->m_node);
 }
@@ -469,8 +407,6 @@ float Flexbox::right() {
     return YGNodeLayoutGetRight(d_ptr->m_node);
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::minWidth() {
     return YGNodeStyleGetMinWidth(d_ptr->m_node).value;
 }
@@ -481,8 +417,6 @@ void Flexbox::setMinWidth(float value) {
         minWidthChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::minHeight() {
     return YGNodeStyleGetMinHeight(d_ptr->m_node).value;
@@ -495,8 +429,6 @@ void Flexbox::setMinHeight(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::maxWidth() {
     return YGNodeStyleGetMaxWidth(d_ptr->m_node).value;
 }
@@ -507,8 +439,6 @@ void Flexbox::setMaxWidth(float value) {
         maxWidthChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::maxHeight() {
     return YGNodeStyleGetMaxHeight(d_ptr->m_node).value;
@@ -521,8 +451,6 @@ void Flexbox::setMaxHeight(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::flex() {
     return YGNodeStyleGetFlex(d_ptr->m_node);
 }
@@ -533,8 +461,6 @@ void Flexbox::setFlex(float value) {
         flexChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::flexBasis() {
     return YGNodeStyleGetFlexBasis(d_ptr->m_node).value;
@@ -547,8 +473,6 @@ void Flexbox::setFlexBasis(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::flexGrow() {
     return YGNodeStyleGetFlexGrow(d_ptr->m_node);
 }
@@ -559,8 +483,6 @@ void Flexbox::setFlexGrow(float value) {
         flexGrowChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::flexShrink() {
     return YGNodeStyleGetFlexShrink(d_ptr->m_node);
@@ -584,8 +506,6 @@ void Flexbox::setFlexWrap(const QString& value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::padding() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeAll).value;
 }
@@ -596,8 +516,6 @@ void Flexbox::setPadding(float value) {
         paddingChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::paddingTop() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeTop).value;
@@ -610,8 +528,6 @@ void Flexbox::setPaddingTop(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::paddingBottom() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeBottom).value;
 }
@@ -622,8 +538,6 @@ void Flexbox::setPaddingBottom(float value) {
         paddingBottomChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::paddingLeft() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeLeft).value;
@@ -636,8 +550,6 @@ void Flexbox::setPaddingLeft(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::paddingRight() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeRight).value;
 }
@@ -648,8 +560,6 @@ void Flexbox::setPaddingRight(float value) {
         paddingRightChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 float Flexbox::paddingHorizontal() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeHorizontal).value;
@@ -662,8 +572,6 @@ void Flexbox::setPaddingHorizontal(float value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 float Flexbox::paddingVertical() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeVertical).value;
 }
@@ -674,8 +582,6 @@ void Flexbox::setPaddingVertical(float value) {
         paddingVerticalChanged();
     }
 }
-
-//-----------------------------------------------------------------------------
 
 QString Flexbox::display() {
     return d_ptr->m_display;
@@ -699,8 +605,6 @@ void Flexbox::setOverflow(const QString& value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 QString Flexbox::position() {
     return d_ptr->m_position;
 }
@@ -712,8 +616,6 @@ void Flexbox::setPosition(const QString& value) {
     }
 }
 
-//-----------------------------------------------------------------------------
-
 QString Flexbox::direction() {
     d_ptr->m_direction;
 }
@@ -724,13 +626,10 @@ void Flexbox::setDirection(const QString& value) {
         directionChanged();
     }
 }
-//-----------------------------------------------------------------------------
 
 void printYGNode(YGNodeRef node, const QString& nodeName) {
     qDebug() << nodeName << ": width: " << YGNodeLayoutGetWidth(node) << " height: " << YGNodeLayoutGetHeight(node)
              << " x: " << YGNodeLayoutGetLeft(node) << " y: " << YGNodeLayoutGetTop(node);
 }
-
-//-----------------------------------------------------------------------------
 
 #include "flexbox.moc"

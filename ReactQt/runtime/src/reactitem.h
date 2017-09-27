@@ -157,7 +157,6 @@ Q_SIGNALS:
 
 protected:
     void paint(QPainter* painter);
-    void updatePolish();
 
 private:
     QScopedPointer<ReactItemPrivate> d_ptr;

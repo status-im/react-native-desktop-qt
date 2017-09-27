@@ -22,7 +22,7 @@ ReactPropertyHandler::ReactPropertyHandler(QObject* object, SetPropertyCallback 
     : QObject(object), m_object(object), m_setPropertyCallback(callback) {
     Q_ASSERT(object);
 
-    m_flexbox = Flexbox::findFlexbox(static_cast<QQuickItem*>(object));
+    m_flexbox = Flexbox::findFlexbox(qobject_cast<QQuickItem*>(object));
 }
 
 ReactPropertyHandler::~ReactPropertyHandler() {}
@@ -50,10 +50,12 @@ void ReactPropertyHandler::applyProperties(const QVariantMap& properties) {
             setValueToObjectProperty(m_object, property, propertyValue);
         }
 
-        it = m_flexboxProperties.find(key);
-        if (it != m_flexboxProperties.end() && m_flexbox) {
-            QMetaProperty property = it.value();
-            setValueToObjectProperty(m_flexbox, property, propertyValue);
+        if (m_flexbox) {
+            it = m_flexboxProperties.find(key);
+            if (it != m_flexboxProperties.end()) {
+                QMetaProperty property = it.value();
+                setValueToObjectProperty(m_flexbox, property, propertyValue);
+            }
         }
     }
 }
@@ -63,12 +65,10 @@ QVariant ReactPropertyHandler::value(const QString& propertyName) {
 
     QVariant value;
 
-    if (m_qmlProperties.contains(propertyName)) {
-        value = m_qmlProperties[propertyName].read(m_object);
-    }
-
-    if (m_flexboxProperties.contains(propertyName) && m_flexbox) {
+    if (m_flexbox && m_flexboxProperties.contains(propertyName)) {
         value = m_flexboxProperties[propertyName].read(m_flexbox);
+    } else if (m_qmlProperties.contains(propertyName)) {
+        value = m_qmlProperties[propertyName].read(m_object);
     }
 
     return value;

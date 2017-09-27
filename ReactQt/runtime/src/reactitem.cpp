@@ -556,11 +556,3 @@ void ReactItem::paint(QPainter* painter) {
         }
     }
 }
-
-void ReactItem::updatePolish() {
-    if (childItems().count() > 0) {
-        QQuickItem* view = childItems().at(0);
-        Flexbox* flexbox = Flexbox::findFlexbox(view);
-        flexbox->recalculateLayout(width(), height());
-    }
-}

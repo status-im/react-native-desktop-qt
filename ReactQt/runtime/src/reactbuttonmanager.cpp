@@ -33,14 +33,14 @@ extern "C" {
 
 const QString EVENT_ONPRESSED = "onPress";
 
-//-----------------------------------------------------------------------------
+
 
 class ReactButtonManagerPrivate {
 public:
     QQuickItem* buttonTextControl(QQuickItem* button) const;
 };
 
-//-----------------------------------------------------------------------------
+
 
 QQuickItem* ReactButtonManagerPrivate::buttonTextControl(QQuickItem* button) const {
     Q_ASSERT(button);
@@ -49,12 +49,12 @@ QQuickItem* ReactButtonManagerPrivate::buttonTextControl(QQuickItem* button) con
     return contentItem;
 }
 
-//-----------------------------------------------------------------------------
+
 
 ReactButtonManager::ReactButtonManager(QObject* parent)
     : ReactViewManager(parent), d_ptr(new ReactButtonManagerPrivate) {}
 
-//-----------------------------------------------------------------------------
+
 
 ReactButtonManager::~ReactButtonManager() {}
 
@@ -62,13 +62,13 @@ ReactViewManager* ReactButtonManager::viewManager() {
     return this;
 }
 
-//-----------------------------------------------------------------------------
+
 
 QString ReactButtonManager::moduleName() {
     return "RCTButtonViewManager";
 }
 
-//-----------------------------------------------------------------------------
+
 
 QStringList ReactButtonManager::customDirectEventTypes() {
     return QStringList{
@@ -76,7 +76,7 @@ QStringList ReactButtonManager::customDirectEventTypes() {
     };
 }
 
-//-----------------------------------------------------------------------------
+
 
 void ReactButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
     int reactTag = ReactAttachedProperties::get(button)->tag();
@@ -84,7 +84,7 @@ void ReactButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
         "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName(EVENT_ONPRESSED), {}});
 }
 
-//-----------------------------------------------------------------------------
+
 
 void ReactButtonManager::setCustomFlexboxMeasureFunctionToButtonText(QQuickItem* button) const {
     const Q_D(ReactButtonManager);
@@ -104,19 +104,19 @@ void ReactButtonManager::setCustomFlexboxMeasureFunctionToButtonText(QQuickItem*
     });
 }
 
-//-----------------------------------------------------------------------------
+
 
 QString ReactButtonManager::qmlComponentFile() const {
     return ":/qml/ReactButton.qml";
 }
 
-//-----------------------------------------------------------------------------
+
 
 void ReactButtonManager::configureView(QQuickItem* button) const {
     ReactViewManager::configureView(button);
     button->setProperty("buttonManager", QVariant::fromValue((QObject*)this));
     setCustomFlexboxMeasureFunctionToButtonText(button);
 }
-//-----------------------------------------------------------------------------
+
 
 #include "reactbuttonmanager.moc"

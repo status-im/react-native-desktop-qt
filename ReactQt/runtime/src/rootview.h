@@ -69,6 +69,9 @@ Q_SIGNALS:
     void pluginsPathChanged();
     void executorChanged();
 
+protected:
+    virtual void updatePolish();
+
 private Q_SLOTS:
     void bridgeReady();
     void requestPolish();
