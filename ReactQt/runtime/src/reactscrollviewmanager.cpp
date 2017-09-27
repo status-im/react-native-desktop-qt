@@ -27,8 +27,6 @@
 #include "reactscrollviewmanager.h"
 #include "reactuimanager.h"
 
-
-
 void ReactScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
     Q_ASSERT(item != nullptr);
@@ -37,15 +35,9 @@ void ReactScrollViewManager::scrollTo(int reactTag, double offsetX, double offse
     QQmlProperty(item, "contentY").write(offsetY);
 }
 
-
-
 ReactScrollViewManager::ReactScrollViewManager(QObject* parent) : ReactViewManager(parent) {}
 
-
-
 ReactScrollViewManager::~ReactScrollViewManager() {}
-
-
 
 ReactViewManager* ReactScrollViewManager::viewManager() {
     return this;
@@ -54,8 +46,6 @@ ReactViewManager* ReactScrollViewManager::viewManager() {
 QString ReactScrollViewManager::moduleName() {
     return "RCTScrollViewManager";
 }
-
-
 
 QStringList ReactScrollViewManager::customDirectEventTypes() {
     return QStringList{"scrollBeginDrag",
@@ -66,16 +56,12 @@ QStringList ReactScrollViewManager::customDirectEventTypes() {
                        "momentumScrollEnd"};
 }
 
-
-
 void ReactScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const {
     // add to parents content item
     QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
     Q_ASSERT(contentItem != nullptr);
     child->setParentItem(contentItem);
 }
-
-
 
 void ReactScrollViewManager::scrollBeginDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
@@ -93,8 +79,6 @@ void ReactScrollViewManager::scrollBeginDrag() {
         "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
 }
 
-
-
 void ReactScrollViewManager::scrollEndDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -110,8 +94,6 @@ void ReactScrollViewManager::scrollEndDrag() {
     bridge()->enqueueJSCall(
         "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
 }
-
-
 
 void ReactScrollViewManager::scroll() {
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -132,8 +114,6 @@ void ReactScrollViewManager::scroll() {
     }
 }
 
-
-
 void ReactScrollViewManager::momentumScrollBegin() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -152,8 +132,6 @@ void ReactScrollViewManager::momentumScrollBegin() {
         QVariantList{reactTag, normalizeInputEventName("momentumScrollBegin"), buildEventData(item)});
 }
 
-
-
 void ReactScrollViewManager::momentumScrollEnd() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
@@ -171,15 +149,11 @@ void ReactScrollViewManager::momentumScrollEnd() {
                             QVariantList{reactTag, normalizeInputEventName("momentumScrollEnd"), buildEventData(item)});
 }
 
-
-
 namespace {
 template <typename TP> TP propertyValue(QQuickItem* item, const QString& property) {
     return QQmlProperty(item, property).read().value<TP>();
 }
 }
-
-
 
 QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const {
     QVariantMap ed;
@@ -202,8 +176,6 @@ QVariantMap ReactScrollViewManager::buildEventData(QQuickItem* item) const {
     return ed;
 }
 
-
-
 void ReactScrollViewManager::configureView(QQuickItem* view) const {
     ReactViewManager::configureView(view);
     // This would be prettier with a Functor version, but connect doesnt support it
@@ -215,12 +187,8 @@ void ReactScrollViewManager::configureView(QQuickItem* view) const {
     connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
 
-
-
 QString ReactScrollViewManager::qmlComponentFile() const {
     return ":/qml/ReactScrollView.qml";
 }
-
-
 
 #include "reactscrollviewmanager.moc"
