@@ -10,5 +10,6 @@
         <file>qml/ReactActivityIndicator.qml</file>
         <file>images/spinner_medium.png</file>
         <file>qml/ReactButton.qml</file>
+        <file>qml/ReactSlider.qml</file>
     </qresource>
 </RCC>

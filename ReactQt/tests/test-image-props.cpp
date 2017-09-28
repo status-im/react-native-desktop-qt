@@ -9,7 +9,7 @@
  */
 
 #include "reactpropertytestcase.h"
-#include "rootview.h"
+
 #include <QDebug>
 #include <QTest>
 #include <QtQuick/QQuickView>
@@ -30,23 +30,7 @@ protected:
 };
 
 QQuickItem* TestImageProps::control() const {
-    // Even when in JS we have only one <Image> component returned in render(),
-    // it is wrapped in <View> component implicitly, so we have hierarchy in QML:
-    // ReactView
-    //  |-<View>
-    //    |-<Image>
-
-    QList<QQuickItem*> reactViewChilds = rootView()->childItems();
-    Q_ASSERT(reactViewChilds.count() == 1);
-
-    QQuickItem* view = reactViewChilds[0];
-    QList<QQuickItem*> viewChilds = view->childItems();
-    Q_ASSERT(viewChilds.count() == 1);
-
-    QQuickItem* image = viewChilds[0];
-    Q_ASSERT(image);
-
-    return image;
+    return singleControl();
 }
 
 void TestImageProps::initTestCase() {

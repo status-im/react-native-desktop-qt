@@ -17,6 +17,7 @@ protected:
     virtual QVariantMap propValues() const = 0;
     virtual QQuickItem* control() const = 0;
     QVariant valueOfProperty(const QString& propertyName);
+    QQuickItem* singleControl() const;
 };
 
 #endif // REACTPROPERTYTTESTCASE_H

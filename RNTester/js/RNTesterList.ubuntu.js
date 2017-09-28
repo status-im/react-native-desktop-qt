@@ -37,6 +37,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'LayoutExample',
     module: require('./LayoutExample'),
   },
+  {
+    key: 'SliderExample',
+    module: require('./SliderExample'),
+  },
 ];
 
 const APIExamples: Array<RNTesterExample> = [
