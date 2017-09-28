@@ -34,12 +34,12 @@ public:
 
     bool shouldLayout() const override;
 
-    static void hookLayout(QQuickItem* textItem);
     typedef std::map<QString, QVariant> PropertyMap;
     static void resizeToWidth(QQuickItem* textItem, double width);
 
 public slots:
     QVariant nestedPropertyValue(QQuickItem* item, const QString& propertyName);
+    void updateMeasureFunction(QQuickItem* textItem);
 
 private:
     QQuickItem* parentTextItem(QQuickItem* textItem);

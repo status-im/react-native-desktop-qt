@@ -16,7 +16,6 @@
 #include "reactredboxitem.h"
 #include "reacttestcase.h"
 #include "reacttestmodule.h"
-#include "reactview.h"
 
 class TestIntegration : public ReactTestCase {
     Q_OBJECT

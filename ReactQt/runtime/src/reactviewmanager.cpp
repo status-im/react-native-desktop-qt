@@ -18,7 +18,6 @@
 #include <QVariant>
 
 #include "reactbridge.h"
-#include "reactflexlayout.h"
 #include "reactitem.h"
 #include "reactpropertyhandler.h"
 #include "reacttextmanager.h"
@@ -96,10 +95,6 @@ bool ReactViewManager::shouldLayout() const {
 
 void ReactViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const {
     child->setParentItem(container);
-    bool childIsTopReactTextInTextHierarchy = child->property("textIsTopInBlock").toBool();
-    if (childIsTopReactTextInTextHierarchy) {
-        ReactTextManager::hookLayout(child);
-    }
 }
 
 QQuickItem* ReactViewManager::view(const QVariantMap& properties) const {

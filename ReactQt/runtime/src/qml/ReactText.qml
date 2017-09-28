@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import React 0.1 as React
 
 Text {
     id: textRoot
@@ -18,6 +19,8 @@ Text {
     property color p_textDecorationColor
     property string p_writingDirection
     property int p_numberOfLines: 1000000
+    property var flexbox: React.Flexbox {control: textRoot}
+
 
 
     property string typeName: "ReactText"
@@ -26,6 +29,8 @@ Text {
     //ReactText components can be nested. This property indicates if item is parent
     //of current text blocks
     property bool textIsTopInBlock: parent ? (parent.typeName ? (parent.typeName === "ReactText" ? false : true) : true) : true
+    onTextIsTopInBlockChanged: updateMeasureFunction()
+    onTextManagerChanged: updateMeasureFunction()
 
 
     text: textIsTopInBlock ? decoratedText : ""
@@ -59,6 +64,11 @@ Text {
     }
     onParentChanged: updateHtmlText()
 
+    function updateMeasureFunction() {
+        if(textManager) {
+            textManager.updateMeasureFunction(textRoot)
+        }
+    }
 
     function subscribeToChildrenTextChanges() {
         for (var i = 0; i < textRoot.children.length; i++)

@@ -23,10 +23,10 @@
 
 #include <QDebug>
 
+#include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactcomponentdata.h"
-#include "reactflexlayout.h"
 #include "reactitem.h"
 #include "reactmoduledata.h"
 #include "reactmodulemethod.h"
@@ -80,24 +80,6 @@ void ReactUIManager::updateView(int reactTag, const QString& viewName, const QVa
     Q_ASSERT(ReactAttachedProperties::get(item) != nullptr);
     ReactAttachedProperties::get(item)->applyProperties(properties);
 
-    ReactFlexLayout* fl = ReactFlexLayout::get(item, false);
-    if (fl != nullptr) {
-        fl->applyLayoutProperties(properties);
-    }
-
-    // We can get updates on views which are not in the layout hierarchy (rawtext)
-    // But we still trigger a layout through its closest visual parent
-    while (fl == nullptr) {
-        QQuickItem* pi = item->parentItem();
-        if (pi == nullptr)
-            break;
-        fl = ReactFlexLayout::get(pi, false);
-        if (fl != nullptr) {
-            fl->setDirty(true);
-            break;
-        }
-    }
-
     m_bridge->visualParent()->polish();
 }
 
@@ -111,14 +93,33 @@ void ReactUIManager::setChildren(int containerReactTag, const QList<int>& childr
     manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices, QList<int>());
 }
 
+void ReactUIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices) {
+
+    Q_ASSERT(parent != nullptr);
+
+    if (!removeAtIndices.isEmpty()) {
+
+        QList<QQuickItem*> itemsToRemove;
+        for (int i : removeAtIndices) {
+            itemsToRemove.push_back(parent->childItems().at(i));
+        }
+
+        for (QQuickItem* child : itemsToRemove) {
+            child->setParent(0);
+            m_views.remove(ReactAttachedProperties::get(child)->tag());
+            child->deleteLater();
+        }
+
+        Flexbox::findFlexbox(parent)->removeChilds(removeAtIndices);
+    }
+}
+
 void ReactUIManager::manageChildren(int containerReactTag,
                                     const QList<int>& moveFromIndicies,
                                     const QList<int>& moveToIndices,
                                     const QList<int>& addChildReactTags,
                                     const QList<int>& addAtIndices,
                                     const QList<int>& removeAtIndices) {
-    // qDebug() << __PRETTY_FUNCTION__ << containerReactTag << moveFromIndicies << moveToIndices << addChildReactTags <<
-    // addAtIndices << removeAtIndices;
 
     QQuickItem* container = m_views[containerReactTag];
     if (container == nullptr) {
@@ -126,28 +127,14 @@ void ReactUIManager::manageChildren(int containerReactTag,
         return;
     }
 
-    ReactFlexLayout* rfl = ReactFlexLayout::get(container);
-
-    if (!removeAtIndices.isEmpty()) {
-        // removeAtIndices get unpluged and erased
-        QList<QQuickItem*> removed = rfl->removeChildren(removeAtIndices);
-        for (QQuickItem* child : removed) {
-            // remove from visual hierarchy
-            child->setParent(0);
-
-            // cleanup references
-            m_views.remove(ReactAttachedProperties::get(child)->tag());
-            child->deleteLater();
-        }
-
-        rfl->setDirty(true);
-    }
+    removeChildren(container, removeAtIndices);
 
     QList<QQuickItem*> children;
     // XXX: Assumption - addChildReactTags is sorted
     std::transform(addChildReactTags.begin(), addChildReactTags.end(), std::back_inserter(children), [this](int key) {
         return m_views.value(key);
     });
+
     if (children.size() > 0) {
         // on iOS, order of the subviews implies z-order, implicitly its the same in
         // QML, barring some exceptions. revisit - set zorder appears to be the only
@@ -164,31 +151,30 @@ void ReactUIManager::manageChildren(int containerReactTag,
                 child->setParentItem(container);
             }
 
-            // Add to layout
-            if (ReactAttachedProperties::get(child)->shouldLayout()) {
-                rfl->insertChild(i, child);
-                ReactFlexLayout::get(child)->setDirty(true);
-                ReactFlexLayout::get(child)->setParentItem(container);
+            auto containerFlexbox = Flexbox::findFlexbox(container);
+            auto childFlexbox = Flexbox::findFlexbox(child);
+            if (containerFlexbox && childFlexbox) {
+                containerFlexbox->addChild(i, childFlexbox);
             }
         }
-
-        rfl->setDirty(true);
     }
 
     m_bridge->visualParent()->polish();
 }
 
 void ReactUIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
-    QQuickItem* item = m_views.value(reactTag);
-    if (item == nullptr) {
+    QQuickItem* oldItem = m_views.value(reactTag);
+    if (oldItem == nullptr) {
         qCritical() << __PRETTY_FUNCTION__ << "Attempting to access unknown item";
         return;
     }
 
-    QQuickItem* parent = ReactFlexLayout::get(item)->parentItem();
+    QQuickItem* parent = oldItem->parentItem();
     Q_ASSERT(parent != nullptr);
 
-    int itemIndex = ReactFlexLayout::get(parent)->getChildIndex(item);
+    int itemIndex = -1;
+    itemIndex = parent->childItems().indexOf(oldItem);
+    Q_ASSERT(itemIndex >= 0);
 
     manageChildren(ReactAttachedProperties::get(parent)->tag(),
                    QList<int>(),
@@ -215,7 +201,7 @@ void ReactUIManager::measureLayout(int reactTag,
     while (depth > 0 && item != ancestor) {
         x += item->x();
         y += item->y();
-        item = ReactFlexLayout::get(item)->parentItem();
+        item = item->parentItem();
         --depth;
     }
 
@@ -232,7 +218,7 @@ void ReactUIManager::measureLayoutRelativeToParent(int reactTag,
     QQuickItem* item = m_views.value(reactTag);
     Q_ASSERT(item != nullptr);
 
-    ReactAttachedProperties* ap = ReactAttachedProperties::get(ReactFlexLayout::get(item)->parentItem());
+    ReactAttachedProperties* ap = ReactAttachedProperties::get(item->parentItem());
     if (ap == nullptr) {
         qWarning() << __PRETTY_FUNCTION__ << "no parent item!";
         return;
@@ -282,21 +268,7 @@ void ReactUIManager::createView(int reactTag, const QString& viewName, int rootT
         ap->applyProperties(props);
     }
 
-    // Layout properties
-    if (ap->shouldLayout()) {
-        ReactFlexLayout* fl = ReactFlexLayout::get(item);
-        fl->applyLayoutProperties(props);
-
-        // At creation properties have been applied which can lead to the new item's
-        // layout being marked as dirty - but we want to be able to mark items being
-        // positioned in the visual hierarchy as dirty, so force a reset until that
-        // time.
-        fl->setDirty(false);
-    }
-
     m_views.insert(reactTag, item);
-
-    // qDebug() << __PRETTY_FUNCTION__ << "end";
 }
 
 void ReactUIManager::findSubviewIn(int reactTag,
@@ -436,10 +408,6 @@ void ReactUIManager::setBridge(ReactBridge* bridge) {
             m_componentData.insert(cd->name(), cd);
         }
     }
-
-    connect(m_bridge->visualParent(), SIGNAL(widthChanged()), SLOT(onRootViewWidthChanged()));
-    connect(m_bridge->visualParent(), SIGNAL(heightChanged()), SLOT(onRootViewHeightChanged()));
-    connect(m_bridge->visualParent(), SIGNAL(scaleChanged()), SLOT(onRootViewScaleChanged()));
 }
 
 QString ReactUIManager::moduleName() {
@@ -519,25 +487,4 @@ void ReactUIManager::registerRootView(QQuickItem* root) {
 
 QQuickItem* ReactUIManager::viewForTag(int reactTag) {
     return m_views.value(reactTag);
-}
-
-void ReactUIManager::onRootViewWidthChanged() {
-    QQuickItem* root = m_bridge->visualParent();
-    if (ReactAttachedProperties::get(root)->tag() == -1)
-        return;
-    root->polish();
-}
-
-void ReactUIManager::onRootViewHeightChanged() {
-    QQuickItem* root = m_bridge->visualParent();
-    if (ReactAttachedProperties::get(root)->tag() == -1)
-        return;
-    root->polish();
-}
-
-void ReactUIManager::onRootViewScaleChanged() {
-    QQuickItem* root = m_bridge->visualParent();
-    if (ReactAttachedProperties::get(root)->tag() == -1)
-        return;
-    root->polish();
 }

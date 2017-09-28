@@ -9,7 +9,7 @@
  */
 
 #include "reactpropertytestcase.h"
-#include "reactview.h"
+#include "rootview.h"
 #include <QTest>
 #include <QtQuick/QQuickView>
 

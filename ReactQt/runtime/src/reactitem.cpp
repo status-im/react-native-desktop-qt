@@ -13,7 +13,7 @@
 
 #include <QPainter>
 
-#include "reactflexlayout.h"
+#include "layout/flexbox.h"
 #include "reactitem.h"
 
 namespace {
@@ -555,11 +555,4 @@ void ReactItem::paint(QPainter* painter) {
             painter->fillPath(path, d->backgroundColor);
         }
     }
-}
-
-void ReactItem::updatePolish() {
-    ReactFlexLayout::get(this)->setWidth(width());
-    ReactFlexLayout::get(this)->setHeight(height());
-
-    ReactFlexLayout::polish(this);
 }

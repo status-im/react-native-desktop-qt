@@ -19,8 +19,8 @@
 
 #include <QDebug>
 
+#include "layout/flexbox.h"
 #include "reactbridge.h"
-#include "reactflexlayout.h"
 #include "reactpropertyhandler.h"
 #include "reacttextmanager.h"
 
@@ -59,16 +59,24 @@ void ReactTextManager::configureView(QQuickItem* view) const {
     view->setProperty("textManager", QVariant::fromValue((QObject*)this));
 }
 
-void ReactTextManager::hookLayout(QQuickItem* textItem) {
-    ReactFlexLayout* fl = ReactFlexLayout::get(textItem);
-    fl->setMeasureFunction([=](double width, FlexMeasureMode widthMode, double height, FlexMeasureMode heightMode) {
+void ReactTextManager::updateMeasureFunction(QQuickItem* textItem) {
 
-        resizeToWidth(textItem, width);
+    Flexbox* flexbox = Flexbox::findFlexbox(textItem);
+    Q_ASSERT(flexbox);
 
-        double w = textItem->width();
-        double ch = textItem->property("contentHeight").toDouble();
-        return std::make_pair(w, ch);
-    });
+    bool childIsTopReactTextInTextHierarchy = textItem->property("textIsTopInBlock").toBool();
+
+    if (childIsTopReactTextInTextHierarchy) {
+        flexbox->setMeasureFunction([=](YGNodeRef, float width, YGMeasureMode, float, YGMeasureMode) {
+
+            resizeToWidth(textItem, width);
+            float w = textItem->width();
+            float ch = textItem->property("contentHeight").toDouble();
+            return YGSize{w, ch};
+        });
+    } else {
+        flexbox->setMeasureFunction(nullptr);
+    }
 }
 
 void ReactTextManager::resizeToWidth(QQuickItem* textItem, double width) {

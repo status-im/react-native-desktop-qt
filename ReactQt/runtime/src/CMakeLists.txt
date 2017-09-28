@@ -39,7 +39,7 @@ set(
   reactappstate.cpp
   reactasynclocalstorage.cpp
   reactitem.cpp
-  reactview.cpp
+  rootview.cpp
   reactviewmanager.cpp
   reactrawtextmanager.cpp
   reacttestmodule.cpp
@@ -47,7 +47,6 @@ set(
   reactimagemanager.cpp
   reactimageloader.cpp
   reactattachedproperties.cpp
-  reactflexlayout.cpp
   reactuimanager.cpp
   reactredboxitem.cpp
   reactexceptionsmanager.cpp
@@ -55,7 +54,11 @@ set(
   reactnavigatormanager.cpp
   reactactivityindicatormanager.cpp
   reactbuttonmanager.cpp
-  ../../../React/Layout/Layout.c
+  layout/flexbox.cpp
+  utilities.cpp
+  ../../../ReactCommon/yoga/yoga/Yoga.c
+  ../../../ReactCommon/yoga/yoga/YGEnums.c
+  ../../../ReactCommon/yoga/yoga/YGNodeList.c
 )
 
 set(

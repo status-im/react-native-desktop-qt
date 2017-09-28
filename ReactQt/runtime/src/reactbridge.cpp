@@ -214,6 +214,7 @@ QQuickItem* ReactBridge::visualParent() const {
 
 void ReactBridge::setVisualParent(QQuickItem* item) {
     Q_D(ReactBridge);
+
     if (d->visualParent == item)
         return;
     d->visualParent = item;
@@ -367,7 +368,6 @@ void ReactBridge::injectModules() {
     QVariantList moduleConfig;
 
     for (int i = 0; i < d->modules.size(); ++i) {
-        //    qDebug() << "Injecting module" << md->name();
         Q_ASSERT(d->modules.contains(i));
         auto& md = d->modules[i];
         moduleConfig.push_back(md->info());
@@ -393,10 +393,6 @@ void ReactBridge::processResult(const QJsonDocument& doc) {
     QVariantList methodIDs = requests[FieldMethodIDs].toList();
     QVariantList paramArrays = requests[FieldParams].toList();
 
-    // qDebug() << "moduleIDs" << moduleIDs;
-    // qDebug() << "methodIDs" << methodIDs;
-    // qDebug() << "paramArrays" << paramArrays;
-
     // XXX: this should all really be wrapped up in a Module class
     // including invocations etc
     for (int i = 0; i < moduleIDs.size(); ++i) {
@@ -420,7 +416,7 @@ void ReactBridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant>
     }
 
     // readable log of methods invoked via bridge
-    // qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
+    //    qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
 
     method->invoke(args);
 }

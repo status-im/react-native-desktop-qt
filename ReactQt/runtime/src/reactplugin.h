@@ -15,6 +15,8 @@
 #define REACTPLUGIN_H
 #include <QQmlExtensionPlugin>
 
+class QJSEngine;
+
 class ReactPlugin : public QQmlExtensionPlugin {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")

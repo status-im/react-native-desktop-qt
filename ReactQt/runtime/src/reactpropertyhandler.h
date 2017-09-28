@@ -21,7 +21,7 @@
 #include <QObject>
 
 class QQuickItem;
-
+class Flexbox;
 const QString QML_PROPERTY_PREFIX = "p_";
 
 using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
@@ -40,14 +40,14 @@ public:
 private:
     void buildPropertyMap();
     void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
-    void getPropertiesFromMetaObject(const QMetaObject* metaObject);
+    void getPropertiesFromMetaObject(const QMetaObject* metaObject, QMap<QString, QMetaProperty>& propertiesMap);
 
 private:
-    bool m_exposeQmlProperties = true;
     bool m_cached = false;
-    QObject* m_object;
+    QObject* m_object = nullptr;
+    Flexbox* m_flexbox = nullptr;
     QMap<QString, QMetaProperty> m_qmlProperties;
-    QMap<QString, QMetaProperty> m_HandlerProperties;
+    QMap<QString, QMetaProperty> m_flexboxProperties;
     SetPropertyCallback m_setPropertyCallback;
 };
 
