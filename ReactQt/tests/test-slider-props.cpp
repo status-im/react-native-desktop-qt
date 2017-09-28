@@ -14,11 +14,8 @@
 #include <QTest>
 #include <QtQuick/QQuickView>
 
-class TestButtonProps : public ReactPropertyTestCase {
+class TestSliderProps : public ReactPropertyTestCase {
     Q_OBJECT
-
-private:
-    QQuickItem* qmlImage();
 
 private slots:
 
@@ -29,24 +26,31 @@ protected:
     virtual QVariantMap propValues() const override;
 };
 
-QQuickItem* TestButtonProps::control() const {
+QQuickItem* TestSliderProps::control() const {
     return singleControl();
 }
 
-void TestButtonProps::initTestCase() {
+void TestSliderProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
-    loadQML(QUrl("qrc:/TestButtonProps.qml"));
+    loadQML(QUrl("qrc:/TestSliderProps.qml"));
     waitAndVerifyJsAppStarted();
 }
 
-QVariantMap TestButtonProps::propValues() const {
-    return {{"p_accessibilityLabel", "Accessibility label"},
-            {"p_title", "Click me"},
-            {"p_color", "red"},
+QVariantMap TestSliderProps::propValues() const {
+    return {{"p_value", 0.5},
+            {"p_step", 0.1},
+            {"p_minimumValue", 0},
+            {"p_maximumValue", 1.0},
+            {"p_minimumTrackTintColor", "green"},
+            {"p_maximumTrackTintColor", "green"},
             {"p_disabled", false},
-            {"p_onPress", true},
-            {"p_testID", "button"}};
+            {"p_trackImage", false},
+            {"p_minimumTrackImage", false},
+            {"p_maximumTrackImage", false},
+            {"p_thumbImage", false},
+            {"p_thumbTintColor", "green"},
+            {"p_testID", "testSlider"}};
 }
 
-QTEST_MAIN(TestButtonProps)
-#include "test-button-props.moc"
+QTEST_MAIN(TestSliderProps)
+#include "test-slider-props.moc"

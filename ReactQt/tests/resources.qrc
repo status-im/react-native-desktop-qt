@@ -4,5 +4,6 @@
         <file>TestImageProps.qml</file>
         <file>TestActivityIndicatorProps.qml</file>
         <file>TestButtonProps.qml</file>
+        <file>TestSliderProps.qml</file>
     </qresource>
 </RCC>
