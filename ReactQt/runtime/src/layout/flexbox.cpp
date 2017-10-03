@@ -627,6 +627,10 @@ void Flexbox::setDirection(const QString& value) {
     }
 }
 
+bool Flexbox::isDirty() {
+    return YGNodeIsDirty(d_ptr->m_node);
+}
+
 void printYGNode(YGNodeRef node, const QString& nodeName) {
     qDebug() << nodeName << ": width: " << YGNodeLayoutGetWidth(node) << " height: " << YGNodeLayoutGetHeight(node)
              << " x: " << YGNodeLayoutGetLeft(node) << " y: " << YGNodeLayoutGetTop(node);

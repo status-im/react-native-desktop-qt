@@ -13,16 +13,24 @@ Button {
     property bool p_onPress: false
     property string p_testID
     property var buttonManager: null
-    property var flexbox: React.Flexbox {control: buttonRoot}
-    property var textFlexbox: React.Flexbox {control: contentItem}
+    property var flexbox: React.Flexbox {
+        control: buttonRoot
+        p_minWidth: buttonRoot.contentItem.contentWidth + 2*priv.textMargin
+        p_minHeight: buttonRoot.contentItem.contentHeight + 2*priv.textMargin
+    }
+
+    QtObject {
+        id: priv
+        property int textMargin: 5
+    }
 
     text: p_title
     objectName: p_testID
     enabled: !p_disabled
 
-
-    implicitHeight: 40
-    implicitWidth: 100
+    Component.onCompleted: {
+        buttonRoot.contentItem.elide = Text.ElideNone
+    }
 
     background: Rectangle {
         color: buttonRoot.down ? Qt.darker(buttonRoot.p_color, 1.2) : buttonRoot.p_color

@@ -77,6 +77,7 @@ class Flexbox : public QObject {
     Q_PROPERTY(QString p_overflow READ overflow WRITE setOverflow NOTIFY overflowChanged)
     Q_PROPERTY(QString p_position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(QString p_direction READ direction WRITE setDirection NOTIFY directionChanged)
+    Q_PROPERTY(QString isDirty READ isDirty NOTIFY isDirtyChanged)
 
 signals:
     void widthChanged();
@@ -124,6 +125,7 @@ signals:
     void overflowChanged();
     void positionChanged();
     void directionChanged();
+    void isDirtyChanged();
 
 public:
     Flexbox(QObject* parent = 0);
@@ -222,6 +224,7 @@ public:
     void setPosition(const QString& value);
     QString direction();
     void setDirection(const QString& value);
+    bool isDirty();
 
 private:
     QScopedPointer<FlexboxPrivate> d_ptr;

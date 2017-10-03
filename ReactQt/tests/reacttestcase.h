@@ -41,6 +41,8 @@ protected:
     void waitAndVerifyJsAppStarted();
     void waitAndVerifyJSException(const QString& exceptionMessage);
     void waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage);
+    QQuickItem* topJSComponent() const;
+    QVariant valueOfControlProperty(QQuickItem* control, const QString& propertyName);
 
 private:
     void registerReactQtTypes();

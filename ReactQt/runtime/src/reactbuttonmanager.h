@@ -30,7 +30,6 @@ public:
 
 public slots:
     void sendPressedNotificationToJs(QQuickItem* button);
-    void setCustomFlexboxMeasureFunctionToButtonText(QQuickItem* button) const;
 
 private:
     virtual QString qmlComponentFile() const override;

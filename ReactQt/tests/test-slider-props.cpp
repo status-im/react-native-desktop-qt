@@ -27,7 +27,7 @@ protected:
 };
 
 QQuickItem* TestSliderProps::control() const {
-    return singleControl();
+    return topJSComponent();
 }
 
 void TestSliderProps::initTestCase() {
