@@ -1,6 +1,7 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.2
 import React 0.1 as React
+import  "../js/utils.js" as Utils
 
 TextArea {
     id: textInputRoot
@@ -19,7 +20,7 @@ TextArea {
     color: p_color
     placeholderText: p_placeholderText
     selectionColor: p_selectionColor
-    horizontalAlignment: alignmentQMLValue(p_textAlign)
+    horizontalAlignment: Utils.alignmentQMLValue(p_textAlign)
 
     selectByKeyboard: true
     selectByMouse: true
@@ -40,15 +41,5 @@ TextArea {
     }
     onSelectionEndChanged: {
         textInputManager.sendSelectionChangeToJs(textInputRoot)
-    }
-
-    function alignmentQMLValue(jsValue) {
-        if (jsValue === "center") {
-            return "AlignHCenter";
-        } else if (jsValue === "left"){
-            return "AlignLeft";
-        } else {
-            return "AlignRight";
-        }
     }
 }
