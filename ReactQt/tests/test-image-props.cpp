@@ -30,7 +30,7 @@ protected:
 };
 
 QQuickItem* TestImageProps::control() const {
-    return singleControl();
+    return topJSComponent();
 }
 
 void TestImageProps::initTestCase() {

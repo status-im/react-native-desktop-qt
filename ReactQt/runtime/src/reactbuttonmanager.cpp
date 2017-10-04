@@ -70,24 +70,6 @@ void ReactButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
         "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName(EVENT_ONPRESSED), {}});
 }
 
-void ReactButtonManager::setCustomFlexboxMeasureFunctionToButtonText(QQuickItem* button) const {
-    const Q_D(ReactButtonManager);
-
-    QQuickItem* textControl = d->buttonTextControl(button);
-    Flexbox* textFlexbox = Flexbox::findFlexbox(textControl);
-    Flexbox* buttonFlexbox = Flexbox::findFlexbox(button);
-
-    buttonFlexbox->addChild(0, textFlexbox);
-
-    textFlexbox->setMeasureFunction([=](YGNodeRef, float width, YGMeasureMode, float height, YGMeasureMode) {
-        Q_UNUSED(width);
-        Q_UNUSED(height);
-        float w = textControl->width();
-        float ch = textControl->property("contentHeight").toDouble();
-        return YGSize{w, ch};
-    });
-}
-
 QString ReactButtonManager::qmlComponentFile() const {
     return ":/qml/ReactButton.qml";
 }
@@ -95,7 +77,6 @@ QString ReactButtonManager::qmlComponentFile() const {
 void ReactButtonManager::configureView(QQuickItem* button) const {
     ReactViewManager::configureView(button);
     button->setProperty("buttonManager", QVariant::fromValue((QObject*)this));
-    setCustomFlexboxMeasureFunctionToButtonText(button);
 }
 
 #include "reactbuttonmanager.moc"

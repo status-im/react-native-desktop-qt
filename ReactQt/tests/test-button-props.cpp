@@ -30,7 +30,7 @@ protected:
 };
 
 QQuickItem* TestButtonProps::control() const {
-    return singleControl();
+    return topJSComponent();
 }
 
 void TestButtonProps::initTestCase() {
