@@ -44,6 +44,7 @@ set(
   reactrawtextmanager.cpp
   reacttestmodule.cpp
   reacttextmanager.cpp
+  reacttextinputmanager.cpp
   reactimagemanager.cpp
   reactimageloader.cpp
   reactattachedproperties.cpp

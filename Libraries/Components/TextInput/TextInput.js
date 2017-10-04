@@ -44,7 +44,7 @@ if (Platform.OS === 'android') {
   var RCTTextView = requireNativeComponent('RCTTextView', null);
   var RCTTextField = requireNativeComponent('RCTTextField', null);
 } else if (Platform.OS === 'ubuntu') {
-  var UbuntuTextField = requireNativeComponent('UbuntuTextField', null);
+  var RCTTextInput = requireNativeComponent('RCTTextInputView', TextInput);
 }
 
 type Event = Object;
@@ -764,7 +764,7 @@ const TextInput = createReactClass({
   _renderUbuntu: function()  {
     var { placeholder, ...props } = this.props;
     return (
-      <UbuntuTextField
+      <RCTTextInput
         ref="input"
         {...props}
         placeholderText={placeholder}

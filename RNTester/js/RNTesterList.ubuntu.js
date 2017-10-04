@@ -41,6 +41,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'SliderExample',
     module: require('./SliderExample'),
   },
+  {
+    key: 'TextInputExample',
+    module: require('./TextInputExample'),
+  }
 ];
 
 const APIExamples: Array<RNTesterExample> = [

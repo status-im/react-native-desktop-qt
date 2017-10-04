@@ -11,5 +11,7 @@
         <file>images/spinner_medium.png</file>
         <file>qml/ReactButton.qml</file>
         <file>qml/ReactSlider.qml</file>
+        <file>qml/ReactTextInput.qml</file>
+        <file>js/utils.js</file>
     </qresource>
 </RCC>
