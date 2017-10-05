@@ -13,5 +13,6 @@
         <file>qml/ReactSlider.qml</file>
         <file>qml/ReactTextInput.qml</file>
         <file>js/utils.js</file>
+        <file>qml/ReactModal.qml</file>
     </qresource>
 </RCC>

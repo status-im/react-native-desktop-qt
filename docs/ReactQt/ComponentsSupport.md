@@ -9,7 +9,7 @@
 | Image                       | +/-       | +              | +/-             |                                |            |
 | KeyboardAvoidingView        |           | +              |                 | ???? PLACEHOLDER               | minor      |
 | ListView                    |           | +              |                 | ListView QML Type              | complex    |
-| Modal                       |           | +              |                 | Dialog QML Type                | medium     |
+| Modal                       |           | +              | +/-             | Dialog QML Type                | medium     |
 | NavigatorIOS                | ?         |                |                 |                                |            |
 | Picker                      |           | +              |                 | Tumbler or Combobox QML Type   | medium     |
 | PickerIOS                   |           |                |                 |                                |            |

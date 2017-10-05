@@ -17,6 +17,7 @@
 #include <QString>
 #include <QVariant>
 
+#include "layout/flexbox.h"
 #include "reactbridge.h"
 #include "reactitem.h"
 #include "reactpropertyhandler.h"

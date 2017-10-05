@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+#include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactevents.h"

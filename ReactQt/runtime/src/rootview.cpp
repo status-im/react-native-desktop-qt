@@ -222,6 +222,7 @@ void RootView::updatePolish() {
         Flexbox* flexbox = Flexbox::findFlexbox(view);
         if (flexbox) {
             flexbox->recalculateLayout(width(), height());
+            // flexbox->printFlexboxHierarchy();
         }
     }
 }
