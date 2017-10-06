@@ -20,7 +20,7 @@
 
 #include "reactitem.h"
 
-class ReactBridge;
+class Bridge;
 
 class RootViewPrivate;
 class RootView : public ReactItem {
@@ -57,7 +57,7 @@ public:
     QString executor() const;
     void setExecutor(const QString& executor);
 
-    ReactBridge* bridge() const;
+    Bridge* bridge() const;
 
     void loadBundle(const QString& moduleName, const QUrl& codeLocation);
 

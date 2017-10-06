@@ -1,10 +1,10 @@
 #include "reacttestcase.h"
 
-#include "reactattachedproperties.h"
-#include "reactbridge.h"
+#include "attachedproperties.h"
+#include "bridge.h"
 #include "reactitem.h"
 #include "reactplugin.h"
-#include "reactredboxitem.h"
+#include "redboxitem.h"
 #include "rootview.h"
 #include "utilities.h"
 
@@ -84,8 +84,8 @@ QVariant ReactTestCase::valueOfControlProperty(QQuickItem* control, const QStrin
     return control->property(propertyName.toStdString().c_str());
 }
 
-ReactBridge* ReactTestCase::bridge() {
-    ReactBridge* bridge = rootView()->bridge();
+Bridge* ReactTestCase::bridge() {
+    Bridge* bridge = rootView()->bridge();
     Q_ASSERT(bridge);
 
     return bridge;

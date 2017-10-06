@@ -1,0 +1,45 @@
+
+/**
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
+#ifndef TEXTINPUTMANAGER_H
+#define TEXTINPUTMANAGER_H
+
+#include "viewmanager.h"
+
+class PropertyHandler;
+class TextInputManagerPrivate;
+class TextInputManager : public ViewManager {
+    Q_OBJECT
+    Q_INTERFACES(ModuleInterface)
+    Q_DECLARE_PRIVATE(TextInputManager)
+
+public:
+    TextInputManager(QObject* parent = 0);
+    virtual ~TextInputManager();
+
+    virtual ViewManager* viewManager() override;
+    virtual QString moduleName() override;
+
+    virtual QStringList customDirectEventTypes() override;
+
+public slots:
+    void sendTextEditedToJs(QQuickItem* textInput);
+    void sendSelectionChangeToJs(QQuickItem* textInput);
+
+private:
+    virtual QString qmlComponentFile() const override;
+    virtual void configureView(QQuickItem* view) const override;
+
+private:
+    QScopedPointer<TextInputManagerPrivate> d_ptr;
+};
+
+#endif // TEXTINPUTMANAGER_H

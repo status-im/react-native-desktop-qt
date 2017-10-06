@@ -10,10 +10,10 @@
  */
 
 #include "flexbox.h"
+#include "attachedproperties.h"
 #include <QDebug>
 #include <QMap>
 #include <QQuickItem>
-#include <reactattachedproperties.h>
 
 static QMap<QString, YGFlexDirection> flexDirectionByString{
     {"row", YGFlexDirectionRow},

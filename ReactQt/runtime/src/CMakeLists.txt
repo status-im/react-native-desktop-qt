@@ -19,43 +19,43 @@ find_package(Qt5Quick REQUIRED)
 set(
   SRC
   reactplugin.cpp
-  reactvaluecoercion.cpp
-  reactblobprovider.cpp
-  reactbridge.cpp
-  reactdeviceinfo.cpp
-  reacteventdispatcher.cpp
-  reactsourcecode.cpp
-  reactcomponentdata.cpp
-  reactmoduledata.cpp
-  reactmodulemethod.cpp
-  reactpropertyhandler.cpp
-  reactexecutor.cpp
-  reactnetexecutor.cpp
-  reactpipeexecutor.cpp
-  reactnetworking.cpp
-  reactnetinfo.cpp
-  reacttiming.cpp
-  reactappstate.cpp
-  reactasynclocalstorage.cpp
+  valuecoercion.cpp
+  blobprovider.cpp
+  bridge.cpp
+  deviceinfo.cpp
+  eventdispatcher.cpp
+  sourcecode.cpp
+  componentdata.cpp
+  moduledata.cpp
+  modulemethod.cpp
+  propertyhandler.cpp
+  executor.cpp
+  netexecutor.cpp
+  pipeexecutor.cpp
+  networking.cpp
+  netinfo.cpp
+  timing.cpp
+  appstate.cpp
+  asynclocalstorage.cpp
   reactitem.cpp
   rootview.cpp
-  reactviewmanager.cpp
-  reactrawtextmanager.cpp
-  reacttestmodule.cpp
-  reacttextmanager.cpp
-  reacttextinputmanager.cpp
-  reactimagemanager.cpp
-  reactimageloader.cpp
-  reactattachedproperties.cpp
-  reactuimanager.cpp
-  reactredboxitem.cpp
-  reactexceptionsmanager.cpp
-  reactscrollviewmanager.cpp
-  reactslidermanager.cpp
-  reactnavigatormanager.cpp
-  reactactivityindicatormanager.cpp
-  reactbuttonmanager.cpp
-  reactmodalmanager.cpp
+  testmodule.cpp
+  attachedproperties.cpp
+  uimanager.cpp
+  redboxitem.cpp
+  exceptionsmanager.cpp
+  componentmanagers/slidermanager.cpp
+  componentmanagers/viewmanager.cpp
+  componentmanagers/rawtextmanager.cpp
+  componentmanagers/scrollviewmanager.cpp
+  componentmanagers/navigatormanager.cpp
+  componentmanagers/activityindicatormanager.cpp
+  componentmanagers/buttonmanager.cpp
+  componentmanagers/modalmanager.cpp
+  componentmanagers/textmanager.cpp
+  componentmanagers/textinputmanager.cpp
+  componentmanagers/imagemanager.cpp
+  componentmanagers/imageloader.cpp
   layout/flexbox.cpp
   utilities.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.c

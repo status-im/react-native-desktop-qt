@@ -8,7 +8,7 @@
 #include <functional>
 
 class RootView;
-class ReactBridge;
+class Bridge;
 
 #define INIT_TEST_CASE_DEFAULT(BaseClass)                                                                              \
     virtual void initTestCase() override {                                                                             \
@@ -35,7 +35,7 @@ protected:
     void loadQML(const QUrl& qmlUrl);
     RootView* rootView() const;
     void loadJSBundle(const QString& moduleName, const QString& bundlePath);
-    ReactBridge* bridge();
+    Bridge* bridge();
     void showView();
     void waitAndVerifyBridgeReady();
     void waitAndVerifyJsAppStarted();
