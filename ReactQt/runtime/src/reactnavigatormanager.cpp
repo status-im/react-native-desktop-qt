@@ -20,10 +20,12 @@
 
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactnavigatormanager.h"
 #include "reactpropertyhandler.h"
 #include "reactuimanager.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 void ReactNavigatorManager::push(int containerTag, int viewTag) {
     QQuickItem* container = bridge()->uiManager()->viewForTag(containerTag);
@@ -72,19 +74,11 @@ QStringList ReactNavigatorManager::customBubblingEventTypes() {
 
 void ReactNavigatorManager::backTriggered() {
     QQuickItem* viewItem = qobject_cast<QQuickItem*>(sender());
-    ReactAttachedProperties* ap = ReactAttachedProperties::get(viewItem);
-
-    if (ap == nullptr) {
-        qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
-        return;
-    }
 
     bool backButtonPressFlagSet = viewItem->property("p_onBackButtonPress").toBool();
 
     if (backButtonPressFlagSet) {
-        bridge()->enqueueJSCall("RCTEventEmitter",
-                                "receiveEvent",
-                                QVariantList{ap->tag(), normalizeInputEventName("onBackButtonPress"), QVariantMap{}});
+        notifyJsAboutEvent(tag(viewItem), "onBackButtonPress", {});
     }
 }
 

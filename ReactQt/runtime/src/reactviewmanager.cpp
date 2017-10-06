@@ -18,12 +18,16 @@
 #include <QVariant>
 
 #include "layout/flexbox.h"
+#include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactitem.h"
 #include "reactpropertyhandler.h"
 #include "reacttextmanager.h"
 #include "reactvaluecoercion.h"
 #include "reactviewmanager.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 class MatrixTransform : public QQuickTransform {
     Q_OBJECT
@@ -114,6 +118,21 @@ QString ReactViewManager::qmlComponentFile() const {
     return ":/qml/ReactView.qml";
 }
 
+void ReactViewManager::notifyJsAboutEvent(int senderTag, const QString& eventName, const QVariantMap& eventData) const {
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter", "receiveEvent", QVariantList{senderTag, normalizeInputEventName(eventName), eventData});
+}
+
+int ReactViewManager::tag(QQuickItem* view) const {
+    ReactAttachedProperties* rap = ReactAttachedProperties::get(view, false);
+    if (rap == nullptr) {
+        qCritical() << "Could not get reacTag for view!";
+        return -1;
+    }
+    Q_ASSERT(rap);
+    return rap->tag();
+}
+
 QQuickItem* ReactViewManager::createView() const {
     QQmlComponent component(m_bridge->qmlEngine());
     auto file = qmlComponentFile();
@@ -130,7 +149,7 @@ QQuickItem* ReactViewManager::createView() const {
     return item;
 }
 
-ReactBridge* ReactViewManager::bridge() {
+ReactBridge* ReactViewManager::bridge() const {
     Q_ASSERT(m_bridge);
     return m_bridge;
 }

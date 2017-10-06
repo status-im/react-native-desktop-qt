@@ -20,7 +20,7 @@
 #include "reactactivityindicatormanager.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
+#include "utilities.h"
 #include "reactpropertyhandler.h"
 
 class ReactActivityIndicatorManagerPrivate {};

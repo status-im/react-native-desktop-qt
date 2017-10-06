@@ -36,7 +36,7 @@ private:
     virtual QString qmlComponentFile() const override;
     virtual void configureView(QQuickItem* view) const override;
 
-    QVariantList sliderValueEventArg(QQuickItem* slider, const QString& eventName) const;
+    void notifyJsAboutSliderEvent(QQuickItem* slider, const QString& eventName) const;
 
 private:
     QScopedPointer<ReactSliderManagerPrivate> d_ptr;

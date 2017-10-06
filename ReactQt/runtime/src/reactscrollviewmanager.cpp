@@ -21,12 +21,14 @@
 #include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
-#include "reactevents.h"
 #include "reactitem.h"
 #include "reactpropertyhandler.h"
 #include "reactscrollviewmanager.h"
 #include "reactuimanager.h"
+#include "utilities.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 void ReactScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
@@ -68,50 +70,24 @@ void ReactScrollViewManager::scrollBeginDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-
-    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-    if (rap == nullptr) {
-        qCritical() << "Could not get reacTag for ScrollView!";
-        return;
-    }
-    int reactTag = rap->tag();
-
-    bridge()->enqueueJSCall(
-        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollBeginDrag")});
+    notifyJsAboutEvent(tag(item), "scrollBeginDrag", {});
 }
 
 void ReactScrollViewManager::scrollEndDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-
-    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-    if (rap == nullptr) {
-        qCritical() << "Could not get reacTag for ScrollView!";
-        return;
-    }
-    int reactTag = rap->tag();
-
-    bridge()->enqueueJSCall(
-        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName("scrollEndDrag")});
+    notifyJsAboutEvent(tag(item), "scrollEndDrag", {});
 }
 
 void ReactScrollViewManager::scroll() {
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
 
-    ReactAttachedProperties* ap = ReactAttachedProperties::get(item);
-    if (ap == nullptr) {
-        qCritical() << __PRETTY_FUNCTION__ << "failed to find ReactAttachedProperties";
-        return;
-    }
-
     bool scrollFlagSet = item->property("p_onScroll").toBool();
 
     if (scrollFlagSet) {
-        bridge()->enqueueJSCall("RCTEventEmitter",
-                                "receiveEvent",
-                                QVariantList{ap->tag(), normalizeInputEventName("onScroll"), buildEventData(item)});
+        notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
     }
 }
 
@@ -119,35 +95,14 @@ void ReactScrollViewManager::momentumScrollBegin() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-
-    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-    if (rap == nullptr) {
-        qCritical() << "Could not get reacTag for ScrollView!";
-        return;
-    }
-    int reactTag = rap->tag();
-
-    bridge()->enqueueJSCall(
-        "RCTEventEmitter",
-        "receiveEvent",
-        QVariantList{reactTag, normalizeInputEventName("momentumScrollBegin"), buildEventData(item)});
+    notifyJsAboutEvent(tag(item), "momentumScrollBegin", buildEventData(item));
 }
 
 void ReactScrollViewManager::momentumScrollEnd() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-
-    ReactAttachedProperties* rap = ReactAttachedProperties::get(item, false);
-    if (rap == nullptr) {
-        qCritical() << "Could not get reactTag for ScrollView!";
-        return;
-    }
-    int reactTag = rap->tag();
-
-    bridge()->enqueueJSCall("RCTEventEmitter",
-                            "receiveEvent",
-                            QVariantList{reactTag, normalizeInputEventName("momentumScrollEnd"), buildEventData(item)});
+    notifyJsAboutEvent(tag(item), "momentumScrollEnd", buildEventData(item));
 }
 
 namespace {

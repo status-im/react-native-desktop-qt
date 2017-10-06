@@ -24,7 +24,6 @@ set(
   reactbridge.cpp
   reactdeviceinfo.cpp
   reacteventdispatcher.cpp
-  reactevents.cpp
   reactsourcecode.cpp
   reactcomponentdata.cpp
   reactmoduledata.cpp
