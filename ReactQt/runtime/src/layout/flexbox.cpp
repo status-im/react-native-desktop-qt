@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QQuickItem>
+#include <reactattachedproperties.h>
 
 static QMap<QString, YGFlexDirection> flexDirectionByString{
     {"row", YGFlexDirectionRow},
@@ -74,6 +75,8 @@ public:
     static void updatePropertiesForControlsTree(YGNodeRef node);
     static void updatePropertiesForControl(YGNodeRef node);
 
+    void printNode();
+
     YGNodeRef m_node = nullptr;
     QString m_flexDirection;
     QString m_justifyContent;
@@ -83,14 +86,11 @@ public:
     QString m_alignContent;
     QString m_alignSelf;
     QString m_flexWrap;
-    static QMap<QQuickItem*, Flexbox*> m_FlexboxesForControls;
     QString m_display;
     QString m_overflow;
     QString m_position;
     QString m_direction;
 };
-
-QMap<QQuickItem*, Flexbox*> FlexboxPrivate::m_FlexboxesForControls;
 
 YGSize measure(YGNodeRef node, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode) {
     FlexboxPrivate* d = static_cast<FlexboxPrivate*>(YGNodeGetContext(node));
@@ -136,7 +136,9 @@ void Flexbox::removeChilds(const QList<int>& indicesToRemove) {
 }
 
 Flexbox* Flexbox::findFlexbox(QQuickItem* control) {
-    return FlexboxPrivate::m_FlexboxesForControls[control];
+    Q_ASSERT(control);
+    Flexbox* flexbox = control->property("flexbox").value<Flexbox*>();
+    return flexbox;
 }
 
 void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
@@ -162,7 +164,6 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
 void Flexbox::setControl(QQuickItem* value) {
     if (value != d_ptr->m_control) {
         d_ptr->m_control = value;
-        d_ptr->m_FlexboxesForControls[d_ptr->m_control] = this;
         controlChanged();
     }
 }
@@ -629,6 +630,25 @@ void Flexbox::setDirection(const QString& value) {
 
 bool Flexbox::isDirty() {
     return YGNodeIsDirty(d_ptr->m_node);
+}
+
+void Flexbox::printFlexboxHierarchy() {
+    d_ptr->printNode();
+}
+
+void FlexboxPrivate::printNode() {
+    static int level = 1;
+
+    QString separator(level, '-');
+    qDebug() << separator << " - " << m_control;
+
+    ++level;
+    for (int i = 0; i < YGNodeGetChildCount(m_node); ++i) {
+        YGNodeRef childNode = YGNodeGetChild(m_node, i);
+        FlexboxPrivate* fp = static_cast<FlexboxPrivate*>(YGNodeGetContext(childNode));
+        fp->printNode();
+    }
+    --level;
 }
 
 void printYGNode(YGNodeRef node, const QString& nodeName) {

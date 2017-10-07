@@ -39,6 +39,7 @@
 #include "reactexceptionsmanager.h"
 #include "reactimageloader.h"
 #include "reactimagemanager.h"
+#include "reactmodalmanager.h"
 #include "reactnavigatormanager.h"
 #include "reactnetinfo.h"
 #include "reactnetworking.h"
@@ -92,6 +93,7 @@ public:
             new ReactTextInputManager,
             new ReactButtonManager,
             new ReactSliderManager,
+            new ReactModalManager,
         };
     }
 };

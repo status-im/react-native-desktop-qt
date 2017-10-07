@@ -135,6 +135,7 @@ public:
     void setMeasureFunction(ygnode_measure_function measureFunction);
     void addChild(int index, Flexbox* child);
     void removeChilds(const QList<int>& indicesToRemove);
+    void printFlexboxHierarchy();
 
     static Flexbox* findFlexbox(QQuickItem* control);
 

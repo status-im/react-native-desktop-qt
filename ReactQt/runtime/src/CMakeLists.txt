@@ -56,6 +56,7 @@ set(
   reactnavigatormanager.cpp
   reactactivityindicatormanager.cpp
   reactbuttonmanager.cpp
+  reactmodalmanager.cpp
   layout/flexbox.cpp
   utilities.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.c
@@ -75,6 +76,7 @@ set(
   qml/ReactActivityIndicator.qml
   qml/ReactButton.qml
   qml/ReactSlider.qml
+  qml/ReactModal.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

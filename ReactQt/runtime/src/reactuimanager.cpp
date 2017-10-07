@@ -105,8 +105,9 @@ void ReactUIManager::removeChildren(QQuickItem* parent, const QList<int>& remove
         }
 
         for (QQuickItem* child : itemsToRemove) {
+            int childTag = ReactAttachedProperties::get(child)->tag();
             child->setParent(0);
-            m_views.remove(ReactAttachedProperties::get(child)->tag());
+            m_views.remove(childTag);
             child->deleteLater();
         }
 
