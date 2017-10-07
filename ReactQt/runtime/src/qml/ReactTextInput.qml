@@ -10,9 +10,13 @@ TextArea {
     property string p_text
     property color p_color
     property bool p_multiline: false
+    property bool p_onChange: false
+    property bool p_onSelectionChange: false
     property string p_placeholderText
     property string p_textAlign: "left"
     property string p_selectionColor: "lightblue"
+    property string p_testID
+
 
     property var flexbox: React.Flexbox {control: textInputRoot}
 
@@ -20,6 +24,7 @@ TextArea {
     color: p_color
     placeholderText: p_placeholderText
     selectionColor: p_selectionColor
+    objectName: p_testID
     horizontalAlignment: Utils.alignmentQMLValue(p_textAlign)
 
     selectByKeyboard: true
