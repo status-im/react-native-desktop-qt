@@ -6,6 +6,7 @@ import React 0.1 as React
 Button {
     id: buttonRoot
 
+
     property string p_accessibilityLabel
     property string p_title
     property string p_color: "#e0e0e0"
