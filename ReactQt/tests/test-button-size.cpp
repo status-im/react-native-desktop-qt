@@ -12,10 +12,10 @@
 #include <QTest>
 #include <QtQuick/QQuickView>
 
-#include "layout/flexbox.h"
 #include "bridge.h"
-#include "redboxitem.h"
+#include "layout/flexbox.h"
 #include "reacttestcase.h"
+#include "redboxitem.h"
 #include "testmodule.h"
 
 class TestButtonSize : public ReactTestCase {
