@@ -28,8 +28,7 @@ const QString EVENT_ON_SELECTION_CHANGE = "onSelectionChange";
 
 class TextInputManagerPrivate {};
 
-TextInputManager::TextInputManager(QObject* parent)
-    : ViewManager(parent), d_ptr(new TextInputManagerPrivate) {}
+TextInputManager::TextInputManager(QObject* parent) : ViewManager(parent), d_ptr(new TextInputManagerPrivate) {}
 
 TextInputManager::~TextInputManager() {}
 

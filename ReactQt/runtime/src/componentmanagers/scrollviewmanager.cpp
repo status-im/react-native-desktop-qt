@@ -18,11 +18,11 @@
 
 #include <QDebug>
 
-#include "layout/flexbox.h"
 #include "attachedproperties.h"
 #include "bridge.h"
-#include "reactitem.h"
+#include "layout/flexbox.h"
 #include "propertyhandler.h"
+#include "reactitem.h"
 #include "scrollviewmanager.h"
 #include "uimanager.h"
 #include "utilities.h"

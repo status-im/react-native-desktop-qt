@@ -21,8 +21,7 @@ public:
     Bridge* bridge;
 };
 
-EventDispatcher::EventDispatcher(Bridge* bridge)
-    : QObject(bridge), d_ptr(new EventDispatcherPrivate) {
+EventDispatcher::EventDispatcher(Bridge* bridge) : QObject(bridge), d_ptr(new EventDispatcherPrivate) {
     Q_D(EventDispatcher);
     d->bridge = bridge;
 }

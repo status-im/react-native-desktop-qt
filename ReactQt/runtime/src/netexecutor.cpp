@@ -137,8 +137,8 @@ void NetExecutor::executeApplicationScript(const QByteArray& script, const QUrl&
 }
 
 void NetExecutor::executeJSCall(const QString& method,
-                                     const QVariantList& args,
-                                     const Executor::ExecuteCallback& callback) {
+                                const QVariantList& args,
+                                const Executor::ExecuteCallback& callback) {
     QByteArrayList stringifiedArgs;
     for (const QVariant& arg : args) {
         if (arg.type() == QVariant::List || arg.type() == QVariant::Map) {

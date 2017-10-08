@@ -16,9 +16,9 @@
 #include <QString>
 #include <QVariant>
 
-#include "layout/flexbox.h"
 #include "attachedproperties.h"
 #include "bridge.h"
+#include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "slidermanager.h"
 #include "utilities.h"
@@ -34,8 +34,7 @@ const char SLIDER_VALUE_PROPERTY_NAME[] = "value";
 
 class SliderManagerPrivate {};
 
-SliderManager::SliderManager(QObject* parent)
-    : ViewManager(parent), d_ptr(new SliderManagerPrivate) {}
+SliderManager::SliderManager(QObject* parent) : ViewManager(parent), d_ptr(new SliderManagerPrivate) {}
 
 SliderManager::~SliderManager() {}
 

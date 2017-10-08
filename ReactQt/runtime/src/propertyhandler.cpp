@@ -90,7 +90,7 @@ void PropertyHandler::buildPropertyMap() {
 }
 
 void PropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject,
-                                                       QMap<QString, QMetaProperty>& propertiesMap) {
+                                                  QMap<QString, QMetaProperty>& propertiesMap) {
     // we get all prefixed properties from object and its parents
     const int propertyCount = metaObject->propertyCount();
     for (int i = 0; i < propertyCount; ++i) {

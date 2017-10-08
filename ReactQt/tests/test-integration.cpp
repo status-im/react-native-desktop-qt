@@ -13,8 +13,8 @@
 #include <QtQuick/QQuickView>
 
 #include "bridge.h"
-#include "redboxitem.h"
 #include "reacttestcase.h"
+#include "redboxitem.h"
 #include "testmodule.h"
 
 class TestIntegration : public ReactTestCase {

@@ -181,8 +181,8 @@ void PipeExecutor::executeApplicationScript(const QByteArray& script, const QUrl
 }
 
 void PipeExecutor::executeJSCall(const QString& method,
-                                      const QVariantList& args,
-                                      const Executor::ExecuteCallback& callback) {
+                                 const QVariantList& args,
+                                 const Executor::ExecuteCallback& callback) {
     Q_D(PipeExecutor);
 
     QByteArrayList stringifiedArgs;

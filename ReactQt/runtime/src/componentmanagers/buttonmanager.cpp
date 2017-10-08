@@ -17,10 +17,10 @@
 
 #include <QDebug>
 
-#include "layout/flexbox.h"
 #include "attachedproperties.h"
 #include "bridge.h"
 #include "buttonmanager.h"
+#include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "utilities.h"
 #include <functional>
@@ -47,8 +47,7 @@ QQuickItem* ButtonManagerPrivate::buttonTextControl(QQuickItem* button) const {
     return contentItem;
 }
 
-ButtonManager::ButtonManager(QObject* parent)
-    : ViewManager(parent), d_ptr(new ButtonManagerPrivate) {}
+ButtonManager::ButtonManager(QObject* parent) : ViewManager(parent), d_ptr(new ButtonManagerPrivate) {}
 
 ButtonManager::~ButtonManager() {}
 

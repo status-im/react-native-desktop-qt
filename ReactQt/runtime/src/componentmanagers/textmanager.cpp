@@ -19,8 +19,8 @@
 
 #include <QDebug>
 
-#include "layout/flexbox.h"
 #include "bridge.h"
+#include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "textmanager.h"
 

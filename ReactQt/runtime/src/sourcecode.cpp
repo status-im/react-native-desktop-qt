@@ -31,7 +31,7 @@ public:
 };
 
 void SourceCode::getScriptText(const ModuleInterface::ListArgumentBlock& resolve,
-                                    const ModuleInterface::ListArgumentBlock& reject) {
+                               const ModuleInterface::ListArgumentBlock& reject) {
     Q_D(SourceCode);
     if (!d->sourceCode.isNull())
         resolve(d->bridge, QVariantList{QVariantMap{{"text", d->sourceCode}, {"url", d->scriptUrl.toString()}}});

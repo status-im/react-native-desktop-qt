@@ -30,10 +30,10 @@ using namespace utilities;
 
 namespace {
 static QMap<ImageLoader::Event, QString> eventNames{{ImageLoader::Event_LoadStart, "onLoadStart"},
-                                                         {ImageLoader::Event_Progress, "onProgress"},
-                                                         {ImageLoader::Event_LoadError, "onError"},
-                                                         {ImageLoader::Event_LoadSuccess, "onLoad"},
-                                                         {ImageLoader::Event_LoadEnd, "onLoadEnd"}};
+                                                    {ImageLoader::Event_Progress, "onProgress"},
+                                                    {ImageLoader::Event_LoadError, "onError"},
+                                                    {ImageLoader::Event_LoadSuccess, "onLoad"},
+                                                    {ImageLoader::Event_LoadEnd, "onLoadEnd"}};
 }
 
 class ImageManagerPrivate {

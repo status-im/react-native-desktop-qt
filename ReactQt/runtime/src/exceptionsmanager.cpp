@@ -21,23 +21,19 @@ public:
     Bridge* bridge = nullptr;
 };
 
-void ExceptionsManager::reportSoftException(const QString& message,
-                                                 const QList<QVariantMap>& stack,
-                                                 int exceptionId) {
+void ExceptionsManager::reportSoftException(const QString& message, const QList<QVariantMap>& stack, int exceptionId) {
     d_func()->bridge->redbox()->showErrorMessage(message, stack);
 }
 
-void ExceptionsManager::reportFatalException(const QString& message,
-                                                  const QList<QVariantMap>& stack,
-                                                  int exceptionId) {
+void ExceptionsManager::reportFatalException(const QString& message, const QList<QVariantMap>& stack, int exceptionId) {
     d_func()->bridge->redbox()->showErrorMessage(message, stack);
 
     // XXX: leaving out reload attempts for now
 }
 
 void ExceptionsManager::updateExceptionMessage(const QString& message,
-                                                    const QList<QVariantMap>& stack,
-                                                    int exceptionId) {
+                                               const QList<QVariantMap>& stack,
+                                               int exceptionId) {
     d_func()->bridge->redbox()->updateErrorMessage(message, stack);
 }
 
@@ -45,8 +41,7 @@ void ExceptionsManager::reportUnhandledException(const QString& message, const Q
     reportFatalException(message, stack, 1);
 }
 
-ExceptionsManager::ExceptionsManager(QObject* parent)
-    : QObject(parent), d_ptr(new ExceptionsManagerPrivate) {}
+ExceptionsManager::ExceptionsManager(QObject* parent) : QObject(parent), d_ptr(new ExceptionsManagerPrivate) {}
 
 ExceptionsManager::~ExceptionsManager() {}
 

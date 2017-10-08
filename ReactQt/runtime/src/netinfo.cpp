@@ -40,7 +40,7 @@ public:
 };
 
 void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& resolve,
-                                          const ModuleInterface::ListArgumentBlock& reject) {
+                                     const ModuleInterface::ListArgumentBlock& reject) {
     Q_UNUSED(reject);
     Q_D(NetInfo);
     resolve(d->bridge,

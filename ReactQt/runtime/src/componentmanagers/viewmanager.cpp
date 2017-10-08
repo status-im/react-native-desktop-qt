@@ -17,15 +17,15 @@
 #include <QString>
 #include <QVariant>
 
-#include "layout/flexbox.h"
 #include "attachedproperties.h"
 #include "bridge.h"
-#include "reactitem.h"
+#include "layout/flexbox.h"
 #include "propertyhandler.h"
+#include "reactitem.h"
 #include "textmanager.h"
+#include "utilities.h"
 #include "valuecoercion.h"
 #include "viewmanager.h"
-#include "utilities.h"
 
 using namespace utilities;
 

@@ -19,10 +19,10 @@
 
 #include <QDebug>
 
-#include "layout/flexbox.h"
 #include "attachedproperties.h"
 #include "bridge.h"
 #include "imageloader.h"
+#include "layout/flexbox.h"
 #include "modalmanager.h"
 #include "propertyhandler.h"
 #include "utilities.h"
