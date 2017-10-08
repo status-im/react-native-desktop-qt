@@ -50,9 +50,11 @@ public:
 
 protected:
     QQuickItem* createView() const;
-    ReactBridge* bridge();
+    ReactBridge* bridge() const;
     virtual void configureView(QQuickItem* view) const;
     virtual QString qmlComponentFile() const;
+    void notifyJsAboutEvent(int senderTag, const QString& eventName, const QVariantMap& eventData) const;
+    int tag(QQuickItem* view) const;
 
 public slots:
     void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);

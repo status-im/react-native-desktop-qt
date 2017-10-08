@@ -33,7 +33,7 @@ public:
     virtual QStringList customDirectEventTypes() override;
 
 public slots:
-    void manageSource(const QVariantMap& imageSource, QObject* image);
+    void manageSource(const QVariantMap& imageSource, QQuickItem* image);
 
 private:
     virtual void configureView(QQuickItem* view) const override;

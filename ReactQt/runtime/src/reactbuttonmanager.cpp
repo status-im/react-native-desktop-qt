@@ -21,9 +21,11 @@
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
 #include "reactbuttonmanager.h"
-#include "reactevents.h"
 #include "reactpropertyhandler.h"
+#include "utilities.h"
 #include <functional>
+
+using namespace utilities;
 
 extern "C" {
 #include "../../../ReactCommon/yoga/yoga/Yoga.h"
@@ -65,9 +67,7 @@ QStringList ReactButtonManager::customDirectEventTypes() {
 }
 
 void ReactButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
-    int reactTag = ReactAttachedProperties::get(button)->tag();
-    bridge()->enqueueJSCall(
-        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName(EVENT_ONPRESSED), {}});
+    notifyJsAboutEvent(tag(button), EVENT_ONPRESSED, {});
 }
 
 QString ReactButtonManager::qmlComponentFile() const {

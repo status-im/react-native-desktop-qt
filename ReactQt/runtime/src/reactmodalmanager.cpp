@@ -22,11 +22,12 @@
 #include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactimageloader.h"
 #include "reactmodalmanager.h"
 #include "reactpropertyhandler.h"
 #include "utilities.h"
+
+using namespace utilities;
 
 const QString EVENT_ONSHOW = "onShow";
 
@@ -61,9 +62,7 @@ QStringList ReactModalManager::customDirectEventTypes() {
 }
 
 void ReactModalManager::sendOnShowNotificationToJs(QQuickItem* modal) {
-    int reactTag = ReactAttachedProperties::get(modal)->tag();
-    bridge()->enqueueJSCall(
-        "RCTEventEmitter", "receiveEvent", QVariantList{reactTag, normalizeInputEventName(EVENT_ONSHOW), {}});
+    notifyJsAboutEvent(tag(modal), EVENT_ONSHOW, {});
 }
 
 void ReactModalManager::configureView(QQuickItem* modal) const {

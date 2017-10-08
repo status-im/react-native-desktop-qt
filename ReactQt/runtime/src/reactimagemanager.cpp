@@ -21,10 +21,12 @@
 
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactimageloader.h"
 #include "reactimagemanager.h"
 #include "reactpropertyhandler.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 namespace {
 static QMap<ReactImageLoader::Event, QString> eventNames{{ReactImageLoader::Event_LoadStart, "onLoadStart"},
@@ -61,7 +63,7 @@ QStringList ReactImageManager::customDirectEventTypes() {
                        normalizeInputEventName("onLoadEnd")};
 }
 
-void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* image) {
+void ReactImageManager::manageSource(const QVariantMap& imageSource, QQuickItem* image) {
     Q_D(ReactImageManager);
 
     auto imageLoader = bridge()->imageLoader();
@@ -81,11 +83,10 @@ void ReactImageManager::manageSource(const QVariantMap& imageSource, QObject* im
         if (event == ReactImageLoader::Event_LoadSuccess) {
             d->setSource(image, source);
         }
-        if (image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool()) {
-            int reactTag = ReactAttachedProperties::get(qobject_cast<QQuickItem*>(image))->tag();
-            bridge()->enqueueJSCall("RCTEventEmitter",
-                                    "receiveEvent",
-                                    QVariantList{reactTag, normalizeInputEventName(eventNames[event]), data});
+        bool eventHandlerSet =
+            image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool();
+        if (eventHandlerSet) {
+            notifyJsAboutEvent(tag(image), eventNames[event], data);
         }
     });
 }

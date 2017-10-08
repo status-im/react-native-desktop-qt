@@ -19,9 +19,9 @@
 
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactpropertyhandler.h"
 #include "reacttextinputmanager.h"
+#include "utilities.h"
 
 const QString EVENT_ON_TEXT_CHANGE = "onChange";
 const QString EVENT_ON_SELECTION_CHANGE = "onSelectionChange";
@@ -61,11 +61,8 @@ void ReactTextInputManager::sendTextEditedToJs(QQuickItem* textInput) {
         return;
 
     QString text = textInput->property("text").toString();
-    int reactTag = ReactAttachedProperties::get(textInput)->tag();
-    QVariantList args = QVariantList{
-        reactTag, normalizeInputEventName(EVENT_ON_TEXT_CHANGE), QVariantMap{{"target", reactTag}, {"text", text}}};
 
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent", args);
+    notifyJsAboutEvent(tag(textInput), EVENT_ON_TEXT_CHANGE, QVariantMap{{"target", tag(textInput)}, {"text", text}});
 }
 
 void ReactTextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
@@ -74,14 +71,10 @@ void ReactTextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
     int start = textInput->property("selectionStart").toInt();
     int end = textInput->property("selectionEnd").toInt();
 
-    int reactTag = ReactAttachedProperties::get(textInput)->tag();
     QVariantMap startEnd = QVariantMap{{"start", start}, {"end", end}};
 
-    QVariantList args = QVariantList{reactTag,
-                                     normalizeInputEventName(EVENT_ON_SELECTION_CHANGE),
-                                     QVariantMap{{"target", reactTag}, {"selection", startEnd}}};
-
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent", args);
+    notifyJsAboutEvent(
+        tag(textInput), EVENT_ON_SELECTION_CHANGE, QVariantMap{{"target", tag(textInput)}, {"selection", startEnd}});
 }
 
 #include "reacttextinputmanager.moc"

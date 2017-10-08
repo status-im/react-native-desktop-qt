@@ -19,10 +19,12 @@
 
 #include "reactattachedproperties.h"
 #include "reactcomponentdata.h"
-#include "reactevents.h"
 #include "reactmoduledata.h"
 #include "reactpropertyhandler.h"
 #include "reactviewmanager.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 ReactComponentData::ReactComponentData(ReactModuleData* moduleData) : m_moduleData(moduleData) {
     m_moduleInterface = m_moduleData->viewManager();

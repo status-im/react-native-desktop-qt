@@ -17,9 +17,11 @@
 #include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactuimanager.h"
 #include "rootview.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 namespace {
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {

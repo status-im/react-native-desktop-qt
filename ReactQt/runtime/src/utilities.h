@@ -12,9 +12,12 @@
 #ifndef UTILITIES
 #define UTILITIES
 
+#include <QString>
+
 namespace utilities {
 
 void registerReactTypes();
+QString normalizeInputEventName(const QString& eventName);
 }
 
 #endif // UTILITIES

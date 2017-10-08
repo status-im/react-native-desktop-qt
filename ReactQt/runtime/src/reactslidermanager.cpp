@@ -19,9 +19,11 @@
 #include "layout/flexbox.h"
 #include "reactattachedproperties.h"
 #include "reactbridge.h"
-#include "reactevents.h"
 #include "reactpropertyhandler.h"
 #include "reactslidermanager.h"
+#include "utilities.h"
+
+using namespace utilities;
 
 namespace {
 const QString EVENT_ON_VALUE_CHANGED = "onValueChange";
@@ -54,15 +56,13 @@ QStringList ReactSliderManager::customDirectEventTypes() {
 void ReactSliderManager::sendSliderValueChangedToJs(QQuickItem* slider) {
     if (!slider)
         return;
-    QVariantList args = sliderValueEventArg(slider, EVENT_ON_VALUE_CHANGED);
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent", args);
+    notifyJsAboutSliderEvent(slider, EVENT_ON_VALUE_CHANGED);
 }
 
 void ReactSliderManager::sendSlidingCompleteToJs(QQuickItem* slider) {
     if (!slider)
         return;
-    QVariantList args = sliderValueEventArg(slider, EVENT_ON_SLIDING_COMPLETE);
-    bridge()->enqueueJSCall("RCTEventEmitter", "receiveEvent", args);
+    notifyJsAboutSliderEvent(slider, EVENT_ON_SLIDING_COMPLETE);
 }
 
 QString ReactSliderManager::qmlComponentFile() const {
@@ -74,14 +74,12 @@ void ReactSliderManager::configureView(QQuickItem* view) const {
     view->setProperty("sliderManager", QVariant::fromValue((QObject*)this));
 }
 
-QVariantList ReactSliderManager::sliderValueEventArg(QQuickItem* slider, const QString& eventName) const {
+void ReactSliderManager::notifyJsAboutSliderEvent(QQuickItem* slider, const QString& eventName) const {
     if (!slider)
-        return QVariantList();
+        return;
 
     double sliderValue = slider->property(SLIDER_VALUE_PROPERTY_NAME).toDouble();
-    int reactTag = ReactAttachedProperties::get(slider)->tag();
-    return QVariantList{
-        reactTag, normalizeInputEventName(eventName), QVariantMap{{"target", reactTag}, {"value", sliderValue}}};
+    notifyJsAboutEvent(tag(slider), eventName, QVariantMap{{"target", tag(slider)}, {"value", sliderValue}});
 }
 
 #include "reactslidermanager.moc"
