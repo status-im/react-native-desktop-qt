@@ -7,5 +7,6 @@
         <file>TestSliderProps.qml</file>
         <file>TestButtonSize.qml</file>
         <file>TestModalProps.qml</file>
+        <file>TestTextInputProps.qml</file>
     </qresource>
 </RCC>

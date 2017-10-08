@@ -26,7 +26,6 @@
 #include "scrollviewmanager.h"
 #include "uimanager.h"
 #include "utilities.h"
-#include "utilities.h"
 
 using namespace utilities;
 

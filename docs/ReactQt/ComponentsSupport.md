@@ -26,7 +26,7 @@
 | TabBarIOS                   |           |                |                 |                                |            |
 | TabBarIOS.Item              |           |                |                 |                                |            |
 | Text                        | ?         | +              | +/-             |                                |            |
-| TextInput                   |           | +              |                 | TextInput QML Type or eq.      | medium     |
+| TextInput                   |           | +              | +/-             | TextArea QML Type              | medium     |
 | ToolbarAndroid              |           |                |                 |                                |            |
 | TouchableHighlight          | ?         | +              |                 |                                | medium++   |
 | TouchableNativeFeedback     | ?         |                |                 |                                |            |
