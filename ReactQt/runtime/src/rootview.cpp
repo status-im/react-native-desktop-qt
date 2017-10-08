@@ -14,11 +14,11 @@
 #include <QQmlEngine>
 #include <QTimer>
 
+#include "attachedproperties.h"
+#include "bridge.h"
 #include "layout/flexbox.h"
-#include "reactattachedproperties.h"
-#include "reactbridge.h"
-#include "reactuimanager.h"
 #include "rootview.h"
+#include "uimanager.h"
 #include "utilities.h"
 
 using namespace utilities;
@@ -41,7 +41,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
         local = target->mapToItem(next, local);
     }
 
-    ReactAttachedProperties* ap = ReactAttachedProperties::get(target, false);
+    AttachedProperties* ap = AttachedProperties::get(target, false);
     if (ap == nullptr) {
         qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
         return e;
@@ -75,8 +75,8 @@ public:
     QUrl codeLocation;
     QVariantMap properties;
     QString pluginsPath;
-    QString executor = "ReactNetExecutor";
-    ReactBridge* bridge = nullptr;
+    QString executor = "NetExecutor";
+    Bridge* bridge = nullptr;
     RootView* q_ptr;
 
     RootViewPrivate(RootView* q) : q_ptr(q) {}
@@ -119,7 +119,7 @@ RootView::RootView(QQuickItem* parent) : ReactItem(parent), d_ptr(new RootViewPr
     setAcceptedMouseButtons(Qt::LeftButton);
     setFiltersChildMouseEvents(true);
 
-    d->bridge = new ReactBridge(this);
+    d->bridge = new Bridge(this);
     connect(d->bridge, SIGNAL(readyChanged()), SLOT(bridgeReady()));
 
     connect(this, SIGNAL(liveReloadChanged()), d, SLOT(onLiveReloadChanged()));
@@ -202,7 +202,7 @@ void RootView::setExecutor(const QString& executor) {
     Q_EMIT executorChanged();
 }
 
-ReactBridge* RootView::bridge() const {
+Bridge* RootView::bridge() const {
     return d_func()->bridge;
 }
 
@@ -236,7 +236,7 @@ void RootView::bridgeReady() {
         return;
 
     // XXX: should do the root view tag allocation internally
-    ReactAttachedProperties* ap = ReactAttachedProperties::get(this);
+    AttachedProperties* ap = AttachedProperties::get(this);
     ap->setTag(d->bridge->uiManager()->allocateRootTag());
     d->bridge->uiManager()->registerRootView(this);
 

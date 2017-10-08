@@ -14,11 +14,11 @@
 #include <QMetaType>
 #include <QtQml>
 
+#include "attachedproperties.h"
+#include "componentmanagers/imagemanager.h"
+#include "componentmanagers/viewmanager.h"
 #include "layout/flexbox.h"
-#include "reactattachedproperties.h"
-#include "reactimagemanager.h"
 #include "reactitem.h"
-#include "reactviewmanager.h"
 #include "rootview.h"
 #include "utilities.h"
 
@@ -28,21 +28,21 @@ const int MINOR_VERSION = 1;
 namespace utilities {
 
 void registerReactTypes() {
-    qmlRegisterUncreatableType<ReactAttachedProperties>(
+    qmlRegisterUncreatableType<AttachedProperties>(
         "React", MAJOR_VERSION, MINOR_VERSION, "React", "React is not meant to be created directly");
     qmlRegisterType<ReactItem>("React", MAJOR_VERSION, MINOR_VERSION, "Item");
     qmlRegisterType<RootView>("React", MAJOR_VERSION, MINOR_VERSION, "RootView");
     qmlRegisterType<Flexbox>("React", MAJOR_VERSION, MINOR_VERSION, "Flexbox");
-    qmlRegisterUncreatableType<ReactImageManager>("React",
-                                                  MAJOR_VERSION,
-                                                  MINOR_VERSION,
-                                                  "ReactImageManager",
-                                                  "ReactImageManager is not meant to be created directly");
-    qmlRegisterUncreatableType<ReactViewManager>("React",
-                                                 MAJOR_VERSION,
-                                                 MINOR_VERSION,
-                                                 "ReactViewManager",
-                                                 "ReactViewManager is not meant to be created directly");
+    qmlRegisterUncreatableType<ImageManager>("React",
+                                             MAJOR_VERSION,
+                                             MINOR_VERSION,
+                                             "ReactImageManager",
+                                             "ReactImageManager is not meant to be created directly");
+    qmlRegisterUncreatableType<ViewManager>("React",
+                                            MAJOR_VERSION,
+                                            MINOR_VERSION,
+                                            "ReactViewManager",
+                                            "ReactViewManager is not meant to be created directly");
 }
 
 QString normalizeInputEventName(const QString& eventName) {

@@ -12,10 +12,10 @@
 #include <QTest>
 #include <QtQuick/QQuickView>
 
-#include "reactbridge.h"
-#include "reactredboxitem.h"
+#include "bridge.h"
 #include "reacttestcase.h"
-#include "reacttestmodule.h"
+#include "redboxitem.h"
+#include "testmodule.h"
 
 class TestIntegration : public ReactTestCase {
     Q_OBJECT
@@ -32,9 +32,9 @@ void TestIntegration::testTestModuleMarkTestCompleted() {
     loadQML(QUrl("qrc:/TestModuleTest.qml"));
     waitAndVerifyBridgeReady();
 
-    ReactTestModule* testModule = bridge()->testModule();
+    TestModule* testModule = bridge()->testModule();
     QVERIFY(testModule);
-    QSignalSpy spy(testModule, &ReactTestModule::testCompleted);
+    QSignalSpy spy(testModule, &TestModule::testCompleted);
 
     waitAndVerifyJsAppStarted();
 
