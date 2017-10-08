@@ -19,6 +19,7 @@ Button {
         p_minHeight: buttonRoot.contentItem.contentHeight + 2*priv.textMargin
     }
 
+
     QtObject {
         id: priv
         property int textMargin: 5
