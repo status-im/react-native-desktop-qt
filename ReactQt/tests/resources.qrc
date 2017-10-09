@@ -8,5 +8,6 @@
         <file>TestButtonSize.qml</file>
         <file>TestModalProps.qml</file>
         <file>TestTextInputProps.qml</file>
+        <file>TestPickerProps.qml</file>
     </qresource>
 </RCC>

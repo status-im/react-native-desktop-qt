@@ -48,6 +48,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'TouchableExample',
     module: require('./TouchableExample'),
+  },
+  {
+    key: 'PickerExample',
+    module: require('./PickerExample'),
   }
 ];
 

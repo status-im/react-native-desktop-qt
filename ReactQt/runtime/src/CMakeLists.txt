@@ -56,6 +56,7 @@ set(
   componentmanagers/textinputmanager.cpp
   componentmanagers/imagemanager.cpp
   componentmanagers/imageloader.cpp
+  componentmanagers/pickermanager.cpp
   layout/flexbox.cpp
   utilities.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.c

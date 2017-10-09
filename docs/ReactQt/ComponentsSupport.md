@@ -11,7 +11,7 @@
 | ListView                    |           | +              |                 | ListView QML Type              | complex    |
 | Modal                       |           | +              | +/-             | Dialog QML Type                | medium     |
 | NavigatorIOS                | ?         |                |                 |                                |            |
-| Picker                      |           | +              |                 | Tumbler or Combobox QML Type   | medium     |
+| Picker                      |           | +              | +/-             | Tumbler QML Type               | medium     |
 | PickerIOS                   |           |                |                 |                                |            |
 | ProgressBarAndroid          |           |                |                 |                                |            |
 | ProgressViewIOS             |           |                |                 |                                |            |

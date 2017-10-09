@@ -14,5 +14,6 @@
         <file>qml/ReactTextInput.qml</file>
         <file>js/utils.js</file>
         <file>qml/ReactModal.qml</file>
+        <file>qml/ReactPicker.qml</file>
     </qresource>
 </RCC>
