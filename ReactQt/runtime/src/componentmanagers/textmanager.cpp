@@ -55,7 +55,7 @@ QString TextManager::qmlComponentFile() const {
 }
 
 void TextManager::configureView(QQuickItem* view) const {
-    RawTextManager::configureView(view);
+    ViewManager::configureView(view);
     view->setProperty("textManager", QVariant::fromValue((QObject*)this));
 }
 

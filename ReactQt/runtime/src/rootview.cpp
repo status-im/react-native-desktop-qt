@@ -23,6 +23,10 @@
 
 using namespace utilities;
 
+const QString TOUCH_START = "touchStart";
+const QString TOUCH_END = "touchEnd";
+const QString TOUCH_MOVE = "touchMove";
+
 namespace {
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     const QPointF& lp = event->localPos();
@@ -272,45 +276,31 @@ void RootView::componentComplete() {
     });
 }
 
-void RootView::mousePressEvent(QMouseEvent* event) {
-    // qDebug() << __PRETTY_FUNCTION__;
+void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
     Q_D(RootView);
+    qDebug() << "Send event: " << eventType;
 
-    QVariantMap e = makeReactTouchEvent(this, event);
+    QVariantMap e = makeReactTouchEvent(receiver, event);
     if (e.isEmpty())
         return;
 
     d->bridge->enqueueJSCall("RCTEventEmitter",
                              "receiveTouches",
-                             QVariantList{normalizeInputEventName("touchStart"), QVariantList{e}, QVariantList{0}});
+                             QVariantList{normalizeInputEventName(eventType), QVariantList{e}, QVariantList{0}});
     event->setAccepted(true);
+}
+
+void RootView::mousePressEvent(QMouseEvent* event) {
+    sendMouseEvent(event, TOUCH_START, this);
 }
 
 // TODO: optimize this
 void RootView::mouseMoveEvent(QMouseEvent* event) {
-    Q_D(RootView);
-
-    QVariantMap e = makeReactTouchEvent(this, event);
-    if (e.isEmpty())
-        return;
-
-    d->bridge->enqueueJSCall("RCTEventEmitter",
-                             "receiveTouches",
-                             QVariantList{normalizeInputEventName("touchMove"), QVariantList{e}, QVariantList{0}});
+    sendMouseEvent(event, TOUCH_MOVE, this);
 }
 
 void RootView::mouseReleaseEvent(QMouseEvent* event) {
-    // qDebug() << __PRETTY_FUNCTION__;
-    Q_D(RootView);
-
-    QVariantMap e = makeReactTouchEvent(this, event);
-    if (e.isEmpty())
-        return;
-
-    d->bridge->enqueueJSCall("RCTEventEmitter",
-                             "receiveTouches",
-                             QVariantList{normalizeInputEventName("touchEnd"), QVariantList{e}, QVariantList{0}});
-    event->setAccepted(true);
+    sendMouseEvent(event, TOUCH_END, this);
 }
 
 bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
@@ -318,7 +308,6 @@ bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
     Q_D(RootView);
 
     switch (event->type()) {
-    // case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonRelease:
     case QEvent::MouseMove:
@@ -327,26 +316,17 @@ bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
         return false;
     }
 
-    QVariantMap e = makeReactTouchEvent(item, static_cast<QMouseEvent*>(event));
-    if (e.isEmpty())
-        return false;
-
     QString eventName;
     if (event->type() == QEvent::MouseButtonPress) {
-        eventName = "touchStart";
+        eventName = TOUCH_START;
     } else if (event->type() == QEvent::MouseButtonRelease) {
-        eventName = "touchEnd";
+        eventName = TOUCH_END;
     } else if (event->type() == QEvent::MouseMove) {
-        eventName = "touchMove";
+        eventName = TOUCH_MOVE;
     }
 
-    QTimer::singleShot(0, [=]() {
-        d->bridge->enqueueJSCall("RCTEventEmitter",
-                                 "receiveTouches",
-                                 QVariantList{normalizeInputEventName(eventName), QVariantList{e}, QVariantList{0}});
-    });
+    sendMouseEvent(static_cast<QMouseEvent*>(event), eventName, item);
 
-    event->setAccepted(true);
     return false;
 }
 
