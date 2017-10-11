@@ -43,5 +43,5 @@ void RawTextManager::configureView(QQuickItem* view) const {
 }
 
 QString RawTextManager::qmlComponentFile() const {
-    return ":/qml/ReactRawText.qml";
+    return "qrc:/qml/ReactRawText.qml";
 }

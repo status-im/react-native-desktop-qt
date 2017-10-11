@@ -143,7 +143,7 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
 }
 
 QString ScrollViewManager::qmlComponentFile() const {
-    return ":/qml/ReactScrollView.qml";
+    return "qrc:/qml/ReactScrollView.qml";
 }
 
 #include "scrollviewmanager.moc"

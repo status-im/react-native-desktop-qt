@@ -70,7 +70,7 @@ void ButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
 }
 
 QString ButtonManager::qmlComponentFile() const {
-    return ":/qml/ReactButton.qml";
+    return "qrc:/qml/ReactButton.qml";
 }
 
 void ButtonManager::configureView(QQuickItem* button) const {

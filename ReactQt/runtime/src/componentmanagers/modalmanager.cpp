@@ -71,7 +71,7 @@ void ModalManager::configureView(QQuickItem* modal) const {
 }
 
 QString ModalManager::qmlComponentFile() const {
-    return ":/qml/ReactModal.qml";
+    return "qrc:/qml/ReactModal.qml";
 }
 
 #include "modalmanager.moc"

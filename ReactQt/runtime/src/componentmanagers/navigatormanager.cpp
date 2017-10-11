@@ -88,7 +88,7 @@ void NavigatorManager::configureView(QQuickItem* view) const {
 }
 
 QString NavigatorManager::qmlComponentFile() const {
-    return ":/qml/ReactNavigator.qml";
+    return "qrc:/qml/ReactNavigator.qml";
 }
 
 #define _R_ARG(argn) QGenericArgument(argn.typeName(), argn.data())
