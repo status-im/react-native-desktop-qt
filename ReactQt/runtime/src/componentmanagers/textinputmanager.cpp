@@ -41,7 +41,7 @@ QString TextInputManager::moduleName() {
 }
 
 QString TextInputManager::qmlComponentFile() const {
-    return ":/qml/ReactTextInput.qml";
+    return "qrc:/qml/ReactTextInput.qml";
 }
 
 void TextInputManager::configureView(QQuickItem* view) const {

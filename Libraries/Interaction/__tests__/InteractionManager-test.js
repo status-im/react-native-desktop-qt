@@ -298,7 +298,7 @@ describe('promise tasks', () => {
 
   it('resolves async tasks recusively before other queued tasks', () => {
     return new Promise(bigAsyncTest);
-  });
+  }, 20000);
 
   it('should also work with a deadline', () => {
     InteractionManager.setDeadline(100);

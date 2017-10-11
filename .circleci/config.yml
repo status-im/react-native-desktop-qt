@@ -63,7 +63,9 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
 
-      - run: npm install
+      - run: |
+          rm -rf ./node_modules/metro-bundler
+          npm install
 
       # Apply metro-bundler patch to add ubuntu platform
       - run: patch --verbose -d ./node_modules/metro-bundler/src -i ../../../add-ubuntu-platform.patch

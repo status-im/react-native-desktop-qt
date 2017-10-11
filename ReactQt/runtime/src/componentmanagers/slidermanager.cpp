@@ -65,7 +65,7 @@ void SliderManager::sendSlidingCompleteToJs(QQuickItem* slider) {
 }
 
 QString SliderManager::qmlComponentFile() const {
-    return ":/qml/ReactSlider.qml";
+    return "qrc:/qml/ReactSlider.qml";
 }
 
 void SliderManager::configureView(QQuickItem* view) const {

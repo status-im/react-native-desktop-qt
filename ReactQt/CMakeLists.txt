@@ -7,5 +7,7 @@
 # of patent rights can be found in the PATENTS file in the same directory.
 
 include_directories(runtime/src)
+set (APP_NAME "ReactNativeApp")
+add_subdirectory(application)
 add_subdirectory(runtime)
 add_subdirectory(tests)

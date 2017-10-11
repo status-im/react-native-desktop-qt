@@ -115,7 +115,7 @@ void ViewManager::configureView(QQuickItem* view) const {
 }
 
 QString ViewManager::qmlComponentFile() const {
-    return ":/qml/ReactView.qml";
+    return "qrc:/qml/ReactView.qml";
 }
 
 void ViewManager::notifyJsAboutEvent(int senderTag, const QString& eventName, const QVariantMap& eventData) const {
@@ -136,7 +136,7 @@ int ViewManager::tag(QQuickItem* view) const {
 QQuickItem* ViewManager::createView() const {
     QQmlComponent component(m_bridge->qmlEngine());
     auto file = qmlComponentFile();
-    component.loadUrl(QUrl::fromLocalFile(file));
+    component.loadUrl(QUrl(file));
     if (!component.isReady()) {
         qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
         return nullptr;

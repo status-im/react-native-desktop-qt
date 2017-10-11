@@ -88,6 +88,7 @@
     "android",
     "ReactQt",
     "ubuntu-server.js",
+    "add-ubuntu-platform.patch",
     "cli.js",
     "flow",
     "init.sh",
@@ -210,7 +211,9 @@
     "xmldoc": "^0.4.0",
     "xpipe": "^1.0.5",
     "xtend": ">=4.0.0 <4.1.0-0",
-    "yargs": "^6.4.0"
+    "yargs": "^6.4.0",
+    "yeoman-environment": "^1.2.7",
+    "yeoman-generator": "^0.20.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
