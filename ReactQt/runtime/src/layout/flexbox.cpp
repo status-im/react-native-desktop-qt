@@ -618,7 +618,7 @@ void Flexbox::setPosition(const QString& value) {
 }
 
 QString Flexbox::direction() {
-    d_ptr->m_direction;
+    return d_ptr->m_direction;
 }
 
 void Flexbox::setDirection(const QString& value) {

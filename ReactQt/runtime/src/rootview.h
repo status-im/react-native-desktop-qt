@@ -82,6 +82,7 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
+    void sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver);
 
     QScopedPointer<RootViewPrivate> d_ptr;
 };

@@ -44,6 +44,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'TextInputExample',
     module: require('./TextInputExample'),
+  },
+  {
+    key: 'TouchableExample',
+    module: require('./TouchableExample'),
   }
 ];
 
