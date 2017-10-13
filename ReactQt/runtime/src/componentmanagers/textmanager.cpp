@@ -51,7 +51,7 @@ bool TextManager::shouldLayout() const {
 }
 
 QString TextManager::qmlComponentFile() const {
-    return ":/qml/ReactText.qml";
+    return "qrc:/qml/ReactText.qml";
 }
 
 void TextManager::configureView(QQuickItem* view) const {

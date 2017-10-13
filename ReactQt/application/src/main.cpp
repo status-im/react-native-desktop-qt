@@ -13,12 +13,10 @@
 #include <QQuickView>
 #include <QUrl>
 
-#include "reactattachedproperties.h"
-#include "reactflexlayout.h"
+#include "attachedproperties.h"
 #include "reactitem.h"
-#include "reactrawtextproperties.h"
-#include "reacttextproperties.h"
-#include "reactview.h"
+#include "rootview.h"
+#include "utilities.h"
 
 // TODO: some way to change while running
 class ReactNativeProperties : public QObject {
@@ -116,26 +114,16 @@ private:
     QString m_packagerTemplate = "http://%1:%2/index.ubuntu.bundle?platform=ubuntu&dev=true";
     QUrl m_codeLocation;
     QString m_pluginsPath;
-    QString m_executor = "ReactPipeExecutor";
+    QString m_executor = "NetExecutor";
 };
-
-void registerTypes() {
-    qmlRegisterUncreatableType<ReactAttachedProperties>(
-        "React", 0, 1, "React", "React is not meant to be created directly");
-    qmlRegisterUncreatableType<ReactFlexLayout>("React", 0, 1, "Flex", "Flex is not meant to be created directly");
-    qmlRegisterUncreatableType<ReactTextProperties>("React", 0, 1, "Text", "Text is not meant to be created directly");
-    qmlRegisterUncreatableType<ReactRawTextProperties>(
-        "React", 0, 1, "RawText", "Text is not meant to be created directly");
-    qmlRegisterType<ReactItem>("React", 0, 1, "Item");
-    qmlRegisterType<ReactView>("React", 0, 1, "RootView");
-}
 
 int main(int argc, char** argv) {
     QGuiApplication app(argc, argv);
+    Q_INIT_RESOURCE(react_resources);
     QQuickView view;
     ReactNativeProperties* rnp = new ReactNativeProperties(&view);
 
-    registerTypes();
+    utilities::registerReactTypes();
 
     QCommandLineParser p;
     p.setApplicationDescription("React Native host application");

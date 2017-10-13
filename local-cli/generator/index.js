@@ -65,18 +65,6 @@ module.exports = yeoman.generators.NamedBase.extend({
       }
     );
 
-    this.fs.copy(
-      this.templatePath('_gitignore'),
-      this.destinationPath('.gitignore')
-    );
-    this.fs.copy(
-      this.templatePath('_watchmanconfig'),
-      this.destinationPath('.watchmanconfig')
-    );
-    this.fs.copy(
-      this.templatePath('_buckconfig'),
-      this.destinationPath('.buckconfig')
-    );
   },
 
   writing: function() {
