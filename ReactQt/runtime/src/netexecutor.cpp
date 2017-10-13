@@ -42,7 +42,11 @@ public:
     QQueue<Executor::ExecuteCallback> responseQueue;
 
     void processRequests() {
-        if (socket->state() != QAbstractSocket::ConnectedState || requestQueue.isEmpty()) {
+        bool socketNotConnected = socket->state() != QAbstractSocket::ConnectedState;
+        bool queueEmpty = requestQueue.isEmpty();
+        if (socketNotConnected || queueEmpty) {
+            qDebug() << "!socket Process Request ERROR!, not connected: " << socketNotConnected
+                     << " queue empty: " << queueEmpty;
             return;
         }
 
@@ -50,34 +54,18 @@ public:
         quint32 length = request.size();
         socket->write((const char*)&length, sizeof(length));
         socket->write(request.constData(), request.size());
-        socket->flush();
     }
 
 public Q_SLOTS:
     void readReply() {
-        if (inputBuffer.capacity() == 0) {
-            quint32 length = 0;
-            if (socket->bytesAvailable() < sizeof(length))
-                return;
-            socket->read((char*)&length, sizeof(length));
-            inputBuffer.reserve(length);
-        }
-
-        inputBuffer += socket->read(inputBuffer.capacity() - inputBuffer.size());
-
-        if (inputBuffer.size() < inputBuffer.capacity())
-            return;
+        QByteArray data = socket->readAll();
 
         Executor::ExecuteCallback callback = responseQueue.dequeue();
         if (callback) {
             QJsonDocument doc;
-            if (inputBuffer != "undefined") {
-                doc = QJsonDocument::fromJson(inputBuffer);
-            }
+            doc = QJsonDocument::fromJson(data);
             callback(doc);
         }
-
-        inputBuffer.clear();
     }
 };
 
