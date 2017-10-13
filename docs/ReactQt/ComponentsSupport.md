@@ -18,7 +18,7 @@
 | RefreshControl              |           |                |                 |                                |            |
 | ScrollView                  | ?         | +              | +/-             |                                |            |
 | SectionList                 |           |                |                 |                                |            |
-| SegmentedControlIOS         |           | +              | +/-             |                                |            |
+| SegmentedControlIOS         |           | +              |                 |                                |            |
 | Slider                      |           |                |                 |                                |            |
 | SnapshotViewIOS             |           |                |                 |                                |            |
 | StatusBar                   |           | +              |                 | StatusBar QML Type or custom   | medium     |
