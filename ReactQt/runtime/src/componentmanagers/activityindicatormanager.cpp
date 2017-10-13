@@ -39,7 +39,7 @@ QString ActivityIndicatorManager::moduleName() {
 }
 
 QString ActivityIndicatorManager::qmlComponentFile() const {
-    return ":/qml/ReactActivityIndicator.qml";
+    return "qrc:/qml/ReactActivityIndicator.qml";
 }
 
 #include "activityindicatormanager.moc"

@@ -248,6 +248,7 @@ function createProject(name, options) {
       start: 'node node_modules/react-native/local-cli/cli.js start',
       ios: 'react-native run-ios',
       android: 'react-native run-android',
+      ubuntu: 'react-native run-ubuntu'
     }
   };
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(packageJson));
@@ -257,7 +258,7 @@ function createProject(name, options) {
 }
 
 function getInstallPackage(rnPackage) {
-  var packageToInstall = 'https://github.com/status-im/react-native-linux#react-native-qt'
+  var packageToInstall = 'https://github.com/status-im/react-native-linux#react-native-qt';
   var isValidSemver = semver.valid(rnPackage);
   if (isValidSemver) {
     packageToInstall = 'react-native@' + isValidSemver;

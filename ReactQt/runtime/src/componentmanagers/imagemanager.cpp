@@ -98,7 +98,7 @@ void ImageManager::configureView(QQuickItem* view) const {
 }
 
 QString ImageManager::qmlComponentFile() const {
-    return ":/qml/ReactImage.qml";
+    return "qrc:/qml/ReactImage.qml";
 }
 
 bool ImageManagerPrivate::isBase64ImageUrl(const QUrl& url) const {

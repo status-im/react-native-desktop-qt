@@ -51,8 +51,9 @@ function _runUbuntu(args, config) {
       } else {
         // result == 'not_running'
         console.log(chalk.bold('Starting JS server...'));
-        startServerInNewWindow();
+        startPackagerInNewWindow();
       }
+      startUbuntuServerInNewWindow();
       actuallyRun(args, reject);
     }));
   });
@@ -85,9 +86,16 @@ function actuallyRun(args, reject) {
   }
 }
 
-function startServerInNewWindow() {
-  const packagerPath = path.resolve(__dirname, '..', '..', 'packager', 'packager.sh');
-  child_process.spawn('gnome-terminal',['-e', packagerPath],{detached: true});
+function startPackagerInNewWindow() {
+  child_process.spawn('gnome-terminal',['-e', 'npm start'],{detached: true});
 }
 
-module.exports = runUbuntu;
+function startUbuntuServerInNewWindow() {
+  child_process.spawn('gnome-terminal', ['-e', 'node ./ubuntu/bin/ubuntu-server.js'],{detached: true});
+}
+
+module.exports = {
+  name: 'run-ubuntu',
+  description: 'builds and runs your app as native application',
+  func: runUbuntu
+};
