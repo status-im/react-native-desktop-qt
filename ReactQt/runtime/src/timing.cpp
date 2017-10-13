@@ -69,7 +69,6 @@ QVariantMap Timing::constantsToExport() {
 */
 
 void Timing::createTimer(int callbackId, int duration /*ms*/, const QDateTime& jsSchedulingTime, bool repeats) {
-    // qDebug() << __PRETTY_FUNCTION__ << callbackId << duration << jsSchedulingTime << repeats;
     if (duration == 0 && !repeats) {
         // XXX: enqueueJSCall should enqueue
         QTimer::singleShot(
@@ -81,8 +80,9 @@ void Timing::createTimer(int callbackId, int duration /*ms*/, const QDateTime& j
     timer->setTimerType(Qt::PreciseTimer);
     timer->setSingleShot(!repeats);
     QObject::connect(timer, &QTimer::timeout, [=]() {
-        if (m_bridge)
-            m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
+        if (m_bridge) {
+            s m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
+        }
         if (!repeats)
             deleteTimer(callbackId);
     });
