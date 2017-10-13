@@ -81,7 +81,7 @@ void Timing::createTimer(int callbackId, int duration /*ms*/, const QDateTime& j
     timer->setSingleShot(!repeats);
     QObject::connect(timer, &QTimer::timeout, [=]() {
         if (m_bridge) {
-            s m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
+            m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
         }
         if (!repeats)
             deleteTimer(callbackId);

@@ -72,7 +72,7 @@ public:
 
 public Q_SLOTS:
     void readReply() {
-        QByteArray data = socket->readAll();
+        QByteArray data = nodeProcess->readAll();
 
         Executor::ExecuteCallback callback = responseQueue.dequeue();
         if (callback) {
