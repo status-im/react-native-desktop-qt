@@ -38,7 +38,7 @@ Download the port for Ubuntu.
 ~$ mkdir src; cd src
 ~/src$ git clone https://github.com/CanonicalLtd/react-native -b ubuntu
 ```
-And then follow the instruction in ~/src/reactnative-ubuntu/react-native-cli/README.md
+And then follow the instruction in ~/src/react-native-linux/react-native-cli/README.md
 
 Roughly they are -
 ```
