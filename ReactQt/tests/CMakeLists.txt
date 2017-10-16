@@ -23,6 +23,7 @@ set(REACT_TESTCASE_JS
   JS/TestButtonSize.js
   JS/TestModalProps.js
   JS/TestTextInputProps.js
+  JS/TestPickerProps.js
 )
 
 set(
@@ -45,6 +46,7 @@ add_executable(test-button-props test-button-props.cpp resources.qrc ${REACT_TES
 add_executable(test-button-size test-button-size.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 add_executable(test-modal-props test-modal-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 add_executable(test-textinput-props test-textinput-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
+add_executable(test-picker-props test-picker-props.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 
 
 add_test(test-integration test-integration)
@@ -55,6 +57,7 @@ add_test(test-button-props test-button-props)
 add_test(test-button-size test-button-size)
 add_test(test-modal-props test-modal-props)
 add_test(test-textinput-props test-textinput-props)
+add_test(test-picker-props test-picker-props)
 
 target_link_libraries(test-integration ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-image-props ${REACT_TESTCASE_LIBRARIES})
@@ -64,6 +67,7 @@ target_link_libraries(test-button-props ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-button-size ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-modal-props ${REACT_TESTCASE_LIBRARIES})
 target_link_libraries(test-textinput-props ${REACT_TESTCASE_LIBRARIES})
+target_link_libraries(test-picker-props ${REACT_TESTCASE_LIBRARIES})
 
 set_target_properties(
   test-integration

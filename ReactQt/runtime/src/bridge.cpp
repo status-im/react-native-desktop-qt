@@ -38,6 +38,7 @@
 #include "componentmanagers/imagemanager.h"
 #include "componentmanagers/modalmanager.h"
 #include "componentmanagers/navigatormanager.h"
+#include "componentmanagers/pickermanager.h"
 #include "componentmanagers/rawtextmanager.h"
 #include "componentmanagers/scrollviewmanager.h"
 #include "componentmanagers/slidermanager.h"
@@ -49,6 +50,7 @@
 #include "exceptionsmanager.h"
 #include "netinfo.h"
 #include "networking.h"
+
 #include "redboxitem.h"
 #include "testmodule.h"
 #include "timing.h"
@@ -74,27 +76,26 @@ public:
     QMap<int, ModuleData*> modules;
 
     QObjectList internalModules() {
-        return QObjectList{
-            new Timing,
-            new AppState,
-            new AsyncLocalStorage,
-            new Networking,
-            new NetInfo,
-            new DeviceInfo,
-            new BlobProvider,
-            new ViewManager,
-            new RawTextManager,
-            new TextManager,
-            new ImageManager,
-            new ExceptionsManager,
-            new ScrollViewManager,
-            new NavigatorManager,
-            new ActivityIndicatorManager,
-            new TextInputManager,
-            new ButtonManager,
-            new SliderManager,
-            new ModalManager,
-        };
+        return QObjectList{new Timing,
+                           new AppState,
+                           new AsyncLocalStorage,
+                           new Networking,
+                           new NetInfo,
+                           new DeviceInfo,
+                           new BlobProvider,
+                           new ViewManager,
+                           new RawTextManager,
+                           new TextManager,
+                           new ImageManager,
+                           new ExceptionsManager,
+                           new ScrollViewManager,
+                           new NavigatorManager,
+                           new ActivityIndicatorManager,
+                           new TextInputManager,
+                           new ButtonManager,
+                           new SliderManager,
+                           new ModalManager,
+                           new PickerManager};
     }
 };
 

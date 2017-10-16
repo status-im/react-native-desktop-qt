@@ -15,6 +15,7 @@
 var ColorPropType = require('ColorPropType');
 var PickerIOS = require('PickerIOS');
 var PickerAndroid = require('PickerAndroid');
+var PickerUbuntu = require('PickerUbuntu');
 var Platform = require('Platform');
 var React = require('React');
 const PropTypes = require('prop-types');
@@ -162,6 +163,8 @@ class Picker extends React.Component {
      } else if (Platform.OS === 'android') {
        // $FlowFixMe found when converting React.createClass to ES6
        return <PickerAndroid {...this.props}>{this.props.children}</PickerAndroid>;
+     } else if (Platform.OS === 'ubuntu') {
+       return <PickerUbuntu {...this.props}>{this.props.children}</PickerUbuntu>;
      } else {
        return <UnimplementedView />;
      }
