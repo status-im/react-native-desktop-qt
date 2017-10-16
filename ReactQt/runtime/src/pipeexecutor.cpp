@@ -72,29 +72,14 @@ public:
 
 public Q_SLOTS:
     void readReply() {
-        if (inputBuffer.capacity() == 0) {
-            quint32 length = 0;
-            if (nodeProcess->bytesAvailable() < sizeof(length))
-                return;
-            nodeProcess->read((char*)&length, sizeof(length));
-            inputBuffer.reserve(length);
-        }
-
-        inputBuffer += nodeProcess->read(inputBuffer.capacity() - inputBuffer.size());
-
-        if (inputBuffer.size() < inputBuffer.capacity())
-            return;
+        QByteArray data = nodeProcess->readAll();
 
         Executor::ExecuteCallback callback = responseQueue.dequeue();
         if (callback) {
             QJsonDocument doc;
-            if (inputBuffer != "undefined") {
-                doc = QJsonDocument::fromJson(inputBuffer);
-            }
+            doc = QJsonDocument::fromJson(data);
             callback(doc);
         }
-
-        inputBuffer.clear();
     }
 };
 
