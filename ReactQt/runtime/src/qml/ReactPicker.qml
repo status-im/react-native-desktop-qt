@@ -1,9 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.2
 import React 0.1 as React
-import QtQuick.Extras 1.4
-import QtQuick.Controls.Styles 1.2
-
 
 Tumbler {
     id: tumbler
@@ -14,33 +11,26 @@ Tumbler {
     property bool p_onValueChange: false
     property string p_testID
 
-    objectName: p_testID
+    model: p_items
+    currentIndex: p_selected
 
-    TumblerColumn {
-        model: p_items
-        onCurrentIndexChanged: {
-            if (pickerManager) {
-                pickerManager.sendValueChangeToJs(tumbler, currentIndex);
-            }
-        }
+    background: Rectangle {
+        color: "lightgrey"
+        border.color: "grey"
     }
-
-    style: TumblerStyle {
-        id: tumblerStyle
-
-        delegate: Item {
-            implicitHeight: (tumbler.height - padding.top - padding.bottom) / tumblerStyle.visibleItemCount
-            Text {
-                id: label
-                text: styleData.value.label
-                color: styleData.value.color ? styleData.value.color : "black"
-                opacity: 0.4 + Math.max(0, 1 - Math.abs(styleData.displacement)) * 0.6
-                anchors.centerIn: parent
-            }
-        }
+    delegate:
+        Text {
+        id: label
+        text: modelData.label
+        color:  modelData.color ? modelData.color : "black"
+        font: tumbler.font
+        opacity: (1.0 - Math.abs(Tumbler.displacement) / (visibleItemCount / 2)) * (tumbler.enabled ? 1 : 0.6)
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
     }
-
-    onP_selectedChanged: {
-        tumbler.setCurrentIndexAt(0, p_selected);
+    onCurrentIndexChanged: {
+        if (pickerManager) {
+            pickerManager.sendValueChangeToJs(tumbler, currentIndex);
+        }
     }
 }
