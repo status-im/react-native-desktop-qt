@@ -33,16 +33,25 @@ struct RegisterClass {
 
 class NetExecutorPrivate : public QObject {
     Q_OBJECT
+    Q_DECLARE_PUBLIC(NetExecutor)
 public:
+    NetExecutorPrivate(NetExecutor* q);
+
     QString serverHost = "localhost";
+    int port = 5000;
     QTcpSocket* socket = nullptr;
     QStateMachine* machina = nullptr;
     QByteArray inputBuffer;
     QQueue<QByteArray> requestQueue;
     QQueue<Executor::ExecuteCallback> responseQueue;
+    NetExecutor* q_ptr = nullptr;
 
     void processRequests() {
-        if (socket->state() != QAbstractSocket::ConnectedState || requestQueue.isEmpty()) {
+        bool socketNotConnected = socket->state() != QAbstractSocket::ConnectedState;
+        bool queueEmpty = requestQueue.isEmpty();
+        if (socketNotConnected || queueEmpty) {
+            qDebug() << "!socket Process Request ERROR!, not connected: " << socketNotConnected
+                     << " queue empty: " << queueEmpty;
             return;
         }
 
@@ -55,33 +64,67 @@ public:
 
 public Q_SLOTS:
     void readReply() {
+        // read commands while we have data in socket
+        while (readCommand()) {
+            ;
+        }
+    }
+
+    bool readCommand() {
+        Q_Q(NetExecutor);
+
+        if (!readPackageHeaderAndAllocateBuffer())
+            return false;
+
+        if (!readPackageBodyToBuffer())
+            return false;
+
+        q->commandReceived(inputBuffer.length());
+        passReceivedDataToCallback(inputBuffer);
+        inputBuffer.clear();
+        return true;
+    }
+
+    bool readPackageHeaderAndAllocateBuffer() {
         if (inputBuffer.capacity() == 0) {
             quint32 length = 0;
-            if (socket->bytesAvailable() < sizeof(length))
-                return;
+            if (socket->bytesAvailable() < sizeof(length)) {
+                return false;
+            }
             socket->read((char*)&length, sizeof(length));
             inputBuffer.reserve(length);
         }
+        return true;
+    }
 
-        inputBuffer += socket->read(inputBuffer.capacity() - inputBuffer.size());
+    bool readPackageBodyToBuffer() {
+        int toRead = inputBuffer.capacity() - inputBuffer.size();
+        QByteArray read = socket->read(toRead);
+        inputBuffer += read;
 
         if (inputBuffer.size() < inputBuffer.capacity())
-            return;
+            return false;
 
-        Executor::ExecuteCallback callback = responseQueue.dequeue();
-        if (callback) {
-            QJsonDocument doc;
-            if (inputBuffer != "undefined") {
-                doc = QJsonDocument::fromJson(inputBuffer);
+        return true;
+    }
+
+    void passReceivedDataToCallback(const QByteArray& data) {
+        if (responseQueue.size()) {
+            Executor::ExecuteCallback callback = responseQueue.dequeue();
+            if (callback) {
+                QJsonDocument doc;
+                if (data != "undefined") {
+                    doc = QJsonDocument::fromJson(data);
+                }
+                callback(doc);
             }
-            callback(doc);
         }
-
-        inputBuffer.clear();
     }
 };
 
-NetExecutor::NetExecutor(QObject* parent) : Executor(parent), d_ptr(new NetExecutorPrivate) {
+NetExecutorPrivate::NetExecutorPrivate(NetExecutor* q) : q_ptr(q) {}
+
+NetExecutor::NetExecutor(QObject* parent) : Executor(parent), d_ptr(new NetExecutorPrivate(this)) {
     Q_D(NetExecutor);
     QString serverHost = qgetenv("REACT_SERVER_HOST");
     if (!serverHost.isEmpty())
@@ -100,7 +143,7 @@ NetExecutor::NetExecutor(QObject* parent) : Executor(parent), d_ptr(new NetExecu
     readyState->addTransition(d->socket, SIGNAL(error(QAbstractSocket::SocketError)), errorState);
     readyState->addTransition(d->socket, SIGNAL(disconnected()), errorState);
 
-    connect(initialState, &QAbstractState::entered, [=] { d->socket->connectToHost(d->serverHost, 5000); });
+    connect(initialState, &QAbstractState::entered, [=] { d->socket->connectToHost(d->serverHost, d->port); });
     connect(readyState, &QAbstractState::entered, [=] { d->processRequests(); });
     connect(errorState, &QAbstractState::entered, [=] { d->machina->stop(); });
 
@@ -121,6 +164,11 @@ void NetExecutor::setServerHost(const QString& serverHost) {
     if (d->serverHost == serverHost)
         return;
     d->serverHost = serverHost;
+}
+
+void NetExecutor::setPort(int port) {
+    Q_ASSERT(port > 0);
+    d_ptr->port = port;
 }
 
 void NetExecutor::init() {

@@ -15,6 +15,7 @@
 #define NETEXECUTOR_H
 
 #include "executor.h"
+#include <QTcpSocket>
 
 class NetExecutorPrivate;
 class NetExecutor : public Executor {
@@ -23,12 +24,16 @@ class NetExecutor : public Executor {
 
     Q_DECLARE_PRIVATE(NetExecutor)
 
+signals:
+    void commandReceived(int size);
+
 public:
     Q_INVOKABLE NetExecutor(QObject* parent = 0);
     ~NetExecutor();
 
     QString serverHost() const;
     void setServerHost(const QString& serverHost);
+    void setPort(int port);
 
     void init() override;
 
