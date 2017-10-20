@@ -28,10 +28,10 @@
 | Text                        | ?         | +              | +/-             |                                |            |
 | TextInput                   |           | +              | +/-             | TextArea QML Type              | medium     |
 | ToolbarAndroid              |           |                |                 |                                |            |
-| TouchableHighlight          | ?         | +              |                 |                                | medium++   |
+| TouchableHighlight          | ?         | +              | +/-             |                                | medium++   |
 | TouchableNativeFeedback     | ?         |                |                 |                                |            |
-| TouchableOpacity            | ?         | +              |                 |                                | medium++   |
-| TouchableWithoutFeedback    | ?         | +              |                 |                                | medium++   |
+| TouchableOpacity            | ?         | +              | +/-             |                                | medium++   |
+| TouchableWithoutFeedback    | ?         | +              | +/-             |                                | medium++   |
 | View                        | ?         | +              | +/-             |                                |            |
 | ViewPagerAndroid            |           |                |                 |                                |            |
 | VirtualizedList             |           |                |                 |                                |            |
