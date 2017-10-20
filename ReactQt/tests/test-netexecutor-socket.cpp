@@ -70,12 +70,12 @@ void TestNetExecutorSocket::initTestCase() {
 void TestNetExecutorSocket::sendPackageInTwoWrites(quint32 bytesCount) {
     m_socket->write(packageHeader(bytesCount));
     m_socket->write(packageData(bytesCount));
-    QCoreApplication::processEvents();
+    m_socket->flush();
 }
 
 void TestNetExecutorSocket::sendPackageInOneWrite(quint32 bytesCount) {
     m_socket->write(package(bytesCount));
-    QCoreApplication::processEvents();
+    m_socket->flush();
 }
 
 void TestNetExecutorSocket::sendPackageInChunks(quint32 bytesCount) {
@@ -85,7 +85,7 @@ void TestNetExecutorSocket::sendPackageInChunks(quint32 bytesCount) {
         QByteArray chunk = ba.left(CHUNK_SIZE);
         ba.remove(0, chunk.length());
         m_socket->write(chunk);
-        QCoreApplication::processEvents();
+        m_socket->flush();
     }
 }
 
@@ -95,7 +95,7 @@ void TestNetExecutorSocket::sendTwoPackagesInOneWrite(quint32 package1bytesCount
     data += package(package2bytesCount);
 
     m_socket->write(data);
-    QCoreApplication::processEvents();
+    m_socket->flush();
 }
 
 QByteArray TestNetExecutorSocket::packageData(int bytesCount) {
