@@ -29,9 +29,6 @@ set(
   moduledata.cpp
   modulemethod.cpp
   propertyhandler.cpp
-  executor.cpp
-  netexecutor.cpp
-  pipeexecutor.cpp
   networking.cpp
   netinfo.cpp
   timing.cpp
@@ -59,6 +56,8 @@ set(
   componentmanagers/pickermanager.cpp
   layout/flexbox.cpp
   utilities.cpp
+  communication/serverconnection.cpp
+  communication/executor
   ../../../ReactCommon/yoga/yoga/Yoga.c
   ../../../ReactCommon/yoga/yoga/YGEnums.c
   ../../../ReactCommon/yoga/yoga/YGNodeList.c
@@ -105,3 +104,5 @@ add_custom_target(
   copy-qmldir ALL
   COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
 )
+
+configure_file(../../../ubuntu-server.js ../../../ubuntu-server.js COPYONLY)

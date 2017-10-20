@@ -47,7 +47,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
 
     AttachedProperties* ap = AttachedProperties::get(target, false);
     if (ap == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
+        //        qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
         return e;
     }
 
@@ -79,7 +79,7 @@ public:
     QUrl codeLocation;
     QVariantMap properties;
     QString pluginsPath;
-    QString executor = "NetExecutor";
+    QString serverConnectionType = "RemoteServerConnection";
     Bridge* bridge = nullptr;
     RootView* q_ptr;
 
@@ -194,15 +194,15 @@ void RootView::setPluginsPath(const QString& pluginsPath) {
     Q_EMIT pluginsPathChanged();
 }
 
-QString RootView::executor() const {
-    return d_func()->executor;
+QString RootView::serverConnectionType() const {
+    return d_func()->serverConnectionType;
 }
 
-void RootView::setExecutor(const QString& executor) {
+void RootView::setServerConnectionType(const QString& executor) {
     Q_D(RootView);
-    if (d->executor == executor)
+    if (d->serverConnectionType == executor)
         return;
-    d->executor = executor;
+    d->serverConnectionType = executor;
     Q_EMIT executorChanged();
 }
 
@@ -270,7 +270,7 @@ void RootView::componentComplete() {
         d->bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
         d->bridge->setBundleUrl(d->codeLocation);
         d->bridge->setPluginsPath(d->pluginsPath);
-        d->bridge->setExecutorName(d->executor);
+        d->bridge->setServerConnectionType(d->serverConnectionType);
         d->bridge->setVisualParent(this);
         d->bridge->init();
     });
@@ -278,7 +278,6 @@ void RootView::componentComplete() {
 
 void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
     Q_D(RootView);
-    qDebug() << "Send event: " << eventType;
 
     QVariantMap e = makeReactTouchEvent(receiver, event);
     if (e.isEmpty())
