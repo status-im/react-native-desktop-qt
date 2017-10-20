@@ -110,32 +110,21 @@ void Bridge::setupExecutor() {
 
     ServerConnection* conn = nullptr;
 
-    if (d->serverConnectionType == "RemoteServerConnection") {
+    const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
+    if (connectionType != QMetaType::UnknownType) {
+        conn = qobject_cast<ServerConnection*>(
+            QMetaType::metaObjectForType(connectionType)->newInstance(Q_ARG(QObject*, this)));
+    }
+
+    if (conn == nullptr) {
+        qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
+                   << "constructing default (RemoteServerConnection)";
         conn = new RemoteServerConnection();
-    } else if (d->serverConnectionType == "LocalServerConnection") {
-        conn = new LocalServerConnection();
     }
 
     d->executor = new Executor(conn, this);
     connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
     d->executor->init();
-
-    //    // Find executor
-    //    const int executorType = QMetaType::type((d->executorName + "*").toLocal8Bit());
-    //    if (executorType != QMetaType::UnknownType) {
-    //        d->executor =
-    //            qobject_cast<Executor*>(QMetaType::metaObjectForType(executorType)->newInstance(Q_ARG(QObject*,
-    //            this)));
-    //    }
-
-    //    if (d->executor == nullptr) {
-    //        qWarning() << __PRETTY_FUNCTION__ << "Could not construct executor named" << d->executorName
-    //                   << "constructing default (ReactNetExecutor)";
-    //        d->executor = new NetExecutor(this); // TODO: config/property
-    //    }
-
-    //    connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
-    //    d->executor->init();
 }
 
 void Bridge::init() {
