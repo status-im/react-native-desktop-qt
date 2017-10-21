@@ -8,7 +8,7 @@
 | FlatList                    |           |                |                 |                                |            |
 | Image                       | +/-       | +              | +/-             |                                |            |
 | KeyboardAvoidingView        |           | +              |                 | ???? PLACEHOLDER               | minor      |
-| ListView                    |           | +              |                 | ListView QML Type              | complex    |
+| ListView                    |           | +              | +/-             | ListView QML Type              | complex    |
 | Modal                       |           | +              | +/-             | Dialog QML Type                | medium     |
 | NavigatorIOS                | ?         |                |                 |                                |            |
 | Picker                      |           | +              | +/-             | Tumbler QML Type               | medium     |
