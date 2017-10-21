@@ -37,7 +37,7 @@ class PickerExample extends React.Component {
         <RNTesterBlock title="Basic Picker">
           <Picker
             style={styles.picker}
-            selectedValue="red"
+            selectedValue="blue"
             onValueChange={ (val, pos) => {
                 const newState = {};
                 newState["selectedValue"] = val;
@@ -48,6 +48,7 @@ class PickerExample extends React.Component {
             <Item label="green" color="green" value="green" />
             <Item label="blue" color="blue" value="blue" />
             <Item label="grey" color="grey" value="grey" />
+            <Item label="yellow" color="yellow" value="yellow" />
           </Picker>
           <Text>
              Value: {this.state.selectedValue}

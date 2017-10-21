@@ -37,7 +37,7 @@ jobs:
           sudo add-apt-repository -y ppa:george-edison55/cmake-3.x
           sudo apt-get -qy update
           sudo apt-get install -y dbus xvfb curl cmake mesa-common-dev \
-              qt59base qt59graphicaleffects qt59quickcontrols2 qt59declarative  qt59x11extras  qt59quickcontrols
+              qt59base qt59graphicaleffects qt59quickcontrols2 qt59declarative
           echo "/opt/qt59/bin/qt59-env.sh" >> ~/.circlerc
 
       # Install node
