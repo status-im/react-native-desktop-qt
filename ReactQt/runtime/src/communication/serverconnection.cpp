@@ -32,6 +32,22 @@ QString itemWithPath(const QString& item, const QStringList& searchPaths) {
 }
 }
 
+namespace {
+struct RegisterLocal {
+    RegisterLocal() {
+        int t = qRegisterMetaType<LocalServerConnection*>();
+        qDebug() << "LocalServerConnection* =" << t;
+    }
+} registerLocal;
+
+struct RegisterRemote {
+    RegisterRemote() {
+        int t = qRegisterMetaType<RemoteServerConnection*>();
+        qDebug() << "RemoteServerConnection* =" << t;
+    }
+} registerRemote;
+}
+
 ServerConnection::ServerConnection(QObject* parent) : QObject(parent) {}
 
 LocalServerConnection::LocalServerConnection(QObject* parent)
@@ -129,3 +145,5 @@ void RemoteServerConnection::openConnection() {
 bool RemoteServerConnection::isReady() {
     return m_socket->state() == QAbstractSocket::ConnectedState;
 }
+
+#include "serverconnection.moc"

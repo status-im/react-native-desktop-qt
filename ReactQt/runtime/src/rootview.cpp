@@ -79,7 +79,7 @@ public:
     QUrl codeLocation;
     QVariantMap properties;
     QString pluginsPath;
-    QString serverConnectionType = "RemoteServerConnection";
+    QString serverConnectionType = "LocalServerConnection";
     Bridge* bridge = nullptr;
     RootView* q_ptr;
 
