@@ -35,15 +35,13 @@ QString itemWithPath(const QString& item, const QStringList& searchPaths) {
 namespace {
 struct RegisterLocal {
     RegisterLocal() {
-        int t = qRegisterMetaType<LocalServerConnection*>();
-        qDebug() << "LocalServerConnection* =" << t;
+        qRegisterMetaType<LocalServerConnection*>();
     }
 } registerLocal;
 
 struct RegisterRemote {
     RegisterRemote() {
-        int t = qRegisterMetaType<RemoteServerConnection*>();
-        qDebug() << "RemoteServerConnection* =" << t;
+        qRegisterMetaType<RemoteServerConnection*>();
     }
 } registerRemote;
 }

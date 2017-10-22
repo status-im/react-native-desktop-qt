@@ -38,7 +38,7 @@ public:
 class LocalServerConnection : public ServerConnection {
     Q_OBJECT
 public:
-    LocalServerConnection(QObject* parent = nullptr);
+    Q_INVOKABLE LocalServerConnection(QObject* parent = nullptr);
 
     virtual void openConnection() override;
     virtual bool isReady() override;
@@ -56,7 +56,7 @@ private:
 class RemoteServerConnection : public ServerConnection {
     Q_OBJECT
 public:
-    RemoteServerConnection(QObject* parent = nullptr);
+    Q_INVOKABLE RemoteServerConnection(QObject* parent = nullptr);
     QString serverHost() const;
     void setServerHost(const QString& serverHost);
     void setPort(int m_port);

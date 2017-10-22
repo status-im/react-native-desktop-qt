@@ -110,13 +110,11 @@ void Bridge::setupExecutor() {
 
     ServerConnection* conn = nullptr;
 
-    // Find executor
     const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
-    qDebug() << "connectionType: " << connectionType;
-
     if (connectionType != QMetaType::UnknownType) {
-        conn = qobject_cast<ServerConnection*>(
-            QMetaType::metaObjectForType(connectionType)->newInstance(Q_ARG(QObject*, this)));
+        const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
+        QObject* instance = mObj->newInstance();
+        conn = qobject_cast<ServerConnection*>(instance);
     }
 
     if (conn == nullptr) {
