@@ -5,7 +5,7 @@
 | Button                      |           |                | +/-             |                                |            |
 | DatePickerIOS               | ?         |                |                 |                                |            |
 | DrawerLayoutAndroid         |           | +              |                 | Drawer QML Type                | medium     |
-| FlatList                    |           |                |                 |                                |            |
+| FlatList                    |           | +              |                 |                                |            |
 | Image                       | +/-       | +              | +/-             |                                |            |
 | KeyboardAvoidingView        |           | +              |                 | ???? PLACEHOLDER               | minor      |
 | ListView                    |           | +              | +/-             | ListView QML Type              | complex    |
@@ -17,7 +17,7 @@
 | ProgressViewIOS             |           |                |                 |                                |            |
 | RefreshControl              |           |                |                 |                                |            |
 | ScrollView                  | ?         | +              | +/-             |                                |            |
-| SectionList                 |           |                |                 |                                |            |
+| SectionList                 |           | +              |                 |                                |            |
 | SegmentedControlIOS         |           | +              |                 |                                |            |
 | Slider                      |           |                |                 |                                |            |
 | SnapshotViewIOS             |           |                |                 |                                |            |
@@ -83,4 +83,4 @@
 | TextStylePropTypes          |           |                |                 |                                |            |
 | ImageStylePropTypes         |           |                |                 |                                |            |
 | **From old React Native: ** |           |                |                 |                                |            |
-| Navigator (v0.43)           |           | +              |                 | ???? Backward support in v0.48 |            |
+| Navigator (v0.43)           |           |                |                 | ???? Backward support in v0.48 |            |
