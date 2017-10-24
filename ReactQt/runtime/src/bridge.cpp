@@ -11,27 +11,12 @@
  *
  */
 
-#include <QDir>
-#include <QJsonDocument>
-#include <QMap>
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
-#include <QPluginLoader>
-#include <QQuickItem>
-#include <QStandardPaths>
-#include <QTimer>
-
 #include "bridge.h"
-#include "moduledata.h"
-#include "moduleinterface.h"
-#include "moduleloader.h"
-#include "modulemethod.h"
-#include "netexecutor.h"
-#include "sourcecode.h"
-
 #include "appstate.h"
 #include "asynclocalstorage.h"
 #include "blobprovider.h"
+#include "communication/executor.h"
+#include "communication/serverconnection.h"
 #include "componentmanagers/activityindicatormanager.h"
 #include "componentmanagers/buttonmanager.h"
 #include "componentmanagers/imageloader.h"
@@ -48,19 +33,32 @@
 #include "deviceinfo.h"
 #include "eventdispatcher.h"
 #include "exceptionsmanager.h"
+#include "moduledata.h"
+#include "moduleinterface.h"
+#include "moduleloader.h"
+#include "modulemethod.h"
 #include "netinfo.h"
 #include "networking.h"
-
 #include "redboxitem.h"
+#include "sourcecode.h"
 #include "testmodule.h"
 #include "timing.h"
 #include "uimanager.h"
+#include <QDir>
+#include <QJsonDocument>
+#include <QMap>
+#include <QNetworkAccessManager>
+#include <QNetworkDiskCache>
+#include <QPluginLoader>
+#include <QQuickItem>
+#include <QStandardPaths>
+#include <QTimer>
 
 class BridgePrivate {
 public:
     bool ready = false;
     bool jsAppStarted = false;
-    QString executorName = "NetExecutor";
+    QString serverConnectionType = "NetExecutor";
     Executor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
     QQuickItem* visualParent = nullptr;
@@ -110,19 +108,22 @@ Bridge::~Bridge() {}
 void Bridge::setupExecutor() {
     Q_D(Bridge);
 
-    // Find executor
-    const int executorType = QMetaType::type((d->executorName + "*").toLocal8Bit());
-    if (executorType != QMetaType::UnknownType) {
-        d->executor =
-            qobject_cast<Executor*>(QMetaType::metaObjectForType(executorType)->newInstance(Q_ARG(QObject*, this)));
+    ServerConnection* conn = nullptr;
+
+    const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
+    if (connectionType != QMetaType::UnknownType) {
+        const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
+        QObject* instance = mObj->newInstance();
+        conn = qobject_cast<ServerConnection*>(instance);
     }
 
-    if (d->executor == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Could not construct executor named" << d->executorName
-                   << "constructing default (ReactNetExecutor)";
-        d->executor = new NetExecutor(this); // TODO: config/property
+    if (conn == nullptr) {
+        qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
+                   << "constructing default (RemoteServerConnection)";
+        conn = new RemoteServerConnection();
     }
 
+    d->executor = new Executor(conn, this);
     connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
     d->executor->init();
 }
@@ -278,15 +279,15 @@ void Bridge::setPluginsPath(const QString& pluginsPath) {
     d->pluginsPath = pluginsPath;
 }
 
-QString Bridge::executorName() const {
-    return d_func()->executorName;
+QString Bridge::serverConnectionType() const {
+    return d_func()->serverConnectionType;
 }
 
-void Bridge::setExecutorName(const QString& executorName) {
+void Bridge::setServerConnectionType(const QString& executorName) {
     Q_D(Bridge);
-    if (d->executorName == executorName)
+    if (d->serverConnectionType == executorName)
         return;
-    d->executorName = executorName;
+    d->serverConnectionType = executorName;
 }
 
 EventDispatcher* Bridge::eventDispatcher() const {

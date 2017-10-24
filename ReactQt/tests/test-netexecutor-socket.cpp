@@ -16,7 +16,8 @@
 #include <QtQuick/QQuickView>
 
 #include "bridge.h"
-#include "netexecutor.h"
+#include "communication/executor.h"
+#include "communication/serverconnection.h"
 #include "reacttestcase.h"
 #include <QTcpServer>
 
@@ -47,7 +48,7 @@ private slots:
     void testSendingTwoPackagesAtOnce();
 
 private:
-    QSharedPointer<NetExecutor> m_netExecutor;
+    QSharedPointer<Executor> m_executor;
     QSharedPointer<QTcpServer> m_server;
     QSharedPointer<QTcpSocket> m_socket;
 };
@@ -57,9 +58,11 @@ void TestNetExecutorSocket::initTestCase() {
     m_server = QSharedPointer<QTcpServer>(new QTcpServer());
     m_server->listen(QHostAddress::LocalHost, TEST_EXECUTOR_PORT);
 
-    m_netExecutor = QSharedPointer<NetExecutor>(new NetExecutor);
-    m_netExecutor->setPort(TEST_EXECUTOR_PORT);
-    m_netExecutor->init();
+    RemoteServerConnection* connection = new RemoteServerConnection;
+    connection->setPort(TEST_EXECUTOR_PORT);
+
+    m_executor = QSharedPointer<Executor>(new Executor(connection));
+    m_executor->init();
 
     waitAndVerifyCondition([=]() { return m_server->hasPendingConnections(); },
                            "NetExecutor didn't connect to Tcp server");
@@ -126,7 +129,7 @@ void TestNetExecutorSocket::waitAndCheckPackagesReceived(QSignalSpy& spy, int co
 
 void TestNetExecutorSocket::testSendingPackagesInTwoWrites() {
 
-    QSignalSpy spy(m_netExecutor.data(), &NetExecutor::commandReceived);
+    QSignalSpy spy(m_executor.data(), &Executor::commandReceived);
 
     for (int i = 0; i < MAX_PACKAGES_COUNT; ++i) {
         quint32 bytesCount = packageSize(i);
@@ -137,7 +140,7 @@ void TestNetExecutorSocket::testSendingPackagesInTwoWrites() {
 }
 
 void TestNetExecutorSocket::testSendingPackagesInOneWrite() {
-    QSignalSpy spy(m_netExecutor.data(), &NetExecutor::commandReceived);
+    QSignalSpy spy(m_executor.data(), &Executor::commandReceived);
 
     for (int i = 0; i < MAX_PACKAGES_COUNT; ++i) {
         quint32 bytesCount = packageSize(i);
@@ -148,7 +151,7 @@ void TestNetExecutorSocket::testSendingPackagesInOneWrite() {
 }
 
 void TestNetExecutorSocket::testSendingPackagesInChunks() {
-    QSignalSpy spy(m_netExecutor.data(), &NetExecutor::commandReceived);
+    QSignalSpy spy(m_executor.data(), &Executor::commandReceived);
 
     for (int i = 0; i < MAX_PACKAGES_COUNT; ++i) {
         quint32 bytesCount = packageSize(i);
@@ -167,7 +170,7 @@ void TestNetExecutorSocket::testSendingTwoPackagesAtOnce() {
     // successfully.
 
     const int PACKAGES_COUNT = 4;
-    QSignalSpy spy(m_netExecutor.data(), &NetExecutor::commandReceived);
+    QSignalSpy spy(m_executor.data(), &Executor::commandReceived);
 
     int i = 0;
     while (i < PACKAGES_COUNT) {

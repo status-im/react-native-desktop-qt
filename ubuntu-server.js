@@ -110,6 +110,7 @@ function rnUbuntuServer(readable, writable) {
 }
 
 if (process.argv.indexOf('--pipe') != -1) {
+  console.log = console.error
   rnUbuntuServer(process.stdin, process.stdout);
 } else {
   var server = net.createServer((sock) => {
