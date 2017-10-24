@@ -1,12 +1,25 @@
-# Build, develop and debug native Qt modules of react-native-linux with Qt Creator
+# Build, develop and debug native Qt modules of react-native-desktop with Qt Creator
 
 ### Prerequisites
 
-You should have installed `cmake`, `qt5-default` and `qtdeclarative5-dev`.  
-Qt 5.5.1 is supported.
+You should have installed `cmake` and `Qt 5.9.1`.
+
+Qt 5.9.1 PPA for Ubuntu Trusty:
 
 ```
-~$ sudo apt-get install -y cmake qt5-default qtdeclarative5-dev
+sudo add-apt-repository -y ppa:beineri/opt-qt591-trusty
+```
+
+Qt 5.9.1 PPA for Ubuntu Xenial:
+
+```
+sudo add-apt-repository -y ppa:beineri/opt-qt591-xenial
+```
+
+Install:
+
+```
+~$ sudo apt-get install -y cmake qt59base qt59graphicaleffects qt59quickcontrols2 qt59declarative
 ```
 
 `Qt Creator` IDE should be installed.
@@ -17,12 +30,12 @@ Qt 5.5.1 is supported.
 Launch `Qt Creator`, select `Tools`->`Options..`->`Build & Run`->`CMake` tab.
 Make sure that `CMake` tool is auto-detected by `Qt Creator` or add one manually.
 
-### Build react-native-linux with Qt Creator
+### Build react-native-desktop with Qt Creator
 
 In `Qt Creator` select menu `File`->`Open File or Project...`.  
 Navigate to the root directory of your clone and select `CMakeList.txt` file to open.
 
-Select Qt 5.5.1 default installation to configure the project, if prompted.
+Select Qt 5.9.1 toolchain to configure the project, if prompted.
 
 By default, Qt configures `CMake` to do out-of-directory build on one level higher than your repo clone directory.
 

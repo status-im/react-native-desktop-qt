@@ -1,21 +1,15 @@
 
-# React Native Ubuntu
+# React Native Desktop - Ubuntu setup.
 
 ## Introduction
 
 ### Platforms
 
-There is support for applications on both Desktop Ubuntu and Ubuntu Touch.
+There is support for applications on Desktop Ubuntu.
 
 ### Prerequisites
 
 You should have an Ubuntu 16.04 (Xenial Xerus) installation.
-
-If you are going to be developing on a device:
- - You must have a device with Ubuntu Touch installed and developer mode
- enabled, see [Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/)
- for more details.
- - Your device must be on the same local network as your development machine.
 
 You should have some familiarity with developing on Ubuntu platforms.
 
@@ -33,12 +27,12 @@ sudo apt-get install -y git nodejs-legacy npm
 To start working on a React Native application, the React Native packages for
 ubuntu need to be published to a local package repository.
 
-Download the port for Ubuntu.
+Clone Desktop repo:
 ```
 ~$ mkdir src; cd src
-~/src$ git clone https://github.com/CanonicalLtd/react-native -b ubuntu
+~/src$ git clone https://github.com/status-im/react-native-desktop -b react-native-qt
 ```
-And then follow the instruction in ~/src/react-native-linux/react-native-cli/README.md
+And then follow the instruction in ~/src/react-native-desktop/react-native-cli/README.md
 
 Roughly they are -
 ```
@@ -102,72 +96,24 @@ build and run the application.
 ~/src/AwesomeProject$ react-native run-ubuntu
 ```
 
-If you have a connected Ubuntu device, you can launch onto the device with
-```
-~/src/AwesomeProject$ react-native run-ubuntu --arch=arm
-```
-*Note*; For device builds, the Ubuntu SDK must have been installed as per the
-instructions below.
-
-
-Other command line arguments can be passed 
-```
-~/src/AwesomeProject$ react-native run-ubuntu -h
-```
-To be able to read the list.
-
-
-### Targeting a device
-
 #### Dependencies
 
-Usually we would want to be installing the ubuntu-sdk, which can be done
-directly, but since this is still in preview, we will just install a raw build
-environment. The build environment is a chroot provided by the hardworking SDK
-team, but is not part of the general distribution. We will need to add the SDK
-team's repository first.
+Add Qt 5.9.1 PPA for Ubuntu Trusty:
 
 ```
-~$ sudo add-apt-repository -y ppa:ubuntu-sdk-team/ppa
-~$ sudo apt-get update && sudo apt-get upgrade -y
+sudo add-apt-repository -y ppa:beineri/opt-qt591-trusty
 ```
 
-Then we can install all necessary packages.
-```
-~$ sudo apt-get install -y adb click-dev ubuntu-sdk-api-15.04-armhf
-```
-
-
-#### Building
-
-To build for the device, run the build script through the chroot build
-environment.
-```
-~/src/AwesomeProject/ubuntu$ click chroot -a armhf -f ubuntu-sdk-15.04 -n click run ./build.sh
-```
-
-#### Running
-
-Make sure that the device can be connected to via adb. The device will need to
-have developer mode enabled, instruction on these topics can be found on the
-[Touch installation page](https://developer.ubuntu.com/en/phone/devices/installing-ubuntu-for-devices/).
-
-In a separate shell, start the React Native packager.
-```
-~/src/AwesomeProject$ npm start
-```
-
-Then it is all good to go. Live reload can be activated by passing the --live-reload flag.
-```
-~/src/AwesomeProject/ubuntu$ ./run-app.sh —on-device —live-reload
-```
-
-### Targeting a desktop
-
-#### Dependencies
+Add Qt 5.9.1 PPA for Ubuntu Xenial:
 
 ```
-~$ sudo apt-get install -y cmake qt5-default qtdeclarative5-dev
+sudo add-apt-repository -y ppa:beineri/opt-qt591-xenial
+```
+
+Installing:
+
+```
+~$ sudo apt-get install -y cmake qt59base qt59graphicaleffects qt59quickcontrols2 qt59declarative
 ```
 
 #### Building
@@ -190,26 +136,21 @@ Then it is all good to go. Live reload can be activated by passing the
 ~/src/AwesomeProject/ubuntu$ ./run-app.sh —live-reload
 ```
 
-## Developing React Native Ubuntu
+## Developing React Native Desktop
 
 If you would like to contribute, or just want a short cut to trying some React
 Native examples, you can build React Native directly.
 
 #### Dependencies
 
-```
-~$ sudo apt-get install -y cmake qt5-default qtdeclarative5-dev
-~/src/reactnative-ubuntu$ npm install
-```
-
-*Note*; you do not need need to add react-native and react-native-cli to the
+You do not need to add react-native and react-native-cli to the
 local repository if you are building this way, but you must add node-haste, as
 per the instructions above.
 
 #### Building
 
 ```
-~/src/reactnative-ubuntu$ mkdir build; cd build; cmake .. && make
+~/src/reactnative-ubuntu$ mkdir build; cd build; cmake .. && make -j4
 ```
 
 #### Running
