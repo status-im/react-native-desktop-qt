@@ -20,10 +20,6 @@ export default class SliderReactNative extends Component {
         disabled={false}
         onValueChange={() => console.log('Slider.onValueChange()')}
         onSlidingComplete={() => console.log('Slider.onSlidingComplete()')}
-        trackImage={false}
-        minimumTrackImage={false}
-        maximumTrackImage={false}
-        thumbImage={false}
         thumbTintColor={'green'}
         testID={'testSlider'}
         />

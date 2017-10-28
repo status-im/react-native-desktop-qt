@@ -32,8 +32,8 @@ private slots:
 void TestButtonSize::initTestCase() {
     ReactTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestButtonSize.qml"));
-    showView();
     waitAndVerifyJsAppStarted();
+    showView();
 }
 
 void TestButtonSize::testButtonShouldBeVisible() {

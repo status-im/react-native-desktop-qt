@@ -6,6 +6,9 @@ import {
   Button
 } from 'react-native';
 
+const onButtonPress = () => {
+};
+
 export default class TestButtonSize extends Component {
 
    render() {
@@ -13,6 +16,7 @@ export default class TestButtonSize extends Component {
          <View nativeID={"TopView"} style = {styles.container}>
                <View nativeID={"Content"} style = {styles.modal}>
                  <Button testID={"TestButton"}
+                    onPress={onButtonPress}
                     title='Long enough button'>
                  </Button>
                </View>

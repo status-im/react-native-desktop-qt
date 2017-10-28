@@ -44,10 +44,6 @@ QVariantMap TestSliderProps::propValues() const {
             {"p_minimumTrackTintColor", "green"},
             {"p_maximumTrackTintColor", "green"},
             {"p_disabled", false},
-            {"p_trackImage", false},
-            {"p_minimumTrackImage", false},
-            {"p_maximumTrackImage", false},
-            {"p_thumbImage", false},
             {"p_thumbTintColor", "green"},
             {"p_testID", "testSlider"}};
 }
