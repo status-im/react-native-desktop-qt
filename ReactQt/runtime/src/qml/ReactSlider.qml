@@ -15,10 +15,6 @@ Slider {
     property string p_minimumTrackTintColor
     property string p_maximumTrackTintColor
     property bool p_disabled: false
-    property var p_trackImage
-    property var p_minimumTrackImage
-    property var p_maximumTrackImage
-    property var p_thumbImage
     property string p_thumbTintColor
     property string p_testID
     property var flexbox: React.Flexbox {control: sliderRoot}

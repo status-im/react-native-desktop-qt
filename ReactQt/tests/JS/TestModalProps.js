@@ -9,6 +9,9 @@ import {
   Button
 } from 'react-native';
 
+const onButtonPress = () => {
+};
+
 export default class ModalReactNative extends Component {
 
    render() {
@@ -18,7 +21,8 @@ export default class ModalReactNative extends Component {
            visible = {true}>
            <View nativeID="ModalInner" style = {styles.modal}>
               <Text style = {styles.text}>Modal is open!</Text>
-              <Button title='Close Modal'/>
+              <Button title='Close Modal'
+                onPress={onButtonPress}/>
            </View>
         </Modal>
       )
