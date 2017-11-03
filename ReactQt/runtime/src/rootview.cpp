@@ -68,7 +68,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
 QVariantMap makeReactTouchEvent(QQuickItem* item, QTouchEvent* event) {
     return QVariantMap{};
 }
-}
+} // namespace
 
 class RootViewPrivate : public QObject {
     Q_OBJECT
@@ -222,8 +222,7 @@ void RootView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
 }
 
 void RootView::updatePolish() {
-    if (childItems().count() > 0) {
-        Q_ASSERT(childItems().count() == 1);
+    if (childItems().count() == 1) {
         auto view = childItems().at(0);
         Flexbox* flexbox = Flexbox::findFlexbox(view);
         if (flexbox) {

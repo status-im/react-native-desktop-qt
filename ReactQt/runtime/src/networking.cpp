@@ -31,7 +31,7 @@ QVariantMap headerListToMap(const QList<QNetworkReply::RawHeaderPair>& rawHeader
     }
     return rh;
 }
-}
+} // namespace
 
 class NetworkingPrivate {
 public:

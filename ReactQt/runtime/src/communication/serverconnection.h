@@ -68,7 +68,7 @@ private:
     virtual QIODevice* device();
 
 private:
-    QString m_serverHost = "localhost";
+    QString m_serverHost = "127.0.0.1";
     int m_port = 5000;
     QTcpSocket* m_socket = nullptr;
 };
