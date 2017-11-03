@@ -109,6 +109,7 @@ RemoteServerConnection::RemoteServerConnection(QObject* parent) : ServerConnecti
 
     m_socket = new QTcpSocket(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &RemoteServerConnection::dataReady);
+    connect(m_socket, &QTcpSocket::connected, [=]() { emit connectionReady(); });
     connect(m_socket,
             static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             [=](QAbstractSocket::SocketError) { emit connectionError(); });
