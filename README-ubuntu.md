@@ -45,25 +45,6 @@ Roughly they are -
 ~/src/reactnative-ubuntu/react-native-cli$ cd ..; npm publish --force
 ```
 
-### Setup node-haste
-
-Some changes to node-haste are required to detect the Ubuntu platform. Clone
-the patched repo and publish to the local package repository.
-```
-~/src$ git clone https://github.com/justinmcp/node-haste
-~/src$ cd node-haste; npm install
-~/src/node-haste$ (add node-haste to sinopia config - see below)
-~/src/node-haste$ npm publish --force
-```
-
-node-haste should be added to the packages section of the Sinopia config file
-```
-    packages:
-      'node-haste':
-        allow_access: $all
-        allow_publish: $all
-```
-
 ### Install React Native CLI
 
 The last step in preparing for creating our application to install the CLI
@@ -144,8 +125,7 @@ Native examples, you can build React Native directly.
 #### Dependencies
 
 You do not need to add react-native and react-native-cli to the
-local repository if you are building this way, but you must add node-haste, as
-per the instructions above.
+local repository if you are building this way.
 
 #### Building
 
