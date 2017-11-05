@@ -30,7 +30,7 @@ QString itemWithPath(const QString& item, const QStringList& searchPaths) {
     }
     return item;
 }
-}
+} // namespace
 
 namespace {
 struct RegisterLocal {
@@ -44,7 +44,7 @@ struct RegisterRemote {
         qRegisterMetaType<RemoteServerConnection*>();
     }
 } registerRemote;
-}
+} // namespace
 
 ServerConnection::ServerConnection(QObject* parent) : QObject(parent) {}
 

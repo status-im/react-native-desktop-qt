@@ -23,6 +23,7 @@
 #include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "textmanager.h"
+#include <cmath>
 
 TextManager::TextManager(QObject* parent) : RawTextManager(parent) {}
 
