@@ -145,7 +145,7 @@ const ActivityIndicator = createReactClass({
 
     return (
       <View onLayout={onLayout} style={[styles.container, style]}>
-        {Platform.OS === 'ios' ? (
+        {(Platform.OS === 'ios' || Platform.OS === 'ubuntu') ? (
           <RCTActivityIndicator {...nativeProps} />
         ) : (
           <ProgressBarAndroid {...nativeProps} />
