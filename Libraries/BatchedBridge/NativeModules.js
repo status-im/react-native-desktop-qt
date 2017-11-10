@@ -31,7 +31,7 @@ function genModule(config: ?ModuleConfig, moduleID: number): ?{name: string, mod
   if (!config) {
     return null;
   }
-  
+
   const [moduleName, constants, methods, promiseMethods, syncMethods] = config;
   invariant(!moduleName.startsWith('RCT') && !moduleName.startsWith('RK'),
     'Module name prefixes should\'ve been stripped by the native side ' +
@@ -82,7 +82,13 @@ function genMethod(moduleID: number, methodID: number, type: MethodType) {
     };
   } else if (type === 'sync') {
     fn = function(...args: Array<any>) {
-      return BatchedBridge.callSyncHook(moduleID, methodID, args);
+      if (__DEV__) {
+        invariant(global.nativeCallSyncHook, 'Calling synchronous methods on native ' +
+          'modules is not supported in Chrome.\n\n Consider providing alternative ' +
+          'methods to expose this method in debug mode, e.g. by exposing constants ' +
+          'ahead-of-time.');
+      }
+      return global.nativeCallSyncHook(moduleID, methodID, args);
     };
   } else {
     fn = function(...args: Array<any>) {

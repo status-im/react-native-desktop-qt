@@ -261,7 +261,7 @@ function getInstallPackage(rnPackage) {
   var packageToInstall = 'https://github.com/status-im/react-native-linux#react-native-qt';
   var isValidSemver = semver.valid(rnPackage);
   if (isValidSemver) {
-    packageToInstall = 'react-native@' + isValidSemver;
+    packageToInstall += '@' + isValidSemver;
   } else if (rnPackage) {
     // for tar.gz or alternative paths
     packageToInstall = rnPackage;

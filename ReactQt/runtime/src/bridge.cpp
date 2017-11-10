@@ -424,18 +424,16 @@ void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args
     }
 
     // readable log of methods invoked via bridge
-    // qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
+    //    qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
 
     method->invoke(args);
 }
 
 void Bridge::applicationScriptDone() {
     QTimer::singleShot(0, [this]() {
-        d_func()->executor->executeJSCall("flushedQueue",
-                                          QVariantList{},
-                                          [=](const QJsonDocument& doc) {
-                                              processResult(doc);
-                                              setReady(true);
-                                          });
+        d_func()->executor->executeJSCall("flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
+            processResult(doc);
+            setReady(true);
+        });
     });
 }

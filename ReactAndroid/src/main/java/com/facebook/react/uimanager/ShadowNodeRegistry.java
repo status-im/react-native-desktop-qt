@@ -11,6 +11,7 @@ package com.facebook.react.uimanager;
 
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
+import com.facebook.react.common.SingleThreadAsserter;
 
 import com.facebook.react.common.SingleThreadAsserter;
 
@@ -18,7 +19,7 @@ import com.facebook.react.common.SingleThreadAsserter;
  * Simple container class to keep track of {@link ReactShadowNode}s associated with a particular
  * UIManagerModule instance.
  */
-/*package*/ class ShadowNodeRegistry {
+public class ShadowNodeRegistry {
 
   private final SparseArray<ReactShadowNode> mTagsToCSSNodes;
   private final SparseBooleanArray mRootTags;
