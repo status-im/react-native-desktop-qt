@@ -111,7 +111,10 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
             child->deleteLater();
         }
 
-        Flexbox::findFlexbox(parent)->removeChilds(removeAtIndices);
+        auto flexbox = Flexbox::findFlexbox(parent);
+        if (flexbox) {
+            flexbox->removeChilds(removeAtIndices);
+        }
     }
 }
 

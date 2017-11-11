@@ -105,7 +105,7 @@ void ReactTestCase::waitAndVerifyJsAppStarted() {
 }
 
 void ReactTestCase::waitAndVerifyJSException(const QString& exceptionMessage) {
-    waitAndVerifyCondition([=]() { return bridge()->redbox()->errorMessage() == exceptionMessage; },
+    waitAndVerifyCondition([=]() { return bridge()->redbox()->errorMessage().startsWith(exceptionMessage); },
                            QString("Expected JS exception \"%1\" was not received").arg(exceptionMessage));
 }
 
