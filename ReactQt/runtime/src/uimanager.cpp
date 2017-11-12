@@ -420,12 +420,38 @@ QList<ModuleMethod*> UIManager::methodsToExport() {
     return QList<ModuleMethod*>{};
 }
 
+QVariantMap directEventsDispatchConfig(const QStringList& eventsList) {
+    QVariantMap directEvents;
+
+    for (const QString& directEventName : eventsList) {
+        if (!directEvents.contains(directEventName)) {
+            QString tmp = directEventName;
+            tmp.replace(0, 3, "on");
+            directEvents.insert(directEventName, QVariantMap{{"registrationName", tmp}});
+        }
+    }
+    return directEvents;
+}
+
+QVariantMap bubblingEventsDispatchConfig(const QStringList& eventsList) {
+    QVariantMap bubblingEvents;
+
+    for (const QString& bubbleEventName : eventsList) {
+        if (!bubblingEvents.contains(bubbleEventName)) {
+            QString tmp = bubbleEventName;
+            tmp.replace(0, 3, "on");
+            bubblingEvents.insert(bubbleEventName,
+                                  QVariantMap{{"phasedRegistrationNames",
+                                               QVariantMap{{"bubbled", tmp}, {"captured", tmp.append("Capture")}}}});
+        }
+    }
+    return bubblingEvents;
+}
+
 QVariantMap UIManager::constantsToExport() {
     QVariantMap rc;
 
     for (const ComponentData* componentData : m_componentData) {
-        QVariantMap directEvents;
-        QVariantMap bubblingEvents;
         // qDebug() << "Checking" << componentData->name();
 
         QVariantMap managerInfo;
@@ -438,26 +464,8 @@ QVariantMap UIManager::constantsToExport() {
             managerInfo.insert("NativeProps", config["propTypes"]);
         }
 
-        for (const QString& eventName : config["directEvents"].toStringList()) {
-            if (!directEvents.contains(eventName)) {
-                QString tmp = eventName;
-                tmp.replace(0, 3, "on");
-                directEvents.insert(eventName, QVariantMap{{"registrationName", tmp}});
-            }
-        }
-
-        for (const QString& eventName : config["bubblingEvents"].toStringList()) {
-            if (!bubblingEvents.contains(eventName)) {
-                QString tmp = eventName;
-                tmp.replace(0, 3, "on");
-                bubblingEvents.insert(
-                    eventName,
-                    QVariantMap{{"phasedRegistrationNames",
-                                 QVariantMap{{"bubbled", tmp}, {"captured", tmp.append("Capture")}}}});
-            }
-        }
-        managerInfo.insert("bubblingEventTypes", bubblingEvents);
-        managerInfo.insert("directEventTypes", directEvents);
+        managerInfo.insert("bubblingEventTypes", bubblingEventsDispatchConfig(config["bubblingEvents"].toStringList()));
+        managerInfo.insert("directEventTypes", directEventsDispatchConfig(config["directEvents"].toStringList()));
 
         rc.insert(componentData->name(), managerInfo);
     }

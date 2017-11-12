@@ -15,8 +15,9 @@ var React = require('React');
 var StyleSheet = require('StyleSheet');
 var Text = require('Text');
 var View = require('View');
+var createReactClass = require('create-react-class');
 
-var DummyProgressViewIOS = React.createClass({
+var DummyProgressViewIOS = createReactClass({
   render: function() {
     return (
       <View style={[styles.dummy, this.props.style]}>
