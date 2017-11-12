@@ -422,10 +422,10 @@ QList<ModuleMethod*> UIManager::methodsToExport() {
 
 QVariantMap UIManager::constantsToExport() {
     QVariantMap rc;
-    QVariantMap directEvents;
-    QVariantMap bubblingEvents;
 
     for (const ComponentData* componentData : m_componentData) {
+        QVariantMap directEvents;
+        QVariantMap bubblingEvents;
         // qDebug() << "Checking" << componentData->name();
 
         QVariantMap managerInfo;
@@ -433,6 +433,7 @@ QVariantMap UIManager::constantsToExport() {
         managerInfo.insert("Manager", componentData->manager()->moduleName());
 
         QVariantMap config = componentData->viewConfig();
+
         if (!config.isEmpty()) {
             managerInfo.insert("NativeProps", config["propTypes"]);
         }
@@ -455,23 +456,11 @@ QVariantMap UIManager::constantsToExport() {
                                  QVariantMap{{"bubbled", tmp}, {"captured", tmp.append("Capture")}}}});
             }
         }
+        managerInfo.insert("bubblingEventTypes", bubblingEvents);
+        managerInfo.insert("directEventTypes", directEvents);
 
         rc.insert(componentData->name(), managerInfo);
     }
-
-    rc.insert("customBubblingEventTypes", bubblingEvents);
-    rc.insert("customDirectEventTypes", directEvents);
-    rc.insert("Dimensions",
-              QVariantMap{{"window",
-                           QVariantMap{{"width", m_bridge->visualParent()->width()},
-                                       {"height", m_bridge->visualParent()->height()},
-                                       {"scale", m_bridge->visualParent()->scale()}}},
-                          {"modalFullscreenView",
-                           QVariantMap{{"width", m_bridge->visualParent()->width()},
-                                       {"height", m_bridge->visualParent()->height()}}}});
-    rc.insert(
-        "modalFullscreenView",
-        QVariantMap{{"width", m_bridge->visualParent()->width()}, {"height", m_bridge->visualParent()->height()}});
 
     return rc;
 }
