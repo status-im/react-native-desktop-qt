@@ -17,6 +17,7 @@
 #include "blobprovider.h"
 #include "communication/executor.h"
 #include "communication/serverconnection.h"
+#include "communication/websocketexecutor.h"
 #include "componentmanagers/activityindicatormanager.h"
 #include "componentmanagers/buttonmanager.h"
 #include "componentmanagers/imageloader.h"
@@ -59,7 +60,7 @@ public:
     bool ready = false;
     bool jsAppStarted = false;
     QString serverConnectionType = "NetExecutor";
-    Executor* executor = nullptr;
+    IExecutor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
     QQuickItem* visualParent = nullptr;
     RedboxItem* redbox = nullptr;
@@ -72,6 +73,7 @@ public:
     QUrl bundleUrl;
     QString pluginsPath = "./plugins";
     QMap<int, ModuleData*> modules;
+    bool remoteJSDebugging = false;
 
     QObjectList internalModules() {
         return QObjectList{new Timing,
@@ -108,22 +110,36 @@ Bridge::~Bridge() {}
 void Bridge::setupExecutor() {
     Q_D(Bridge);
 
-    ServerConnection* conn = nullptr;
-
-    const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
-    if (connectionType != QMetaType::UnknownType) {
-        const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
-        QObject* instance = mObj->newInstance();
-        conn = qobject_cast<ServerConnection*>(instance);
+    if (d->executor) {
+        d->executor->deleteLater();
+        d->executor = nullptr;
     }
 
-    if (conn == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
-                   << "constructing default (RemoteServerConnection)";
-        conn = new RemoteServerConnection();
+#ifdef RCT_DEV
+    if (d->remoteJSDebugging) {
+        d->executor = new WebSocketExecutor(QUrl("ws://localhost:8081/debugger-proxy?role=client"), this);
+    }
+#endif // RCT_DEV
+
+    if (!d->executor) {
+        ServerConnection* conn = nullptr;
+
+        const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
+        if (connectionType != QMetaType::UnknownType) {
+            const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
+            QObject* instance = mObj->newInstance();
+            conn = qobject_cast<ServerConnection*>(instance);
+        }
+
+        if (conn == nullptr) {
+            qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
+                       << "constructing default (RemoteServerConnection)";
+            conn = new RemoteServerConnection();
+        }
+
+        d->executor = new Executor(conn, this);
     }
 
-    d->executor = new Executor(conn, this);
     connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
     d->executor->init();
 }
@@ -143,10 +159,9 @@ void Bridge::reload() {
     setReady(false);
     setJsAppStarted(false);
 
-    d->executor->deleteLater();
     setupExecutor();
 
-    // d->uiManager->reset();
+    d->uiManager->reset();
     for (auto& md : d->modules) {
         md->deleteLater();
     }
@@ -162,18 +177,24 @@ void Bridge::loadBundle(const QUrl& bundleUrl) {
 }
 
 void Bridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args) {
+    if (!d_func()->executor)
+        return;
     d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
                                       QVariantList{module, method, args},
                                       [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args) {
+    if (!d_func()->executor)
+        return;
     d_func()->executor->executeJSCall("invokeCallbackAndReturnFlushedQueue",
                                       QVariantList{callbackCode, args},
                                       [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
+    if (!d_func()->executor)
+        return;
     d_func()->executor->executeJSCall(method, args, [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
@@ -182,6 +203,8 @@ void Bridge::executeSourceCode(const QByteArray& sourceCode) {
 }
 
 void Bridge::enqueueRunAppCall(const QVariantList& args) {
+    if (!d_func()->executor)
+        return;
     d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
                                       QVariantList{"AppRegistry", "runApplication", args},
                                       [=](const QJsonDocument& doc) {
@@ -315,6 +338,10 @@ RedboxItem* Bridge::redbox() {
     if (d->redbox == nullptr)
         d->redbox = new RedboxItem(this);
     return d->redbox;
+}
+
+void Bridge::setRemoteJSDebugging(bool value) {
+    d_func()->remoteJSDebugging = value;
 }
 
 void Bridge::sourcesFinished() {

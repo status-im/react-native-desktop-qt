@@ -14,6 +14,11 @@ Used Qt framework of version Qt 5.9.1 LTS.
 
 Follow [Ubuntu development guide](https://github.com/status-im/react-native-desktop/blob/react-native-qt/README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
 
+### Debugging
+
+To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.  
+By default, `In-App Developer Menu` is available only for Debug configuration builds.
+
 ## Documentation
 
 - [List of supported React Native componenets and APIs ("React Native Qt" column)](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/ComponentsSupport.md)

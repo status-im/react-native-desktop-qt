@@ -384,9 +384,20 @@ UIManager::~UIManager() {
 }
 
 void UIManager::reset() {
+    // Avoid to delete root view on reset
+    QQuickItem* rootView = m_views[m_rootTag];
+    if (rootView) {
+        m_views.remove(m_rootTag);
+    }
+
     for (auto& v : m_views) {
         v->setParentItem(nullptr);
         v->deleteLater();
+    }
+    m_views.clear();
+
+    if (rootView) {
+        m_views.insert(m_rootTag, rootView);
     }
     m_bridge->visualParent()->polish();
 }
@@ -481,7 +492,8 @@ int UIManager::allocateRootTag() {
 
 void UIManager::registerRootView(QQuickItem* root) {
     AttachedProperties* properties = AttachedProperties::get(root);
-    m_views.insert(properties->tag(), root);
+    m_rootTag = properties->tag();
+    m_views.insert(m_rootTag, root);
 }
 
 QQuickItem* UIManager::viewForTag(int reactTag) {
