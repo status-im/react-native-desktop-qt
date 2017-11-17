@@ -71,7 +71,7 @@ Q_SIGNALS:
     void executorChanged();
 
 protected:
-    virtual void updatePolish();
+    virtual void updatePolish() override;
 
 private Q_SLOTS:
     void bridgeReady();

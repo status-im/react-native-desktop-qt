@@ -123,7 +123,7 @@ void ViewManager::notifyJsAboutEvent(int senderTag, const QString& eventName, co
         "RCTEventEmitter", "receiveEvent", QVariantList{senderTag, normalizeInputEventName(eventName), eventData});
 }
 
-int ViewManager::tag(QQuickItem* view) const {
+int ViewManager::tag(QQuickItem* view) {
     AttachedProperties* rap = AttachedProperties::get(view, false);
     if (rap == nullptr) {
         qCritical() << "Could not get reacTag for view!";
