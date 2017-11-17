@@ -134,17 +134,9 @@ int ViewManager::tag(QQuickItem* view) const {
 }
 
 QQuickItem* ViewManager::createView() const {
-    QQmlComponent component(m_bridge->qmlEngine());
-    auto file = qmlComponentFile();
-    component.loadUrl(QUrl(file));
-    if (!component.isReady()) {
-        qCritical() << QString("Component for %1 is not ready!").arg(qmlComponentFile()) << component.errors();
-        return nullptr;
-    }
-
-    QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
+    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlComponentFile()));
     if (item == nullptr) {
-        qCritical() << QString("Unable to construct item from component %1").arg(qmlComponentFile());
+        qCritical() << QString("Can't create QML item for componenet %1").arg(qmlComponentFile());
     }
     return item;
 }

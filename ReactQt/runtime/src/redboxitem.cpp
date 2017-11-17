@@ -15,6 +15,7 @@
 
 #include "bridge.h"
 #include "redboxitem.h"
+#include "utilities.h"
 
 namespace {
 
@@ -76,12 +77,9 @@ public:
     }
 
     void createRedboxItem(QQuickItem* parent) {
-
-        QQmlComponent component(bridge->qmlEngine());
-        component.loadUrl(QUrl("qrc:/qml/ReactRedboxItem.qml"));
-        redbox = qobject_cast<QQuickItem*>(component.create());
+        redbox = utilities::createQMLItemFromSourceFile(bridge->qmlEngine(), QUrl("qrc:/qml/ReactRedboxItem.qml"));
         if (redbox == nullptr) {
-            qCritical() << __PRETTY_FUNCTION__ << "Unable to create RedboxItem" << component.errors();
+            qCritical() << __PRETTY_FUNCTION__ << "Unable to create RedboxItem";
             return;
         }
 

@@ -22,6 +22,7 @@
 
 class Bridge;
 class ComponentData;
+class QQuickItem;
 
 class UIManager : public QObject, public ModuleInterface {
     Q_OBJECT
@@ -94,6 +95,7 @@ private:
     Bridge* m_bridge;
     QMap<QString, ComponentData*> m_componentData;
     QMap<int, QQuickItem*> m_views;
+    int m_rootTag = -1;
 };
 
 #endif // UIMANAGER_H

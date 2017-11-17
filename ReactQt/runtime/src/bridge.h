@@ -91,6 +91,7 @@ public:
     TestModule* testModule() const;
     ImageLoader* imageLoader() const;
     RedboxItem* redbox();
+    void setRemoteJSDebugging(bool value);
 
 Q_SIGNALS:
     void readyChanged();

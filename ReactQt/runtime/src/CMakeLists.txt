@@ -12,9 +12,17 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  ADD_DEFINITIONS(-DRCT_DEV)
+endif()
+
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  find_package(Qt5WebSockets REQUIRED)
+endif()
 
 set(
   SRC
@@ -57,7 +65,9 @@ set(
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp
-  communication/executor
+  communication/executor.cpp
+  communication/websocketexecutor.cpp
+  communication/iexecutor.h
   ../../../ReactCommon/yoga/yoga/Yoga.c
   ../../../ReactCommon/yoga/yoga/YGEnums.c
   ../../../ReactCommon/yoga/yoga/YGNodeList.c
@@ -76,6 +86,7 @@ set(
   qml/ReactButton.qml
   qml/ReactSlider.qml
   qml/ReactModal.qml
+  qml/DevMenu.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
@@ -98,7 +109,12 @@ set_target_properties(
 )
 endif()
 
-qt5_use_modules(react-native Core Qml Quick)
+set(USED_QT_MODULES Core Qml Quick)
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+  set(USED_QT_MODULES ${USED_QT_MODULES} WebSockets)
+endif()
+
+qt5_use_modules(react-native ${USED_QT_MODULES})
 
 add_custom_target(
   copy-qmldir ALL

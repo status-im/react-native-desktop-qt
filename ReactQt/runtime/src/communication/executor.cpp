@@ -41,7 +41,7 @@ public:
     Executor* q_ptr = nullptr;
 };
 
-Executor::Executor(ServerConnection* conn, QObject* parent) : QObject(parent), d_ptr(new ExecutorPrivate(this)) {
+Executor::Executor(ServerConnection* conn, QObject* parent) : IExecutor(parent), d_ptr(new ExecutorPrivate(this)) {
     Q_ASSERT(conn);
     Q_D(Executor);
     d->m_connection = QSharedPointer<ServerConnection>(conn);
@@ -50,7 +50,9 @@ Executor::Executor(ServerConnection* conn, QObject* parent) : QObject(parent), d
     d->setupStateMachine();
 }
 
-Executor::~Executor() {}
+Executor::~Executor() {
+    d_ptr->connection()->device()->close();
+}
 
 void ExecutorPrivate::setupStateMachine() {
     m_machina = new QStateMachine(this);

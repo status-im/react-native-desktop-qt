@@ -13,6 +13,7 @@
 
 #include <QQmlEngine>
 #include <QTimer>
+#include <QVariant>
 
 #include "attachedproperties.h"
 #include "bridge.h"
@@ -82,6 +83,7 @@ public:
     QString serverConnectionType = "RemoteServerConnection";
     Bridge* bridge = nullptr;
     RootView* q_ptr;
+    bool remoteJSDebugging = false;
 
     RootViewPrivate(RootView* q) : q_ptr(q) {}
 
@@ -221,6 +223,21 @@ void RootView::loadBundle(const QString& moduleName, const QUrl& codeLocation) {
     }
 }
 
+void RootView::startRemoteJSDebugging() {
+    Q_D(RootView);
+
+    if (d_func()->remoteJSDebugging == false) {
+        d_func()->remoteJSDebugging = true;
+        d->bridge->setRemoteJSDebugging(d_func()->remoteJSDebugging);
+        d->bridge->reload();
+    }
+}
+
+void RootView::reloadBridge() {
+    Q_D(RootView);
+    d->bridge->reload();
+}
+
 void RootView::updatePolish() {
     if (childItems().count() == 1) {
         auto view = childItems().at(0);
@@ -263,6 +280,10 @@ void RootView::componentComplete() {
 
     QQuickItem::componentComplete();
 
+#ifdef RCT_DEV
+    loadDevMenu();
+#endif // RCT_DEV
+
     QTimer::singleShot(0, [=]() {
         // TODO: setQmlEngine && setNetworkAccessManager to be just setQmlEngine && then internal?
         d->bridge->setQmlEngine(qmlEngine(this));
@@ -287,6 +308,18 @@ void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQui
                              QVariantList{normalizeInputEventName(eventType), QVariantList{e}, QVariantList{0}});
     event->setAccepted(true);
 }
+
+#ifdef RCT_DEV
+void RootView::loadDevMenu() {
+    QQuickItem* item = createQMLItemFromSourceFile(qmlEngine(this), QUrl("qrc:/qml/DevMenu.qml"));
+    if (!item) {
+        qCritical() << QString("Can't create QML item for DevMenu.qml");
+    }
+    // DevMenu is supposed to be direct child of RootView's parent QML item
+    item->setParentItem(this->parentItem());
+    item->setProperty("rootView", QVariant::fromValue((QObject*)this));
+}
+#endif // RCT_DEV
 
 void RootView::mousePressEvent(QMouseEvent* event) {
     sendMouseEvent(event, TOUCH_START, this);
