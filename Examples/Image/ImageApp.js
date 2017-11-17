@@ -15,7 +15,7 @@ export default class ImageReactNative extends Component {
   render() {
     return (
       <Image
-        source={{uri: 'https://www.google.com.ua/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png'}}
+        source={{uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png'}}
         style={styles.base}
         resizeMode={'center'}
       />
