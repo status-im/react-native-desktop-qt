@@ -311,17 +311,10 @@ void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQui
 
 #ifdef RCT_DEV
 void RootView::loadDevMenu() {
-    QQmlComponent component(qmlEngine(this));
-    component.loadUrl(QUrl("qrc:/qml/DevMenu.qml"));
-    if (!component.isReady()) {
-        qCritical() << QString("Component for DevMenu.qml is not loaded");
+    QQuickItem* item = createQMLItemFromSourceFile(qmlEngine(this), QUrl("qrc:/qml/DevMenu.qml"));
+    if (!item) {
+        qCritical() << QString("Can't create QML item for DevMenu.qml");
     }
-
-    QQuickItem* item = qobject_cast<QQuickItem*>(component.create());
-    if (item == nullptr) {
-        qCritical() << QString("Unable to construct item from component DevMenu.qml");
-    }
-
     // DevMenu is supposed to be direct child of RootView's parent QML item
     item->setParentItem(this->parentItem());
     item->setProperty("rootView", QVariant::fromValue((QObject*)this));

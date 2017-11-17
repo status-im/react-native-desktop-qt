@@ -86,6 +86,10 @@ void WebSocketExecutorPrivate::setupWebSocket(const QUrl& url) {
                 });
                 timer->start();
             }
+            reply->abort();
+        });
+
+        connect(reply, &QNetworkReply::finished, [=]() {
             reply->deleteLater();
             networkAccessManager->deleteLater();
         });
