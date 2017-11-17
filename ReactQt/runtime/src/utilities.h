@@ -13,11 +13,16 @@
 #define UTILITIES
 
 #include <QString>
+#include <QUrl>
+
+class QQuickItem;
+class QQmlEngine;
 
 namespace utilities {
 
 void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);
+QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl);
 }
 
 #endif // UTILITIES
