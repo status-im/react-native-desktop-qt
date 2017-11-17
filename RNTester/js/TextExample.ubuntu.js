@@ -343,89 +343,90 @@ exports.examples = [
   //   title: 'Selectable',
   //   render: function() {
   //     return (
-  //         <View>
-  //           <Text selectable={true}>
-  //             This text is <Text style={{fontWeight: 'bold'}}>selectable</Text> if you click-and-hold.
-  //           </Text>
-  //         </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'Text Decoration',
-  //   render: function() {
-  //     return (
   //       <View>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'underline',
-  //             textDecorationStyle: 'solid',
-  //           }}>
-  //           Solid underline
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'underline',
-  //             textDecorationStyle: 'double',
-  //             textDecorationColor: '#ff0000',
-  //           }}>
-  //           Double underline with custom color
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'underline',
-  //             textDecorationStyle: 'dashed',
-  //             textDecorationColor: '#9CDC40',
-  //           }}>
-  //           Dashed underline with custom color
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'underline',
-  //             textDecorationStyle: 'dotted',
-  //             textDecorationColor: 'blue',
-  //           }}>
-  //           Dotted underline with custom color
-  //         </Text>
-  //         <Text style={{textDecorationLine: 'none'}}>None textDecoration</Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'line-through',
-  //             textDecorationStyle: 'solid',
-  //           }}>
-  //           Solid line-through
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'line-through',
-  //             textDecorationStyle: 'double',
-  //             textDecorationColor: '#ff0000',
-  //           }}>
-  //           Double line-through with custom color
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'line-through',
-  //             textDecorationStyle: 'dashed',
-  //             textDecorationColor: '#9CDC40',
-  //           }}>
-  //           Dashed line-through with custom color
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             textDecorationLine: 'line-through',
-  //             textDecorationStyle: 'dotted',
-  //             textDecorationColor: 'blue',
-  //           }}>
-  //           Dotted line-through with custom color
-  //         </Text>
-  //         <Text style={{textDecorationLine: 'underline line-through'}}>
-  //           Both underline and line-through
+  //         <Text selectable={true}>
+  //           This text is <Text style={{fontWeight: 'bold'}}>selectable</Text> if
+  //           you click-and-hold.
   //         </Text>
   //       </View>
   //     );
   //   },
   // },
+  {
+    title: 'Text Decoration',
+    render: function() {
+      return (
+        <View>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'solid',
+            }}>
+            Solid underline
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'double',
+              textDecorationColor: '#ff0000',
+            }}>
+            Double underline with custom color
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'dashed',
+              textDecorationColor: '#9CDC40',
+            }}>
+            Dashed underline with custom color
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'underline',
+              textDecorationStyle: 'dotted',
+              textDecorationColor: 'blue',
+            }}>
+            Dotted underline with custom color
+          </Text>
+          <Text style={{textDecorationLine: 'none'}}>None textDecoration</Text>
+          <Text
+            style={{
+              textDecorationLine: 'line-through',
+              textDecorationStyle: 'solid',
+            }}>
+            Solid line-through
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'line-through',
+              textDecorationStyle: 'double',
+              textDecorationColor: '#ff0000',
+            }}>
+            Double line-through with custom color
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'line-through',
+              textDecorationStyle: 'dashed',
+              textDecorationColor: '#9CDC40',
+            }}>
+            Dashed line-through with custom color
+          </Text>
+          <Text
+            style={{
+              textDecorationLine: 'line-through',
+              textDecorationStyle: 'dotted',
+              textDecorationColor: 'blue',
+            }}>
+            Dotted line-through with custom color
+          </Text>
+          <Text style={{textDecorationLine: 'underline line-through'}}>
+            Both underline and line-through
+          </Text>
+        </View>
+      );
+    },
+  },
   // {
   //   title: 'Nested',
   //   description:
@@ -468,67 +469,67 @@ exports.examples = [
   //     );
   //   },
   // },
-  // {
-  //   title: 'Text Align',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text>auto (default) - english LTR</Text>
-  //         <Text>
-  //           {'\u0623\u062D\u0628 \u0627\u0644\u0644\u063A\u0629 ' +
-  //             '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 auto (default) - arabic ' +
-  //             'RTL'}
-  //         </Text>
-  //         <Text style={{textAlign: 'left'}}>
-  //           left left left left left left left left left left left left left
-  //           left left
-  //         </Text>
-  //         <Text style={{textAlign: 'center'}}>
-  //           center center center center center center center center center
-  //           center center
-  //         </Text>
-  //         <Text style={{textAlign: 'right'}}>
-  //           right right right right right right right right right right right
-  //           right right
-  //         </Text>
-  //         <Text style={{textAlign: 'justify'}}>
-  //           justify: this text component{"'"}s contents are laid out with
-  //           "textAlign: justify" and as you can see all of the lines except the
-  //           last one span the available width of the parent container.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'Letter Spacing',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text style={{letterSpacing: 0}}>letterSpacing = 0</Text>
-  //         <Text style={{letterSpacing: 2, marginTop: 5}}>
-  //           letterSpacing = 2
-  //         </Text>
-  //         <Text style={{letterSpacing: 9, marginTop: 5}}>
-  //           letterSpacing = 9
-  //         </Text>
-  //         <Text style={{letterSpacing: -1, marginTop: 5}}>
-  //           letterSpacing = -1
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'Spaces',
-  //   render: function() {
-  //     return (
-  //       <Text>
-  //         A {'generated'} {' '} {'string'} and    some &nbsp;&nbsp;&nbsp; spaces
-  //       </Text>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Text Align',
+    render: function() {
+      return (
+        <View>
+          <Text>auto (default) - english LTR</Text>
+          <Text>
+            {'\u0623\u062D\u0628 \u0627\u0644\u0644\u063A\u0629 ' +
+              '\u0627\u0644\u0639\u0631\u0628\u064A\u0629 auto (default) - arabic ' +
+              'RTL'}
+          </Text>
+          <Text style={{textAlign: 'left'}}>
+            left left left left left left left left left left left left left
+            left left
+          </Text>
+          <Text style={{textAlign: 'center'}}>
+            center center center center center center center center center
+            center center
+          </Text>
+          <Text style={{textAlign: 'right'}}>
+            right right right right right right right right right right right
+            right right
+          </Text>
+          <Text style={{textAlign: 'justify'}}>
+            justify: this text component{"'"}s contents are laid out with
+            "textAlign: justify" and as you can see all of the lines except the
+            last one span the available width of the parent container.
+          </Text>
+        </View>
+      );
+    },
+  },
+  {
+    title: 'Letter Spacing',
+    render: function() {
+      return (
+        <View>
+          <Text style={{letterSpacing: 0}}>letterSpacing = 0</Text>
+          <Text style={{letterSpacing: 2, marginTop: 5}}>
+            letterSpacing = 2
+          </Text>
+          <Text style={{letterSpacing: 9, marginTop: 5}}>
+            letterSpacing = 9
+          </Text>
+          <Text style={{letterSpacing: -1, marginTop: 5}}>
+            letterSpacing = -1
+          </Text>
+        </View>
+      );
+    },
+  },
+  {
+    title: 'Spaces',
+    render: function() {
+      return (
+        <Text>
+          A {'generated'} {' '} {'string'} and    some &nbsp;&nbsp;&nbsp; spaces
+        </Text>
+      );
+    },
+  },
   // {
   //   title: 'Line Height',
   //   render: function() {
@@ -542,13 +543,13 @@ exports.examples = [
   //     );
   //   },
   // },
-  // {
-  //   title: 'Empty Text',
-  //   description: "It's ok to have Text with zero or null children.",
-  //   render: function() {
-  //     return <Text />;
-  //   },
-  // },
+  {
+    title: 'Empty Text',
+    description: "It's ok to have Text with zero or null children.",
+    render: function() {
+      return <Text />;
+    },
+  },
   // {
   //   title: 'Toggling Attributes',
   //   render: function(): React.Element<any> {
@@ -582,27 +583,27 @@ exports.examples = [
   //     );
   //   },
   // },
-  // {
-  //   title: 'numberOfLines attribute',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text numberOfLines={1}>
-  //           Maximum of one line, no matter how much I write here. If I keep
-  //           writing, it{"'"}ll just truncate after one line.
-  //         </Text>
-  //         <Text numberOfLines={2} style={{marginTop: 20}}>
-  //           Maximum of two lines, no matter how much I write here. If I keep
-  //           writing, it{"'"}ll just truncate after two lines.
-  //         </Text>
-  //         <Text style={{marginTop: 20}}>
-  //           No maximum lines specified, no matter how much I write here. If I
-  //           keep writing, it{"'"}ll just keep going and going.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
+  {
+    title: 'numberOfLines attribute',
+    render: function() {
+      return (
+        <View>
+          <Text numberOfLines={1}>
+            Maximum of one line, no matter how much I write here. If I keep
+            writing, it{"'"}ll just truncate after one line.
+          </Text>
+          <Text numberOfLines={2} style={{marginTop: 20}}>
+            Maximum of two lines, no matter how much I write here. If I keep
+            writing, it{"'"}ll just truncate after two lines.
+          </Text>
+          <Text style={{marginTop: 20}}>
+            No maximum lines specified, no matter how much I write here. If I
+            keep writing, it{"'"}ll just keep going and going.
+          </Text>
+        </View>
+      );
+    },
+  },
   // {
   //   title: 'Text highlighting (tap the link to see highlight)',
   //   render: function() {
@@ -673,89 +674,89 @@ exports.examples = [
   //     );
   //   },
   // },
-  // {
-  //   title: 'Text shadow',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text
-  //           style={{
-  //             fontSize: 20,
-  //             textShadowOffset: {width: 2, height: 2},
-  //             textShadowRadius: 1,
-  //             textShadowColor: '#00cccc',
-  //           }}>
-  //           Demo text shadow
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'Ellipsize mode',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text numberOfLines={1}>
-  //           This very long text should be truncated with dots in the end.
-  //         </Text>
-  //         <Text ellipsizeMode="middle" numberOfLines={1}>
-  //           This very long text should be truncated with dots in the middle.
-  //         </Text>
-  //         <Text ellipsizeMode="head" numberOfLines={1}>
-  //           This very long text should be truncated with dots in the beginning.
-  //         </Text>
-  //         <Text ellipsizeMode="clip" numberOfLines={1}>
-  //           This very looooooooooooooooooooooooooooong text should be clipped.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'Font variants',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text style={{fontVariant: ['small-caps']}}>Small Caps{'\n'}</Text>
-  //         <Text
-  //           style={{
-  //             fontFamily: Platform.isTVOS ? 'Times' : 'Hoefler Text',
-  //             fontVariant: ['oldstyle-nums'],
-  //           }}>
-  //           Old Style nums 0123456789{'\n'}
-  //         </Text>
-  //         <Text
-  //           style={{
-  //             fontFamily: Platform.isTVOS ? 'Times' : 'Hoefler Text',
-  //             fontVariant: ['lining-nums'],
-  //           }}>
-  //           Lining nums 0123456789{'\n'}
-  //         </Text>
-  //         <Text style={{fontVariant: ['tabular-nums']}}>
-  //           Tabular nums{'\n'}
-  //           1111{'\n'}
-  //           2222{'\n'}
-  //         </Text>
-  //         <Text style={{fontVariant: ['proportional-nums']}}>
-  //           Proportional nums{'\n'}
-  //           1111{'\n'}
-  //           2222{'\n'}
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Text shadow',
+    render: function() {
+      return (
+        <View>
+          <Text
+            style={{
+              fontSize: 20,
+              textShadowOffset: {width: 2, height: 2},
+              textShadowRadius: 1,
+              textShadowColor: '#00cccc',
+            }}>
+            Demo text shadow
+          </Text>
+        </View>
+      );
+    },
+  },
+  {
+    title: 'Ellipsize mode',
+    render: function() {
+      return (
+        <View>
+          <Text numberOfLines={1}>
+            This very long text should be truncated with dots in the end.
+          </Text>
+          <Text ellipsizeMode="middle" numberOfLines={1}>
+            This very long text should be truncated with dots in the middle.
+          </Text>
+          <Text ellipsizeMode="head" numberOfLines={1}>
+            This very long text should be truncated with dots in the beginning.
+          </Text>
+          <Text ellipsizeMode="clip" numberOfLines={1}>
+            This very looooooooooooooooooooooooooooong text should be clipped.
+          </Text>
+        </View>
+      );
+    },
+  },
+  {
+    title: 'Font variants',
+    render: function() {
+      return (
+        <View>
+          <Text style={{fontVariant: ['small-caps']}}>Small Caps{'\n'}</Text>
+          <Text
+            style={{
+              fontFamily: Platform.isTVOS ? 'Times' : 'Hoefler Text',
+              fontVariant: ['oldstyle-nums'],
+            }}>
+            Old Style nums 0123456789{'\n'}
+          </Text>
+          <Text
+            style={{
+              fontFamily: Platform.isTVOS ? 'Times' : 'Hoefler Text',
+              fontVariant: ['lining-nums'],
+            }}>
+            Lining nums 0123456789{'\n'}
+          </Text>
+          <Text style={{fontVariant: ['tabular-nums']}}>
+            Tabular nums{'\n'}
+            1111{'\n'}
+            2222{'\n'}
+          </Text>
+          <Text style={{fontVariant: ['proportional-nums']}}>
+            Proportional nums{'\n'}
+            1111{'\n'}
+            2222{'\n'}
+          </Text>
+        </View>
+      );
+    },
+  },
   // {
   //   title: 'Dynamic Font Size Adjustment',
   //   render: function(): React.Element<any> {
   //     return <AdjustingFontSize />;
   //   },
   // },
-  // {
-  //   title: 'Text Align with RTL',
-  //   render: function() {
-  //     return <TextAlignRTLExample />;
-  //   },
-  // },
+  {
+    title: 'Text Align with RTL',
+    render: function() {
+      return <TextAlignRTLExample />;
+    },
+  },
 ];
