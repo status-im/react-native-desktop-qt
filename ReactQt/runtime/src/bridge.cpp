@@ -431,11 +431,9 @@ void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args
 
 void Bridge::applicationScriptDone() {
     QTimer::singleShot(0, [this]() {
-        d_func()->executor->executeJSCall("flushedQueue",
-                                          QVariantList{},
-                                          [=](const QJsonDocument& doc) {
-                                              processResult(doc);
-                                              setReady(true);
-                                          });
+        d_func()->executor->executeJSCall("flushedQueue", QVariantList{}, [=](const QJsonDocument& doc) {
+            processResult(doc);
+            setReady(true);
+        });
     });
 }

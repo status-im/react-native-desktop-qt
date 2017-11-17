@@ -65,6 +65,10 @@ QStringList ButtonManager::customDirectEventTypes() {
     };
 }
 
+QStringList ButtonManager::customBubblingEventTypes() {
+    return QStringList{};
+}
+
 void ButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
     notifyJsAboutEvent(tag(button), EVENT_ONPRESSED, {});
 }

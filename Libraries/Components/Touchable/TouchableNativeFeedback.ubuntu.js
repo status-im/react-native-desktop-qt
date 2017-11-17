@@ -13,8 +13,9 @@
 
 var React = require('React');
 var View = require('View');
+var createReactClass = require('create-react-class');
 
-var TouchableNativeFeedback = React.createClass({
+var TouchableNativeFeedback = createReactClass({
   render: function() {
     return (
       <View {...this.props} />

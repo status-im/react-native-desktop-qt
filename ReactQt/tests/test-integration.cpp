@@ -46,7 +46,7 @@ void TestIntegration::testJSExceptionReceived() {
     loadJSBundle("TestJSException", "IntegrationTests/TestJSException");
 
     waitAndVerifyJsAppStarted();
-    waitAndVerifyJSException("Exception on componentDidMount. File TestJSException.js");
+    waitAndVerifyJSException("Error: Exception on componentDidMount. File TestJSException.js");
 }
 
 QTEST_MAIN(TestIntegration)

@@ -27,6 +27,7 @@ public:
     virtual ViewManager* viewManager() override;
     virtual QString moduleName() override;
     virtual QStringList customDirectEventTypes() override;
+    virtual QStringList customBubblingEventTypes() override;
 
 public slots:
     void sendPressedNotificationToJs(QQuickItem* button);

@@ -11,28 +11,28 @@
 'use strict';
 
 const fs = require('fs');
-var generate = require('../generate/generate');
+// var generate = require('../generate/generate');
 const { exec } = require('child_process');
 
 function applyUbuntuPlatformPatch() {
-  exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src -i ../../react-native/add-ubuntu-platform.patch', (err, stdout, stderr) => {
-    console.log(`Std output: ${stdout}`);
-    if (err) {
-      console.error(`exec error: ${err}`);
-      return;
-    }
-  });
+  // exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src -i ../../react-native/add-ubuntu-platform.patch', (err, stdout, stderr) => {
+  //   console.log(`Std output: ${stdout}`);
+  //   if (err) {
+  //     console.error(`exec error: ${err}`);
+  //     return;
+  //   }
+  // });
 }
 
 function genUbuntu(args, config) {
-  applyUbuntuPlatformPatch();
-  return generate([
-    '--platform', 'ubuntu',
-    '--project-path', process.cwd(),
-    '--project-name', JSON.parse(
-      fs.readFileSync('package.json', 'utf8')
-    ).name
-  ], config);
+  // applyUbuntuPlatformPatch();
+  // return generate([
+  //   '--platform', 'ubuntu',
+  //   '--project-path', process.cwd(),
+  //   '--project-name', JSON.parse(
+  //     fs.readFileSync('package.json', 'utf8')
+  //   ).name
+  // ], config);
 }
 
 module.exports = {

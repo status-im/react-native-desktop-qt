@@ -12,7 +12,7 @@
 'use strict';
 
 var React = require('React');
-var PropTypes = React.PropTypes;
+const PropTypes = require('prop-types');
 
 var NativeModules = require('NativeModules');
 var ImageResizeMode = require('ImageResizeMode');
@@ -20,15 +20,17 @@ var ImageStylePropTypes = require('ImageStylePropTypes');
 var StyleSheetPropType = require('StyleSheetPropType');
 var NativeMethodsMixin = require('NativeMethodsMixin');
 var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
+const ImageSourcePropType = require('ImageSourcePropType');
 
 var requireNativeComponent = require('requireNativeComponent');
 var resolveAssetSource = require('resolveAssetSource');
+const createReactClass = require('create-react-class');
 
 var {
   ImageLoader,
 } = NativeModules;
 
-var Image = React.createClass({
+var Image = createReactClass({
   propTypes: {
     style: StyleSheetPropType(ImageStylePropTypes),
     source: PropTypes.oneOfType([

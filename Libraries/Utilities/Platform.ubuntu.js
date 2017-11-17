@@ -14,6 +14,7 @@
 
 var Platform = {
   OS: 'ubuntu',
+  select: (obj: Object) => 'ubuntu' in obj ? obj.ubuntu : obj.default,
 };
 
 module.exports = Platform;
