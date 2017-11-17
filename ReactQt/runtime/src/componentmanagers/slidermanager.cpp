@@ -30,7 +30,7 @@ const QString EVENT_ON_VALUE_CHANGED = "onValueChange";
 const QString EVENT_ON_SLIDING_COMPLETE = "onSlidingComplete";
 
 const char SLIDER_VALUE_PROPERTY_NAME[] = "value";
-}
+} // namespace
 
 class SliderManagerPrivate {};
 

@@ -18,6 +18,6 @@ namespace utilities {
 
 void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);
-}
+} // namespace utilities
 
 #endif // UTILITIES

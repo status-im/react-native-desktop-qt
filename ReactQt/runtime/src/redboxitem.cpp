@@ -30,7 +30,7 @@ static QHash<int, QByteArray> roleData{
 };
 
 const char REDBOX_MESSAGE_PROPERTY[] = "message";
-}
+} // namespace
 
 class RedboxItemPrivate : public QAbstractListModel {
 

@@ -61,7 +61,7 @@ QVariantMap buildConstantMap(QObject* moduleImpl) {
 
     return constants;
 }
-}
+} // namespace
 
 class ModuleDataPrivate {
 public:

@@ -29,7 +29,7 @@ QString reactAppState(Qt::ApplicationState state) {
         return "active";
     }
 }
-}
+} // namespace
 
 void AppState::getCurrentAppState(const ModuleInterface::ListArgumentBlock& success,
                                   const ModuleInterface::MapArgumentBlock& error) {

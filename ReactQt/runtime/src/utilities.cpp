@@ -59,4 +59,4 @@ QString normalizeInputEventName(const QString& eventName) {
 
     return tmp;
 }
-}
+} // namespace utilities
