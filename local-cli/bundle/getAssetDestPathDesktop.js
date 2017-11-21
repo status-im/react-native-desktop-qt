@@ -10,8 +10,8 @@
 
 const path = require('path');
 
-function getAssetDestPathUbuntu(asset, scale) {
+function getAssetDestPathDesktop(asset, scale) {
   return path.join('share', asset.httpServerLocation.substr(1), asset.name + '.' + asset.type);
 }
 
-module.exports = getAssetDestPathUbuntu;
+module.exports = getAssetDestPathDesktop;

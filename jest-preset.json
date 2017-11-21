@@ -1,7 +1,7 @@
 {
   "haste": {
     "defaultPlatform": "ios",
-    "platforms": ["android", "ios", "native", "ubuntu"],
+    "platforms": ["android", "ios", "native", "desktop"],
     "providesModuleNodeModules": [
       "react-native"
     ]

@@ -14,7 +14,7 @@ const fs = require('fs');
 // var generate = require('../generate/generate');
 const { exec } = require('child_process');
 
-function applyUbuntuPlatformPatch() {
+function applyDesktopPlatformPatch() {
   // exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src -i ../../react-native/add-ubuntu-platform.patch', (err, stdout, stderr) => {
   //   console.log(`Std output: ${stdout}`);
   //   if (err) {
@@ -24,7 +24,7 @@ function applyUbuntuPlatformPatch() {
   // });
 }
 
-function genUbuntu(args, config) {
+function genDesktop(args, config) {
   // applyUbuntuPlatformPatch();
   // return generate([
   //   '--platform', 'ubuntu',
@@ -36,7 +36,7 @@ function genUbuntu(args, config) {
 }
 
 module.exports = {
-  name: 'ubuntu',
-  description: 'generates an Ubuntu project for your app',
-  func: genUbuntu
+  name: 'desktop',
+  description: 'generates an Desktop project for your app',
+  func: genDesktop
 };

@@ -19,7 +19,7 @@ var mkdirp = require('mkdirp');
 
 
 function validatePackageName(name) {
-  // TODO: check that this matches Ubuntu package reqs as well
+  // TODO: check that this matches Desktop package reqs as well
   if (!name.match(/^([a-zA-Z_$][a-zA-Z\d_$]*\.)+([a-zA-Z_$][a-zA-Z\d_$]*)$/)) {
     return false;
   }
@@ -51,66 +51,65 @@ module.exports = yeoman.generators.NamedBase.extend({
     };
     this.fs.copyTpl(
       this.templatePath('CMakeLists.txt'),
-      this.destinationPath(path.join('ubuntu', 'CMakeLists.txt')),
+      this.destinationPath(path.join('desktop', 'CMakeLists.txt')),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('build.sh'),
-      this.destinationPath(path.join('ubuntu', 'build.sh')),
+      this.destinationPath(path.join('desktop', 'build.sh')),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('run-app.sh.in'),
-      this.destinationPath(path.join('ubuntu', 'run-app.sh.in')),
+      this.destinationPath(path.join('desktop', 'run-app.sh.in')),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('ubuntu-server.js'),
-      this.destinationPath(path.join('ubuntu', 'bin/ubuntu-server.js')),
+      this.destinationPath(path.join('desktop', 'bin/ubuntu-server.js')),
       templateParams
     );
 
     // click
     this.fs.copyTpl(
       this.templatePath('click/manifest.json'),
-      this.destinationPath(path.join('ubuntu', 'click', 'manifest.json')),
+      this.destinationPath(path.join('desktop', 'click', 'manifest.json')),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('click/desktop'),
-      this.destinationPath(path.join('ubuntu', 'click', this.name + '.desktop')),
+      this.destinationPath(path.join('desktop', 'click', this.name + '.desktop')),
       templateParams
     );
     this.fs.copy(
       this.templatePath('click/apparmor'),
-      this.destinationPath(path.join('ubuntu', 'click', this.name + '.apparmor'))
+      this.destinationPath(path.join('desktop', 'click', this.name + '.apparmor'))
     );
     this.fs.copy(
       this.templatePath('click/icon.png'),
-      this.destinationPath(path.join('ubuntu', 'click', 'share', 'icons', this.name + '.png'))
+      this.destinationPath(path.join('desktop', 'click', 'share', 'icons', this.name + '.png'))
     );
 
     // snap
     this.fs.copyTpl(
       this.templatePath('snap/snapcraft.yaml'),
-      this.destinationPath(path.join('ubuntu', 'snap', 'snapcraft.yaml')),
+      this.destinationPath(path.join('desktop', 'snap', 'snapcraft.yaml')),
       templateParams
     );
     this.fs.copy(
       this.templatePath('snap/parts/plugins/x-nodejs.py'),
-      this.destinationPath(path.join('ubuntu', 'snap/parts/plugins', 'x-nodejs.py'))
+      this.destinationPath(path.join('desktop', 'snap/parts/plugins', 'x-nodejs.py'))
     );
 
-    mkdirp.sync('ubuntu/share');
-    mkdirp.sync('ubuntu/plugins');
-    mkdirp.sync('ubuntu/tmp');
+    mkdirp.sync('desktop/share');
+    mkdirp.sync('desktop/plugins');
+    mkdirp.sync('desktop/tmp');
   },
 
   end: function() {
     var projectPath = this.destinationRoot();
-    this.log(chalk.white.bold('To run your app on Ubuntu:'));
-    this.log(chalk.white('   Have an Ubuntu emulator running, or a device connected'));
+    this.log(chalk.white.bold('To run your app on your Desktop natively:'));
     this.log(chalk.white('   cd ' + projectPath));
-    this.log(chalk.white('   react-native run-ubuntu'));
+    this.log(chalk.white('   react-native run-desktop'));
   }
 });

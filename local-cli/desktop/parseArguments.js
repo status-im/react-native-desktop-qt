@@ -19,7 +19,7 @@ function parseArguments(argv) {
   const args = parseCommandLine([{
     command: 'root',
     type: 'string',
-    description: 'Override the root directory for the ubuntu build (which contains the ubuntu directory)',
+    description: 'Override the root directory for the desktop build (which contains the desktop directory)',
   }, {
     command: 'live-reload',
     description: 'Start with live reloading enabled',
@@ -45,7 +45,7 @@ function parseArguments(argv) {
     command: 'plugins-path',
     type: 'string',
     description: 'Path to node modules',
-    default: process.cwd() + "/ubuntu/plugins"
+    default: process.cwd() + "/desktop/plugins"
   }, {
     command: 'click',
     description: 'Build a click package',

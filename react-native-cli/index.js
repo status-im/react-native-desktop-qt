@@ -248,7 +248,7 @@ function createProject(name, options) {
       start: 'node node_modules/react-native/local-cli/cli.js start',
       ios: 'react-native run-ios',
       android: 'react-native run-android',
-      ubuntu: 'react-native run-ubuntu'
+      desktop: 'react-native run-desktop'
     }
   };
   fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify(packageJson));

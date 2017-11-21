@@ -8,9 +8,9 @@
 
 cmake_minimum_required(VERSION 3.2.2)
 
-project(react-native-ubuntu)
+project(react-native-desktop)
 
-set(PROJECT_NAME "react-native-ubuntu")
+set(PROJECT_NAME "react-native-desktop")
 set(PROJECT_VERSION "0.0.1")
 
 include_directories(./React/Layout)

@@ -145,7 +145,7 @@ const ActivityIndicator = createReactClass({
 
     return (
       <View onLayout={onLayout} style={[styles.container, style]}>
-        {(Platform.OS === 'ios' || Platform.OS === 'ubuntu') ? (
+        {(Platform.OS === 'ios' || Platform.OS === 'desktop') ? (
           <RCTActivityIndicator {...nativeProps} />
         ) : (
           <ProgressBarAndroid {...nativeProps} />
@@ -176,7 +176,7 @@ if (Platform.OS === 'ios') {
     ActivityIndicator,
     { nativeOnly: { activityIndicatorViewStyle: true } }
   );
-} else if (Platform.OS === 'ubuntu') {
+} else if (Platform.OS === 'desktop') {
   var RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
 }
 

@@ -664,7 +664,7 @@ const ScrollView = createReactClass({
         ScrollViewClass = AndroidScrollView;
         ScrollContentContainerViewClass = View;
       }
-    } else if (Platform.OS === 'ubuntu') {
+    } else if (Platform.OS === 'desktop') {
       ScrollViewClass = UbuntuScrollView;
       ScrollContentContainerViewClass = View;
     }
@@ -921,7 +921,7 @@ if (Platform.OS === 'android') {
     nativeOnlyProps,
   );
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView', View);
-} else if (Platform.OS === 'ubuntu') {
+} else if (Platform.OS === 'desktop') {
   var UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
 }
 

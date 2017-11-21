@@ -19,15 +19,15 @@ const fs = require('fs');
 const child_process = require('child_process');
 
 
-function buildUbuntu(args, dependencies) {
+function buildDesktop(args, dependencies) {
   return _findModules(args).then((dependencies) => {
     return new Promise((resolve, reject) => {
-      _findUbuntuModules(args, dependencies, resolve, reject);
+      _findDesktopModules(args, dependencies, resolve, reject);
     });
-  }).then((ubuntuModules) => {
+  }).then((desktopModules) => {
     return new Promise((resolve, reject) => {
-      if (ubuntuModules && ubuntuModules.length > 0) {
-        _buildModules(args, ubuntuModules, resolve, reject);
+      if (desktopModules && desktopModules.length > 0) {
+        _buildModules(args, desktopModules, resolve, reject);
       } else {
         resolve();
       }
@@ -49,7 +49,7 @@ function _findModules(args) {
   });
 }
 
-function _findUbuntuModules(args, dependencies, resolve, reject) {
+function _findDesktopModules(args, dependencies, resolve, reject) {
   var potential = Object.keys(dependencies).map((p) => {
     if (p === 'react' || p === 'react-native')
       return null;
@@ -57,9 +57,9 @@ function _findUbuntuModules(args, dependencies, resolve, reject) {
     return new Promise((resolve, reject) => {
       const depPath = path.join(args.root, 'node_modules', p);
       fs.readFile(path.join(depPath, 'package.json'), (err, data) => {
-        const ubuntu = data && JSON.parse(data)._ubuntu;
-        if (ubuntu !== undefined && ubuntu.hasOwnProperty('build')) {
-          resolve({name: p, build: ubuntu.build, path: depPath});
+        const desktop = data && JSON.parse(data)._desktop;
+        if (desktop !== undefined && desktop.hasOwnProperty('build')) {
+          resolve({name: p, build: desktop.build, path: depPath});
         } else {
           resolve(null);
         }
@@ -70,21 +70,17 @@ function _findUbuntuModules(args, dependencies, resolve, reject) {
   Promise.all(potential).then((result) => {
     resolve(result.filter((v) => v !== null));
   }).catch((err) => {
-    reject("Error assessing Ubuntu module: " + err);
+    reject("Error assessing Desktop module: " + err);
   });
 }
 
 function _buildModules(args, dependencies, resolve, reject) {
   var builds = dependencies.map((p) => {
     return new Promise((resolve, reject) => {
-      console.log(chalk.bold('Building Ubuntu module: ') + p.name);
+      console.log(chalk.bold('Building Desktop module: ') + p.name);
 
-      var buildCommand = 'URN_OUTPUT_DIR=' + path.resolve(args.root, 'ubuntu', 'plugins');
-      if (args['arch'].startsWith('arm')) {
-        buildCommand = 'click chroot -a armhf -f ubuntu-sdk-15.04 -n click run ' + buildCommand + ' ' + p.build;
-      } else {
-        buildCommand += ' ' + p.build;
-      }
+      var buildCommand = 'URN_OUTPUT_DIR=' + path.resolve(args.root, 'desktop', 'plugins');
+      buildCommand += ' ' + p.build;
 
       child_process.exec(buildCommand, {cwd: p.path}, (error, stdout, stderr) => {
                              if (error) {
@@ -108,10 +104,7 @@ function _buildApplication(args) {
     console.log(chalk.bold('Building the app...'));
 
     var buildCommand = './build.sh';
-    if (args['arch'].startsWith('arm')) {
-      buildCommand = 'click chroot -a armhf -f ubuntu-sdk-15.04 -n click run ' + buildCommand;
-    }
-    child_process.exec(buildCommand, {cwd: path.join(args.root, 'ubuntu')},
+    child_process.exec(buildCommand, {cwd: path.join(args.root, 'desktop')},
                         (error, stdout, stderr) => {
                           if (error)
                             reject(error);
@@ -121,4 +114,4 @@ function _buildApplication(args) {
   });
 }
 
-module.exports = buildUbuntu;
+module.exports = buildDesktop;

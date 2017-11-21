@@ -16,9 +16,9 @@
 const path = require('path');
 const fs = require('fs');
 
-function checkUbuntu(args) {
-  return fs.existsSync(path.join(args.root, 'ubuntu/CMakeLists.txt')) &&
-         process.platform.startsWith('linux');
+function checkDesktop(args) {
+  return fs.existsSync(path.join(args.root, 'desktop/CMakeLists.txt')) &&
+         process.platform.startsWith('desktop');
 }
 
-module.exports = checkUbuntu;
+module.exports = checkDesktop;

@@ -17,7 +17,7 @@ Follow [Ubuntu development guide](https://github.com/status-im/react-native-desk
 ### Debugging
 
 To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.  
-By default, `In-App Developer Menu` is available only for Debug configuration builds.
+`In-App Developer Menu` is available only for Debug configuration builds by default.
 
 ## Documentation
 

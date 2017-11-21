@@ -13,8 +13,8 @@
 'use strict';
 
 var Platform = {
-  OS: 'ubuntu',
-  select: (obj: Object) => 'ubuntu' in obj ? obj.ubuntu : obj.default,
+  OS: 'desktop',
+  select: (obj: Object) => 'desktop' in obj ? obj.desktop : obj.default,
 };
 
 module.exports = Platform;

@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestTextInputProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestTextInputProps.bundle?platform=ubuntu&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestTextInputProps.bundle?platform=desktop&dev=true"
     }
 }

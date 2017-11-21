@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestSliderProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestSliderProps.bundle?platform=ubuntu&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestSliderProps.bundle?platform=desktop&dev=true"
     }
 }

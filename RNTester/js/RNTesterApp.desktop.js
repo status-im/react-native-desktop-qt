@@ -20,7 +20,7 @@ const ReactNative = require('react-native');
 const RNTesterActions = require('./RNTesterActions');
 const RNTesterExampleContainer = require('./RNTesterExampleContainer');
 const RNTesterExampleList = require('./RNTesterExampleList');
-const RNTesterList = require('./RNTesterList.ubuntu');
+const RNTesterList = require('./RNTesterList.desktop');
 const RNTesterNavigationReducer = require('./RNTesterNavigationReducer');
 const URIActionMap = require('./URIActionMap');
 
@@ -34,7 +34,7 @@ const {
 //  Button
 } = ReactNative;
 
-import type { RNTesterExample } from './RNTesterList.ubuntu';
+import type { RNTesterExample } from './RNTesterList.desktop';
 import type { RNTesterAction } from './RNTesterActions';
 import type { RNTesterNavigationState } from './RNTesterNavigationReducer';
 
