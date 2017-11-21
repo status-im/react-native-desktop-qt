@@ -11,6 +11,6 @@ Rectangle {
     anchors.fill: parent
 
     moduleName: "UIExplorerApp"
-    codeLocation: "http://localhost:8081/Examples/UIExplorer/UIExplorerApp.ubuntu.bundle?platform=ubuntu&dev=true"
+    codeLocation: "http://localhost:8081/Examples/UIExplorer/UIExplorerApp.desktop.bundle?platform=desktop&dev=true"
   }
 }

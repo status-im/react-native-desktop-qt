@@ -78,7 +78,7 @@ if (Platform.OS === 'ios') {
     ): bool {
     return connectionType !== 'NONE' && connectionType !== 'UNKNOWN';
   };
-} else if (Platform.OS === 'ubuntu') {
+} else if (Platform.OS === 'desktop') {
   _isConnected = function(
     networkAccessibility: NetworkAccessibility
   ): bool {

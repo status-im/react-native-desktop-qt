@@ -9,7 +9,7 @@
 #include "utilities.h"
 
 const int TIMEOUT_INTERVAL = 30000;
-const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=ubuntu&dev=true";
+const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=desktop&dev=true";
 
 ReactTestCase::ReactTestCase(QObject* parent) : QObject(parent) {
     timeoutTimer.setSingleShot(true);

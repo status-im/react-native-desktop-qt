@@ -13,21 +13,21 @@
 
 var Settings = {
   get(key: string): mixed {
-    console.warn('Settings is not yet supported on Ubuntu');
+    console.warn('Settings is not yet supported on Desktop');
     return null;
   },
 
   set(settings: Object) {
-    console.warn('Settings is not yet supported on Ubuntu');
+    console.warn('Settings is not yet supported on Desktop');
   },
 
   watchKeys(keys: string | Array<string>, callback: Function): number {
-    console.warn('Settings is not yet supported on Ubuntu');
+    console.warn('Settings is not yet supported on Desktop');
     return -1;
   },
 
   clearWatch(watchId: number) {
-    console.warn('Settings is not yet supported on Ubuntu');
+    console.warn('Settings is not yet supported on Desktop');
   },
 };
 

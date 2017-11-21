@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestModalProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestModalProps.bundle?platform=ubuntu&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestModalProps.bundle?platform=desktop&dev=true"
     }
 }

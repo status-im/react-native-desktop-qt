@@ -36,7 +36,7 @@
       "platforms": [
         "ios",
         "android",
-        "ubuntu"
+        "desktop"
       ]
     },
     "modulePathIgnorePatterns": [
@@ -91,7 +91,7 @@
     "android",
     "ReactQt",
     "ubuntu-server.js",
-    "add-ubuntu-platform.patch",
+    "add-desktop-platform.patch",
     "cli.js",
     "flow",
     "init.sh",

@@ -164,7 +164,7 @@ class Picker extends React.Component<{
      } else if (Platform.OS === 'android') {
        // $FlowFixMe found when converting React.createClass to ES6
        return <PickerAndroid {...this.props}>{this.props.children}</PickerAndroid>;
-     } else if (Platform.OS === 'ubuntu') {
+     } else if (Platform.OS === 'desktop') {
        return <PickerUbuntu {...this.props}>{this.props.children}</PickerUbuntu>;
      } else {
        return <UnimplementedView />;

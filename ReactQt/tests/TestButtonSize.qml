@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestButtonSize"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestButtonSize.bundle?platform=ubuntu&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestButtonSize.bundle?platform=desktop&dev=true"
     }
 }

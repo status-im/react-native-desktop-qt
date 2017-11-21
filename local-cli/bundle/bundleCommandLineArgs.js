@@ -14,8 +14,8 @@ module.exports = [
     description: 'Path to the root JS file, either absolute or relative to JS root',
   }, {
     command: '--platform [string]',
-    description: 'Either "ios" or "android" or "ubuntu"',
-    default: 'ubuntu',
+    description: 'Either "ios" or "android" or "desktop"',
+    default: 'desktop',
   }, {
     command: '--transformer [string]',
     description: 'Specify a custom transformer to be used',

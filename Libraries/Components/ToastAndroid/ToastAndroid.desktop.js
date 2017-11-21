@@ -18,7 +18,7 @@ var ToastAndroid = {
     message: string,
     duration: number
   ): void {
-    warning(false, 'Cannot use ToastAndroid on Ubuntu.');
+    warning(false, 'Cannot use ToastAndroid on Desktop.');
   },
 
 };

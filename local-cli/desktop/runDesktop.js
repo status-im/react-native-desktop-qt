@@ -21,27 +21,27 @@ const isPackagerRunning = require('../util/isPackagerRunning');
 const Promise = require('promise');
 
 const parseArguments = require('./parseArguments');
-const checkUbuntu = require('./checkUbuntu');
-const buildUbuntu = require('./buildUbuntu');
+const checkDesktop = require('./checkDesktop');
+const buildDesktop = require('./buildDesktop');
 
 
-function runUbuntu(argv, config) {
+function runDesktop(argv, config) {
   const args = parseArguments(argv);
 
   return new Promise((resolve, reject) => {
-    if (!checkUbuntu(args)) {
-      console.log(chalk.red('Ubuntu project not found. Maybe run react-native ubuntu first?'));
+    if (!checkDesktop(args)) {
+      console.log(chalk.red('Desktop project not found. Maybe run react-native desktop first?'));
     } else {
       resolve();
     }
   }).then(() => {
-    return buildUbuntu(args);
+    return buildDesktop(args);
   }).then(() => {
-    return _runUbuntu(args, config);
+    return _runDesktop(args, config);
   });
 }
 
-function _runUbuntu(args, config) {
+function _runDesktop(args, config) {
   return new Promise((resolve, reject) => {
     resolve(isPackagerRunning().then(result => {
       if (result === 'running') {
@@ -60,7 +60,7 @@ function _runUbuntu(args, config) {
 }
 
 function actuallyRun(args, reject) {
-  process.chdir(path.join(args.root, 'ubuntu'));
+  process.chdir(path.join(args.root, 'desktop'));
 
   console.log(chalk.bold('Starting the app...'));
   try {
@@ -91,11 +91,11 @@ function startPackagerInNewWindow() {
 }
 
 function startUbuntuServerInNewWindow() {
-  child_process.spawn('gnome-terminal', ['-e', 'node ./ubuntu/bin/ubuntu-server.js'],{detached: true});
+  child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
 }
 
 module.exports = {
-  name: 'run-ubuntu',
+  name: 'run-desktop',
   description: 'builds and runs your app as native application',
-  func: runUbuntu
+  func: runDesktop
 };

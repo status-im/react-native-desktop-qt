@@ -21,17 +21,17 @@ const Promise = require('promise');
 const bundle = require('../bundle/bundle');
 
 const parseArguments = require('./parseArguments');
-const checkUbuntu = require('./checkUbuntu');
-const buildUbuntu = require('./buildUbuntu');
+const checkDesktop = require('./checkDesktop');
+const buildDesktop = require('./buildDesktop');
 
 
-function packageUbuntu(argv, config) {
+function packageDesktop(argv, config) {
   const args = parseArguments(argv);
   var packagePath = '';
 
   return new Promise((resolve, reject) => {
-    if (!checkUbuntu(args)) {
-      console.log(chalk.red('Ubuntu project not found. Maybe run react-native ubuntu first?'));
+    if (!checkDesktop(args)) {
+      console.log(chalk.red('Desktop project not found. Maybe run react-native desktop first?'));
     } else {
       resolve();
     }
@@ -41,16 +41,16 @@ function packageUbuntu(argv, config) {
         console.log(chalk.red('You must be creating either a click or snap package.'));
         return;
       }
-      packagePath = path.join(args.root, `ubuntu/${args.click ? 'click' : 'snap'}/`);
+      packagePath = path.join(args.root, `desktop/${args.click ? 'click' : 'snap'}/`);
       resolve();
     });
   }).then(() => {
-    return buildUbuntu(args);
+    return buildDesktop(args);
   }).then(() => {
     console.log(chalk.bold('Running RN bundler...'));
     const sharePath = path.join(packagePath, 'share');
     mkdirp.sync(path.join(sharePath, 'js'));
-    const bundleArgs=`--platform ubuntu --entry-file index.ubuntu.js --bundle-output ${path.join(sharePath, 'js/index.js')} --assets-dest ${path.join(sharePath, 'assets')}`.split(' ');
+    const bundleArgs=`--platform desktop --entry-file index.desktop.js --bundle-output ${path.join(sharePath, 'js/index.js')} --assets-dest ${path.join(sharePath, 'assets')}`.split(' ');
     return bundle(bundleArgs, config);
   }).then(() => {
     return new Promise((resolve, reject) => {
@@ -84,7 +84,7 @@ function packageUbuntu(argv, config) {
 
 function _copyAssets(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Copying app assets...'));
-  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/share/* ') + path.join(packagePath, 'share') + ' || true',
+  child_process.exec('cp -uR ' + path.join(args.root, 'desktop/share/* ') + path.join(packagePath, 'share') + ' || true',
                       {}, (error, stdout, stderr) => {
                         if (error)
                           reject(error);
@@ -94,10 +94,10 @@ function _copyAssets(args, packagePath, resolve, reject) {
 }
 
 function _copyModules(args, packagePath, resolve, reject) {
-  console.log(chalk.bold('Copying Ubuntu modules...'));
+  console.log(chalk.bold('Copying Desktop modules...'));
   const pluginsDestPath = path.join(packagePath, 'plugins');
   mkdirp.sync(pluginsDestPath);
-  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/plugins/* ') + pluginsDestPath + ' || true',
+  child_process.exec('cp -uR ' + path.join(args.root, 'desktop/plugins/* ') + pluginsDestPath + ' || true',
                       {}, (error, stdout, stderr) => {
                         if (error)
                           reject(error);
@@ -110,7 +110,7 @@ function _copyBinaries(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Copying app binaries...'));
   const binDestPath = path.join(packagePath, 'bin');
   mkdirp.sync(binDestPath);
-  child_process.exec('cp -uR ' + path.join(args.root, 'ubuntu/bin/ubuntu-server.js ') + binDestPath + ' || true',
+  child_process.exec('cp -uR ' + path.join(args.root, 'desktop/bin/ubuntu-server.js ') + binDestPath + ' || true',
                       {}, (error, stdout, stderr) => {
                         if (error)
                           reject(error);
@@ -123,7 +123,7 @@ function _copyBinaries(args, packagePath, resolve, reject) {
 function _fetchArmNode(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Downloading arm node binaries...'));
   const binDestPath = path.join(packagePath, 'bin');
-  const tmpPath = path.join(args.root, 'ubuntu/tmp');
+  const tmpPath = path.join(args.root, 'desktop/tmp');
 
   const wget = 'wget -N https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-armv7l.tar.xz';
   const tar = 'tar xf node-v4.4.7-linux-armv7l.tar.xz node-v4.4.7-linux-armv7l/bin/node';
@@ -144,7 +144,7 @@ function _fetchArmNode(args, packagePath, resolve, reject) {
 function _buildClick(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Building click package...'));
   child_process.exec('click build click .',
-                     {cwd: path.join(args.root, 'ubuntu')},
+                     {cwd: path.join(args.root, 'desktop')},
                      (error, stdout, stderr) => {
                        if (error)
                         reject(error);
@@ -156,7 +156,7 @@ function _buildClick(args, packagePath, resolve, reject) {
 function _buildSnap(args, packagePath, resolve, reject) {
   console.log(chalk.bold('Building snap package...'));
   child_process.exec('snapcraft',
-                     {cwd: path.join(args.root, 'ubuntu/snap')},
+                     {cwd: path.join(args.root, 'desktop/snap')},
                      (error, stdout, stderr) => {
                        if (error)
                         reject(error);
@@ -165,5 +165,5 @@ function _buildSnap(args, packagePath, resolve, reject) {
                      });
 }
 
-module.exports = packageUbuntu;
+module.exports = packageDesktop;
 

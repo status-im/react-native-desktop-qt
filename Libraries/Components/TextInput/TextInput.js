@@ -52,7 +52,7 @@ if (Platform.OS === 'android') {
 } else if (Platform.OS === 'ios') {
   var RCTTextView = requireNativeComponent('RCTTextView', null);
   var RCTTextField = requireNativeComponent('RCTTextField', null);
-} else if (Platform.OS === 'ubuntu') {
+} else if (Platform.OS === 'desktop') {
   var RCTTextInput = requireNativeComponent('RCTTextInputView', TextInput);
 }
 
@@ -657,8 +657,8 @@ const TextInput = createReactClass({
       return this._renderIOS();
     } else if (Platform.OS === 'android') {
       return this._renderAndroid();
-    } else if (Platform.OS == 'ubuntu') {
-      return this._renderUbuntu();
+    } else if (Platform.OS == 'desktop') {
+      return this._renderDesktop();
     }
   },
 
@@ -813,7 +813,7 @@ const TextInput = createReactClass({
     );
   },
 
-  _renderUbuntu: function()  {
+  _renderDesktop: function()  {
     var { placeholder, ...props } = this.props;
     return (
       <RCTTextInput

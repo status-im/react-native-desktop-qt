@@ -11,7 +11,7 @@
 const filterPlatformAssetScales = require('./filterPlatformAssetScales');
 const fs = require('fs');
 const getAssetDestPathAndroid = require('./getAssetDestPathAndroid');
-const getAssetDestPathUbuntu = require('./getAssetDestPathUbuntu');
+const getAssetDestPathDesktop = require('./getAssetDestPathDesktop');
 const getAssetDestPathIOS = require('./getAssetDestPathIOS');
 const log = require('../util/log').out('bundle');
 const mkdirp = require('mkdirp');
@@ -29,7 +29,7 @@ function saveAssets(
 
   const getAssetDestPath = {
       'android': getAssetDestPathAndroid,
-      'ubuntu': getAssetDestPathUbuntu,
+      'desktop': getAssetDestPathDesktop,
       'ios': getAssetDestPathIOS
     }[platform];
 

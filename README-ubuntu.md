@@ -41,8 +41,8 @@ Roughly they are -
 ~/src$ sinopia&
 ~/src$ npm set registry http://localhost:4873/
 ~/src$ npm adduser --registry http://localhost:4873/
-~/src$ cd reactnative-ubuntu/react-native-cli; npm publish --force
-~/src/reactnative-ubuntu/react-native-cli$ cd ..; npm publish --force
+~/src$ cd react-native-desktop/react-native-cli; npm publish --force
+~/src/react-native-desktop/react-native-cli$ cd ..; npm publish --force
 ```
 
 ### Install React Native CLI
@@ -62,19 +62,19 @@ application.
 ~$ cd ~/src
 ~/src$ react-native init AwesomeProject
 ~/src$ cd AwesomeProject
-~/src/AwesomeProject$ react-native ubuntu
-~/src/AwesomeProject$ cd ubuntu
+~/src/AwesomeProject$ react-native desktop
+~/src/AwesomeProject$ cd desktop
 ```
 
 That's it, the skeleton of an application is in place. You can edit
-~/src/AwesomeProject/index.ubuntu.js to start developing.
+~/src/AwesomeProject/index.desktop.js to start developing.
 
 ## Easy path
 
 The quick and easy way to get started is to use the react-native CLI tool to
 build and run the application.
 ```
-~/src/AwesomeProject$ react-native run-ubuntu
+~/src/AwesomeProject$ react-native run-desktop
 ```
 
 #### Dependencies
@@ -101,7 +101,7 @@ Installing:
 
 Run the build script.
 ```
-~/src/AwesomeProject/ubuntu$ ./build.sh
+~/src/AwesomeProject/desktop$ ./build.sh
 ```
 
 #### Running
@@ -114,7 +114,7 @@ In a separate shell, start the React Native packager.
 Then it is all good to go. Live reload can be activated by passing the
 --live-reload flag.
 ```
-~/src/AwesomeProject/ubuntu$ ./run-app.sh —live-reload
+~/src/AwesomeProject/desktop$ ./run-app.sh —live-reload
 ```
 
 ## Developing React Native Desktop
@@ -130,22 +130,22 @@ local repository if you are building this way.
 #### Building
 
 ```
-~/src/reactnative-ubuntu$ mkdir build; cd build; cmake .. && make -j4
+~/src/react-native-desktop$ mkdir build; cd build; cmake .. && make -j4
 ```
 
 #### Running
 
 In a separate shell, start the React Native packager.
 ```
-~/src/reactnative-ubuntu$ npm start
+~/src/react-native-desktop$ npm start
 ```
 
 The examples all follow a similar template, e.g to run the TicTacToe app
 ```
-~/src/reactnative-ubuntu$ ./build/Examples/TicTacToe/run-example.sh
+~/src/react-native-desktop$ ./build/Examples/TicTacToe/run-example.sh
 ```
 To run the 2048 app
 ```
-~/src/reactnative-ubuntu$ ./build/Examples/2048/run-example.sh
+~/src/react-native-desktop$ ./build/Examples/2048/run-example.sh
 ```
 

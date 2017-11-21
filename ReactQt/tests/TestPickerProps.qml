@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestPickerProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestPickerProps.bundle?platform=ubuntu&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestPickerProps.bundle?platform=desktop&dev=true"
     }
 }

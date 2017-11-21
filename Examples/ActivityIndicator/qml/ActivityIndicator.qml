@@ -10,6 +10,6 @@ Rectangle {
     anchors.fill: parent
 
     moduleName: "ActivityIndicatorApp"
-    codeLocation: "http://localhost:8081/Examples/ActivityIndicator/ActivityIndicatorApp.bundle?platform=ubuntu&dev=true"
+    codeLocation: "http://localhost:8081/Examples/ActivityIndicator/ActivityIndicatorApp.bundle?platform=desktop&dev=true"
   }
 }

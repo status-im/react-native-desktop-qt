@@ -19,7 +19,7 @@
 const React = require('react');
 const ReactNative = require('react-native');
 const UIExplorerActions = require('./UIExplorerActions');
-const UIExplorerList = require('./UIExplorerList.ubuntu');
+const UIExplorerList = require('./UIExplorerList.desktop');
 const UIExplorerExampleList = require('./UIExplorerExampleList');
 const UIExplorerNavigationReducer = require('./UIExplorerNavigationReducer');
 const UIExplorerStateTitleMap = require('./UIExplorerStateTitleMap');
@@ -41,7 +41,7 @@ const {
 
 import type { UIExplorerNavigationState } from './UIExplorerNavigationReducer';
 
-import type { UIExplorerExample } from './UIExplorerList.ubuntu';
+import type { UIExplorerExample } from './UIExplorerList.desktop';
 
 
 class UIExplorerApp extends React.Component {
