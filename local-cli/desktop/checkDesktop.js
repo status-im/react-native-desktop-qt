@@ -17,8 +17,7 @@ const path = require('path');
 const fs = require('fs');
 
 function checkDesktop(args) {
-  return fs.existsSync(path.join(args.root, 'desktop/CMakeLists.txt')) &&
-         process.platform.startsWith('desktop');
+  return fs.existsSync(path.join(args.root, 'desktop/CMakeLists.txt'));
 }
 
 module.exports = checkDesktop;

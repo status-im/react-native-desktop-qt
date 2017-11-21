@@ -11,32 +11,32 @@
 'use strict';
 
 const fs = require('fs');
-// var generate = require('../generate/generate');
+var generate = require('../generate/generate');
 const { exec } = require('child_process');
 
 function applyDesktopPlatformPatch() {
-  // exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src -i ../../react-native/add-ubuntu-platform.patch', (err, stdout, stderr) => {
-  //   console.log(`Std output: ${stdout}`);
-  //   if (err) {
-  //     console.error(`exec error: ${err}`);
-  //     return;
-  //   }
-  // });
+  exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src -i ../../react-native/add-desktop-platform.patch', (err, stdout, stderr) => {
+     console.log(`Std output: ${stdout}`);
+     if (err) {
+       console.error(`exec error: ${err}`);
+       return;
+     }
+   });
 }
 
 function genDesktop(args, config) {
-  // applyUbuntuPlatformPatch();
-  // return generate([
-  //   '--platform', 'ubuntu',
-  //   '--project-path', process.cwd(),
-  //   '--project-name', JSON.parse(
-  //     fs.readFileSync('package.json', 'utf8')
-  //   ).name
-  // ], config);
+  applyDesktopPlatformPatch();
+  return generate([
+     '--platform', 'desktop',
+     '--project-path', process.cwd(),
+     '--project-name', JSON.parse(
+       fs.readFileSync('package.json', 'utf8')
+     ).name
+    ], config);
 }
 
 module.exports = {
   name: 'desktop',
-  description: 'generates an Desktop project for your app',
+  description: 'generates a desktop project for your app',
   func: genDesktop
 };
