@@ -62,6 +62,9 @@ public:
 
     void loadBundle(const QString& moduleName, const QUrl& codeLocation);
 
+    Q_INVOKABLE void startRemoteJSDebugging();
+    Q_INVOKABLE void reloadBridge();
+
 Q_SIGNALS:
     void liveReloadChanged();
     void moduleNameChanged();
@@ -84,6 +87,9 @@ private:
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
     void sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver);
+#ifdef RCT_DEV
+    void loadDevMenu();
+#endif // RCT_DEV
 
     QScopedPointer<RootViewPrivate> d_ptr;
 };
