@@ -23,6 +23,6 @@ Rectangle {
     moduleName: "ReactNativeApp"
     codeLocation: ReactNativeProperties.codeLocation
     pluginsPath: ReactNativeProperties.pluginsPath
-    executor: ReactNativeProperties.executor
+    serverConnectionType: ReactNativeProperties.executor
   }
 }

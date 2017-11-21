@@ -14,6 +14,7 @@ var net = require('net');
 var repl = require('repl');
 var vm = require('vm');
 var util = require('util');
+var Buffer = require('buffer').Buffer;
 
 var DEBUG = 1;
 
@@ -29,7 +30,7 @@ function rnUbuntuServer(readable, writable) {
   var internalEval = function(code) {
     DEBUG > 3 && console.error("-- internalEval: executing script(length=" + code.length + "): " + code.slice(0, 80) + " ... " + code.slice(-80));
     DEBUG > 3 && console.error("-- before sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
-    result = vm.runInContext(code, sandbox);
+    var result = vm.runInContext(code, sandbox);
     DEBUG > 3 && console.error("-- internalEval: result = " + result);
     DEBUG > 3 && console.error("-- after sandbox=" + util.inspect(sandbox, { colors: true, depth: null }));
     return result;
@@ -44,7 +45,7 @@ function rnUbuntuServer(readable, writable) {
       writable.write(dataBuf);
     }
 
-    stringifiedResult = JSON.stringify(result);
+    var stringifiedResult = JSON.stringify(result);
     DEBUG > 3 && console.error("-- sending result=" + stringifiedResult);
     if (stringifiedResult === undefined) {
       sendResponsePacket('undefined');
@@ -52,6 +53,10 @@ function rnUbuntuServer(readable, writable) {
     }
     sendResponsePacket(stringifiedResult);
   }
+
+  readable.on('error', function (exc) {
+    console.warn("ignoring exception: " + exc);
+  });
 
   readable.on('data', function(chunk) {
     DEBUG > 2 && console.error("-- Data received from RN Client: state = " + state)
@@ -64,36 +69,37 @@ function rnUbuntuServer(readable, writable) {
     buffer = Buffer.concat([buffer, chunk]);
     DEBUG > 2 && console.error("-- buffer length(concat): " + buffer.length)
 
-    if (state === 'start') {
-      if (buffer.length < 4)
-        return; 
-      length = buffer.readUInt32LE(0);
-      DEBUG > 2 && console.error("-- New Packet: length=" + length);
+    while(true) {
+      if (state === 'start') {
+        if (buffer.length < 4)
+          return;
+        length = buffer.readUInt32LE(0);
+        DEBUG > 2 && console.error("-- New Packet: length=" + length);
 
-      if (buffer.length >= length + 4) {
-        result = internalEval(buffer.toString('utf8', 4, length + 4));
-        var tmpBuffer = new Buffer(buffer.length - 4 - length);
-        buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
-        buffer = tmpBuffer;
-        sendResponse(result);
-      } else {
-        state = 'script';
-      }
-      return;
-    }
-
-    if (state === 'script') {
-      DEBUG > 2 && console.error("-- Packet length: " + length);
-      if (buffer.length >= length + 4) {
-        result = internalEval(buffer.toString('utf8', 4, length + 4));
-        var tmpBuffer = new Buffer(buffer.length - 4 - length);
-        buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
-        buffer = tmpBuffer;
-        state = 'start';
-        sendResponse(result);
+        if (buffer.length >= length + 4) {
+          var result = internalEval(buffer.toString('utf8', 4, length + 4));
+          var tmpBuffer = new Buffer(buffer.length - 4 - length);
+          buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
+          buffer = tmpBuffer;
+          sendResponse(result);
+        } else {
+          state = 'script';
+        }
       }
 
-      return;
+      if (state === 'script') {
+        DEBUG > 2 && console.error("-- Packet length: " + length);
+        if (buffer.length >= length + 4) {
+          var result = internalEval(buffer.toString('utf8', 4, length + 4));
+          var tmpBuffer = new Buffer(buffer.length - 4 - length);
+          buffer.copy(tmpBuffer, 0, length + 4, buffer.length);
+          buffer = tmpBuffer;
+          state = 'start';
+          sendResponse(result);
+        } else {
+          return;
+        }
+      }
     }
   });
 
@@ -104,14 +110,11 @@ function rnUbuntuServer(readable, writable) {
 }
 
 if (process.argv.indexOf('--pipe') != -1) {
+  console.log = console.error
   rnUbuntuServer(process.stdin, process.stdout);
 } else {
-  var server = net.createServer((sock) => { 
+  var server = net.createServer((sock) => {
     DEBUG && console.error("-- Connection from RN client");
     rnUbuntuServer(sock, sock);
   }).listen(5000, function() { console.error("-- Server starting") });
 }
-
-
-
-
