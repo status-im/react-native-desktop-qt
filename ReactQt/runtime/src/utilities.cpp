@@ -73,4 +73,4 @@ QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileU
     }
     return item;
 }
-}
+} // namespace utilities

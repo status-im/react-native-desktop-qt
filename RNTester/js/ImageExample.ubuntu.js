@@ -194,7 +194,7 @@ var MultipleSourcesExample = createReactClass({
             source={[
               {uri: 'https://facebook.github.io/react/img/logo_small.png', width: 38, height: 38},
               {uri: 'https://facebook.github.io/react/img/logo_small_2x.png', width: 76, height: 76},
-              {uri: 'https://facebook.github.io/react/img/logo_og.png', width: 400, height: 400}
+              {uri: 'https://facebook.github.io/react/logo-og.png', width: 400, height: 400}
             ]}
           />
         </View>
@@ -234,7 +234,7 @@ exports.examples = [
     render: function() {
       return (
         <Image
-          source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
+          source={{uri: 'https://facebook.github.io/react/logo-og.png'}}
           style={styles.base}
         />
       );
@@ -708,7 +708,7 @@ exports.examples = [
   },
 ];
 
-var fullImage = {uri: 'https://facebook.github.io/react/img/logo_og.png'};
+var fullImage = {uri: 'https://facebook.github.io/react/logo-og.png'};
 var smallImage = {uri: 'https://facebook.github.io/react/img/logo_small_2x.png'};
 
 var styles = StyleSheet.create({

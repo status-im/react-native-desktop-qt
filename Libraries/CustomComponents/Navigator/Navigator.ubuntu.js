@@ -15,7 +15,7 @@ var React = require('React');
 var PropTypes = React.PropTypes;
 var LayoutPropTypes = require("LayoutPropTypes");
 var StyleSheetPropType = require("StyleSheetPropType");
-
+var createReactClass = require('create-react-class');
 var requireNativeComponent = require('requireNativeComponent');
 var findNodeHandle = require('findNodeHandle');
 var util = require('util');
@@ -26,7 +26,7 @@ var {
 
 var View = require('View');
 
-var Page = React.createClass({
+var Page = createReactClass({
   propTypes: {
     style: StyleSheetPropType(LayoutPropTypes),
     head: PropTypes.object,
@@ -48,7 +48,7 @@ var Page = React.createClass({
 var UbuntuPage = requireNativeComponent('UbuntuPage', Page);
 
 
-var Navigator = React.createClass({
+var Navigator = createReactClass({
   propTypes: {
     initialRoute: PropTypes.object,
     renderScene: PropTypes.func.isRequired,

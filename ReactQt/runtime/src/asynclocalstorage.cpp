@@ -26,7 +26,7 @@ QVariantMap makeError(const QString& message, const QVariantMap& extraData = QVa
     rc.insert("message", message);
     return rc;
 }
-}
+} // namespace
 
 void AsyncLocalStorage::multiGet(const QList<QString>& keys, const ModuleInterface::ListArgumentBlock& callback) {
     if (m_settings == nullptr) {

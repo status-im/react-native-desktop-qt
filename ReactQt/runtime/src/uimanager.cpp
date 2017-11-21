@@ -111,7 +111,10 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
             child->deleteLater();
         }
 
-        Flexbox::findFlexbox(parent)->removeChilds(removeAtIndices);
+        auto flexbox = Flexbox::findFlexbox(parent);
+        if (flexbox) {
+            flexbox->removeChilds(removeAtIndices);
+        }
     }
 }
 
@@ -431,10 +434,36 @@ QList<ModuleMethod*> UIManager::methodsToExport() {
     return QList<ModuleMethod*>{};
 }
 
+QVariantMap directEventsDispatchConfig(const QStringList& eventsList) {
+    QVariantMap directEvents;
+
+    for (const QString& directEventName : eventsList) {
+        if (!directEvents.contains(directEventName)) {
+            QString tmp = directEventName;
+            tmp.replace(0, 3, "on");
+            directEvents.insert(directEventName, QVariantMap{{"registrationName", tmp}});
+        }
+    }
+    return directEvents;
+}
+
+QVariantMap bubblingEventsDispatchConfig(const QStringList& eventsList) {
+    QVariantMap bubblingEvents;
+
+    for (const QString& bubbleEventName : eventsList) {
+        if (!bubblingEvents.contains(bubbleEventName)) {
+            QString tmp = bubbleEventName;
+            tmp.replace(0, 3, "on");
+            bubblingEvents.insert(bubbleEventName,
+                                  QVariantMap{{"phasedRegistrationNames",
+                                               QVariantMap{{"bubbled", tmp}, {"captured", tmp.append("Capture")}}}});
+        }
+    }
+    return bubblingEvents;
+}
+
 QVariantMap UIManager::constantsToExport() {
     QVariantMap rc;
-    QVariantMap directEvents;
-    QVariantMap bubblingEvents;
 
     for (const ComponentData* componentData : m_componentData) {
         // qDebug() << "Checking" << componentData->name();
@@ -444,45 +473,16 @@ QVariantMap UIManager::constantsToExport() {
         managerInfo.insert("Manager", componentData->manager()->moduleName());
 
         QVariantMap config = componentData->viewConfig();
+
         if (!config.isEmpty()) {
             managerInfo.insert("NativeProps", config["propTypes"]);
         }
 
-        for (const QString& eventName : config["directEvents"].toStringList()) {
-            if (!directEvents.contains(eventName)) {
-                QString tmp = eventName;
-                tmp.replace(0, 3, "on");
-                directEvents.insert(eventName, QVariantMap{{"registrationName", tmp}});
-            }
-        }
-
-        for (const QString& eventName : config["bubblingEvents"].toStringList()) {
-            if (!bubblingEvents.contains(eventName)) {
-                QString tmp = eventName;
-                tmp.replace(0, 3, "on");
-                bubblingEvents.insert(
-                    eventName,
-                    QVariantMap{{"phasedRegistrationNames",
-                                 QVariantMap{{"bubbled", tmp}, {"captured", tmp.append("Capture")}}}});
-            }
-        }
+        managerInfo.insert("bubblingEventTypes", bubblingEventsDispatchConfig(config["bubblingEvents"].toStringList()));
+        managerInfo.insert("directEventTypes", directEventsDispatchConfig(config["directEvents"].toStringList()));
 
         rc.insert(componentData->name(), managerInfo);
     }
-
-    rc.insert("customBubblingEventTypes", bubblingEvents);
-    rc.insert("customDirectEventTypes", directEvents);
-    rc.insert("Dimensions",
-              QVariantMap{{"window",
-                           QVariantMap{{"width", m_bridge->visualParent()->width()},
-                                       {"height", m_bridge->visualParent()->height()},
-                                       {"scale", m_bridge->visualParent()->scale()}}},
-                          {"modalFullscreenView",
-                           QVariantMap{{"width", m_bridge->visualParent()->width()},
-                                       {"height", m_bridge->visualParent()->height()}}}});
-    rc.insert(
-        "modalFullscreenView",
-        QVariantMap{{"width", m_bridge->visualParent()->width()}, {"height", m_bridge->visualParent()->height()}});
 
     return rc;
 }

@@ -108,7 +108,7 @@ namespace {
 template <typename TP> TP propertyValue(QQuickItem* item, const QString& property) {
     return QQmlProperty(item, property).read().value<TP>();
 }
-}
+} // namespace
 
 QVariantMap ScrollViewManager::buildEventData(QQuickItem* item) const {
     QVariantMap ed;

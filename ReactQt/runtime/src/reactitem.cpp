@@ -35,7 +35,7 @@ QString penStyleToBorderStyle(Qt::PenStyle penStyle) {
         return "dashed";
     }
 }
-}
+} // namespace
 
 class ReactItemPrivate {
     Q_DECLARE_PUBLIC(ReactItem)

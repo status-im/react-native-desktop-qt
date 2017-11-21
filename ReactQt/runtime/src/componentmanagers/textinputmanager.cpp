@@ -51,7 +51,7 @@ void TextInputManager::configureView(QQuickItem* view) const {
 
 QStringList TextInputManager::customDirectEventTypes() {
     return QStringList{
-        EVENT_ON_TEXT_CHANGE, EVENT_ON_SELECTION_CHANGE,
+        EVENT_ON_SELECTION_CHANGE,
     };
 }
 

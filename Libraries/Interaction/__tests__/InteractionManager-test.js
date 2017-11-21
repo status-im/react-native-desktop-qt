@@ -293,7 +293,7 @@ describe('promise tasks', () => {
       expectToBeCalledOnce(task6);
 
       resolve();
-    }, 2000);
+    }, 100);
   };
 
   it('resolves async tasks recusively before other queued tasks', () => {
@@ -301,7 +301,7 @@ describe('promise tasks', () => {
   });
 
   it('should also work with a deadline', () => {
-    InteractionManager.setDeadline(2000);
+    InteractionManager.setDeadline(100);
     BatchedBridge.getEventLoopRunningTime.mockReturnValue(200);
     return new Promise(bigAsyncTest);
   });

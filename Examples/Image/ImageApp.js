@@ -15,7 +15,7 @@ export default class ImageReactNative extends Component {
   render() {
     return (
       <Image
-        source={{uri: '/home/parallels/work/Qt/Docs/Qt-5.9.1/qtquick/images/edge4.png'}}
+        source={{uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png'}}
         style={styles.base}
         resizeMode={'center'}
       />
@@ -87,4 +87,3 @@ var styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('ImageApp', () => ImageReactNative)
-module.exports = ImageReactNative;

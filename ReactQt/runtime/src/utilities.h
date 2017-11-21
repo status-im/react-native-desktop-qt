@@ -23,6 +23,7 @@ namespace utilities {
 void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);
 QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl);
-}
+
+} // namespace utilities
 
 #endif // UTILITIES

@@ -25,6 +25,8 @@
 
 var React = require('react');
 var ReactNative = require('react-native');
+var createReactClass = require('create-react-class');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -184,7 +186,7 @@ class GameEndOverlay extends React.Component {
   }
 }
 
-var TicTacToeApp = React.createClass({
+var TicTacToeApp = createReactClass({
   getInitialState() {
     return { board: new Board(), player: 1 };
   },
@@ -323,5 +325,3 @@ var styles = StyleSheet.create({
 });
 
 AppRegistry.registerComponent('TicTacToeApp', () => TicTacToeApp);
-
-module.exports = TicTacToeApp;
