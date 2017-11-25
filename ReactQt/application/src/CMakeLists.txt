@@ -19,6 +19,8 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   find_package(Qt5WebSockets REQUIRED)
 endif()
 
+# Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
+string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_TYPE_NAMES}")
 
 configure_file(
   main.qml.in

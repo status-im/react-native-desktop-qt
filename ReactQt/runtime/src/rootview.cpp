@@ -208,6 +208,18 @@ void RootView::setServerConnectionType(const QString& executor) {
     Q_EMIT executorChanged();
 }
 
+QVariantList RootView::externalModules() const {
+    return d_func()->bridge->externalModules();
+}
+
+void RootView::setExternalModules(const QVariantList& externalModules) {
+    Q_D(RootView);
+    if (bridge()->externalModules() == externalModules)
+        return;
+    bridge()->setExternalModules(externalModules);
+    Q_EMIT externalModulesChanged();
+}
+
 Bridge* RootView::bridge() const {
     return d_func()->bridge;
 }
