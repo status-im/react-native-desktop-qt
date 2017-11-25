@@ -25,7 +25,7 @@ if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
 endif()
 
 set(
-  SRC
+  SRC_RUNTIME
   reactplugin.cpp
   valuecoercion.cpp
   blobprovider.cpp
@@ -72,6 +72,10 @@ set(
   ../../../ReactCommon/yoga/yoga/YGEnums.c
   ../../../ReactCommon/yoga/yoga/YGNodeList.c
 )
+
+message(STATUS "REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC = ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC}")
+
+set (SRC ${SRC_RUNTIME} ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC})
 
 set(
   QML

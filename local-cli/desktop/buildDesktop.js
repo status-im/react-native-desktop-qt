@@ -20,6 +20,8 @@ const child_process = require('child_process');
 
 
 function buildDesktop(args, dependencies) {
+  var desktopExternalModules = _findDesktopExternalModules(args);
+  console.log("Found desktop external modules: " + desktopExternalModules);
   return _findModules(args).then((dependencies) => {
     return new Promise((resolve, reject) => {
       _findDesktopModules(args, dependencies, resolve, reject);
@@ -33,8 +35,13 @@ function buildDesktop(args, dependencies) {
       }
     });
   }).then(() => {
-    return _buildApplication(args);
+    return _buildApplication(args, desktopExternalModules);
   });
+}
+
+function _findDesktopExternalModules(args) {
+  var data = fs.readFileSync(path.join(args.root, 'package.json'));
+  return JSON.parse(data).desktopExternalModules;
 }
 
 function _findModules(args) {
@@ -99,17 +106,22 @@ function _buildModules(args, dependencies, resolve, reject) {
   });
 }
 
-function _buildApplication(args) {
+function _buildApplication(args, desktopExternalModules) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
     var buildCommand = './build.sh';
+    if (typeof desktopExternalModules !== 'undefined' && desktopExternalModules !== null) {
+      buildCommand += ' "' + desktopExternalModules.toString().replace(/,/g, ';') + '"'
+    }
     child_process.exec(buildCommand, {cwd: path.join(args.root, 'desktop')},
                         (error, stdout, stderr) => {
                           if (error)
                             reject(error);
-                          else
+                          else {
+                            console.log(stdout);
                             resolve();
+                          }
                         });
   });
 }

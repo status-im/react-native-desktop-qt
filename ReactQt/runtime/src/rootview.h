@@ -33,6 +33,7 @@ class RootView : public ReactItem {
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
     Q_PROPERTY(
         QString serverConnectionType READ serverConnectionType WRITE setServerConnectionType NOTIFY executorChanged)
+    Q_PROPERTY(QVariantList externalModules READ externalModules WRITE setExternalModules NOTIFY externalModulesChanged)
 
     Q_DECLARE_PRIVATE(RootView)
 
@@ -58,6 +59,9 @@ public:
     QString serverConnectionType() const;
     void setServerConnectionType(const QString& serverConnectionType);
 
+    QVariantList externalModules() const;
+    void setExternalModules(const QVariantList& externalModules);
+
     Bridge* bridge() const;
 
     void loadBundle(const QString& moduleName, const QUrl& codeLocation);
@@ -72,6 +76,7 @@ Q_SIGNALS:
     void propertiesChanged();
     void pluginsPathChanged();
     void executorChanged();
+    void externalModulesChanged();
 
 protected:
     virtual void updatePolish() override;

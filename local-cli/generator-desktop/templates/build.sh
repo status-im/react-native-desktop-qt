@@ -9,11 +9,14 @@
 
 # XXX: Don't move this script
 cd $(dirname $0)
+externalModulesPaths="$1"
+
+echo $externalModulesPaths
 
 # Workaround
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake . && make && cp ./bin/<%= name %> click/
+cmake -DEXTERNAL_MODULES_DIR="$externalModulesPaths" . && make && cp ./bin/<%= name %> click/
 
 
