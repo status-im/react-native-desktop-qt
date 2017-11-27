@@ -19,8 +19,6 @@ var StyleSheet = require('StyleSheet');
 var UIManager = require('UIManager');
 var View = require('View');
 var ViewPropTypes = require('ViewPropTypes');
-var NativeModules = require('NativeModules');
-
 
 var deprecatedPropType = require('deprecatedPropType');
 var keyMirror = require('fbjs/lib/keyMirror');
@@ -28,9 +26,6 @@ var requireNativeComponent = require('requireNativeComponent');
 var resolveAssetSource = require('resolveAssetSource');
 
 var RCT_WEBVIEW_REF = 'webview';
-
-var webViewManager = NativeModules["WebViewViewManager"];
-
 
 var WebViewState = keyMirror({
   IDLE: null,
@@ -178,8 +173,6 @@ class WebView extends React.Component {
      * executed immediately as JavaScript.
      */
     injectJavaScript: PropTypes.func,
-    
-    reload: PropTypes.func,
 
     /**
      * Specifies the mixed content mode. i.e WebView will allow a secure origin to load content from any other origin.
@@ -294,15 +287,27 @@ class WebView extends React.Component {
   }
 
   goForward = () => {
-    webViewManager.goForward();
+    UIManager.dispatchViewManagerCommand(
+      this.getWebViewHandle(),
+      UIManager.RCTWebView.Commands.goForward,
+      null
+    );
   };
 
   goBack = () => {
-    webViewManager.goBack();
+    UIManager.dispatchViewManagerCommand(
+      this.getWebViewHandle(),
+      UIManager.RCTWebView.Commands.goBack,
+      null
+    );
   };
 
   reload = () => {
-    webViewManager.reload();
+    UIManager.dispatchViewManagerCommand(
+      this.getWebViewHandle(),
+      UIManager.RCTWebView.Commands.reload,
+      null
+    );
   };
 
   stopLoading = () => {
@@ -384,12 +389,11 @@ class WebView extends React.Component {
   }
 }
 
-var RCTWebView = requireNativeComponent('RCTWebViewView', WebView, {
-  nativeOnly: {
-    messagingEnabled: PropTypes.bool
-  },
-});
-
+var RCTWebView = requireNativeComponent('RCTWebView') //, WebView, {
+//  nativeOnly: {
+//    messagingEnabled: PropTypes.bool,
+//  },
+///});
 
 var styles = StyleSheet.create({
   container: {
