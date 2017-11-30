@@ -34,7 +34,7 @@ const fs = require('fs');
  */
 module.exports = function findSymlinkedModules(
   projectRoot: string,
-  ignoredRoots?: Array<string> = [],
+  ignoredRoots: Array<string> = [],
 ) {
   const timeStart = Date.now();
   const nodeModuleRoot = path.join(projectRoot, 'node_modules');
