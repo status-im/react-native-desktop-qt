@@ -101,10 +101,14 @@ public:
                 qCritical() << __PRETTY_FUNCTION__ << "Error monitoring change url";
                 return;
             }
+
+            if (!liveReload)
+                return;
+
             if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() == 205) {
                 bridge->reload();
             }
-            if (liveReload && bridge->ready()) {
+            if (bridge->ready()) {
                 monitorChangeUrl();
             }
         });
