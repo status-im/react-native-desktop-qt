@@ -58,15 +58,15 @@ QList<ModuleMethod*> WebViewManager::methodsToExport() {
 }
 
 void WebViewManager::reload() {
-    emit s_reload();
+    Q_EMIT s_reload();
 }
 
 void WebViewManager::goBack() {
-    emit s_goBack();
+    Q_EMIT s_goBack();
 }
 
 void WebViewManager::goForward() {
-    emit s_goForward();
+    Q_EMIT s_goForward();
 }
 
 #include "webviewmanager.moc"

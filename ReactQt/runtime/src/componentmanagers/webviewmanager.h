@@ -33,7 +33,7 @@ public:
     Q_INVOKABLE void goBack();
     Q_INVOKABLE void goForward();
 
-signals:
+Q_SIGNALS:
     void s_reload();
     void s_goBack();
     void s_goForward();
