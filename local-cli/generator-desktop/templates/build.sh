@@ -17,6 +17,6 @@ echo $externalModulesPaths
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake -DEXTERNAL_MODULES_DIR="$externalModulesPaths" . && make && cp ./bin/<%= name %> click/
+cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$externalModulesPaths" . && make && cp ./bin/<%= name %> click/
 
 

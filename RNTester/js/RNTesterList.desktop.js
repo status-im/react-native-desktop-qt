@@ -52,6 +52,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'PickerExample',
     module: require('./PickerExample'),
+  },
+  {
+    key: 'WebSocketExample',
+    module: require('./WebSocketExample'),
   }
 ];
 

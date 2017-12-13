@@ -19,10 +19,7 @@ endif()
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
-
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  find_package(Qt5WebSockets REQUIRED)
-endif()
+find_package(Qt5WebSockets REQUIRED)
 
 set(
   SRC_RUNTIME
@@ -68,6 +65,7 @@ set(
   communication/executor.cpp
   communication/websocketexecutor.cpp
   communication/iexecutor.h
+  websocketmodule.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.c
   ../../../ReactCommon/yoga/yoga/YGEnums.c
   ../../../ReactCommon/yoga/yoga/YGNodeList.c
@@ -113,10 +111,7 @@ set_target_properties(
 )
 endif()
 
-set(USED_QT_MODULES Core Qml Quick)
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  set(USED_QT_MODULES ${USED_QT_MODULES} WebSockets)
-endif()
+set(USED_QT_MODULES Core Qml Quick WebSockets)
 
 qt5_use_modules(react-native ${USED_QT_MODULES})
 

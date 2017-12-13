@@ -27,6 +27,7 @@ class RootView : public ReactItem {
     Q_OBJECT
 
     Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
+    Q_PROPERTY(bool hotReload READ hotReload WRITE setHotReload NOTIFY hotReloadChanged)
     Q_PROPERTY(QString moduleName READ moduleName WRITE setModuleName NOTIFY moduleNameChanged)
     Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
     Q_PROPERTY(QVariantMap properties READ properties WRITE setProperties NOTIFY propertiesChanged)
@@ -43,6 +44,9 @@ public:
 
     bool liveReload() const;
     void setLiveReload(bool liveReload);
+
+    bool hotReload() const;
+    void setHotReload(bool hotReload);
 
     QString moduleName() const;
     void setModuleName(const QString& moduleName);
@@ -71,6 +75,7 @@ public:
 
 Q_SIGNALS:
     void liveReloadChanged();
+    void hotReloadChanged();
     void moduleNameChanged();
     void codeLocationChanged();
     void propertiesChanged();

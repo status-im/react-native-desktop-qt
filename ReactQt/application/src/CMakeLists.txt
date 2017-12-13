@@ -14,10 +14,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
-
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  find_package(Qt5WebSockets REQUIRED)
-endif()
+find_package(Qt5WebSockets REQUIRED)
 
 # Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
 string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_TYPE_NAMES}")
@@ -35,10 +32,7 @@ add_executable(
   main.qrc
 )
 
-set(USED_QT_MODULES Core Qml Quick)
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  set(USED_QT_MODULES ${USED_QT_MODULES} WebSockets)
-endif()
+set(USED_QT_MODULES Core Qml Quick WebSockets)
 
 qt5_use_modules(${APP_NAME} ${USED_QT_MODULES})
 
