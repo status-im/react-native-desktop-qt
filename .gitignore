@@ -69,3 +69,5 @@ moc_*.cpp
 
 /coverage
 /third-party
+CMakeFiles/
+CMakeLists.txt.user

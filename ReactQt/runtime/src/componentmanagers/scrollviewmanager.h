@@ -46,8 +46,8 @@ private Q_SLOTS:
 
 private:
     QVariantMap buildEventData(QQuickItem* item) const;
-    virtual void configureView(QQuickItem* view) const;
-    virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const override;
+    virtual QString qmlComponentFile() const override;
 };
 
 #endif // SCROLLVIEWMANAGER_H

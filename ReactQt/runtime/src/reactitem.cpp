@@ -33,6 +33,8 @@ QString penStyleToBorderStyle(Qt::PenStyle penStyle) {
         return "dotted";
     case Qt::DashLine:
         return "dashed";
+    default:
+        return "solid";
     }
 }
 } // namespace
@@ -205,7 +207,7 @@ void ReactItem::setBorderRadius(double borderRadius) {
 }
 
 double ReactItem::borderTopLeftRadius() const {
-    d_func()->borderRadiuses[0];
+    return d_func()->borderRadiuses[0];
 }
 
 void ReactItem::setBorderTopLeftRadius(double borderTopLeftRadius) {
@@ -219,7 +221,7 @@ void ReactItem::setBorderTopLeftRadius(double borderTopLeftRadius) {
 }
 
 double ReactItem::borderTopRightRadius() const {
-    d_func()->borderRadiuses[1];
+    return d_func()->borderRadiuses[1];
 }
 
 void ReactItem::setBorderTopRightRadius(double borderTopRightRadius) {
@@ -233,7 +235,7 @@ void ReactItem::setBorderTopRightRadius(double borderTopRightRadius) {
 }
 
 double ReactItem::borderBottomLeftRadius() const {
-    d_func()->borderRadiuses[3];
+    return d_func()->borderRadiuses[3];
 }
 
 void ReactItem::setBorderBottomLeftRadius(double borderBottomLeftRadius) {
@@ -247,7 +249,7 @@ void ReactItem::setBorderBottomLeftRadius(double borderBottomLeftRadius) {
 }
 
 double ReactItem::borderBottomRightRadius() const {
-    d_func()->borderRadiuses[2];
+    return d_func()->borderRadiuses[2];
 }
 
 void ReactItem::setBorderBottomRightRadius(double borderBottomRightRadius) {
