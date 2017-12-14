@@ -38,7 +38,6 @@ public:
     QList<ModuleMethod*> methodsToExport() override;
     QVariantMap constantsToExport() override;
 
-
 private:
     QScopedPointer<RNRandomBytesPrivate> d_ptr;
 };
