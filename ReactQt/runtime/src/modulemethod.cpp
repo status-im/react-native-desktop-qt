@@ -112,6 +112,7 @@ void ModuleMethod::invoke(const QVariantList& args) {
                             _R_ARG(pa.at(4)),
                             _R_ARG(pa.at(5)),
                             _R_ARG(pa.at(6)));
+        break;
     case 8:
         m_metaMethod.invoke(target,
                             Qt::DirectConnection,
@@ -123,6 +124,19 @@ void ModuleMethod::invoke(const QVariantList& args) {
                             _R_ARG(pa.at(5)),
                             _R_ARG(pa.at(6)),
                             _R_ARG(pa.at(7)));
+        break;
+    case 9:
+        m_metaMethod.invoke(target,
+                            Qt::DirectConnection,
+                            _R_ARG(pa.at(0)),
+                            _R_ARG(pa.at(1)),
+                            _R_ARG(pa.at(2)),
+                            _R_ARG(pa.at(3)),
+                            _R_ARG(pa.at(4)),
+                            _R_ARG(pa.at(5)),
+                            _R_ARG(pa.at(6)),
+                            _R_ARG(pa.at(7)),
+                            _R_ARG(pa.at(8)));
         break;
     }
 }

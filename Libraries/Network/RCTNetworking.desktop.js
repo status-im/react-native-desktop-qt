@@ -12,22 +12,46 @@
 'use strict';
 
 var RCTNetworkingNative = require('NativeModules').Networking;
+const NativeEventEmitter = require('NativeEventEmitter');
+const convertRequestBody = require('convertRequestBody');
 
-class RCTNetworking {
+class RCTNetworking extends NativeEventEmitter {
 
-  static sendRequest(requestId, method, url, headers, data) {
+  constructor() {
+    super(RCTNetworkingNative);
+  }
+
+  sendRequest(
+    method: string,
+    trackingName: string,
+    url: string,
+    headers: Object,
+    data: RequestBody,
+    responseType: 'text' | 'base64',
+    incrementalUpdates: boolean,
+    timeout: number,
+    callback: (requestId: number) => any,
+    withCredentials: boolean
+  ) {
+    const body = convertRequestBody(data);
+    console.log("Starting call sendRequest on RCTNetworkingNative... method:" + method + " url: " + url);
     RCTNetworkingNative.sendRequest(
-      requestId,
       method,
       url,
+      {data: {...body, trackingName}},
       headers,
-      data);
+      responseType,
+      incrementalUpdates,
+      timeout,
+      withCredentials,
+      callback);
   }
 
-  static abortRequest(requestId) {
+  abortRequest(requestId) {
     RCTNetworkingNative.abortRequest(requestId);
   }
-
 }
+
+ RCTNetworking = new RCTNetworking();
 
 module.exports = RCTNetworking;
