@@ -63,7 +63,9 @@ void TextManager::configureView(QQuickItem* view) const {
 void TextManager::updateMeasureFunction(QQuickItem* textItem) {
 
     Flexbox* flexbox = Flexbox::findFlexbox(textItem);
-    Q_ASSERT(flexbox);
+    if (!flexbox) {
+        return;
+    }
 
     bool childIsTopReactTextInTextHierarchy = textItem->property("textIsTopInBlock").toBool();
 
