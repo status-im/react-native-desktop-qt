@@ -39,8 +39,8 @@ public:
     bool shouldLayout() const override;
 
 protected:
-    virtual void configureView(QQuickItem* view) const;
-    virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const override;
+    virtual QString qmlComponentFile() const override;
 };
 
 #endif // RAWTEXTMANAGER_H

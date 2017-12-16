@@ -46,7 +46,7 @@ public:
     void setLogErrors(bool logErrors);
 
 private:
-    virtual QIODevice* device();
+    virtual QIODevice* device() override;
 
 private:
     bool m_logErrors = true;
@@ -65,7 +65,7 @@ public:
     virtual bool isReady() override;
 
 private:
-    virtual QIODevice* device();
+    virtual QIODevice* device() override;
 
 private:
     QString m_serverHost = "127.0.0.1";

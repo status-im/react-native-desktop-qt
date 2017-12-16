@@ -59,6 +59,7 @@ set(
   componentmanagers/imagemanager.cpp
   componentmanagers/imageloader.cpp
   componentmanagers/pickermanager.cpp
+  3rdparty/rnrandombytes.cpp
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp
