@@ -43,8 +43,8 @@ private Q_SLOTS:
     void backTriggered();
 
 private:
-    virtual void configureView(QQuickItem* view) const;
-    virtual QString qmlComponentFile() const;
+    virtual void configureView(QQuickItem* view) const override;
+    virtual QString qmlComponentFile() const override;
 
     void invokeMethod(const QString& methodSignature, QQuickItem* item, const QVariantList& args = QVariantList{});
     QMetaMethod findMethod(const QString& methodSignature, QQuickItem* item);
