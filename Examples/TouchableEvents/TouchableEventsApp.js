@@ -15,7 +15,6 @@ export default class App extends Component<{}>  {
   };
 
   render() {
-    console.log("TouchableEventApp.js rerendered()")
     return (
       <View testID="touchable_feedback_events">
         <View style={[styles.row, {justifyContent: 'center'}]}>
@@ -45,7 +44,7 @@ export default class App extends Component<{}>  {
 
   _appendEvent = (eventName) => {
     var limit = 6;
-    var eventLog = this.state.eventLog.slice(0, limit - 1);
+    var eventLog = this.state.eventLog;
     eventLog.unshift(eventName);
     this.setState({eventLog});
   };
