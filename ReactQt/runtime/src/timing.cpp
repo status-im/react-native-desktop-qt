@@ -44,6 +44,15 @@ QVariantMap Timing::constantsToExport() {
     return QVariantMap{};
 }
 
+void Timing::callTimer(const int timerId) {
+    if (m_bridge) {
+        QVariantList args;
+        QVariantList timersArray{timerId};
+        args.push_back(timersArray);
+        m_bridge->enqueueJSCall("JSTimers", "callTimers", args);
+    }
+}
+
 /*
  React Behaviour (objc)
  Reacts timers are based off the screen refresh callback from CADisplayLink.
@@ -68,25 +77,24 @@ QVariantMap Timing::constantsToExport() {
     scene graph to properly sync (especially re: animations)
 */
 
-void Timing::createTimer(int callbackId, int duration /*ms*/, const QDateTime& jsSchedulingTime, bool repeats) {
+void Timing::createTimer(int timerId, int duration /*ms*/, const QDateTime& jsSchedulingTime, bool repeats) {
+
     if (duration == 0 && !repeats) {
         // XXX: enqueueJSCall should enqueue
-        QTimer::singleShot(
-            0, [=] { m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}}); });
+        QTimer::singleShot(0, [=] { callTimer(timerId); });
         return;
     }
 
     QTimer* timer = new QTimer(this);
     timer->setTimerType(Qt::PreciseTimer);
     timer->setSingleShot(!repeats);
-    QObject::connect(timer, &QTimer::timeout, [=]() {
-        if (m_bridge) {
-            m_bridge->enqueueJSCall("JSTimers", "callTimers", QVariantList{QVariantList{callbackId}});
-        }
+
+    QObject::connect(timer, &QTimer::timeout, this, [=]() {
+        callTimer(timerId);
         if (!repeats)
-            deleteTimer(callbackId);
+            deleteTimer(timerId);
     });
-    m_activeTimers[callbackId] = timer;
+    m_activeTimers[timerId] = timer;
     if (duration < 18) {
         // XXX: mimicking RN behavior via timeouts
         timer->start((1.0 / 60) * 1000);
