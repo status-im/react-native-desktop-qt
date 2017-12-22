@@ -21,7 +21,6 @@ var PropTypes = require('prop-types');
 var TimerMixin = require('react-timer-mixin');
 var Touchable = require('Touchable');
 var TouchableWithoutFeedback = require('TouchableWithoutFeedback');
-var Platform = require('Platform');
 
 var createReactClass = require('create-react-class');
 var ensurePositiveDelayProps = require('ensurePositiveDelayProps');
@@ -165,7 +164,7 @@ var TouchableOpacity = createReactClass({
       this.state.anim,
       {
         toValue: value,
-        duration: (Platform.OS === 'desktop') ? 0 : duration,
+        duration: duration,
         easing: Easing.inOut(Easing.quad),
         useNativeDriver: true,
       }
