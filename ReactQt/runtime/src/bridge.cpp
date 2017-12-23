@@ -12,7 +12,6 @@
  */
 
 #include "bridge.h"
-#include "3rdparty/rnrandombytes.h"
 #include "appstate.h"
 #include "asynclocalstorage.h"
 #include "blobprovider.h"
@@ -103,10 +102,6 @@ public:
                            new ModalManager,
                            new PickerManager,
                            new WebSocketModule};
-    }
-
-    QObjectList thirdPartyModules() {
-        return QObjectList{new RNRandomBytes};
     }
 };
 
@@ -401,7 +396,6 @@ void Bridge::initModules() {
 
     QObjectList modules;
     modules << d->internalModules();
-    modules << d->thirdPartyModules();
 
     // Special cases // TODO:
     d->sourceCode = new SourceCode;
