@@ -27,6 +27,7 @@ class ImageLoader;
 class EventDispatcher;
 class RedboxItem;
 class TestModule;
+class ModuleInterface;
 
 class BridgePrivate;
 class Bridge : public QObject {
@@ -117,6 +118,7 @@ private:
     void setupExecutor();
     void setJsAppStarted(bool started);
     void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
+    void addModuleData(QObject* module);
 
     QScopedPointer<BridgePrivate> d_ptr;
 };

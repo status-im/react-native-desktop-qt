@@ -404,8 +404,6 @@ void Bridge::initModules() {
     modules << d->imageLoader;
     d->reactTestModule = new TestModule;
     modules << d->reactTestModule;
-    d->uiManager = new UIManager; // XXX: this needs to be at end, FIXME:
-    modules << d->uiManager;
 
     // XXX:
     d->sourceCode->setScriptUrl(d->bundleUrl);
@@ -416,15 +414,27 @@ void Bridge::initModules() {
 
     // XXX:
     for (QObject* o : modules) {
-        ModuleInterface* module = qobject_cast<ModuleInterface*>(o);
-        if (module != nullptr) {
-            module->setBridge(this);
-            ModuleData* moduleData = new ModuleData(o, d->modules.size());
-            d->modules.insert(moduleData->id(), moduleData);
-        } else {
-            qWarning() << "A module loader exported an invalid module";
-        }
+        addModuleData(o);
     }
+
+    // Setup of UIManager should be in the end,
+    // since it exposes all view managers data to JS as constants of itself
+    d->uiManager = new UIManager;
+    addModuleData(d->uiManager);
+}
+
+void Bridge::addModuleData(QObject* module) {
+    ModuleInterface* moduleInterface = qobject_cast<ModuleInterface*>(module);
+    if (!moduleInterface) {
+        qWarning() << "A module loader exported an invalid module";
+        return;
+    }
+
+    Q_D(Bridge);
+
+    moduleInterface->setBridge(this);
+    ModuleData* moduleData = new ModuleData(module, d->modules.size());
+    d->modules.insert(moduleData->id(), moduleData);
 }
 
 void Bridge::loadExternalModules(QObjectList* modules) {
@@ -435,12 +445,16 @@ void Bridge::loadExternalModules(QObjectList* modules) {
 
     foreach (QVariant moduleTypeName, d->externalModules) {
         QObject* instance = utilities::createQObjectInstance(moduleTypeName.toString());
-        if (!instance)
+        if (!instance) {
+            qDebug() << "Can't create QObject instance for external module type name " << moduleTypeName.toString();
             continue;
+        }
         ModuleInterface* externalModule = dynamic_cast<ModuleInterface*>(instance);
         if (externalModule) {
             externalModule->setBridge(this);
             modules->append(instance);
+        } else {
+            qDebug() << "External module " << moduleTypeName.toString() << " must inherit ModuleInterface";
         }
     }
 }
