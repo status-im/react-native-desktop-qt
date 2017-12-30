@@ -44,6 +44,7 @@ class TextEventsExample extends React.Component {
           autoCorrect={false}
           onFocus={() => this.updateText('onFocus')}
           onBlur={() => this.updateText('onBlur')}
+          secureTextEntry={true}
           onChange={(event) => this.updateText(
             'onChange text: ' + event.nativeEvent.text
           )}
@@ -201,7 +202,7 @@ exports.examples = [
           <TextInput
             placeholder="Default placeholder text color"
             style={styles.singleLine}
-          />                  
+          />
           <TextInput
             defaultValue="Highlight Color is red"
             selectionColor={'red'}

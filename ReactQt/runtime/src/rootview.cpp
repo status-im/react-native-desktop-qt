@@ -51,7 +51,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
 
     AttachedProperties* ap = AttachedProperties::get(target, false);
     if (ap == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
+        // qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
         return e;
     }
 

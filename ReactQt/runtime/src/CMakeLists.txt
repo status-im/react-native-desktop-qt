@@ -89,6 +89,9 @@ set(
   qml/ReactSlider.qml
   qml/ReactModal.qml
   qml/DevMenu.qml
+  qml/ReactTextInput.qml
+  qml/ReactTextInputArea.qml
+  qml/reactTextInputField.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
