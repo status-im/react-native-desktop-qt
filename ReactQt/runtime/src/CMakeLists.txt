@@ -91,7 +91,7 @@ set(
   qml/DevMenu.qml
   qml/ReactTextInput.qml
   qml/ReactTextInputArea.qml
-  qml/reactTextInputField.qml
+  qml/ReactTextInputField.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
