@@ -9,7 +9,6 @@ WebView {
     property var p_source: ''
     property var webViewManager: null
     property var flexbox: React.Flexbox {control: webViewRoot}
-    url: (p_source && p_source.uri) ? p_source.uri : ""
 
     onWebViewManagerChanged: {
         if (!webViewManager) {
@@ -19,4 +18,12 @@ WebView {
         webViewManager.s_goBack.connect(webViewRoot.goBack);
         webViewManager.s_goForward.connect(webViewRoot.goForward);
     }
+
+    onP_sourceChanged: {
+        webViewRoot.url = (p_source && p_source.uri) ? p_source.uri : "";
+        if(p_source && p_source.html) {
+            webViewRoot.loadHtml(p_source.html)
+        }
+    }
+
 }
