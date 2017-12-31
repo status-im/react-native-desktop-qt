@@ -19,13 +19,10 @@ endif()
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
-
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  find_package(Qt5WebSockets REQUIRED)
-endif()
+find_package(Qt5WebSockets REQUIRED)
 
 set(
-  SRC
+  SRC_RUNTIME
   reactplugin.cpp
   valuecoercion.cpp
   blobprovider.cpp
@@ -69,10 +66,15 @@ set(
   communication/executor.cpp
   communication/websocketexecutor.cpp
   communication/iexecutor.h
+  websocketmodule.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.c
   ../../../ReactCommon/yoga/yoga/YGEnums.c
   ../../../ReactCommon/yoga/yoga/YGNodeList.c
 )
+
+message(STATUS "REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC = ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC}")
+
+set (SRC ${SRC_RUNTIME} ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC})
 
 set(
   QML
@@ -88,6 +90,9 @@ set(
   qml/ReactSlider.qml
   qml/ReactModal.qml
   qml/DevMenu.qml
+  qml/ReactTextInput.qml
+  qml/ReactTextInputArea.qml
+  qml/ReactTextInputField.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
@@ -110,10 +115,7 @@ set_target_properties(
 )
 endif()
 
-set(USED_QT_MODULES Core Qml Quick)
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-  set(USED_QT_MODULES ${USED_QT_MODULES} WebSockets)
-endif()
+set(USED_QT_MODULES Core Qml Quick WebSockets)
 
 qt5_use_modules(react-native ${USED_QT_MODULES})
 

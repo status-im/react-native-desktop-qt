@@ -27,6 +27,7 @@ class ImageLoader;
 class EventDispatcher;
 class RedboxItem;
 class TestModule;
+class ModuleInterface;
 
 class BridgePrivate;
 class Bridge : public QObject {
@@ -85,13 +86,19 @@ public:
     QString serverConnectionType() const;
     void setServerConnectionType(const QString& serverConnectionType);
 
+    const QVariantList& externalModules() const;
+    void setExternalModules(const QVariantList& externalModules);
+
     EventDispatcher* eventDispatcher() const;
     QList<ModuleData*> modules() const;
     UIManager* uiManager() const;
     TestModule* testModule() const;
     ImageLoader* imageLoader() const;
     RedboxItem* redbox();
+
     void setRemoteJSDebugging(bool value);
+
+    void setHotReload(bool value);
 
 Q_SIGNALS:
     void readyChanged();
@@ -105,11 +112,13 @@ private Q_SLOTS:
 private:
     void loadSource();
     void initModules();
+    void loadExternalModules(QObjectList* modules);
     void injectModules();
     void processResult(const QJsonDocument& document);
     void setupExecutor();
     void setJsAppStarted(bool started);
     void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
+    void addModuleData(QObject* module);
 
     QScopedPointer<BridgePrivate> d_ptr;
 };

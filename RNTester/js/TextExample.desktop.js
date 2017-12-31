@@ -339,19 +339,19 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Selectable',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text selectable={true}>
-  //           This text is <Text style={{fontWeight: 'bold'}}>selectable</Text> if
-  //           you click-and-hold.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Selectable',
+    render: function() {
+      return (
+        <View>
+          <Text selectable={true}>
+            This text is <Text style={{fontWeight: 'bold'}}>selectable</Text> if
+            you click-and-hold.
+          </Text>
+        </View>
+      );
+    },
+  },
   {
     title: 'Text Decoration',
     render: function() {
@@ -427,48 +427,48 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Nested',
-  //   description:
-  //     'Nested text components will inherit the styles of their ' +
-  //     'parents (only backgroundColor is inherited from non-Text parents).  ' +
-  //     '<Text> only supports other <Text> and raw text (strings) as children.',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text>
-  //           (Normal text,
-  //           <Text style={{fontWeight: 'bold'}}>
-  //             (and bold
-  //             <Text style={{fontSize: 11, color: '#527fe4'}}>
-  //               (and tiny inherited bold blue)
-  //             </Text>
-  //             )
-  //           </Text>
-  //           )
-  //         </Text>
-  //         <Text style={{opacity: 0.7}}>
-  //           (opacity
-  //           <Text>
-  //             (is inherited
-  //             <Text style={{opacity: 0.7}}>
-  //               (and accumulated
-  //               <Text style={{backgroundColor: '#ffaaaa'}}>
-  //                 (and also applies to the background)
-  //               </Text>
-  //               )
-  //             </Text>
-  //             )
-  //           </Text>
-  //           )
-  //         </Text>
-  //         <Text style={{fontSize: 12}}>
-  //           <Entity>Entity Name</Entity>
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Nested',
+    description:
+      'Nested text components will inherit the styles of their ' +
+      'parents (only backgroundColor is inherited from non-Text parents).  ' +
+      '<Text> only supports other <Text> and raw text (strings) as children.',
+    render: function() {
+      return (
+        <View>
+          <Text>
+            (Normal text,
+            <Text style={{fontWeight: 'bold'}}>
+              (and bold
+              <Text style={{fontSize: 11, color: '#527fe4'}}>
+                (and tiny inherited bold blue)
+              </Text>
+              )
+            </Text>
+            )
+          </Text>
+          <Text style={{opacity: 0.7}}>
+            (opacity
+            <Text>
+              (is inherited
+              <Text style={{opacity: 0.7}}>
+                (and accumulated
+                <Text style={{backgroundColor: '#ffaaaa'}}>
+                  (and also applies to the background)
+                </Text>
+                )
+              </Text>
+              )
+            </Text>
+            )
+          </Text>
+          <Text style={{fontSize: 12}}>
+            <Entity>Entity Name</Entity>
+          </Text>
+        </View>
+      );
+    },
+  },
   {
     title: 'Text Align',
     render: function() {
@@ -530,19 +530,19 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Line Height',
-  //   render: function() {
-  //     return (
-  //       <Text>
-  //         <Text style={{lineHeight: 35}}>
-  //           A lot of space between the lines of this long passage that should
-  //           wrap once.
-  //         </Text>
-  //       </Text>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Line Height',
+    render: function() {
+      return (
+        <Text>
+          <Text style={{lineHeight: 35}}>
+            A lot of space between the lines of this long passage that should
+            wrap once.
+          </Text>
+        </Text>
+      );
+    },
+  },
   {
     title: 'Empty Text',
     description: "It's ok to have Text with zero or null children.",
@@ -550,39 +550,39 @@ exports.examples = [
       return <Text />;
     },
   },
-  // {
-  //   title: 'Toggling Attributes',
-  //   render: function(): React.Element<any> {
-  //     return <AttributeToggler />;
-  //   },
-  // },
-  // {
-  //   title: 'backgroundColor attribute',
-  //   description: 'backgroundColor is inherited from all types of views.',
-  //   render: function() {
-  //     return (
-  //       <Text style={{backgroundColor: 'yellow'}}>
-  //         Yellow container background,
-  //         <Text style={{backgroundColor: '#ffaaaa'}}>
-  //           {' '}
-  //           red background,
-  //           <Text style={{backgroundColor: '#aaaaff'}}>
-  //             {' '}
-  //             blue background,
-  //             <Text>
-  //               {' '}
-  //               inherited blue background,
-  //               <Text style={{backgroundColor: '#aaffaa'}}>
-  //                 {' '}
-  //                 nested green background.
-  //               </Text>
-  //             </Text>
-  //           </Text>
-  //         </Text>
-  //       </Text>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Toggling Attributes',
+    render: function(): React.Element<any> {
+      return <AttributeToggler />;
+    },
+  },
+  {
+    title: 'backgroundColor attribute',
+    description: 'backgroundColor is inherited from all types of views.',
+    render: function() {
+      return (
+        <Text style={{backgroundColor: 'yellow'}}>
+          Yellow container background,
+          <Text style={{backgroundColor: '#ffaaaa'}}>
+            {' '}
+            red background,
+            <Text style={{backgroundColor: '#aaaaff'}}>
+              {' '}
+              blue background,
+              <Text>
+                {' '}
+                inherited blue background,
+                <Text style={{backgroundColor: '#aaffaa'}}>
+                  {' '}
+                  nested green background.
+                </Text>
+              </Text>
+            </Text>
+          </Text>
+        </Text>
+      );
+    },
+  },
   {
     title: 'numberOfLines attribute',
     render: function() {
@@ -604,56 +604,56 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Text highlighting (tap the link to see highlight)',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text>
-  //           Lorem ipsum dolor sit amet,{' '}
-  //           <Text
-  //             suppressHighlighting={false}
-  //             style={{
-  //               backgroundColor: 'white',
-  //               textDecorationLine: 'underline',
-  //               color: 'blue',
-  //             }}
-  //             onPress={() => null}>
-  //             consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-  //             labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-  //             nostrud
-  //           </Text>{' '}
-  //           exercitation ullamco laboris nisi ut aliquip ex ea commodo
-  //           consequat.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
-  // {
-  //   title: 'allowFontScaling attribute',
-  //   render: function() {
-  //     return (
-  //       <View>
-  //         <Text>
-  //           By default, text will respect Text Size accessibility setting on
-  //           iOS. It means that all font sizes will be increased or descreased
-  //           depending on the value of Text Size setting in{' '}
-  //           <Text style={{fontWeight: 'bold'}}>
-  //             Settings.app - Display & Brightness - Text Size
-  //           </Text>
-  //         </Text>
-  //         <Text style={{marginTop: 10}}>
-  //           You can disable scaling for your Text component by passing {'"'}allowFontScaling={'{'}false{'}"'}{' '}
-  //           prop.
-  //         </Text>
-  //         <Text allowFontScaling={false} style={{marginTop: 20}}>
-  //           This text will not scale.
-  //         </Text>
-  //       </View>
-  //     );
-  //   },
-  // },
+  {
+    title: 'Text highlighting (tap the link to see highlight)',
+    render: function() {
+      return (
+        <View>
+          <Text>
+            Lorem ipsum dolor sit amet,{' '}
+            <Text
+              suppressHighlighting={false}
+              style={{
+                backgroundColor: 'white',
+                textDecorationLine: 'underline',
+                color: 'blue',
+              }}
+              onPress={() => null}>
+              consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+              labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+              nostrud
+            </Text>{' '}
+            exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat.
+          </Text>
+        </View>
+      );
+    },
+  },
+  {
+    title: 'allowFontScaling attribute',
+    render: function() {
+      return (
+        <View>
+          <Text>
+            By default, text will respect Text Size accessibility setting on
+            iOS. It means that all font sizes will be increased or descreased
+            depending on the value of Text Size setting in{' '}
+            <Text style={{fontWeight: 'bold'}}>
+              Settings.app - Display & Brightness - Text Size
+            </Text>
+          </Text>
+          <Text style={{marginTop: 10}}>
+            You can disable scaling for your Text component by passing {'"'}allowFontScaling={'{'}false{'}"'}{' '}
+            prop.
+          </Text>
+          <Text allowFontScaling={false} style={{marginTop: 20}}>
+            This text will not scale.
+          </Text>
+        </View>
+      );
+    },
+  },
   // {
   //   title: 'Inline views',
   //   render: function() {
@@ -747,12 +747,12 @@ exports.examples = [
       );
     },
   },
-  // {
-  //   title: 'Dynamic Font Size Adjustment',
-  //   render: function(): React.Element<any> {
-  //     return <AdjustingFontSize />;
-  //   },
-  // },
+  {
+    title: 'Dynamic Font Size Adjustment',
+    render: function(): React.Element<any> {
+      return <AdjustingFontSize />;
+    },
+  },
   {
     title: 'Text Align with RTL',
     render: function() {

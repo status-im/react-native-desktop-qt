@@ -25,7 +25,7 @@ function generate(argv, config) {
 function _generate(argv, config, resolve, reject) {
   const args = parseCommandLine([{
     command: 'platform',
-    description: 'Platform (ios|android|ubuntu)',
+    description: 'Platform (ios|android|desktop)',
     type: 'string',
     required: true,
   },

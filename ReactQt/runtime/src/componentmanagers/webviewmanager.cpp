@@ -19,7 +19,6 @@
 #include <QDebug>
 
 #include "attachedproperties.h"
-#include "binders.h"
 #include "bridge.h"
 #include "modulemethod.h"
 #include "propertyhandler.h"

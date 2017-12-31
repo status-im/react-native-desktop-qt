@@ -46,6 +46,9 @@
 #include "testmodule.h"
 #include "timing.h"
 #include "uimanager.h"
+#include "utilities.h"
+#include "websocketmodule.h"
+
 #include <QDir>
 #include <QJsonDocument>
 #include <QMap>
@@ -75,6 +78,8 @@ public:
     QString pluginsPath = "./plugins";
     QMap<int, ModuleData*> modules;
     bool remoteJSDebugging = false;
+    bool hotReload = false;
+    QVariantList externalModules;
 
     QObjectList internalModules() {
         return QObjectList{new Timing,
@@ -97,6 +102,7 @@ public:
                            new SliderManager,
                            new ModalManager,
                            new PickerManager,
+                           new WebSocketModule,
                            new WebViewManager};
     }
 };
@@ -124,14 +130,8 @@ void Bridge::setupExecutor() {
 #endif // RCT_DEV
 
     if (!d->executor) {
-        ServerConnection* conn = nullptr;
-
-        const int connectionType = QMetaType::type((d->serverConnectionType + "*").toLocal8Bit());
-        if (connectionType != QMetaType::UnknownType) {
-            const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
-            QObject* instance = mObj->newInstance();
-            conn = qobject_cast<ServerConnection*>(instance);
-        }
+        ServerConnection* conn =
+            qobject_cast<ServerConnection*>(utilities::createQObjectInstance(d->serverConnectionType + "*"));
 
         if (conn == nullptr) {
             qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
@@ -315,6 +315,15 @@ void Bridge::setServerConnectionType(const QString& executorName) {
     d->serverConnectionType = executorName;
 }
 
+const QVariantList& Bridge::externalModules() const {
+    return d_func()->externalModules;
+}
+
+void Bridge::setExternalModules(const QVariantList& externalModules) {
+    Q_D(Bridge);
+    d->externalModules = externalModules;
+}
+
 EventDispatcher* Bridge::eventDispatcher() const {
     return d_func()->eventDispatcher;
 }
@@ -346,9 +355,28 @@ void Bridge::setRemoteJSDebugging(bool value) {
     d_func()->remoteJSDebugging = value;
 }
 
+void Bridge::setHotReload(bool value) {
+    d_func()->hotReload = value;
+}
+
 void Bridge::sourcesFinished() {
     Q_D(Bridge);
-    QTimer::singleShot(0, [=] { d->executor->executeApplicationScript(d->sourceCode->sourceCode(), d->bundleUrl); });
+    QTimer::singleShot(0, [=] {
+        d->executor->executeApplicationScript(d->sourceCode->sourceCode(), d->bundleUrl);
+        if (d_func()->hotReload) {
+            d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
+                                              QVariantList{"HMRClient",
+                                                           "enable",
+                                                           QVariantList{"desktop",
+                                                                        d->sourceCode->scriptUrl().path().mid(1),
+                                                                        d->sourceCode->scriptUrl().host(),
+                                                                        d->sourceCode->scriptUrl().port(0)}},
+                                              [=](const QJsonDocument& doc) {
+                                                  qDebug() << "Enabling HMRClient response";
+                                                  processResult(doc);
+                                              });
+        }
+    });
 }
 
 void Bridge::sourcesLoadFailed() {
@@ -378,23 +406,57 @@ void Bridge::initModules() {
     modules << d->imageLoader;
     d->reactTestModule = new TestModule;
     modules << d->reactTestModule;
-    d->uiManager = new UIManager; // XXX: this needs to be at end, FIXME:
-    modules << d->uiManager;
 
     // XXX:
     d->sourceCode->setScriptUrl(d->bundleUrl);
     connect(d->sourceCode, SIGNAL(sourceCodeChanged()), SLOT(sourcesFinished()));
     connect(d->sourceCode, SIGNAL(loadFailed()), SLOT(sourcesLoadFailed()));
 
+    loadExternalModules(&modules);
+
     // XXX:
     for (QObject* o : modules) {
-        ModuleInterface* module = qobject_cast<ModuleInterface*>(o);
-        if (module != nullptr) {
-            module->setBridge(this);
-            ModuleData* moduleData = new ModuleData(o, d->modules.size());
-            d->modules.insert(moduleData->id(), moduleData);
+        addModuleData(o);
+    }
+
+    // Setup of UIManager should be in the end,
+    // since it exposes all view managers data to JS as constants of itself
+    d->uiManager = new UIManager;
+    addModuleData(d->uiManager);
+}
+
+void Bridge::addModuleData(QObject* module) {
+    ModuleInterface* moduleInterface = qobject_cast<ModuleInterface*>(module);
+    if (!moduleInterface) {
+        qWarning() << "A module loader exported an invalid module";
+        return;
+    }
+
+    Q_D(Bridge);
+
+    moduleInterface->setBridge(this);
+    ModuleData* moduleData = new ModuleData(module, d->modules.size());
+    d->modules.insert(moduleData->id(), moduleData);
+}
+
+void Bridge::loadExternalModules(QObjectList* modules) {
+    Q_D(Bridge);
+
+    if (modules == nullptr)
+        return;
+
+    foreach (QVariant moduleTypeName, d->externalModules) {
+        QObject* instance = utilities::createQObjectInstance(moduleTypeName.toString());
+        if (!instance) {
+            qDebug() << "Can't create QObject instance for external module type name " << moduleTypeName.toString();
+            continue;
+        }
+        ModuleInterface* externalModule = dynamic_cast<ModuleInterface*>(instance);
+        if (externalModule) {
+            externalModule->setBridge(this);
+            modules->append(instance);
         } else {
-            qWarning() << "A module loader exported an invalid module";
+            qDebug() << "External module " << moduleTypeName.toString() << " must inherit ModuleInterface";
         }
     }
 }

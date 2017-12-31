@@ -73,4 +73,17 @@ QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileU
     }
     return item;
 }
+
+QObject* createQObjectInstance(const QString& typeName) {
+    const int connectionType = QMetaType::type((typeName + "*").toLocal8Bit());
+    if (connectionType == QMetaType::UnknownType) {
+        return nullptr;
+    }
+    const QMetaObject* mObj = QMetaType::metaObjectForType(connectionType);
+    if (mObj == nullptr) {
+        return nullptr;
+    }
+    return mObj->newInstance();
+}
+
 } // namespace utilities

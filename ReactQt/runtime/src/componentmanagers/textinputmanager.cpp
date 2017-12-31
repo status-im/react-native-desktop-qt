@@ -60,8 +60,9 @@ void TextInputManager::sendTextEditedToJs(QQuickItem* textInput) {
         return;
 
     QString text = textInput->property("text").toString();
+    int parentTag = tag(textInput->parentItem());
 
-    notifyJsAboutEvent(tag(textInput), EVENT_ON_TEXT_CHANGE, QVariantMap{{"target", tag(textInput)}, {"text", text}});
+    notifyJsAboutEvent(parentTag, EVENT_ON_TEXT_CHANGE, QVariantMap{{"target", parentTag}, {"text", text}});
 }
 
 void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
@@ -72,8 +73,10 @@ void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
 
     QVariantMap startEnd = QVariantMap{{"start", start}, {"end", end}};
 
+    int parentTag = tag(textInput->parentItem());
+
     notifyJsAboutEvent(
-        tag(textInput), EVENT_ON_SELECTION_CHANGE, QVariantMap{{"target", tag(textInput)}, {"selection", startEnd}});
+        parentTag, EVENT_ON_SELECTION_CHANGE, QVariantMap{{"target", parentTag}, {"selection", startEnd}});
 }
 
 #include "textinputmanager.moc"

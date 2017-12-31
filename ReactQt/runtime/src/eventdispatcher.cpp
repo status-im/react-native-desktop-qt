@@ -31,3 +31,7 @@ EventDispatcher::~EventDispatcher() {}
 void EventDispatcher::sendDeviceEvent(const QString& name, const QVariantList& args) {
     d_func()->bridge->enqueueJSCall("RCTDeviceEventEmitter", "emit", QVariantList{name, args});
 }
+
+void EventDispatcher::sendDeviceEvent(const QString& name, const QVariantMap& args) {
+    d_func()->bridge->enqueueJSCall("RCTDeviceEventEmitter", "emit", QVariantList{name, args});
+}

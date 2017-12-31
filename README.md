@@ -21,7 +21,7 @@ To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.
 
 ## Documentation
 
-- [List of supported React Native componenets and APIs ("React Native Qt" column)](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/ComponentsSupport.md)
+- [List of supported React Native components and APIs ("React Native Qt" column)](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/ComponentsSupport.md)
 - [Linux guide for React Native Desktop contributors](https://github.com/status-im/react-native-desktop/blob/react-native-qt/Development-linux.md)
 - [Troubleshooting](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/Troubleshooting.md)
 

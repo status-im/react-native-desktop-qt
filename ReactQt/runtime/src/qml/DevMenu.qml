@@ -42,6 +42,26 @@ Rectangle {
                     rootView.startRemoteJSDebugging()
                 }
             }
+            Button {
+                text: rootView.liveReload ? "Disable Live Reload" : "Enable Live Reload"
+                highlighted: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 10
+                onClicked: {
+                    devMenuRootId.state = "devMenuHidden"
+                    rootView.liveReload = !rootView.liveReload
+                }
+            }
+            Button {
+                text: rootView.hotReload ? "Disable Hot Reloading" : "Enable Hot Reloading"
+                highlighted: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 10
+                onClicked: {
+                    devMenuRootId.state = "devMenuHidden"
+                    rootView.hotReload = !rootView.hotReload
+                }
+            }
         }
     }
 

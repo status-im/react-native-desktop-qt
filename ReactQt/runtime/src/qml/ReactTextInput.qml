@@ -3,9 +3,10 @@ import QtQuick.Controls 2.2
 import React 0.1 as React
 import  "../js/utils.js" as Utils
 
-TextArea {
+Item {
     id: textInputRoot
     property var textInputManager: null
+    property var textInputControl: null
 
     property string p_text
     property color p_color
@@ -16,35 +17,30 @@ TextArea {
     property string p_textAlign: "left"
     property string p_selectionColor: "lightblue"
     property string p_testID
-
+    property bool p_secureTextEntry: false
 
     property var flexbox: React.Flexbox {control: textInputRoot}
 
-    text: p_text
-    color: p_color
-    placeholderText: p_placeholderText
-    selectionColor: p_selectionColor
-    objectName: p_testID
-    horizontalAlignment: Utils.alignmentQMLValue(p_textAlign)
-
-    selectByKeyboard: true
-    selectByMouse: true
-    background: Rectangle {
-        border.color:  "gray"
-    }
-
-    onTextChanged: {
-        if (!p_multiline && textInputRoot.text.indexOf('\n') != -1) {
-            //TODO. should not trigger textChanged
-            textInputRoot.text = textInputRoot.text.replace('\n', '');
-            return;
+    function recreateInputControl() {
+        if(textInputControl) {
+            textInputControl.destroy();
+            textInputControl = null;
         }
-        textInputManager.sendTextEditedToJs(textInputRoot)
+
+        var component;
+        if(p_multiline) {
+            component = Qt.createComponent("ReactTextInputArea.qml");
+            textInputControl = component.createObject(textInputRoot);
+        }
+        else {
+            component = Qt.createComponent("ReactTextInputField.qml");
+            textInputControl = component.createObject(textInputRoot);
+        }
+        if(!textInputControl) {
+            console.error("Can't load TextInput qml component");
+        }
     }
-    onSelectionStartChanged: {
-        textInputManager.sendSelectionChangeToJs(textInputRoot)
-    }
-    onSelectionEndChanged: {
-        textInputManager.sendSelectionChangeToJs(textInputRoot)
-    }
+
+    Component.onCompleted: recreateInputControl();
+    onP_multilineChanged: recreateInputControl();
 }

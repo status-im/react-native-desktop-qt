@@ -19,7 +19,7 @@ Text {
     property color p_textDecorationColor
     property string p_writingDirection
     property int p_numberOfLines: 1000000
-    property var flexbox: React.Flexbox {control: textRoot}
+    property var flexbox: null
 
 
 
@@ -27,7 +27,7 @@ Text {
     property var textManager: null
     property string decoratedText
     //ReactText components can be nested. This property indicates if item is parent
-    //of current text blocks
+    //of current text blocks.
     property bool textIsTopInBlock: parent ? (parent.typeName ? (parent.typeName === "ReactText" ? false : true) : true) : true
     onTextIsTopInBlockChanged: updateMeasureFunction()
     onTextManagerChanged: updateMeasureFunction()
@@ -65,6 +65,20 @@ Text {
     onParentChanged: updateHtmlText()
 
     function updateMeasureFunction() {
+
+        //Only topmost text item in a set of nested ones can have a flexbox node.
+        if(textIsTopInBlock) {
+            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot}',
+                                               textRoot, "dynamicSnippet1");
+        }
+        else
+        {
+            if(textRoot.flexbox) {
+                textRoot.flexbox.destroy()
+                textRoot.flexbox = null;
+            }
+        }
+
         if(textManager) {
             textManager.updateMeasureFunction(textRoot)
         }

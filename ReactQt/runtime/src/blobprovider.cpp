@@ -36,3 +36,7 @@ QList<ModuleMethod*> BlobProvider::methodsToExport() {
 QVariantMap BlobProvider::constantsToExport() {
     return QVariantMap{};
 }
+
+void BlobProvider::enableBlobSupport(qlonglong socketId) {}
+
+void BlobProvider::disableBlobSupport(qlonglong socketId) {}

@@ -27,12 +27,14 @@ class RootView : public ReactItem {
     Q_OBJECT
 
     Q_PROPERTY(bool liveReload READ liveReload WRITE setLiveReload NOTIFY liveReloadChanged)
+    Q_PROPERTY(bool hotReload READ hotReload WRITE setHotReload NOTIFY hotReloadChanged)
     Q_PROPERTY(QString moduleName READ moduleName WRITE setModuleName NOTIFY moduleNameChanged)
     Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
     Q_PROPERTY(QVariantMap properties READ properties WRITE setProperties NOTIFY propertiesChanged)
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
     Q_PROPERTY(
         QString serverConnectionType READ serverConnectionType WRITE setServerConnectionType NOTIFY executorChanged)
+    Q_PROPERTY(QVariantList externalModules READ externalModules WRITE setExternalModules NOTIFY externalModulesChanged)
 
     Q_DECLARE_PRIVATE(RootView)
 
@@ -42,6 +44,9 @@ public:
 
     bool liveReload() const;
     void setLiveReload(bool liveReload);
+
+    bool hotReload() const;
+    void setHotReload(bool hotReload);
 
     QString moduleName() const;
     void setModuleName(const QString& moduleName);
@@ -58,6 +63,9 @@ public:
     QString serverConnectionType() const;
     void setServerConnectionType(const QString& serverConnectionType);
 
+    QVariantList externalModules() const;
+    void setExternalModules(const QVariantList& externalModules);
+
     Bridge* bridge() const;
 
     void loadBundle(const QString& moduleName, const QUrl& codeLocation);
@@ -67,11 +75,13 @@ public:
 
 Q_SIGNALS:
     void liveReloadChanged();
+    void hotReloadChanged();
     void moduleNameChanged();
     void codeLocationChanged();
     void propertiesChanged();
     void pluginsPathChanged();
     void executorChanged();
+    void externalModulesChanged();
 
 protected:
     virtual void updatePolish() override;

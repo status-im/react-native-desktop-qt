@@ -46,6 +46,9 @@ public:
     QVariantMap constantsToExport() override;
 
 private:
+    void callTimer(const int timerId);
+
+private:
     QPointer<Bridge> m_bridge;
     QMap<int, QTimer*> m_activeTimers;
 };

@@ -10,4 +10,14 @@
  * @flow
  */
 
-module.export = {};
+'use strict';
+
+class HMRLoadingView {
+  static showMessage(message: string) {
+  }
+
+  static hide() {
+  }
+}
+
+module.exports = HMRLoadingView;

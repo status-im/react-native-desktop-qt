@@ -32,6 +32,9 @@ public:
     QList<ModuleMethod*> methodsToExport() override;
     QVariantMap constantsToExport() override;
 
+    Q_INVOKABLE void enableBlobSupport(qlonglong socketId);
+    Q_INVOKABLE void disableBlobSupport(qlonglong socketId);
+
 private:
     QScopedPointer<BlobProviderPrivate> d_ptr;
 };

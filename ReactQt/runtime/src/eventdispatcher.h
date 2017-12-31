@@ -28,6 +28,7 @@ public:
     ~EventDispatcher();
 
     void sendDeviceEvent(const QString& name, const QVariantList& args);
+    void sendDeviceEvent(const QString& name, const QVariantMap& args);
 
 private:
     QScopedPointer<EventDispatcherPrivate> d_ptr;
