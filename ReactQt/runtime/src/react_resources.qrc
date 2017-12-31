@@ -18,5 +18,6 @@
         <file>qml/ReactPicker.qml</file>
         <file>qml/ReactTextInputArea.qml</file>
         <file>qml/ReactTextInputField.qml</file>
+        <file>qml/ReactWebView.qml</file>
     </qresource>
 </RCC>

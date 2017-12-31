@@ -31,6 +31,7 @@
 #include "componentmanagers/textinputmanager.h"
 #include "componentmanagers/textmanager.h"
 #include "componentmanagers/viewmanager.h"
+#include "componentmanagers/webviewmanager.h"
 #include "deviceinfo.h"
 #include "eventdispatcher.h"
 #include "exceptionsmanager.h"
@@ -101,7 +102,8 @@ public:
                            new SliderManager,
                            new ModalManager,
                            new PickerManager,
-                           new WebSocketModule};
+                           new WebSocketModule,
+                           new WebViewManager};
     }
 };
 

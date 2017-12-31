@@ -35,8 +35,8 @@ class WebViewExample extends React.Component<{}, $FlowFixMeState> {
   state = {
     url: DEFAULT_URL,
     status: 'No Page Loaded',
-    backButtonEnabled: false,
-    forwardButtonEnabled: false,
+    backButtonEnabled: true,
+    forwardButtonEnabled: true,
     loading: true,
     scalesPageToFit: true,
   };
@@ -55,20 +55,20 @@ class WebViewExample extends React.Component<{}, $FlowFixMeState> {
     this.inputText = this.state.url;
 
     return (
-      <View style={[styles.container]}>
+      <View style={[styles.container], {height: 500}}>
         <View style={[styles.addressBarRow]}>
           <TouchableOpacity
             onPress={this.goBack}
             style={this.state.backButtonEnabled ? styles.navButton : styles.disabledButton}>
             <Text>
-               {'<'}
+               {"BACK"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={this.goForward}
             style={this.state.forwardButtonEnabled ? styles.navButton : styles.disabledButton}>
             <Text>
-              {'>'}
+              {'FWD'}
             </Text>
           </TouchableOpacity>
           <TextInput
@@ -90,16 +90,16 @@ class WebViewExample extends React.Component<{}, $FlowFixMeState> {
         </View>
         <WebView
           ref={WEBVIEW_REF}
-          automaticallyAdjustContentInsets={false}
+          //automaticallyAdjustContentInsets={false}
           style={styles.webView}
           source={{uri: this.state.url}}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          decelerationRate="normal"
-          onNavigationStateChange={this.onNavigationStateChange}
-          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
-          startInLoadingState={true}
-          scalesPageToFit={this.state.scalesPageToFit}
+          //javaScriptEnabled={true}
+          //domStorageEnabled={true}
+          //decelerationRate="normal"
+          //onNavigationStateChange={this.onNavigationStateChange}
+          //onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+          //startInLoadingState={true}
+          //scalesPageToFit={this.state.scalesPageToFit}
         />
         <View style={styles.statusBar}>
           <Text style={styles.statusBarText}>{this.state.status}</Text>
@@ -127,7 +127,7 @@ class WebViewExample extends React.Component<{}, $FlowFixMeState> {
 
   onNavigationStateChange = (navState) => {
     this.setState({
-      backButtonEnabled: navState.canGoBack,
+      backButtonEnabled: true,
       forwardButtonEnabled: navState.canGoForward,
       url: navState.url,
       status: navState.title,
@@ -300,7 +300,7 @@ var styles = StyleSheet.create({
     borderColor: 'transparent',
     borderRadius: 3,
     borderWidth: 1,
-    height: 24,
+    height: 34,
     paddingLeft: 10,
     paddingTop: 3,
     paddingBottom: 3,
@@ -308,7 +308,7 @@ var styles = StyleSheet.create({
     fontSize: 14,
   },
   navButton: {
-    width: 20,
+    width: 40,
     padding: 3,
     marginRight: 3,
     alignItems: 'center',
