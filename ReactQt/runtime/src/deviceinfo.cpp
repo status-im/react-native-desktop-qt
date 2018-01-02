@@ -12,6 +12,8 @@
 #include "bridge.h"
 #include "eventdispatcher.h"
 
+#include <QQuickItem>
+
 class DeviceInfoPrivate {
 public:
     Bridge* bridge = nullptr;
@@ -35,8 +37,12 @@ QList<ModuleMethod*> DeviceInfo::methodsToExport() {
 }
 
 QVariantMap DeviceInfo::constantsToExport() {
+    Q_D(DeviceInfo);
+
     // TODO: Populate Dimensions with real data
-    QVariantMap values{{"fontScale", 1}, {"width", 375}, {"height", 667}, {"scale", 2}};
+    QQuickItem* rootView = d->bridge->visualParent();
+    Q_ASSERT(rootView);
+    QVariantMap values{{"fontScale", 8}, {"width", rootView->width()}, {"height", rootView->height()}, {"scale", 8}};
     QVariantMap screenValues{{"screen", values}, {"window", values}};
 
     return QVariantMap{{"Dimensions", screenValues}};
