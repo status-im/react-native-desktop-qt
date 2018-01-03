@@ -57,6 +57,7 @@ public:
     void loadBundle(const QUrl& bundleUrl);
 
     void invokePromiseCallback(double callbackCode, const QVariantList& args);
+    void invokePromiseCallback(double callbackCode, const QVariantMap& args);
     void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
     void invokeAndProcess(const QString& method, const QVariantList& args);
     void executeSourceCode(const QByteArray& sourceCode);
@@ -119,6 +120,7 @@ private:
     void setJsAppStarted(bool started);
     void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
     void addModuleData(QObject* module);
+    void invokePromiseCallbackInternal(const QVariantList& args);
 
     QScopedPointer<BridgePrivate> d_ptr;
 };

@@ -187,11 +187,18 @@ void Bridge::enqueueJSCall(const QString& module, const QString& method, const Q
 }
 
 void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args) {
+    invokePromiseCallbackInternal(QVariantList{callbackCode, args});
+}
+
+void Bridge::invokePromiseCallback(double callbackCode, const QVariantMap& args) {
+    invokePromiseCallbackInternal(QVariantList{callbackCode, args});
+}
+
+void Bridge::invokePromiseCallbackInternal(const QVariantList& args) {
     if (!d_func()->executor)
         return;
-    d_func()->executor->executeJSCall("invokeCallbackAndReturnFlushedQueue",
-                                      QVariantList{callbackCode, args},
-                                      [=](const QJsonDocument& doc) { processResult(doc); });
+    d_func()->executor->executeJSCall(
+        "invokeCallbackAndReturnFlushedQueue", args, [=](const QJsonDocument& doc) { processResult(doc); });
 }
 
 void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
