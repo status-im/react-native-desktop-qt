@@ -33,10 +33,16 @@ public:
 public slots:
     void sendTextEditedToJs(QQuickItem* textInput);
     void sendSelectionChangeToJs(QQuickItem* textInput);
+    void sendOnSubmitEditingToJs(QQuickItem* textInput);
+    void sendOnEndEditingToJs(QQuickItem* textInput);
+    void sendOnFocusToJs(QQuickItem* textInput);
+    void sendOnKeyPressToJs(QQuickItem* textInput, QString keyText);
 
 private:
     virtual QString qmlComponentFile() const override;
     virtual void configureView(QQuickItem* view) const override;
+
+    void sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData = QVariantMap());
 
 private:
     QScopedPointer<TextInputManagerPrivate> d_ptr;

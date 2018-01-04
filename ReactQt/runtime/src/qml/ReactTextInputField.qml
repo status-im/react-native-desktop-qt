@@ -29,4 +29,19 @@ TextField {
     onSelectionEndChanged: {
         textInputManager.sendSelectionChangeToJs(textField)
     }
+    onAccepted: {
+        textInputManager.sendOnSubmitEditingToJs(textField)
+    }
+    onEditingFinished: {
+        textInputManager.sendOnEndEditingToJs(textField)
+    }
+    onFocusChanged: {
+        if (focus) {
+            textInputManager.sendOnFocusToJs(textField)
+        }
+    }
+    Keys.onPressed: {
+        textInputManager.sendOnKeyPressToJs(textField, event.text)
+    }
+
 }

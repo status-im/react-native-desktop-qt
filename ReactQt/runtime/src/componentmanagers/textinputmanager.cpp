@@ -14,6 +14,7 @@
 #include <QQuickItem>
 #include <QString>
 #include <QVariant>
+#include <QVariantMap>
 
 #include <QDebug>
 
@@ -25,6 +26,11 @@
 
 const QString EVENT_ON_TEXT_CHANGE = "onChange";
 const QString EVENT_ON_SELECTION_CHANGE = "onSelectionChange";
+const QString EVENT_ON_SUBMIT_EDITING = "onSubmitEditing";
+const QString EVENT_ON_END_EDITING = "onEndEditing";
+const QString EVENT_ON_FOCUS = "onFocus";
+const QString EVENT_ON_BLUR = "onBlur";
+const QString EVENT_ON_KEY_PRESS = "onKeyPress";
 
 class TextInputManagerPrivate {};
 
@@ -50,19 +56,11 @@ void TextInputManager::configureView(QQuickItem* view) const {
 }
 
 QStringList TextInputManager::customDirectEventTypes() {
-    return QStringList{
-        EVENT_ON_SELECTION_CHANGE,
-    };
+    return QStringList{EVENT_ON_SELECTION_CHANGE, EVENT_ON_KEY_PRESS};
 }
 
 void TextInputManager::sendTextEditedToJs(QQuickItem* textInput) {
-    if (!textInput)
-        return;
-
-    QString text = textInput->property("text").toString();
-    int parentTag = tag(textInput->parentItem());
-
-    notifyJsAboutEvent(parentTag, EVENT_ON_TEXT_CHANGE, QVariantMap{{"target", parentTag}, {"text", text}});
+    sendTextInputEvent(textInput, EVENT_ON_TEXT_CHANGE);
 }
 
 void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
@@ -71,12 +69,42 @@ void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
     int start = textInput->property("selectionStart").toInt();
     int end = textInput->property("selectionEnd").toInt();
 
-    QVariantMap startEnd = QVariantMap{{"start", start}, {"end", end}};
+    sendTextInputEvent(
+        textInput, EVENT_ON_SELECTION_CHANGE, QVariantMap{{"selection", QVariantMap{{"start", start}, {"end", end}}}});
+}
 
+void TextInputManager::sendOnSubmitEditingToJs(QQuickItem* textInput) {
+    sendTextInputEvent(textInput, EVENT_ON_SUBMIT_EDITING);
+}
+
+void TextInputManager::sendOnEndEditingToJs(QQuickItem* textInput) {
+    sendTextInputEvent(textInput, EVENT_ON_END_EDITING);
+    sendTextInputEvent(textInput, EVENT_ON_BLUR);
+}
+
+void TextInputManager::sendOnFocusToJs(QQuickItem* textInput) {
+    sendTextInputEvent(textInput, EVENT_ON_FOCUS);
+}
+
+void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText) {
+    sendTextInputEvent(textInput, EVENT_ON_KEY_PRESS, QVariantMap{{"key", keyText}});
+}
+
+void TextInputManager::sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData) {
+    if (!textInput)
+        return;
+
+    QString text = textInput->property("text").toString();
     int parentTag = tag(textInput->parentItem());
 
-    notifyJsAboutEvent(
-        parentTag, EVENT_ON_SELECTION_CHANGE, QVariantMap{{"target", parentTag}, {"selection", startEnd}});
+    QVariantMap eventData = QVariantMap{{"target", parentTag}, {"text", text}};
+    if (!additionalEventData.isEmpty()) {
+        for (auto iterator = additionalEventData.constBegin(); iterator != additionalEventData.constEnd(); ++iterator) {
+            eventData.insert(iterator.key(), iterator.value());
+        }
+    }
+
+    notifyJsAboutEvent(parentTag, eventName, eventData);
 }
 
 #include "textinputmanager.moc"

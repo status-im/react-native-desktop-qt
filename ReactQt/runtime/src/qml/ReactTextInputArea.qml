@@ -29,5 +29,17 @@ TextArea {
     onSelectionEndChanged: {
         parent.textInputManager.sendSelectionChangeToJs(textField)
     }
+    onEditingFinished: {
+        textInputManager.sendOnSubmitEditingToJs(textField)
+        textInputManager.sendOnEndEditingToJs(textField)
+    }
+    onFocusChanged: {
+        if (focus) {
+            textInputManager.sendOnFocusToJs(textField)
+        }
+    }
+    Keys.onPressed: {
+        textInputManager.sendOnKeyPressToJs(textField, event.text)
+    }
 }
 
