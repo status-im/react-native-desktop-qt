@@ -120,7 +120,7 @@ private:
     void setJsAppStarted(bool started);
     void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
     void addModuleData(QObject* module);
-    void invokePromiseCallbackInternal(const QVariantList& args);
+    void invokePromiseViaExecutor(const QVariantList& args);
 
     QScopedPointer<BridgePrivate> d_ptr;
 };
