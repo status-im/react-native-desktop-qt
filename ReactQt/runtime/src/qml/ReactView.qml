@@ -7,9 +7,12 @@ React.Item {
     property var p_transformMatrix;
     property var viewManager: null
     property string p_nativeID
+    property int p_zIndex: 0
     property var flexbox: React.Flexbox {control: viewRoot}
 
     objectName: p_nativeID
 
-    onP_transformMatrixChanged: viewManager.manageTransforMatrix(p_transformMatrix, viewRoot)
+    onP_transformMatrixChanged: viewManager.manageTransformMatrix(p_transformMatrix, viewRoot)
+
+    z: p_zIndex
 }

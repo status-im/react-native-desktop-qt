@@ -60,6 +60,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'WebViewExample',
     module: require('./WebViewExample'),
+  },
+  {
+    key: 'ViewExample',
+    module: require('./ViewExample'),
   }
 ];
 
