@@ -79,7 +79,7 @@ if (Platform.OS === 'ios') {
     return connectionType !== 'NONE' && connectionType !== 'UNKNOWN';
   };
 } else if (Platform.OS === 'desktop') {
-  _isConnected = function(
+  _isConnectedDeprecated = function(
     networkAccessibility: NetworkAccessibility
   ): bool {
     return networkAccessibility === 'Accessible';
@@ -87,7 +87,11 @@ if (Platform.OS === 'ios') {
 }
 
 function _isConnected(connection) {
-  return connection.type !== 'none' && connection.type !== 'unknown';
+  if (Platform.OS === 'desktop') {
+    return connection.networkAccessibility === 'Accessible';
+  } else {
+    return connection.type !== 'none' && connection.type !== 'unknown';
+  }
 }
 
 const _isConnectedSubscriptions = new Map();
@@ -290,6 +294,7 @@ const NetInfo = {
       return {
         type: resp.connectionType,
         effectiveType: resp.effectiveConnectionType,
+        networkAccessibility: resp.network_info
       };
     });
   },
