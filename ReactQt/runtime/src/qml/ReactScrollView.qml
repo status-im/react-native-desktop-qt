@@ -9,7 +9,6 @@ Flickable {
     property var flexbox: React.Flexbox {control: scrollViewRoot}
 
     clip: true
-    anchors.fill: parent
     contentHeight: contentItem.childrenRect.height
     contentWidth: contentItem.childrenRect.width
 }
