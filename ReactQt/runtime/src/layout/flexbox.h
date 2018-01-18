@@ -52,10 +52,10 @@ class Flexbox : public QObject {
     Q_PROPERTY(QString p_alignContent READ alignContent WRITE setAlignContent NOTIFY alignContentChanged)
     Q_PROPERTY(QString p_alignSelf READ alignSelf WRITE setAlignSelf NOTIFY alignSelfChanged)
     Q_PROPERTY(float p_aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
-    Q_PROPERTY(float p_bottom READ bottom NOTIFY bottomChanged)
-    Q_PROPERTY(float p_left READ left NOTIFY leftChanged)
-    Q_PROPERTY(float p_right READ right NOTIFY rightChanged)
-    Q_PROPERTY(float p_top READ top NOTIFY topChanged)
+    Q_PROPERTY(float p_bottom READ bottom WRITE setBottom NOTIFY bottomChanged)
+    Q_PROPERTY(float p_left READ left WRITE setLeft NOTIFY leftChanged)
+    Q_PROPERTY(float p_right READ right WRITE setRight NOTIFY rightChanged)
+    Q_PROPERTY(float p_top READ top WRITE setTop NOTIFY topChanged)
     Q_PROPERTY(float p_maxWidth READ maxWidth WRITE setMaxWidth NOTIFY maxWidthChanged)
     Q_PROPERTY(float p_maxHeight READ maxHeight WRITE setMaxHeight NOTIFY maxHeightChanged)
     Q_PROPERTY(float p_minWidth READ minWidth WRITE setMinWidth NOTIFY minWidthChanged)
@@ -182,9 +182,13 @@ public:
     float aspectRatio();
     void setAspectRatio(float value);
     float top();
+    void setTop(float value);
     float bottom();
+    void setBottom(float value);
     float left();
+    void setLeft(float value);
     float right();
+    void setRight(float value);
     float minWidth();
     void setMinWidth(float value);
     float minHeight();

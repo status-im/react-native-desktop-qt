@@ -396,16 +396,35 @@ float Flexbox::top() {
     return YGNodeLayoutGetTop(d_ptr->m_node);
 }
 
+void Flexbox::setTop(float value) {
+    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeTop, value);
+    topChanged();
+}
+
 float Flexbox::bottom() {
     return YGNodeLayoutGetBottom(d_ptr->m_node);
+}
+
+void Flexbox::setBottom(float value) {
+    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeBottom, value);
+    bottomChanged();
 }
 
 float Flexbox::left() {
     return YGNodeLayoutGetLeft(d_ptr->m_node);
 }
 
+void Flexbox::setLeft(float value) {
+    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeLeft, value);
+    leftChanged();
+}
+
 float Flexbox::right() {
     return YGNodeLayoutGetRight(d_ptr->m_node);
+}
+void Flexbox::setRight(float value) {
+    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeRight, value);
+    rightChanged();
 }
 
 float Flexbox::minWidth() {
