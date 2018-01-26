@@ -11,6 +11,8 @@
 
 #include "flexbox.h"
 #include "attachedproperties.h"
+#include "reactitem.h"
+
 #include <QDebug>
 #include <QMap>
 #include <QQuickItem>
@@ -155,10 +157,21 @@ void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
 void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     auto qmlControl = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_control;
 
+    bool emitLayoutUpdated =
+        YGNodeLayoutGetLeft(node) != qmlControl->x() || YGNodeLayoutGetTop(node) != qmlControl->y() ||
+        YGNodeLayoutGetWidth(node) != qmlControl->width() || YGNodeLayoutGetHeight(node) != qmlControl->height();
+
     qmlControl->setX(YGNodeLayoutGetLeft(node));
     qmlControl->setY(YGNodeLayoutGetTop(node));
     qmlControl->setWidth(YGNodeLayoutGetWidth(node));
     qmlControl->setHeight(YGNodeLayoutGetHeight(node));
+
+    if (emitLayoutUpdated) {
+        ReactItem* reactItem = qobject_cast<ReactItem*>(qmlControl);
+        if (reactItem) {
+            Q_EMIT(reactItem->layoutUpdated());
+        }
+    }
 }
 
 void Flexbox::setControl(QQuickItem* value) {

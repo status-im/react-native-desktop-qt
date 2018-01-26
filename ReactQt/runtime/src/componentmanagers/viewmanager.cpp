@@ -29,6 +29,10 @@
 
 using namespace utilities;
 
+namespace {
+const QString EVENT_ONLAYOUT = "onLayout";
+}
+
 class MatrixTransform : public QQuickTransform {
     Q_OBJECT
 public:
@@ -78,7 +82,7 @@ QVariantMap ViewManager::constantsToExport() {
 }
 
 QStringList ViewManager::customDirectEventTypes() {
-    return QStringList{};
+    return QStringList{EVENT_ONLAYOUT};
 }
 
 QStringList ViewManager::customBubblingEventTypes() {
@@ -131,6 +135,18 @@ int ViewManager::tag(QQuickItem* view) {
     }
     Q_ASSERT(rap);
     return rap->tag();
+}
+
+void ViewManager::sendLayoutUpdatedToJs(QQuickItem* view) {
+    if (!view)
+        return;
+
+    notifyJsAboutEvent(
+        tag(view),
+        EVENT_ONLAYOUT,
+        QVariantMap{
+            {"layout",
+             QVariantMap{{"x", view->x()}, {"y", view->y()}, {"width", view->width()}, {"height", view->height()}}}});
 }
 
 QQuickItem* ViewManager::createView() const {

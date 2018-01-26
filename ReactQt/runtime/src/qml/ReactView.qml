@@ -13,6 +13,7 @@ React.Item {
     objectName: p_nativeID
 
     onP_transformMatrixChanged: viewManager.manageTransformMatrix(p_transformMatrix, viewRoot)
+    onLayoutUpdated: viewManager.sendLayoutUpdatedToJs(viewRoot)
 
     z: p_zIndex
 }

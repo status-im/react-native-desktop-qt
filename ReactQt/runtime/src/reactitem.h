@@ -154,6 +154,7 @@ Q_SIGNALS:
     void shadowOffsetChanged();
     void shadowOpacityChanged();
     void shadowRadiusChanged();
+    void layoutUpdated();
 
 protected:
     void paint(QPainter* painter);
