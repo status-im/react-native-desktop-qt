@@ -14,11 +14,11 @@ var base64Icon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAABLCAQAAACS
 export default class ImageReactNative extends Component {
   render() {
     return (
-      <Image
-        source={{uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png'}}
-        style={styles.base}
-        resizeMode={'center'}
-      />
+        <View style={{height: 52, width: 290}}>
+                <Text style={{fontSize: 30, opacity: 0.1}}>
+                    Hello
+                </Text>
+        </View>
     );
   }
 }

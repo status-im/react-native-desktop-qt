@@ -20,6 +20,7 @@ Text {
     property string p_writingDirection
     property int p_numberOfLines: 1000000
     property var flexbox: null
+    property double p_opacity: 1
 
 
 
@@ -39,6 +40,7 @@ Text {
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
     textFormat: Text.RichText
     wrapMode: Text.WordWrap
+    opacity: p_opacity
 
 
     onP_allowFontScalingChanged: updateHtmlText();
