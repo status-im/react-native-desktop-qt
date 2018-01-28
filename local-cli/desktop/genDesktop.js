@@ -24,8 +24,19 @@ function applyDesktopPlatformPatch() {
    });
 }
 
+function applyIncreseBundlerMemoryPatch() {
+  exec('pwd && patch --verbose -d ./node_modules/metro-bundler/src/JSTransformer -i ../../../react-native/increase_bundler_memory_usage.patch', (err, stdout, stderr) => {
+     console.log(`Std output: ${stdout}`);
+     if (err) {
+       console.error(`exec error: ${err}`);
+       return;
+     }
+   });
+}
+
 function genDesktop(args, config) {
   applyDesktopPlatformPatch();
+  applyIncreseBundlerMemoryPatch();
   return generate([
      '--platform', 'desktop',
      '--project-path', process.cwd(),

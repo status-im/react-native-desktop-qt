@@ -1,0 +1,37 @@
+--- node_modules/metro-bundler/src/JSTransformer/index.js	2017-11-10 19:24:28.000000000 +0200
++++ ../../vkjr/status-desktop-qt/node_modules/metro-bundler/src/JSTransformer/index.js	2017-12-12 18:48:01.000000000 +0200
+@@ -6,7 +6,7 @@
+  * LICENSE file in the root directory of this source tree. An additional grant
+  * of patent rights can be found in the PATENTS file in the same directory.
+  *
+- *
++ *
+  * @format
+  */
+
+@@ -49,6 +49,9 @@
+ const MAX_RETRIES = 2;
+
+ function makeFarm(worker, methods, timeout, maxConcurrentWorkers) {
++
++  var a = process.execArgv;
++  a.push("--max-old-space-size=8192");
+   return workerFarm(
+   {
+     autoStart: true,
+@@ -58,7 +61,7 @@
+                       * Feel free to add more cases to the RegExp. A whitelist is preferred, to
+                       * guarantee robustness when upgrading node, etc.
+                       */
+-    execArgv: process.execArgv.filter(
++    execArgv: a.filter(
+     arg =>
+     /^--stack[_-]trace[_-]limit=[0-9]+$/.test(arg) ||
+     /^--heap[_-]growing[_-]percent=[0-9]+$/.test(arg) ||
+@@ -244,4 +247,4 @@
+   return error;
+ }
+
+-module.exports = Transformer;
+\ No newline at end of file
++module.exports = Transformer;
