@@ -31,6 +31,7 @@ class Flexbox : public QObject {
     Q_DECLARE_PRIVATE(Flexbox)
 
     Q_PROPERTY(QQuickItem* control READ control WRITE setControl NOTIFY controlChanged)
+    Q_PROPERTY(QObject* viewManager READ viewManager WRITE setViewManager NOTIFY viewManagerChanged)
     Q_PROPERTY(int p_width READ width WRITE setWidth NOTIFY widthChanged)
     Q_PROPERTY(int p_height READ height WRITE setHeight NOTIFY heightChanged)
     Q_PROPERTY(QString p_flexDirection READ flexDirection WRITE setFlexDirection NOTIFY flexDirectionChanged)
@@ -85,6 +86,7 @@ signals:
     void flexDirectionChanged();
     void justifyContentChanged();
     void controlChanged();
+    void viewManagerChanged();
     void marginChanged();
     void marginTopChanged();
     void marginBottomChanged();
@@ -141,6 +143,8 @@ public:
 
     QQuickItem* control();
     void setControl(QQuickItem* value);
+    QObject* viewManager();
+    void setViewManager(QObject* value);
     float width();
     void setWidth(float value);
     float height();

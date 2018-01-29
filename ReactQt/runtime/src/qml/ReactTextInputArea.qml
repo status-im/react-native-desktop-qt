@@ -41,5 +41,8 @@ TextArea {
     Keys.onPressed: {
         textInputManager.sendOnKeyPressToJs(textField, event.text)
     }
+    onContentSizeChanged: {
+        textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+    }
 }
 

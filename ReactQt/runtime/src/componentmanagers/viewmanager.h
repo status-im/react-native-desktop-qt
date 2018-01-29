@@ -49,7 +49,7 @@ public:
     virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
     static int tag(QQuickItem* view);
 
-    Q_INVOKABLE void sendLayoutUpdatedToJs(QQuickItem* view);
+    Q_INVOKABLE void sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height);
 
 protected:
     QQuickItem* createView() const;

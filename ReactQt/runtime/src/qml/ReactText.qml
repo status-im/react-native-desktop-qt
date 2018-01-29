@@ -71,7 +71,7 @@ Text {
 
         //Only topmost text item in a set of nested ones can have a flexbox node.
         if(textIsTopInBlock) {
-            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot}',
+            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot; viewManager: textManager}',
                                                textRoot, "dynamicSnippet1");
         }
         else
@@ -167,5 +167,4 @@ Text {
         else
             return false
     }
-
 }

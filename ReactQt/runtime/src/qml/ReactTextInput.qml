@@ -19,7 +19,7 @@ Item {
     property string p_testID
     property bool p_secureTextEntry: false
 
-    property var flexbox: React.Flexbox {control: textInputRoot}
+    property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
 
     function recreateInputControl() {
         if(textInputControl) {

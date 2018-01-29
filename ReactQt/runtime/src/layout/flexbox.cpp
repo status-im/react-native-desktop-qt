@@ -11,7 +11,7 @@
 
 #include "flexbox.h"
 #include "attachedproperties.h"
-#include "reactitem.h"
+#include "componentmanagers/viewmanager.h"
 
 #include <QDebug>
 #include <QMap>
@@ -60,6 +60,8 @@ static QMap<QString, YGPositionType> positionByString{
 static QMap<QString, YGDirection> directionByString{
     {"inherit", YGDirectionInherit}, {"ltr", YGDirectionLTR}, {"rtl", YGDirectionRTL}};
 
+const char LAYOUT_UPDATED_SIGNAL_NAME[] = "layoutUpdated";
+
 class FlexboxPrivate {
 public:
     FlexboxPrivate() {
@@ -83,6 +85,7 @@ public:
     QString m_flexDirection;
     QString m_justifyContent;
     QQuickItem* m_control = nullptr;
+    ViewManager* m_viewManager = nullptr;
     ygnode_measure_function m_measureFunction = nullptr;
     QString m_alignItems;
     QString m_alignContent;
@@ -156,6 +159,7 @@ void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
 
 void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     auto qmlControl = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_control;
+    auto viewManager = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_viewManager;
 
     bool emitLayoutUpdated =
         YGNodeLayoutGetLeft(node) != qmlControl->x() || YGNodeLayoutGetTop(node) != qmlControl->y() ||
@@ -166,11 +170,12 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     qmlControl->setWidth(YGNodeLayoutGetWidth(node));
     qmlControl->setHeight(YGNodeLayoutGetHeight(node));
 
-    if (emitLayoutUpdated) {
-        ReactItem* reactItem = qobject_cast<ReactItem*>(qmlControl);
-        if (reactItem) {
-            Q_EMIT(reactItem->layoutUpdated());
-        }
+    if (emitLayoutUpdated && viewManager) {
+        viewManager->sendOnLayoutToJs(qmlControl,
+                                      YGNodeLayoutGetLeft(node),
+                                      YGNodeLayoutGetTop(node),
+                                      YGNodeLayoutGetWidth(node),
+                                      YGNodeLayoutGetHeight(node));
     }
 }
 
@@ -178,6 +183,18 @@ void Flexbox::setControl(QQuickItem* value) {
     if (value != d_ptr->m_control) {
         d_ptr->m_control = value;
         controlChanged();
+    }
+}
+
+QObject* Flexbox::viewManager() {
+    return d_ptr->m_viewManager;
+}
+
+void Flexbox::setViewManager(QObject* value) {
+    ViewManager* viewManager = qobject_cast<ViewManager*>(value);
+    if (viewManager != d_ptr->m_viewManager) {
+        d_ptr->m_viewManager = viewManager;
+        viewManagerChanged();
     }
 }
 

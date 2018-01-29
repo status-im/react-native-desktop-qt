@@ -31,6 +31,7 @@ const QString EVENT_ON_END_EDITING = "onEndEditing";
 const QString EVENT_ON_FOCUS = "onFocus";
 const QString EVENT_ON_BLUR = "onBlur";
 const QString EVENT_ON_KEY_PRESS = "onKeyPress";
+const QString EVENT_ON_CONTENT_SIZE_CHANGE = "onContentSizeChange";
 
 class TextInputManagerPrivate {};
 
@@ -88,6 +89,12 @@ void TextInputManager::sendOnFocusToJs(QQuickItem* textInput) {
 
 void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText) {
     sendTextInputEvent(textInput, EVENT_ON_KEY_PRESS, QVariantMap{{"key", keyText}});
+}
+
+void TextInputManager::sendOnContentSizeChange(QQuickItem* textInput, double width, double height) {
+    sendTextInputEvent(textInput,
+                       EVENT_ON_CONTENT_SIZE_CHANGE,
+                       QVariantMap{{"contentSize", QVariantMap{{"width", width}, {"height", height}}}});
 }
 
 void TextInputManager::sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData) {

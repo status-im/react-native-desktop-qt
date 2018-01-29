@@ -137,16 +137,13 @@ int ViewManager::tag(QQuickItem* view) {
     return rap->tag();
 }
 
-void ViewManager::sendLayoutUpdatedToJs(QQuickItem* view) {
+void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height) {
     if (!view)
         return;
 
-    notifyJsAboutEvent(
-        tag(view),
-        EVENT_ONLAYOUT,
-        QVariantMap{
-            {"layout",
-             QVariantMap{{"x", view->x()}, {"y", view->y()}, {"width", view->width()}, {"height", view->height()}}}});
+    notifyJsAboutEvent(tag(view),
+                       EVENT_ONLAYOUT,
+                       QVariantMap{{"layout", QVariantMap{{"x", x}, {"y", y}, {"width", width}, {"height", height}}}});
 }
 
 QQuickItem* ViewManager::createView() const {
