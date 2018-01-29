@@ -115,6 +115,12 @@ set_target_properties(
 )
 endif()
 
+if (REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS)
+  target_link_libraries(react-native ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS})
+endif()
+
+include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
+
 set(USED_QT_MODULES Core Qml Quick WebSockets)
 
 qt5_use_modules(react-native ${USED_QT_MODULES})
