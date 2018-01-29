@@ -9,6 +9,7 @@ Text {
     property double p_fontSize: font.pointSize
     property bool p_highlighted: false
     property color p_color
+    property color p_backgroundColor: 'transparent'
     property string p_fontStyle
     property string p_fontWeight
     property double p_letterSpacing
@@ -115,19 +116,23 @@ Text {
         //get props values, own or nested
         var fontFamily = textManager.nestedPropertyValue(textRoot, "p_fontFamily")
         var color = textManager.nestedPropertyValue(textRoot, "p_color")
+        var backgroundColor = textManager.nestedPropertyValue(textRoot, "p_backgroundColor")
         var fontWeight = textManager.nestedPropertyValue(textRoot, "p_fontWeight")
         var fontSize = textManager.nestedPropertyValue(textRoot, "p_fontSize")
         var fontStyle = textManager.nestedPropertyValue(textRoot, "p_fontStyle")
-        var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")
+        var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")        
 
-        return "<span style=\"" + (fontFamily ? ("font-family:"+fontFamily+";") : "")
+        var result = "<span style=\"" + (fontFamily ? ("font-family:"+fontFamily+";") : "")
                 + (fontSize? ("font-size:"+fontSize+"pt;") : "")
                 + (color ? ("color:"+color+";") : "")
+                + ( !Qt.colorEqual(backgroundColor, "transparent") ? ("background-color:"+backgroundColor+";") : "")
                 + (fontStyle ? ("font-style:"+fontStyle+";") : "")
                 + (fontWeight ? ("font-weight:"+fontWeight+";") : "")
                 + (textDecorLine ? ("text-decoration:"+textDecorLine+";") : "")
                 + "\">"
                 + textString + "</span>";
+
+        return result;
     }
 
 
