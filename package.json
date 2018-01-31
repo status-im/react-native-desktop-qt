@@ -92,6 +92,7 @@
     "ReactQt",
     "ubuntu-server.js",
     "add-desktop-platform.patch",
+    "increase_bundler_memory_usage.patch",
     "cli.js",
     "flow",
     "init.sh",
