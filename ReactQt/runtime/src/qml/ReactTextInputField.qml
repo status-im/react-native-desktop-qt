@@ -6,44 +6,38 @@ import  "../js/utils.js" as Utils
 
 TextField {
     id: textField
-    anchors.fill: parent
 
-    text: parent.p_text
-    color: parent.p_color
-    placeholderText: parent.p_placeholderText
-    selectionColor: parent.p_selectionColor
-    objectName: parent.p_testID
-    horizontalAlignment: Utils.alignmentQMLValue(parent.p_textAlign)
-    echoMode: parent.p_secureTextEntry ? TextInput.Password : TextInput.Normal
+    property var textInputRoot: parent
+
+    anchors.fill: textInputRoot
+    text: textInputRoot.p_text
+    color: textInputRoot.p_color
+    placeholderText: textInputRoot.p_placeholderText
+    selectionColor: textInputRoot.p_selectionColor
+    objectName: textInputRoot.p_testID
+    horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
+    echoMode: textInputRoot.p_secureTextEntry ? TextInput.Password : TextInput.Normal
 
     selectByMouse: true
     background: Rectangle {
-        border.color:  "gray"
+        border.color: textInputRoot.p_borderColor
+        border.width: textInputRoot.p_borderWidth
+        radius: textInputRoot.p_borderRadius
     }
 
-    onTextChanged: textInputManager.sendTextEditedToJs(textField)
+    onTextChanged:              textInputManager.sendTextEditedToJs(textField)
+    onSelectionStartChanged:    textInputManager.sendSelectionChangeToJs(textField)
+    onSelectionEndChanged:      textInputManager.sendSelectionChangeToJs(textField)
+    onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
+    onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
+    onContentSizeChanged:       textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+    Keys.onPressed:             textInputManager.sendOnKeyPressToJs(textField, event.text)
 
-    onSelectionStartChanged: {
-        textInputManager.sendSelectionChangeToJs(textField)
-    }
-    onSelectionEndChanged: {
-        textInputManager.sendSelectionChangeToJs(textField)
-    }
-    onAccepted: {
-        textInputManager.sendOnSubmitEditingToJs(textField)
-    }
-    onEditingFinished: {
-        textInputManager.sendOnEndEditingToJs(textField)
-    }
     onFocusChanged: {
         if (focus) {
             textInputManager.sendOnFocusToJs(textField)
         }
     }
-    Keys.onPressed: {
-        textInputManager.sendOnKeyPressToJs(textField, event.text)
-    }
-    onContentSizeChanged: {
-        textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
-    }
+
+
 }
