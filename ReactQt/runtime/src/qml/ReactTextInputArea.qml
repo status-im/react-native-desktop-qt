@@ -6,29 +6,32 @@ import  "../js/utils.js" as Utils
 
 TextArea {
     id: textField
-    anchors.fill: parent
 
-    text: parent.p_text
-    color: parent.p_color
-    placeholderText: parent.p_placeholderText
-    selectionColor: parent.p_selectionColor
-    objectName: parent.p_testID
-    horizontalAlignment: Utils.alignmentQMLValue(parent.p_textAlign)
+    property var textInputRoot: parent
+
+    anchors.fill: textInputRoot
+
+    text: textInputRoot.p_text
+    color: textInputRoot.p_color
+    placeholderText: textInputRoot.p_placeholderText
+    selectionColor: textInputRoot.p_selectionColor
+    objectName: textInputRoot.p_testID
+    horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
 
     selectByKeyboard: true
     selectByMouse: true
+
     background: Rectangle {
-        border.color:  "gray"
+        border.color: textInputRoot.p_borderColor
+        border.width: textInputRoot.p_borderWidth
+        radius: textInputRoot.p_borderRadius
     }
 
-    onTextChanged: parent.textInputManager.sendTextEditedToJs(textField)
-
-    onSelectionStartChanged: {
-        parent.textInputManager.sendSelectionChangeToJs(textField)
-    }
-    onSelectionEndChanged: {
-        parent.textInputManager.sendSelectionChangeToJs(textField)
-    }
+    onTextChanged: textInputRoot.textInputManager.sendTextEditedToJs(textField)
+    onSelectionStartChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
+    onSelectionEndChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
+    Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField, event.text)
+    onContentSizeChanged: textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
     onEditingFinished: {
         textInputManager.sendOnSubmitEditingToJs(textField)
         textInputManager.sendOnEndEditingToJs(textField)
@@ -38,11 +41,6 @@ TextArea {
             textInputManager.sendOnFocusToJs(textField)
         }
     }
-    Keys.onPressed: {
-        textInputManager.sendOnKeyPressToJs(textField, event.text)
-    }
-    onContentSizeChanged: {
-        textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
-    }
+
 }
 

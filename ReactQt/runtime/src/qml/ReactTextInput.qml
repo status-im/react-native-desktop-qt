@@ -18,6 +18,9 @@ Item {
     property string p_selectionColor: "lightblue"
     property string p_testID
     property bool p_secureTextEntry: false
+    property color p_borderColor: "black"
+    property double p_borderWidth: 0
+    property double p_borderRadius: 0
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
 
