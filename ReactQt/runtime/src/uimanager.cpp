@@ -470,7 +470,7 @@ QVariantMap UIManager::constantsToExport() {
 
         QVariantMap managerInfo;
 
-        managerInfo.insert("Manager", componentData->manager()->moduleName());
+        managerInfo.insert("Manager", componentData->manager()->moduleName().replace("RCT", ""));
 
         QVariantMap config = componentData->viewConfig();
 

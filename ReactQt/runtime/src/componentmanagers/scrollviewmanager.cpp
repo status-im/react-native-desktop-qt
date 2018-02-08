@@ -37,6 +37,17 @@ void ScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, b
     QQmlProperty(item, "contentY").write(offsetY);
 }
 
+void ScrollViewManager::scrollToEnd(int reactTag, bool animated) {
+    QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
+    Q_ASSERT(item != nullptr);
+
+    qreal contentHeight = item->property("contentHeight").toReal();
+    qreal height = item->property("height").toReal();
+    qreal newContentY = (contentHeight > height) ? contentHeight - height : 0;
+
+    QQmlProperty(item, "contentY").write(newContentY);
+}
+
 ScrollViewManager::ScrollViewManager(QObject* parent) : ViewManager(parent) {}
 
 ScrollViewManager::~ScrollViewManager() {}
