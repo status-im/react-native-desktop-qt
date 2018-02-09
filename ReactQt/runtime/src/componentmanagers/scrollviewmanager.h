@@ -24,6 +24,7 @@ class ScrollViewManager : public ViewManager {
     Q_INTERFACES(ModuleInterface)
 
     Q_INVOKABLE void scrollTo(int reactTag, double offsetX, double offsetY, bool animated);
+    Q_INVOKABLE void scrollToEnd(int reactTag, bool animated);
 
 public:
     ScrollViewManager(QObject* parent = 0);
