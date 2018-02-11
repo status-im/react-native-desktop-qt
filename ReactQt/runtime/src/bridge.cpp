@@ -15,6 +15,7 @@
 #include "appstate.h"
 #include "asynclocalstorage.h"
 #include "blobprovider.h"
+#include "clipboard.h"
 #include "communication/executor.h"
 #include "communication/serverconnection.h"
 #include "communication/websocketexecutor.h"
@@ -87,6 +88,7 @@ public:
                            new AsyncLocalStorage,
                            new Networking,
                            new NetInfo,
+                           new Clipboard,
                            new DeviceInfo,
                            new BlobProvider,
                            new ViewManager,
