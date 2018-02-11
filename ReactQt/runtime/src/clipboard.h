@@ -21,10 +21,8 @@ class Clipboard : public QObject, public ModuleInterface {
     Q_DECLARE_PRIVATE(Clipboard)
 
     Q_INVOKABLE REACT_PROMISE void getString(const ModuleInterface::ListArgumentBlock& resolve,
-                                                          const ModuleInterface::ListArgumentBlock& reject);
+                                             const ModuleInterface::ListArgumentBlock& reject);
     Q_INVOKABLE void setString(const QString& clipboardContent);
-
-
 
 public:
     Clipboard(QObject* parent = 0);
