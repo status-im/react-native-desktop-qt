@@ -46,6 +46,7 @@ set(
   uimanager.cpp
   redboxitem.cpp
   exceptionsmanager.cpp
+  clipboard.cpp
   componentmanagers/slidermanager.cpp
   componentmanagers/viewmanager.cpp
   componentmanagers/rawtextmanager.cpp
