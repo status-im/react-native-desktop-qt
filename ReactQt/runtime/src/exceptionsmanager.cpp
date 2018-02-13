@@ -14,7 +14,7 @@
 #include "exceptionsmanager.h"
 
 #include "bridge.h"
-#include "redboxitem.h"
+#include "redbox.h"
 
 class ExceptionsManagerPrivate {
 public:

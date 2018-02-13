@@ -44,7 +44,7 @@ set(
   testmodule.cpp
   attachedproperties.cpp
   uimanager.cpp
-  redboxitem.cpp
+  redbox.cpp
   exceptionsmanager.cpp
   componentmanagers/slidermanager.cpp
   componentmanagers/viewmanager.cpp

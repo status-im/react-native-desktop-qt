@@ -14,7 +14,7 @@
 
 #include "bridge.h"
 #include "reacttestcase.h"
-#include "redboxitem.h"
+#include "redbox.h"
 #include "testmodule.h"
 
 class TestIntegration : public ReactTestCase {

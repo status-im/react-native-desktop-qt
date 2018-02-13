@@ -15,7 +15,7 @@
 #include "bridge.h"
 #include "layout/flexbox.h"
 #include "reacttestcase.h"
-#include "redboxitem.h"
+#include "redbox.h"
 #include "testmodule.h"
 
 class TestButtonSize : public ReactTestCase {
