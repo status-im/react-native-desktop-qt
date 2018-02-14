@@ -3,53 +3,80 @@ import QtQuick.Controls 2.2
 
 Rectangle {
     id: redboxRoot
-    color: 'red'
     anchors.fill: parent
+    color: "#bd271a"
 
-    property alias message: textMessage.text
-    property alias stackModel: stackListView.model
+    property var stackmodel
+    property string message
+    property alias stackModel: listView.model
 
     signal dismissPressed();
     signal reloadPressed();
 
-    Text {
-        id: textMessage
-        visible: message.length > 0
-        anchors {
-            centerIn: redboxRoot
-            margins: 40
-        }
-        color: 'white'
-        font.pointSize: 18
-        wrapMode: Text.WordWrap
-        onTextChanged: console.log("redbox message:", text)
-    }
 
     ListView {
-        id: stackListView
+        id: listView
+
+        spacing: 15
+        clip: true
+        visible: stackModel ? (!stackModel.empty) : false
+
         anchors {
-            top: textMessage.bottom
             left: parent.left
-            bottom: buttonRow.top
             right: parent.right
-            margins: 40
+            top: parent.top
+            bottom: buttonRow.top
+            margins: 20
         }
 
-        clip: true
+        header: Text {
+            id: textMessage
+            width: parent.width
+
+            visible: message.length > 0
+            height: contentHeight + 30
+            text: redboxRoot.message
+
+            color: 'white'
+            font.pointSize: 16
+            font.weight: Font.DemiBold
+            wrapMode: Text.WordWrap
+        }
 
         delegate: Label {
-            height: 60
+            height: contentHeight
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
             color: 'white'
             text: methodName + "\n" + file + " @ " + lineNumber + ":" + column
-            font.weight: Font.DemiBold
+
+            font.pointSize: 14
+            font.family: 'Courier'
             verticalAlignment: Text.AlignVCenter
+            wrapMode: Text.WordWrap
         }
+    }
+
+    Text {
+        visible: stackModel ? stackModel.empty : false
+        text: redboxRoot.message
+
+        anchors {
+            centerIn: parent
+        }
+        color: 'white'
+        font.pointSize: 16
+        font.weight: Font.DemiBold
+        wrapMode: Text.WordWrap
     }
 
     Row {
         id: buttonRow
         anchors {
-            bottomMargin: 60
+            bottomMargin: 10
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
         }
@@ -66,41 +93,4 @@ Rectangle {
             onClicked: dismissPressed()
         }
     }
-
-    state: stackModel !== undefined && !stackModel.empty ? "stackTrace" : "errorMessage"
-    onStateChanged: {
-        // XXX: weird hack
-        if (state === 'stackTrace') {
-            textMessage.anchors.centerIn = undefined;
-        }
-    }
-
-    states: [
-        State {
-            name: "errorMessage"
-            PropertyChanges {
-                target: textMessage
-                anchors.left: undefined
-                anchors.top: undefined
-                anchors.centerIn: redboxRoot
-            }
-            PropertyChanges {
-                target: stackListView
-                visible: false
-            }
-        },
-        State  {
-            name: "stackTrace"
-            PropertyChanges {
-                target: textMessage
-                anchors.centerIn: undefined
-                anchors.left: redboxRoot.left
-                anchors.top: redboxRoot.top
-            }
-            PropertyChanges {
-                target: stackListView
-                visible: true
-            }
-        }
-    ]
 }

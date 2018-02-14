@@ -25,7 +25,7 @@ class ModuleData;
 class UIManager;
 class ImageLoader;
 class EventDispatcher;
-class RedboxItem;
+class Redbox;
 class TestModule;
 class ModuleInterface;
 
@@ -94,7 +94,7 @@ public:
     UIManager* uiManager() const;
     TestModule* testModule() const;
     ImageLoader* imageLoader() const;
-    RedboxItem* redbox();
+    Redbox* redbox();
 
     void setRemoteJSDebugging(bool value);
 

@@ -42,7 +42,7 @@
 #include "modulemethod.h"
 #include "netinfo.h"
 #include "networking.h"
-#include "redboxitem.h"
+#include "redbox.h"
 #include "sourcecode.h"
 #include "testmodule.h"
 #include "timing.h"
@@ -68,7 +68,7 @@ public:
     IExecutor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
     QQuickItem* visualParent = nullptr;
-    RedboxItem* redbox = nullptr;
+    Redbox* redbox = nullptr;
     QNetworkAccessManager* nam = nullptr;
     UIManager* uiManager = nullptr;
     ImageLoader* imageLoader = nullptr;
@@ -346,10 +346,10 @@ ImageLoader* Bridge::imageLoader() const {
     return d_func()->imageLoader;
 }
 
-RedboxItem* Bridge::redbox() {
+Redbox* Bridge::redbox() {
     Q_D(Bridge);
     if (d->redbox == nullptr)
-        d->redbox = new RedboxItem(this);
+        d->redbox = new Redbox(this);
     return d->redbox;
 }
 

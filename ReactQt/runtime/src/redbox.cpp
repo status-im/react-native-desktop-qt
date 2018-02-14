@@ -1,20 +1,18 @@
 
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * Author: Justin McPherson <justin.mcpherson@canonical.com>
- *
  */
 
 #include <QAbstractListModel>
 
 #include "bridge.h"
-#include "redboxitem.h"
+#include "redbox.h"
 #include "utilities.h"
 
 namespace {
@@ -33,19 +31,19 @@ static QHash<int, QByteArray> roleData{
 const char REDBOX_MESSAGE_PROPERTY[] = "message";
 } // namespace
 
-class RedboxItemPrivate : public QAbstractListModel {
+class RedboxPrivate : public QAbstractListModel {
 
     Q_OBJECT
     Q_PROPERTY(bool empty READ empty NOTIFY emptyChanged)
-    Q_DECLARE_PUBLIC(RedboxItem)
+    Q_DECLARE_PUBLIC(Redbox)
 
 public:
     QList<QVariantMap> stack;
-    QQuickItem* redbox;
-    RedboxItem* q_ptr;
-    Bridge* bridge;
+    QQuickItem* redbox = nullptr;
+    Redbox* q_ptr = nullptr;
+    Bridge* bridge = nullptr;
 
-    RedboxItemPrivate(RedboxItem* q) : q_ptr(q) {}
+    RedboxPrivate(Redbox* q) : q_ptr(q) {}
 
     void setStack(const QList<QVariantMap>& stack) {
         const bool oe = this->stack.isEmpty();
@@ -76,7 +74,7 @@ public:
         return stack.isEmpty();
     }
 
-    void createRedboxItem(QQuickItem* parent) {
+    void createRedboxItem() {
         redbox = utilities::createQMLItemFromSourceFile(bridge->qmlEngine(), QUrl("qrc:/qml/ReactRedboxItem.qml"));
         if (redbox == nullptr) {
             qCritical() << __PRETTY_FUNCTION__ << "Unable to create RedboxItem";
@@ -84,7 +82,6 @@ public:
         }
 
         redbox->setObjectName("Redbox");
-        redbox->setParentItem(parent);
         redbox->setProperty("stackModel", QVariant::fromValue(this));
 
         connect(redbox, SIGNAL(reloadPressed()), this, SLOT(reloadPressed()));
@@ -94,48 +91,43 @@ public:
 public Q_SLOTS:
 
     void reloadPressed() {
-        q_ptr->setParentItem(0);
+        redbox->setParentItem(0);
         bridge->reload();
     }
 
     void dismissPressed() {
-        q_ptr->setParentItem(0);
+        redbox->setParentItem(0);
     }
 
 Q_SIGNALS:
     void emptyChanged();
 };
 
-RedboxItem::RedboxItem(Bridge* bridge) : QQuickItem(0), d_ptr(new RedboxItemPrivate(this)) {
-    Q_D(RedboxItem);
+Redbox::Redbox(Bridge* bridge) : QObject(0), d_ptr(new RedboxPrivate(this)) {
+    Q_D(Redbox);
     d->bridge = bridge;
-    d->createRedboxItem(this);
+    d->createRedboxItem();
 }
 
-RedboxItem::~RedboxItem() {}
+Redbox::~Redbox() {}
 
-void RedboxItem::showErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
-    Q_D(RedboxItem);
+void Redbox::showErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
+    Q_D(Redbox);
     d->redbox->setProperty(REDBOX_MESSAGE_PROPERTY, message);
     d->setStack(stack);
 
     QQuickItem* rootView = d->bridge->visualParent();
-    setParentItem(rootView);
-
-    setX(0);
-    setY(0);
-    setWidth(rootView->width());
-    setHeight(rootView->height());
+    d->redbox->setParentItem(rootView);
 }
 
-void RedboxItem::updateErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
-    Q_D(RedboxItem);
+void Redbox::updateErrorMessage(const QString& message, const QList<QVariantMap>& stack) {
+    Q_D(Redbox);
     d->redbox->setProperty(REDBOX_MESSAGE_PROPERTY, message);
     d->setStack(stack);
 }
 
-QString RedboxItem::errorMessage() const {
+QString Redbox::errorMessage() const {
     return d_func()->redbox->property(REDBOX_MESSAGE_PROPERTY).toString();
 }
 
-#include "redboxitem.moc"
+#include "redbox.moc"

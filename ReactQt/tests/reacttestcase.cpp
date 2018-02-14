@@ -4,7 +4,7 @@
 #include "bridge.h"
 #include "reactitem.h"
 #include "reactplugin.h"
-#include "redboxitem.h"
+#include "redbox.h"
 #include "rootview.h"
 #include "utilities.h"
 
