@@ -20,7 +20,7 @@ class Alert : public QObject, public ModuleInterface {
     Q_INTERFACES(ModuleInterface)
     Q_DECLARE_PRIVATE(Alert)
 
-    Q_INVOKABLE void alert(const QVariantMap &config, double callback);
+    Q_INVOKABLE void alert(const QVariantMap& config, double callback);
 
 public slots:
     void sendButtonClickToJs(double callback, const QString& buttonName);
