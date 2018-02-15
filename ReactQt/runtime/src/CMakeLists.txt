@@ -47,6 +47,7 @@ set(
   redbox.cpp
   exceptionsmanager.cpp
   clipboard.cpp
+  alert.cpp
   componentmanagers/slidermanager.cpp
   componentmanagers/viewmanager.cpp
   componentmanagers/rawtextmanager.cpp
@@ -94,6 +95,7 @@ set(
   qml/ReactTextInput.qml
   qml/ReactTextInputArea.qml
   qml/ReactTextInputField.qml
+  qml/ReactAlert.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)

@@ -19,5 +19,6 @@
         <file>qml/ReactTextInputArea.qml</file>
         <file>qml/ReactTextInputField.qml</file>
         <file>qml/ReactWebView.qml</file>
+        <file>qml/ReactAlert.qml</file>
     </qresource>
 </RCC>

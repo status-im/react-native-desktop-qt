@@ -94,6 +94,8 @@ class Alert {
       AlertIOS.alert(title, message, buttons);
     } else if (Platform.OS === 'android') {
       AlertAndroid.alert(title, message, buttons, options);
+    } else if (Platform.OS === 'desktop') {
+      AlertDesktop.alert(title, message, buttons, options);
     }
   }
 }
@@ -148,6 +150,61 @@ class AlertAndroid {
           options && options.onDismiss && options.onDismiss();
         }
       }
+    );
+  }
+}
+
+
+/**
+ * Wrapper around the Desktop native module.
+ */
+class AlertDesktop {
+
+  static alert(
+    title: ?string,
+    message?: ?string,
+    buttons?: Buttons,
+    options?: Options,
+  ): void {
+    var config = {
+      title: title || '',
+      message: message || '',
+    };
+
+    if (options) {
+      config = {...config, cancelable: options.cancelable};
+    }
+    // At most three buttons (neutral, negative, positive). Ignore rest.
+    // The text 'OK' should be probably localized. iOS Alert does that in native.
+    var validButtons: Buttons = buttons ? buttons.slice(0, 3) : [{text: 'OK'}];
+    var buttonPositive = validButtons.pop();
+    var buttonNegative = validButtons.pop();
+    var buttonNeutral = validButtons.pop();
+    if (buttonNeutral) {
+      config = {...config, buttonNeutral: buttonNeutral.text || '' };
+      config = {...config, test: buttonNeutral.onPress };
+    }
+    if (buttonNegative) {
+      config = {...config, buttonNegative: buttonNegative.text || '' };
+    }
+    if (buttonPositive) {
+      config = {...config, buttonPositive: buttonPositive.text || '' };
+    }
+    NativeModules.AlertManager.alert(
+        config,
+        (action, buttonKey) => {
+          if (action === 'Clicked') {
+            if (buttonKey === 'buttonNeutral') {
+              buttonNeutral.onPress && buttonNeutral.onPress();
+          } else if (buttonKey === 'buttonNegative') {
+              buttonNegative.onPress && buttonNegative.onPress();
+          } else if (buttonKey === 'buttonPositive') {
+              buttonPositive.onPress && buttonPositive.onPress();
+            }
+        } else if (action === 'Dismissed') {
+            options && options.onDismiss && options.onDismiss();
+          }
+        }
     );
   }
 }
