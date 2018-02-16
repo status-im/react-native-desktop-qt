@@ -32,7 +32,6 @@ Item {
         onClosed: {
             root.visible = false
             if(!root.closedByButton) {
-                console.log("closed")
                 root.alertManager.sendDismissedToJs(callback)
             }
         }
