@@ -54,7 +54,10 @@ void AlertPrivate::createAlertItem(const QVariantMap& config, double callback) {
         alert->setProperty("cancelable", config["cancelable"]);
     }
     if (config.contains("title")) {
-        alert->setProperty("title", config["title"]);
+        if (!config["title"].toString().isEmpty())
+            alert->setProperty("title", config["title"]);
+        else
+            alert->setProperty("title", " ");
     }
     if (config.contains("message")) {
         alert->setProperty("message", config["message"]);

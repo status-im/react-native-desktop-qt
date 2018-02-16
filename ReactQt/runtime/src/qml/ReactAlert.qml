@@ -18,12 +18,31 @@ Item {
 
     anchors.fill: parent
 
-
     Dialog {
         id: dialog
 
-        width: 400
-        height: 200
+        //position dialog window in the center
+        x: root.x + root.width/2 - dialog.width/2
+        y: root.y + root.height/2 - dialog.height/2
+
+        width: maxWidth < alertWidth ? maxWidth : alertWidth
+
+        property int maxWidth: root.width - 20
+        property int alertWidth: Math.max(titleWidth, textWidth, buttonsWidth) + 2*contentText.anchors.margins
+        property int textWidth: textFontMetrics.boundingRect(message).width
+        property int titleWidth: titleFontMetrics.boundingRect(title).width
+        property int buttonsWidth: root.buttons ? root.buttons.length * 100 : 0
+
+
+        FontMetrics {
+            id: titleFontMetrics
+            font: dialog.header.font
+        }
+
+        FontMetrics {
+            id: textFontMetrics
+            font: contentText.font
+        }
 
         title: root.title
         modal: true
@@ -37,6 +56,7 @@ Item {
         }
 
         contentItem: Text {
+            id: contentText
             anchors {
                 top: dialog.header.bottom
                 bottom: dialog.footer.top
@@ -51,7 +71,6 @@ Item {
         }
 
         footer: DialogButtonBox {
-
             Repeater {
                 model: buttons
                 delegate:  Button {
