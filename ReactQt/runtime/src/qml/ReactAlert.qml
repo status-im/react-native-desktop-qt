@@ -61,7 +61,6 @@ Item {
                  }
             }
             onClicked: {
-                console.log("clicked")
                 root.closedByButton = true;
                 root.alertManager.sendButtonClickToJs(callback, button.name)
                 dialog.accept();
