@@ -164,11 +164,3 @@ ViewManager* WebSocketModule::viewManager() {
 QString WebSocketModule::moduleName() {
     return "WebSocketModule";
 }
-
-QList<ModuleMethod*> WebSocketModule::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap WebSocketModule::constantsToExport() {
-    return QVariantMap{};
-}

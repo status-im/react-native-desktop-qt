@@ -126,14 +126,6 @@ QString ImageLoader::moduleName() {
     return "RCTImageLoader";
 }
 
-QList<ModuleMethod*> ImageLoader::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap ImageLoader::constantsToExport() {
-    return QVariantMap{};
-}
-
 void ImageLoader::loadImage(const QUrl& source, const LoadEventCallback& loadEventCallback) {
     d_func()->fetchImage(source, loadEventCallback);
 }

@@ -430,10 +430,6 @@ QString UIManager::moduleName() {
     return "RCTUIManager";
 }
 
-QList<ModuleMethod*> UIManager::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
 QVariantMap directEventsDispatchConfig(const QStringList& eventsList) {
     QVariantMap directEvents;
 

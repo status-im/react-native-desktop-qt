@@ -122,11 +122,3 @@ ViewManager* AsyncLocalStorage::viewManager() {
 QString AsyncLocalStorage::moduleName() {
     return "RCTAsyncLocalStorage";
 }
-
-QList<ModuleMethod*> AsyncLocalStorage::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap AsyncLocalStorage::constantsToExport() {
-    return QVariantMap{};
-}

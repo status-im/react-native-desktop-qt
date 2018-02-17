@@ -16,6 +16,7 @@
 
 #include <functional>
 
+#include <QVariantMap>
 #include <QtPlugin>
 
 class Bridge;
@@ -53,8 +54,14 @@ public:
     }
 
     virtual QString moduleName() = 0;
-    virtual QList<ModuleMethod*> methodsToExport() = 0;
-    virtual QVariantMap constantsToExport() = 0;
+
+    virtual QList<ModuleMethod*> methodsToExport() {
+        return QList<ModuleMethod*>{};
+    }
+
+    virtual QVariantMap constantsToExport() {
+        return QVariantMap{};
+    }
 };
 
 #define ModuleInterface_IID "com.canonical.ReactNative.ModuleInterface"

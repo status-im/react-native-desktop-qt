@@ -51,11 +51,3 @@ ViewManager* AppState::viewManager() {
 QString AppState::moduleName() {
     return "RCTAppState";
 }
-
-QList<ModuleMethod*> AppState::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap AppState::constantsToExport() {
-    return QVariantMap{};
-}

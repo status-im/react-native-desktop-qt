@@ -73,14 +73,6 @@ QString ViewManager::moduleName() {
     return "RCTViewManager";
 }
 
-QList<ModuleMethod*> ViewManager::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap ViewManager::constantsToExport() {
-    return QVariantMap{};
-}
-
 QStringList ViewManager::customDirectEventTypes() {
     return QStringList{EVENT_ONLAYOUT};
 }

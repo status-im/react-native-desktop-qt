@@ -46,8 +46,6 @@ public:
     ViewManager* viewManager() override;
 
     QString moduleName() override;
-    QList<ModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
 
     QUrl scriptUrl() const;
     void setScriptUrl(const QUrl& source);

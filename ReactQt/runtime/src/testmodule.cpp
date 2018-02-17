@@ -32,14 +32,6 @@ QString TestModule::moduleName() {
     return "TestModule";
 }
 
-QList<ModuleMethod*> TestModule::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap TestModule::constantsToExport() {
-    return QVariantMap{};
-}
-
 void TestModule::markTestCompleted() {
     emit testCompleted();
 }

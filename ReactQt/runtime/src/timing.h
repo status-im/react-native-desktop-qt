@@ -42,8 +42,6 @@ public:
     ViewManager* viewManager() override;
 
     QString moduleName() override;
-    QList<ModuleMethod*> methodsToExport() override;
-    QVariantMap constantsToExport() override;
 
 private:
     void callTimer(const int timerId);

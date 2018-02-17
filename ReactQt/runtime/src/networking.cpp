@@ -139,11 +139,3 @@ ViewManager* Networking::viewManager() {
 QString Networking::moduleName() {
     return "RCTNetworking";
 }
-
-QList<ModuleMethod*> Networking::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap Networking::constantsToExport() {
-    return QVariantMap{};
-}

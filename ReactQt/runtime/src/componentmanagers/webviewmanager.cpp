@@ -52,10 +52,6 @@ bool WebViewManager::shouldLayout() const {
     return true;
 }
 
-QList<ModuleMethod*> WebViewManager::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
 void WebViewManager::reload() {
     Q_EMIT s_reload();
 }
