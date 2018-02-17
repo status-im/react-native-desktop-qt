@@ -12,6 +12,7 @@
  */
 
 #include "bridge.h"
+#include "alert.h"
 #include "appstate.h"
 #include "asynclocalstorage.h"
 #include "blobprovider.h"
@@ -89,6 +90,7 @@ public:
                            new Networking,
                            new NetInfo,
                            new Clipboard,
+                           new Alert,
                            new DeviceInfo,
                            new BlobProvider,
                            new ViewManager,

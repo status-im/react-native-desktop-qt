@@ -64,15 +64,18 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'ViewExample',
     module: require('./ViewExample'),
-  },
-  {
-    key: 'ClipboardExample',
-    module: require('./ClipboardExample'),
   }
 ];
 
 const APIExamples: Array<RNTesterExample> = [
-
+    {
+      key: 'ClipboardExample',
+      module: require('./ClipboardExample'),
+    },
+    {
+      key: 'AlertExample',
+      module: require('./AlertExample').AlertExample,
+    },
 ];
 
 const Modules = {};
