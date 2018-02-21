@@ -62,6 +62,7 @@ set(
   componentmanagers/imageloader.cpp
   componentmanagers/pickermanager.cpp
   componentmanagers/webviewmanager.cpp
+  componentmanagers/cameramanager.cpp
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp

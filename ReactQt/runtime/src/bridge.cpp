@@ -22,6 +22,7 @@
 #include "communication/websocketexecutor.h"
 #include "componentmanagers/activityindicatormanager.h"
 #include "componentmanagers/buttonmanager.h"
+#include "componentmanagers/cameramanager.h"
 #include "componentmanagers/imageloader.h"
 #include "componentmanagers/imagemanager.h"
 #include "componentmanagers/modalmanager.h"
@@ -107,7 +108,8 @@ public:
                            new ModalManager,
                            new PickerManager,
                            new WebSocketModule,
-                           new WebViewManager};
+                           new WebViewManager,
+                           new CameraManager};
     }
 };
 

@@ -20,5 +20,6 @@
         <file>qml/ReactTextInputField.qml</file>
         <file>qml/ReactWebView.qml</file>
         <file>qml/ReactAlert.qml</file>
+        <file>qml/ReactCamera.qml</file>
     </qresource>
 </RCC>
