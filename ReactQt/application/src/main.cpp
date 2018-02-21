@@ -114,12 +114,14 @@ private:
     QString m_packagerTemplate = "http://%1:%2/index.desktop.bundle?platform=desktop&dev=true";
     QUrl m_codeLocation;
     QString m_pluginsPath;
-    QString m_executor = "NetExecutor";
+    QString m_executor = "LocalServerConnection";
 };
 
 int main(int argc, char** argv) {
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     Q_INIT_RESOURCE(react_resources);
+
     QQuickView view;
     ReactNativeProperties* rnp = new ReactNativeProperties(&view);
 

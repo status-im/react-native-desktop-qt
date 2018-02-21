@@ -135,12 +135,12 @@ void Bridge::setupExecutor() {
 
     if (!d->executor) {
         ServerConnection* conn =
-            qobject_cast<ServerConnection*>(utilities::createQObjectInstance(d->serverConnectionType + "*"));
+            qobject_cast<ServerConnection*>(utilities::createQObjectInstance(d->serverConnectionType));
 
         if (conn == nullptr) {
             qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
-                       << "constructing default (RemoteServerConnection)";
-            conn = new RemoteServerConnection();
+                       << "constructing default (LocalServerConnection)";
+            conn = new LocalServerConnection();
         }
 
         d->executor = new Executor(conn, this);
