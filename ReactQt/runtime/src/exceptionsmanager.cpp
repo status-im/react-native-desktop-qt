@@ -57,11 +57,3 @@ ViewManager* ExceptionsManager::viewManager() {
 QString ExceptionsManager::moduleName() {
     return "RCTExceptionsManager";
 }
-
-QList<ModuleMethod*> ExceptionsManager::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap ExceptionsManager::constantsToExport() {
-    return QVariantMap{};
-}

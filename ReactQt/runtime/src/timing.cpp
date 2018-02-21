@@ -36,14 +36,6 @@ QString Timing::moduleName() {
     return "RCTTiming";
 }
 
-QList<ModuleMethod*> Timing::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap Timing::constantsToExport() {
-    return QVariantMap{};
-}
-
 void Timing::callTimer(const int timerId) {
     if (m_bridge) {
         QVariantList args;

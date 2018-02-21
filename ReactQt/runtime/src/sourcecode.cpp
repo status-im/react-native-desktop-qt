@@ -56,14 +56,6 @@ QString SourceCode::moduleName() {
     return "RCTSourceCode";
 }
 
-QList<ModuleMethod*> SourceCode::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap SourceCode::constantsToExport() {
-    return QVariantMap{};
-}
-
 QUrl SourceCode::scriptUrl() const {
     return d_func()->scriptUrl;
 }

@@ -116,11 +116,3 @@ void Alert::setBridge(Bridge* bridge) {
 QString Alert::moduleName() {
     return "RCTAlertManager";
 }
-
-QList<ModuleMethod*> Alert::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap Alert::constantsToExport() {
-    return QVariantMap{};
-}

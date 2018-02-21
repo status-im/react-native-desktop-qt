@@ -29,14 +29,6 @@ QString BlobProvider::moduleName() {
     return "RCTBlobModule";
 }
 
-QList<ModuleMethod*> BlobProvider::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap BlobProvider::constantsToExport() {
-    return QVariantMap{};
-}
-
 void BlobProvider::enableBlobSupport(qlonglong socketId) {}
 
 void BlobProvider::disableBlobSupport(qlonglong socketId) {}

@@ -77,7 +77,6 @@ public:
     void setBridge(Bridge* bridge) override;
 
     QString moduleName() override;
-    QList<ModuleMethod*> methodsToExport() override;
     QVariantMap constantsToExport() override;
 
     int allocateRootTag();

@@ -61,11 +61,3 @@ void NetInfo::setBridge(Bridge* bridge) {
 QString NetInfo::moduleName() {
     return "RCTNetInfo";
 }
-
-QList<ModuleMethod*> NetInfo::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap NetInfo::constantsToExport() {
-    return QVariantMap{};
-}

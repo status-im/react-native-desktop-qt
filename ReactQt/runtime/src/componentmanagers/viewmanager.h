@@ -38,8 +38,6 @@ public:
     virtual PropertyHandler* propertyHandler(QObject* object) override;
     virtual QString moduleName() override;
 
-    virtual QList<ModuleMethod*> methodsToExport() override;
-    virtual QVariantMap constantsToExport() override;
     virtual QStringList customDirectEventTypes();
     virtual QStringList customBubblingEventTypes();
 

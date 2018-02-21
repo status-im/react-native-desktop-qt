@@ -47,11 +47,3 @@ void Clipboard::setBridge(Bridge* bridge) {
 QString Clipboard::moduleName() {
     return "RCTClipboard";
 }
-
-QList<ModuleMethod*> Clipboard::methodsToExport() {
-    return QList<ModuleMethod*>{};
-}
-
-QVariantMap Clipboard::constantsToExport() {
-    return QVariantMap{};
-}

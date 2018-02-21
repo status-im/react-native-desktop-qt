@@ -41,7 +41,6 @@ Q_SIGNALS:
 private:
     virtual QString qmlComponentFile() const override;
     virtual void configureView(QQuickItem* view) const override;
-    QList<ModuleMethod*> methodsToExport() override;
 
 private:
     QScopedPointer<WebViewManagerPrivate> d_ptr;
