@@ -19,9 +19,18 @@ find_package(Qt5WebSockets REQUIRED)
 # Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
 string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_TYPE_NAMES}")
 
+if (JS_BUNDLE_PATH)
+  set(JS_BUNDLE_RESOURCE "<file alias=\"index.desktop.bundle\">${JS_BUNDLE_PATH}</file>")
+endif()
+
 configure_file(
   main.qml.in
   ${CMAKE_CURRENT_SOURCE_DIR}/main.qml
+)
+
+configure_file(
+  main.qrc.in
+  ${CMAKE_CURRENT_SOURCE_DIR}/main.qrc
 )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../runtime/src)

@@ -22,6 +22,8 @@ const child_process = require('child_process');
 function buildDesktop(args, dependencies) {
   var desktopExternalModules = _findDesktopExternalModules(args);
   console.log("Found desktop external modules: " + desktopExternalModules);
+  var desktopJSBundlePath = _findDesktopJSBundlePath(args);
+  console.log("Found desktop JS bundle path: " + desktopJSBundlePath);
   return _findModules(args).then((dependencies) => {
     return new Promise((resolve, reject) => {
       _findDesktopModules(args, dependencies, resolve, reject);
@@ -35,13 +37,18 @@ function buildDesktop(args, dependencies) {
       }
     });
   }).then(() => {
-    return _buildApplication(args, desktopExternalModules);
+    return _buildApplication(args, desktopExternalModules, desktopJSBundlePath);
   });
 }
 
 function _findDesktopExternalModules(args) {
   var data = fs.readFileSync(path.join(args.root, 'package.json'));
   return JSON.parse(data).desktopExternalModules;
+}
+
+function _findDesktopJSBundlePath(args) {
+  var data = fs.readFileSync(path.join(args.root, 'package.json'));
+  return JSON.parse(data).desktopJSBundlePath;
 }
 
 function _findModules(args) {
@@ -106,13 +113,16 @@ function _buildModules(args, dependencies, resolve, reject) {
   });
 }
 
-function _buildApplication(args, desktopExternalModules) {
+function _buildApplication(args, desktopExternalModules, desktopJSBundlePath) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
     var buildCommand = './build.sh';
     if (typeof desktopExternalModules !== 'undefined' && desktopExternalModules !== null) {
-      buildCommand += ' "' + desktopExternalModules.toString().replace(/,/g, ';') + '"'
+      buildCommand += ' -e="' + desktopExternalModules.toString().replace(/,/g, ';') + '"';
+    }
+    if (typeof desktopJSBundlePath !== 'undefined' && desktopJSBundlePath !== null) {
+      buildCommand += ' -j="' + desktopJSBundlePath.toString() + '"';
     }
     child_process.exec(buildCommand, {cwd: path.join(args.root, 'desktop')},
                         (error, stdout, stderr) => {

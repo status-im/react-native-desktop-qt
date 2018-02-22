@@ -9,14 +9,21 @@
 
 # XXX: Don't move this script
 cd $(dirname $0)
-externalModulesPaths="$1"
+for i in "$@"
+do
+case $i in
+  -e=*|--externalModulesPaths=*)
+  ExternalModulesPaths="${i#*=}" ;;
+  -j=*|--jsBundlePath=*)
+  JsBundlePath="${i#*=}" ;;
+esac
+done
 
-echo $externalModulesPaths
+echo "build.sh external modules paths: "$ExternalModulesPaths
+echo "build.sh JS bundle path: "$JsBundlePath
 
 # Workaround
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$externalModulesPaths" . && make && cp ./bin/<%= name %> click/
-
-
+cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" . && make && cp ./bin/TestProject10 click/

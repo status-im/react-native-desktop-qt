@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -86,24 +87,38 @@ void SourceCode::setRetryCount(int retryCount) {
 void SourceCode::loadSource(QNetworkAccessManager* nam) {
     Q_D(SourceCode);
 
-    QNetworkRequest request(d->scriptUrl);
-    QNetworkReply* reply = nam->get(request);
-    QObject::connect(reply, &QNetworkReply::finished, [=]() {
-        reply->deleteLater();
-        if (reply->error() != QNetworkReply::NoError) {
-            if (d->retryAttempts < d->retryCount) {
-                d->retryAttempts++;
-                d->retryTimeout *= 2;
-                QTimer::singleShot(d->retryTimeout, [=] { loadSource(nam); });
-            } else {
-                qCritical() << __PRETTY_FUNCTION__ << ": Error while loading source" << reply->errorString();
-                Q_EMIT loadFailed();
+    const QString JS_BUNDLE_RESOURCES_PATH = QStringLiteral(":/index.desktop.bundle");
+    if (QFile::exists(JS_BUNDLE_RESOURCES_PATH)) {
+        QTimer::singleShot(1000, [=]() {
+            QFile bundleJS(JS_BUNDLE_RESOURCES_PATH);
+            if (bundleJS.open(QIODevice::ReadOnly)) {
+                d->sourceCode = bundleJS.readAll();
+                d->retryAttempts = 0;
+                d->retryTimeout = 250;
+                Q_EMIT sourceCodeChanged();
+                bundleJS.close();
             }
-            return;
-        }
-        d->sourceCode = reply->readAll();
-        d->retryAttempts = 0;
-        d->retryTimeout = 250;
-        Q_EMIT sourceCodeChanged();
-    });
+        });
+    } else {
+        QNetworkRequest request(d->scriptUrl);
+        QNetworkReply* reply = nam->get(request);
+        QObject::connect(reply, &QNetworkReply::finished, [=]() {
+            reply->deleteLater();
+            if (reply->error() != QNetworkReply::NoError) {
+                if (d->retryAttempts < d->retryCount) {
+                    d->retryAttempts++;
+                    d->retryTimeout *= 2;
+                    QTimer::singleShot(d->retryTimeout, [=] { loadSource(nam); });
+                } else {
+                    qCritical() << __PRETTY_FUNCTION__ << ": Error while loading source" << reply->errorString();
+                    Q_EMIT loadFailed();
+                }
+                return;
+            }
+            d->sourceCode = reply->readAll();
+            d->retryAttempts = 0;
+            d->retryTimeout = 250;
+            Q_EMIT sourceCodeChanged();
+        });
+    }
 }
