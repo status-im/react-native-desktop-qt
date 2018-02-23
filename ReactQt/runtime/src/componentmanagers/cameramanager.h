@@ -21,13 +21,31 @@ class CameraManager : public ViewManager {
     Q_INTERFACES(ModuleInterface)
     Q_DECLARE_PRIVATE(CameraManager)
 
+signals:
+
+    void capture();
+
 public:
+
+    Q_INVOKABLE REACT_PROMISE void capture(const QVariantMap& options, double success, double error);
+
     CameraManager(QObject* parent = 0);
     virtual ~CameraManager();
 
     virtual ViewManager* viewManager() override;
     virtual QString moduleName() override;
     virtual QVariantMap constantsToExport() override;
+
+    enum CameraAspect { CameraAspectStretch, CameraAspectFill, CameraAspectFit };
+    enum CameraCaptureMode { CameraCaptureModeStill, CameraCaptureModeVideo };
+
+    Q_ENUMS(CameraAspect)
+    Q_ENUMS(CameraCaptureMode)
+
+public slots:
+
+    void captureFailed(const QString& errorMessage);
+    void imageSaved(const QString& path);
 
 private:
     virtual QString qmlComponentFile() const override;

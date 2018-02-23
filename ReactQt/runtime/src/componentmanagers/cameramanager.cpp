@@ -22,7 +22,18 @@
 #include "bridge.h"
 #include "cameramanager.h"
 #include "propertyhandler.h"
+#include "uimanager.h"
 #include "utilities.h"
+
+namespace {
+struct RegisterQMLMetaType {
+    RegisterQMLMetaType() {
+        qRegisterMetaType<CameraManager*>();
+        qmlRegisterUncreatableType<CameraManager>(
+            "React", 0, 1, "CameraManager", "CameraManager is not meant to be created directly");
+    }
+} registerMetaType;
+} // namespace
 
 enum BarcodeTypes {
     TypeUPCECode,
@@ -48,8 +59,6 @@ const QVariantMap barcodeTypes{{"upce", TypeUPCECode},
                                {"qr", TypeQRCode},
                                {"aztec", TypeAztecCode}};
 
-enum CameraAspect { CameraAspectStretch, CameraAspectFill, CameraAspectFit };
-
 enum CameraCaptureSessionPreset {
     CameraCaptureSessionPresetLow,
     CameraCaptureSessionPresetMedium,
@@ -59,8 +68,6 @@ enum CameraCaptureSessionPreset {
     CameraCaptureSessionPreset720p,
     CameraCaptureSessionPreset1080p
 };
-
-enum CameraCaptureMode { CameraCaptureModeStill, CameraCaptureModeVideo };
 
 enum CameraCaptureTarget {
     CameraCaptureTargetMemory,
@@ -83,7 +90,20 @@ enum CameraFlashMode { CameraFlashModeOff, CameraFlashModeOn, CameraFlashModeAut
 
 enum CameraTorchMode { CameraTorchModeOff, CameraTorchModeOn, CameraTorchModeAuto };
 
-class CameraManagerPrivate {};
+class CameraManagerPrivate {
+public:
+    int successCallback = -1;
+    int errorCallback = -1;
+};
+
+void CameraManager::capture(const QVariantMap& options, double success, double error) {
+    Q_D(CameraManager);
+
+    d->successCallback = success;
+    d->errorCallback = error;
+
+    emit capture();
+}
 
 CameraManager::CameraManager(QObject* parent) : ViewManager(parent), d_ptr(new CameraManagerPrivate) {}
 
@@ -143,16 +163,29 @@ QVariantMap CameraManager::constantsToExport() {
     return constants;
 }
 
-QString CameraManager::qmlComponentFile() const {
+void CameraManager::captureFailed(const QString& errorMessage) {
+    Q_D(CameraManager);
+    bridge()->invokePromiseCallback(d->errorCallback, QVariantList{errorMessage});
+}
 
-    qDebug() << "!!!!!!!!!!!! requested camera Object";
+void CameraManager::imageSaved(const QString& path) {
+    Q_D(CameraManager);
+    QVariantMap data{{"path", path}};
+    QVariantList args;
+    args.push_back(data);
+
+    bridge()->invokePromiseCallback(d->successCallback, args);
+}
+
+QString CameraManager::qmlComponentFile() const {
     return "qrc:/qml/ReactCamera.qml";
 }
 
 void CameraManager::configureView(QQuickItem* view) const {
-
     ViewManager::configureView(view);
-    view->setProperty("pickerManager", QVariant::fromValue((QObject*)this));
+    view->setProperty("cameraManager", QVariant::fromValue((QObject*)this));
+
+    connect(this, SIGNAL(capture()), view, SLOT(capture()));
 }
 
 #include "cameramanager.moc"
