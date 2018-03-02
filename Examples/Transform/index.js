@@ -1,4 +1,6 @@
 
+// Display views and an image with various transforms applied
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
