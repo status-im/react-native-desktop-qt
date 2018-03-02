@@ -33,8 +33,6 @@ namespace {
 const QString EVENT_ONLAYOUT = "onLayout";
 }
 
-
-
 ViewManager::ViewManager(QObject* parent) : QObject(parent) {}
 
 ViewManager::~ViewManager() {}
@@ -133,6 +131,5 @@ Bridge* ViewManager::bridge() const {
     Q_ASSERT(m_bridge);
     return m_bridge;
 }
-
 
 #include "viewmanager.moc"
