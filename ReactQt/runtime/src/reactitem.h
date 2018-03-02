@@ -50,6 +50,7 @@ class ReactItem : public QQuickPaintedItem {
     Q_PROPERTY(QSize p_shadowOffset READ shadowOffset WRITE setShadowOffset NOTIFY shadowOffsetChanged)
     Q_PROPERTY(double p_shadowOpacity READ shadowOpacity WRITE setShadowOpacity NOTIFY shadowOpacityChanged)
     Q_PROPERTY(double p_shadowRadius READ shadowRadius WRITE setShadowRadius NOTIFY shadowRadiusChanged)
+    Q_PROPERTY(QVector<float> p_transform READ transform WRITE setTransform NOTIFY transformChanged)
 
     Q_DECLARE_PRIVATE(ReactItem)
 
@@ -129,6 +130,9 @@ public:
     double shadowRadius() const;
     void setShadowRadius(double shadowRadius);
 
+    QVector<float> transform() const;
+    void setTransform(QVector<float>& transform);
+
 Q_SIGNALS:
     void backfaceVisibilityChanged();
     void backgroundColorChanged();
@@ -154,6 +158,7 @@ Q_SIGNALS:
     void shadowOffsetChanged();
     void shadowOpacityChanged();
     void shadowRadiusChanged();
+    void transformChanged();
 
 protected:
     void paint(QPainter* painter);
