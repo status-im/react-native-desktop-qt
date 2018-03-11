@@ -7,11 +7,13 @@ import  "../js/utils.js" as Utils
 Flickable {
     id: textField
     property var textInputRoot: parent
+    property alias text: textArea.text
     anchors.fill: textInputRoot
     ScrollBar.vertical: ScrollBar {}
 
     TextArea.flickable: TextArea {
 
+        id: textArea
         text: textInputRoot.p_text
         color: textInputRoot.p_color
         placeholderText: textInputRoot.p_placeholderText
