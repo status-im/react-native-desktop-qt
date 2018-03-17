@@ -78,6 +78,7 @@ public:
     Qt::PenStyle borderStyle = Qt::SolidLine;
     QRectF outerRects[4];
     QRectF innerRects[4];
+    QVector<float> transform;
 
     ReactItemPrivate(ReactItem* q) : q_ptr(q) {}
 
@@ -413,11 +414,12 @@ double ReactItem::shadowRadius() const {
 void ReactItem::setShadowRadius(double shadowRadius) {}
 
 QVector<float> ReactItem::transform() const {
-    return QVector<float>{};
-    // todo - I think this should be returning a vector based on data retrieved from QQuickItem::transform()
+    return d_func()->transform;
 }
 
 void ReactItem::setTransform(QVector<float>& transform) {
+    Q_D(ReactItem);
+    d->transform = transform;
     QQmlListReference r(this, "transform");
     r.clear();
     r.append(new MatrixTransform(transform, this));
