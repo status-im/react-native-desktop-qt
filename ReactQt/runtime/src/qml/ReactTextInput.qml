@@ -8,7 +8,7 @@ Item {
     property var textInputManager: null
     property var textInputControl: null
 
-    property string p_text
+    property string p_text: textInputControl ? textInputControl.text : ""
     property color p_color
     property bool p_multiline: false
     property bool p_onChange: false
@@ -16,13 +16,15 @@ Item {
     property string p_placeholderText
     property string p_textAlign: "left"
     property string p_selectionColor: "lightblue"
-    property string p_testID
+    property string p_nativeID
     property bool p_secureTextEntry: false
     property color p_borderColor: "black"
     property double p_borderWidth: 0
     property double p_borderRadius: 0
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
+
+    objectName: p_nativeID
 
     function recreateInputControl() {
         if(textInputControl) {

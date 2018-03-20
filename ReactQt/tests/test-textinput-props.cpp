@@ -37,7 +37,7 @@ void TestTextInputProps::initTestCase() {
 }
 
 QVariantMap TestTextInputProps::propValues() const {
-    return {{"p_testID", "textinput"},
+    return {{"p_nativeID", "textinput"},
             {"p_text", "some text"},
             {"p_textAlign", "left"},
             {"p_multiline", true},
