@@ -14,7 +14,7 @@ TextField {
     color: textInputRoot.p_color
     placeholderText: textInputRoot.p_placeholderText
     selectionColor: textInputRoot.p_selectionColor
-    objectName: textInputRoot.p_testID
+    objectName: textInputRoot.p_nativeID
     horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
     echoMode: textInputRoot.p_secureTextEntry ? TextInput.Password : TextInput.Normal
 
@@ -30,7 +30,10 @@ TextField {
     onSelectionEndChanged:      textInputManager.sendSelectionChangeToJs(textField)
     onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
     onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
-    onContentSizeChanged:       textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+    onContentSizeChanged:       {
+        if(textInputManager)
+            textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+    }
     Keys.onPressed:             textInputManager.sendOnKeyPressToJs(textField, event.text)
 
     onFocusChanged: {

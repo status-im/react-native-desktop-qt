@@ -18,7 +18,7 @@ Flickable {
         color: textInputRoot.p_color
         placeholderText: textInputRoot.p_placeholderText
         selectionColor: textInputRoot.p_selectionColor
-        objectName: textInputRoot.p_testID
+        objectName: textInputRoot.p_nativeID
         horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
         wrapMode: TextEdit.WordWrap
 
@@ -35,7 +35,10 @@ Flickable {
         onSelectionStartChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
         onSelectionEndChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
         Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField, event.text)
-        onContentSizeChanged: textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+        onContentSizeChanged: {
+            if(textInputManager)
+                textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+        }
         onEditingFinished: {
             textInputManager.sendOnSubmitEditingToJs(textField)
             textInputManager.sendOnEndEditingToJs(textField)
