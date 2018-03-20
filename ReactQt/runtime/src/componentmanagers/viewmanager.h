@@ -56,9 +56,6 @@ protected:
     virtual QString qmlComponentFile() const;
     void notifyJsAboutEvent(int senderTag, const QString& eventName, const QVariantMap& eventData) const;
 
-public slots:
-    void manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object);
-
 private:
     Bridge* m_bridge = nullptr;
 };

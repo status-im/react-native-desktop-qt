@@ -33,25 +33,6 @@ namespace {
 const QString EVENT_ONLAYOUT = "onLayout";
 }
 
-class MatrixTransform : public QQuickTransform {
-    Q_OBJECT
-public:
-    MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
-        : QQuickTransform(parent), m_item(qobject_cast<QQuickItem*>(parent)) {
-        memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
-        m_transformMatrix.optimize();
-    }
-    void applyTo(QMatrix4x4* matrix) const override {
-        if (m_transformMatrix.isIdentity())
-            return;
-        matrix->translate(m_item->width() / 2, m_item->height() / 2);
-        *matrix *= m_transformMatrix;
-        matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
-    }
-    QMatrix4x4 m_transformMatrix;
-    QQuickItem* m_item;
-};
-
 ViewManager::ViewManager(QObject* parent) : QObject(parent) {}
 
 ViewManager::~ViewManager() {}
@@ -149,12 +130,6 @@ QQuickItem* ViewManager::createView() const {
 Bridge* ViewManager::bridge() const {
     Q_ASSERT(m_bridge);
     return m_bridge;
-}
-
-void ViewManager::manageTransformMatrix(const QVector<float>& transformMatrix, QQuickItem* object) {
-    QQmlListReference r(object, "transform");
-    r.clear();
-    r.append(new MatrixTransform(transformMatrix, qobject_cast<QQuickItem*>(object)));
 }
 
 #include "viewmanager.moc"

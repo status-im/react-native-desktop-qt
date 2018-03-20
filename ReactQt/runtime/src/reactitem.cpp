@@ -15,6 +15,7 @@
 
 #include "layout/flexbox.h"
 #include "reactitem.h"
+#include <QMatrix4x4>
 
 namespace {
 Qt::PenStyle borderStyleToPenStyle(const QString& borderStyle) {
@@ -39,6 +40,24 @@ QString penStyleToBorderStyle(Qt::PenStyle penStyle) {
 }
 } // namespace
 
+class MatrixTransform : public QQuickTransform {
+public:
+    MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
+        : QQuickTransform(parent), m_item(qobject_cast<QQuickItem*>(parent)) {
+        memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
+        m_transformMatrix.optimize();
+    }
+    void applyTo(QMatrix4x4* matrix) const override {
+        if (m_transformMatrix.isIdentity())
+            return;
+        matrix->translate(m_item->width() / 2, m_item->height() / 2);
+        *matrix *= m_transformMatrix;
+        matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
+    }
+    QMatrix4x4 m_transformMatrix;
+    QQuickItem* m_item;
+};
+
 class ReactItemPrivate {
     Q_DECLARE_PUBLIC(ReactItem)
 public:
@@ -59,6 +78,7 @@ public:
     Qt::PenStyle borderStyle = Qt::SolidLine;
     QRectF outerRects[4];
     QRectF innerRects[4];
+    QVector<float> transform;
 
     ReactItemPrivate(ReactItem* q) : q_ptr(q) {}
 
@@ -392,6 +412,18 @@ double ReactItem::shadowRadius() const {
 }
 
 void ReactItem::setShadowRadius(double shadowRadius) {}
+
+QVector<float> ReactItem::transform() const {
+    return d_func()->transform;
+}
+
+void ReactItem::setTransform(QVector<float>& transform) {
+    Q_D(ReactItem);
+    d->transform = transform;
+    QQmlListReference r(this, "transform");
+    r.clear();
+    r.append(new MatrixTransform(transform, this));
+}
 
 ReactItem::ReactItem(QQuickItem* parent) : QQuickPaintedItem(parent), d_ptr(new ReactItemPrivate(this)) {}
 
