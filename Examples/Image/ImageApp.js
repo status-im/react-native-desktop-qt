@@ -26,12 +26,7 @@ export default class ImageReactNative extends Component {
 var styles = StyleSheet.create({
   base: {
     width:  300,
-    height: 300,
-    transform: [
-      { perspective: 850 },
-      { translateX: - 20 },
-      { rotateY: '60deg'},
-    ],
+    height: 300
   },
   progress: {
     flex: 1,
