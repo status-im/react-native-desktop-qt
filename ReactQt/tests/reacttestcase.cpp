@@ -117,3 +117,10 @@ void ReactTestCase::waitAndVerifyCondition(std::function<bool()> condition, cons
     }
     QVERIFY2(timeoutTimer.isActive(), qUtf8Printable(timeoutMessage));
 }
+
+void ReactTestCase::clickItem(QQuickItem* item) {
+    auto point = item->mapToScene(QPoint(0, 0)).toPoint();
+    point.rx() += item->width() / 2;
+    point.ry() += item->height() / 2;
+    QTest::mouseClick(m_quickView, Qt::LeftButton, Qt::NoModifier, point);
+}

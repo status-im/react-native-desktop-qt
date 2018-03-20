@@ -9,5 +9,6 @@
         <file>TestModalProps.qml</file>
         <file>TestTextInputProps.qml</file>
         <file>TestPickerProps.qml</file>
+        <file>TestTextInputClear.qml</file>
     </qresource>
 </RCC>

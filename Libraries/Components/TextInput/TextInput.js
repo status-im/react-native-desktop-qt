@@ -816,7 +816,7 @@ const TextInput = createReactClass({
     var { placeholder, ...props } = this.props;
     return (
       <RCTTextInput
-        ref="input"
+        ref={this._setNativeRef}
         {...props}
         placeholderText={placeholder}
         onFocus={this._onFocus}

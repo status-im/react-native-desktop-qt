@@ -10,7 +10,7 @@ export default class TextInputReactNative extends Component {
   render() {
     return (
       <TextInput
-           testID="textinput"
+           nativeID="textinput"
            value="some text"
            multiline={true}
            selectionColor={'red'}

@@ -43,6 +43,7 @@ protected:
     void waitAndVerifyCondition(std::function<bool()> condition, const QString& timeoutMessage);
     QQuickItem* topJSComponent() const;
     QVariant valueOfControlProperty(QQuickItem* control, const QString& propertyName);
+    void clickItem(QQuickItem* item);
 
 private:
     void registerReactQtTypes();
