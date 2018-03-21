@@ -8,6 +8,10 @@ Rectangle {
     color: "transparent"
     property var rootView: null
 
+    function hideDevMenu() {
+        devMenuRootId.state = "devMenuHidden"
+    }
+
     Rectangle {
         id: devMenuId
         anchors.top: parent.bottom
@@ -28,7 +32,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottomMargin: 10
                 onClicked: {
-                    devMenuRootId.state = "devMenuHidden"
+                    hideDevMenu()
                     rootView.reloadBridge()
                 }
             }
@@ -38,7 +42,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottomMargin: 10
                 onClicked: {
-                    devMenuRootId.state = "devMenuHidden"
+                    hideDevMenu()
                     rootView.startRemoteJSDebugging()
                 }
             }
@@ -48,7 +52,7 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottomMargin: 10
                 onClicked: {
-                    devMenuRootId.state = "devMenuHidden"
+                    hideDevMenu()
                     rootView.liveReload = !rootView.liveReload
                 }
             }
@@ -58,12 +62,20 @@ Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottomMargin: 10
                 onClicked: {
-                    devMenuRootId.state = "devMenuHidden"
+                    hideDevMenu()
                     rootView.hotReload = !rootView.hotReload
                 }
             }
+            Button {
+                text: "Cancel"
+                highlighted: true
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottomMargin: 10
+                onClicked: hideDevMenu()
+            }
         }
     }
+
 
     states: [
         State {
