@@ -34,6 +34,8 @@ static QMap<ImageLoader::Event, QString> eventNames{{ImageLoader::Event_LoadStar
                                                     {ImageLoader::Event_LoadError, "onError"},
                                                     {ImageLoader::Event_LoadSuccess, "onLoad"},
                                                     {ImageLoader::Event_LoadEnd, "onLoadEnd"}};
+const QString URI_KEY = QStringLiteral("uri");
+const QString FILE_SCHEME = QStringLiteral("file://");
 }
 
 class ImageManagerPrivate {
@@ -68,15 +70,19 @@ void ImageManager::manageSource(const QVariantMap& imageSource, QQuickItem* imag
 
     auto imageLoader = bridge()->imageLoader();
 
-    QUrl source = imageSource["uri"].toUrl();
+    QUrl source = imageSource[URI_KEY].toUrl();
 
     if (d->isBase64ImageUrl(source)) {
         d->setSource(image, source);
         return;
     }
 
+    if (source.scheme() == "file" && imageSource[URI_KEY].toString().startsWith(FILE_SCHEME)) {
+        source = QUrl(imageSource[URI_KEY].toString().replace(FILE_SCHEME, ""));
+    }
+
     if (source.isRelative()) {
-        source = QUrl::fromLocalFile(QFileInfo(imageSource["uri"].toString()).absoluteFilePath());
+        source = QUrl::fromLocalFile(QFileInfo(source.toString()).absoluteFilePath());
     }
 
     imageLoader->loadImage(source, [=](ImageLoader::Event event, const QVariantMap& data) {
