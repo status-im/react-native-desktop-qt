@@ -70,8 +70,11 @@ void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
     int start = textInput->property("selectionStart").toInt();
     int end = textInput->property("selectionEnd").toInt();
 
-    sendTextInputEvent(
-        textInput, EVENT_ON_SELECTION_CHANGE, QVariantMap{{"selection", QVariantMap{{"start", start}, {"end", end}}}});
+    // TODO: Generation of onSelectionChange event causes issue
+    // https://github.com/status-im/react-native-desktop/issues/210
+    // sendTextInputEvent(
+    //    textInput, EVENT_ON_SELECTION_CHANGE, QVariantMap{{"selection", QVariantMap{{"start", start}, {"end",
+    //    end}}}});
 }
 
 void TextInputManager::sendOnSubmitEditingToJs(QQuickItem* textInput) {

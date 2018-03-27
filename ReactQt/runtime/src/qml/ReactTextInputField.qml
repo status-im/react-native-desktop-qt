@@ -26,8 +26,7 @@ TextField {
     }
 
     onTextChanged:              textInputManager.sendTextEditedToJs(textField)
-    onSelectionStartChanged:    textInputManager.sendSelectionChangeToJs(textField)
-    onSelectionEndChanged:      textInputManager.sendSelectionChangeToJs(textField)
+    onCursorPositionChanged:    textInputManager.sendSelectionChangeToJs(textField)
     onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
     onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
     onContentSizeChanged:       {
