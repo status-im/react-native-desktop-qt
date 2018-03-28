@@ -13,8 +13,6 @@ import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import com.facebook.react.common.SingleThreadAsserter;
 
-import com.facebook.react.common.SingleThreadAsserter;
-
 /**
  * Simple container class to keep track of {@link ReactShadowNode}s associated with a particular
  * UIManagerModule instance.

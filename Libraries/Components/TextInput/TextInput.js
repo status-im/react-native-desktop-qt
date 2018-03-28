@@ -50,8 +50,8 @@ const onlyMultiline = {
 if (Platform.OS === 'android') {
   var AndroidTextInput = requireNativeComponent('AndroidTextInput', null);
 } else if (Platform.OS === 'ios') {
-  var RCTTextView = requireNativeComponent('RCTTextView', null);
-  var RCTTextField = requireNativeComponent('RCTTextField', null);
+  var RCTMultilineTextInputView = requireNativeComponent('RCTMultilineTextInputView', null);
+  var RCTSinglelineTextInputView = requireNativeComponent('RCTSinglelineTextInputView', null);
 } else if (Platform.OS === 'desktop') {
   var RCTTextInput = requireNativeComponent('RCTTextInputView', TextInput);
 }
@@ -247,6 +247,25 @@ const TextInput = createReactClass({
      * - `numeric`
      * - `email-address`
      * - `phone-pad`
+     *
+     * *iOS Only*
+     *
+     * The following values work on iOS only:
+     *
+     * - `ascii-capable`
+     * - `numbers-and-punctuation`
+     * - `url`
+     * - `number-pad`
+     * - `name-phone-pad`
+     * - `decimal-pad`
+     * - `twitter`
+     * - `web-search`
+     *
+     * *Android Only*
+     *
+     * The following values work on Android only:
+     *
+     * - `visible-password`
      */
     keyboardType: PropTypes.oneOf([
       // Cross-platform
@@ -263,6 +282,8 @@ const TextInput = createReactClass({
       'decimal-pad',
       'twitter',
       'web-search',
+      // Android-only
+      'visible-password',
     ]),
     /**
      * Determines the color of the keyboard.
@@ -438,7 +459,7 @@ const TextInput = createReactClass({
     placeholderTextColor: ColorPropType,
     /**
      * If `true`, the text input obscures the text entered so that sensitive text
-     * like passwords stay secure. The default value is `false`.
+     * like passwords stay secure. The default value is `false`. Does not work with 'multiline={true}'.
      */
     secureTextEntry: PropTypes.bool,
     /**
@@ -513,7 +534,17 @@ const TextInput = createReactClass({
      */
     blurOnSubmit: PropTypes.bool,
     /**
-     * Note that not all Text styles are supported,
+     * Note that not all Text styles are supported, an incomplete list of what is not supported includes:
+     *
+     * - `borderLeftWidth`
+     * - `borderTopWidth`
+     * - `borderRightWidth`
+     * - `borderBottomWidth`
+     * - `borderTopLeftRadius`
+     * - `borderTopRightRadius`
+     * - `borderBottomRightRadius`
+     * - `borderBottomLeftRadius`
+     *
      * see [Issue#7070](https://github.com/facebook/react-native/issues/7070)
      * for more detail.
      *
@@ -582,10 +613,6 @@ const TextInput = createReactClass({
    * make `this` look like an actual native component class.
    */
   mixins: [NativeMethodsMixin, TimerMixin],
-
-  getInitialState: function() {
-    return {layoutHeight: this._layoutHeight};
-  },
 
   /**
    * Returns `true` if the input is currently focused; `false` otherwise.
@@ -697,7 +724,7 @@ const TextInput = createReactClass({
         }
       }
       textContainer =
-        <RCTTextField
+        <RCTSinglelineTextInputView
           ref={this._setNativeRef}
           {...props}
           onFocus={this._onFocus}
@@ -723,7 +750,7 @@ const TextInput = createReactClass({
       }
       props.style.unshift(styles.multilineInput);
       textContainer =
-        <RCTTextView
+        <RCTMultilineTextInputView
           ref={this._setNativeRef}
           {...props}
           children={children}
@@ -756,10 +783,7 @@ const TextInput = createReactClass({
 
   _renderAndroid: function() {
     const props = Object.assign({}, this.props);
-    props.style = this.props.style;
-    if (this.state.layoutHeight >= 0) {
-      props.style = [props.style, {height: this.state.layoutHeight}];
-    }
+    props.style = [this.props.style];
     props.autoCapitalize =
       UIManager.AndroidTextInput.Constants.AutoCapitalizationType[
         props.autoCapitalize || 'sentences'
@@ -780,6 +804,7 @@ const TextInput = createReactClass({
     if (props.selection && props.selection.end == null) {
       props.selection = {start: props.selection.start, end: props.selection.start};
     }
+
     const textContainer =
       <AndroidTextInput
         ref={this._setNativeRef}
@@ -956,8 +981,8 @@ const TextInput = createReactClass({
 
 var styles = StyleSheet.create({
   multilineInput: {
-    // This default top inset makes RCTTextView seem as close as possible
-    // to single-line RCTTextField defaults, using the system defaults
+    // This default top inset makes RCTMultilineTextInputView seem as close as possible
+    // to single-line RCTSinglelineTextInputView defaults, using the system defaults
     // of font size 17 and a height of 31 points.
     paddingTop: 5,
   },

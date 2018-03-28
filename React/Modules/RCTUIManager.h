@@ -30,6 +30,12 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
 @interface RCTUIManager : NSObject <RCTBridgeModule, RCTInvalidating>
 
 /**
+ * Register a root view tag and creates corresponding `rootView` and
+ * `rootShadowView`.
+ */
+- (void)registerRootViewTag:(NSNumber *)rootTag;
+
+/**
  * Register a root view with the RCTUIManager.
  */
 - (void)registerRootView:(UIView *)rootView;
@@ -80,14 +86,7 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * Use `UIViewNoIntrinsicMetric` to ignore a dimension.
  * The `size` must NOT include padding and border.
  */
-- (void)setIntrinsicContentSize:(CGSize)size forView:(UIView *)view;
-
-/**
- * Update the background color of a view. The source of truth for
- * backgroundColor is the shadow view, so if to update backgroundColor from
- * native code you will need to call this method.
- */
-- (void)setBackgroundColor:(UIColor *)color forView:(UIView *)view;
+- (void)setIntrinsicContentSize:(CGSize)intrinsicContentSize forView:(UIView *)view;
 
 /**
  * Sets up layout animation which will perform on next layout pass.
@@ -144,17 +143,6 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
 + (UIView *)JSResponder;
 
 /**
- * Normally, UI changes are not applied until the complete batch of method
- * invocations from JavaScript to native has completed.
- *
- * Setting this to YES will flush UI changes sooner, which could potentially
- * result in inconsistent UI updates.
- *
- * The default is NO (recommended).
- */
-@property (atomic, assign) BOOL unsafeFlushUIChangesBeforeBatchEnds;
-
-/**
  * In some cases we might want to trigger layout from native side.
  * React won't be aware of this, so we need to make sure it happens.
  */
@@ -165,26 +153,6 @@ RCT_EXTERN NSString *const RCTUIManagerWillUpdateViewsDueToContentSizeMultiplier
  * See `RCTUIManagerObserver` protocol for more details.
  */
 @property (atomic, retain, readonly) RCTUIManagerObserverCoordinator *observerCoordinator;
-
-@end
-
-@interface RCTUIManager (Deprecated)
-
-/**
- * This method is deprecated and will be removed in next releases.
- * Use `setSize:forView:` or `setIntrinsicContentSize:forView:` instead.
- * Only frames with `origin` equals {0, 0} are supported.
- */
-- (void)setFrame:(CGRect)frame forView:(UIView *)view
-__deprecated_msg("Use `setSize:forView:` or `setIntrinsicContentSize:forView:` instead.");
-
-
-/**
- * This method is deprecated and will be removed in next releases.
- * Use `registerRootView:` instead. There is no need to specify `sizeFlexibility` anymore.
- */
-- (void)registerRootView:(UIView *)rootView withSizeFlexibility:(RCTRootViewSizeFlexibility)sizeFlexibility
-__deprecated_msg("Use `registerRootView:` instead.");
 
 @end
 
