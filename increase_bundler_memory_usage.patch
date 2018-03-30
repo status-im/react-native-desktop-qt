@@ -1,37 +1,30 @@
---- node_modules/metro-bundler/src/JSTransformer/index.js	2017-11-10 19:24:28.000000000 +0200
-+++ ../../vkjr/status-desktop-qt/node_modules/metro-bundler/src/JSTransformer/index.js	2017-12-12 18:48:01.000000000 +0200
+--- index.orig.js	2018-01-25 19:24:58.000000000 +0200
++++ index.js	2018-03-30 12:26:08.000000000 +0300
 @@ -6,7 +6,7 @@
   * LICENSE file in the root directory of this source tree. An additional grant
   * of patent rights can be found in the PATENTS file in the same directory.
   *
-- *
+- * 
 + *
   * @format
   */
-
-@@ -49,6 +49,9 @@
- const MAX_RETRIES = 2;
-
- function makeFarm(worker, methods, timeout, maxConcurrentWorkers) {
-+
-+  var a = process.execArgv;
-+  a.push("--max-old-space-size=8192");
-   return workerFarm(
-   {
-     autoStart: true,
-@@ -58,7 +61,7 @@
-                       * Feel free to add more cases to the RegExp. A whitelist is preferred, to
-                       * guarantee robustness when upgrading node, etc.
-                       */
--    execArgv: process.execArgv.filter(
-+    execArgv: a.filter(
+ 
+@@ -132,8 +132,10 @@
+     // We whitelist only what would work. For example `--inspect` doesn't work
+     // in the workers because it tries to open the same debugging port. Feel
+     // free to add more cases to the RegExp. A whitelist is preferred, to
++    var a = process.execArgv;
++    a.push("--max-old-space-size=8192");
+     // guarantee robustness when upgrading node, etc.
+-    const execArgv = process.execArgv.filter(
++    const execArgv = a.filter(
      arg =>
      /^--stack[_-]trace[_-]limit=[0-9]+$/.test(arg) ||
      /^--heap[_-]growing[_-]percent=[0-9]+$/.test(arg) ||
-@@ -244,4 +247,4 @@
-   return error;
- }
-
--module.exports = Transformer;
+@@ -193,4 +195,4 @@
+   constructor(message) {
+     super(message);this.type = 'TransformError';
+     Error.captureStackTrace && Error.captureStackTrace(this, TransformError);
+-  }}
 \ No newline at end of file
-+module.exports = Transformer;
++  }}

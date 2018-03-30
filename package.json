@@ -225,7 +225,8 @@
     "xcode": "^0.9.1",
     "xmldoc": "^0.4.0",
     "yargs": "^9.0.0",
-    "yeoman-environment": "^1.2.7"
+    "yeoman-environment": "^1.2.7",
+    "yeoman-generator": "^0.20.3"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",

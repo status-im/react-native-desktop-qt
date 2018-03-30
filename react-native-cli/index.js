@@ -258,7 +258,7 @@ function createProject(name, options) {
 }
 
 function getInstallPackage(rnPackage) {
-  var packageToInstall = 'https://github.com/status-im/react-native-linux#master';
+  var packageToInstall = 'https://github.com/status-im/react-native-desktop#merge-react-native-0.53.3';
   var isValidSemver = semver.valid(rnPackage);
   if (isValidSemver) {
     packageToInstall += '@' + isValidSemver;
