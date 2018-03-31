@@ -69,9 +69,10 @@ set(
   communication/websocketexecutor.cpp
   communication/iexecutor.h
   websocketmodule.cpp
-  ../../../ReactCommon/yoga/yoga/Yoga.c
-  ../../../ReactCommon/yoga/yoga/YGEnums.c
-  ../../../ReactCommon/yoga/yoga/YGNodeList.c
+  ../../../ReactCommon/yoga/yoga/Yoga.cpp
+  ../../../ReactCommon/yoga/yoga/YGEnums.cpp
+  ../../../ReactCommon/yoga/yoga/YGNode.cpp
+  ../../../ReactCommon/yoga/yoga/YGNodePrint.cpp
 )
 
 message(STATUS "REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC = ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC}")

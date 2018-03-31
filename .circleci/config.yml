@@ -44,7 +44,7 @@ jobs:
       - run: |
           curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
           sudo apt-get install -y nodejs
-          
+
       - run: |
           cmake -version
           qmake -version
@@ -71,11 +71,11 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
 
       - run: |
-          rm -rf ./node_modules/metro-bundler
+          rm -rf ./node_modules/metro
           npm install
 
-      # Apply metro-bundler patch to add desktop platform
-      - run: patch --verbose -d ./node_modules/metro-bundler/src -i ../../../add-desktop-platform.patch
+      # Apply metro patch to add desktop platform
+      - run: patch --verbose -d ./node_modules/metro/src -i ../../../add-desktop-platform.patch
 
       - type: shell
         name: Start packager
@@ -91,7 +91,7 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-        
+
       # run tests!
       - run: npm test
 

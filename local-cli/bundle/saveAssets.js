@@ -44,7 +44,7 @@ function saveAssets(
         const src = asset.files[idx];
         const dest = path.join(assetsDest, getAssetDestPath(asset, scale));
         filesToCopy[src] = dest;
-      })
+      });
     });
 
   return copyAll(filesToCopy);

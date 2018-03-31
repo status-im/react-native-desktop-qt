@@ -77,6 +77,7 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
   private static final String KEYBOARD_TYPE_EMAIL_ADDRESS = "email-address";
   private static final String KEYBOARD_TYPE_NUMERIC = "numeric";
   private static final String KEYBOARD_TYPE_PHONE_PAD = "phone-pad";
+  private static final String KEYBOARD_TYPE_VISIBLE_PASSWORD = "visible-password";
   private static final InputFilter[] EMPTY_FILTERS = new InputFilter[0];
   private static final int UNSET = -1;
 
@@ -137,6 +138,11 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
             MapBuilder.of(
                 "phasedRegistrationNames",
                 MapBuilder.of("bubbled", "onBlur", "captured", "onBlurCapture")))
+        .put(
+            "topKeyPress",
+            MapBuilder.of(
+                "phasedRegistrationNames",
+                MapBuilder.of("bubbled", "onKeyPress", "captured", "onKeyPressCapture")))
         .build();
   }
 
@@ -330,6 +336,11 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
       Field cursorDrawableResField = TextView.class.getDeclaredField("mCursorDrawableRes");
       cursorDrawableResField.setAccessible(true);
       int drawableResId = cursorDrawableResField.getInt(view);
+
+      // The view has no cursor drawable.
+      if (drawableResId == 0) {
+        return;
+      }
 
       Drawable drawable = ContextCompat.getDrawable(view.getContext(), drawableResId);
       if (color != null) {
@@ -528,6 +539,8 @@ public class ReactTextInputManager extends BaseViewManager<ReactEditText, Layout
       flagsToSet = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS | InputType.TYPE_CLASS_TEXT;
     } else if (KEYBOARD_TYPE_PHONE_PAD.equalsIgnoreCase(keyboardType)) {
       flagsToSet = InputType.TYPE_CLASS_PHONE;
+    } else if (KEYBOARD_TYPE_VISIBLE_PASSWORD.equalsIgnoreCase(keyboardType)) {
+      flagsToSet = InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD;
     }
     updateStagedInputTypeFlag(
         view,
