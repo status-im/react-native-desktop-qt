@@ -52,7 +52,7 @@ public:
 
         QObject::connect(socket, &QWebSocket::textMessageReceived, [=](const QString& message) {
 #ifdef RCT_DEV
-            qDebug() << QString("Text message %1 received for SocketId").arg(message).arg(socketId);
+            qDebug() << QString("Text message %1 received for SocketId %2").arg(message).arg(socketId);
 #endif // RCT_DEV
             if (bridge) {
                 bridge->eventDispatcher()->sendDeviceEvent(
@@ -62,7 +62,7 @@ public:
 
         QObject::connect(socket, &QWebSocket::binaryMessageReceived, [=](const QByteArray& message) {
 #ifdef RCT_DEV
-            qDebug() << QString("Binary message of size %1 received for SocketId").arg(message.size()).arg(socketId);
+            qDebug() << QString("Binary message of size %1 received for SocketId %2").arg(message.size()).arg(socketId);
 #endif // RCT_DEV
             if (bridge) {
                 bridge->eventDispatcher()->sendDeviceEvent(
