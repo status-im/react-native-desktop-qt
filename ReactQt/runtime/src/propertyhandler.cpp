@@ -47,14 +47,14 @@ void PropertyHandler::applyProperties(const QVariantMap& properties) {
         auto it = m_qmlProperties.find(key);
         if (it != m_qmlProperties.end()) {
             QMetaProperty property = it.value();
-            setValueToObjectProperty(m_object, property, propertyValue);
+            setValueToObjectProperty(m_object, property, propertyValue, m_defaultQmlValues[key]);
         }
 
         if (m_flexbox) {
             it = m_flexboxProperties.find(key);
             if (it != m_flexboxProperties.end()) {
                 QMetaProperty property = it.value();
-                setValueToObjectProperty(m_flexbox, property, propertyValue);
+                setValueToObjectProperty(m_flexbox, property, propertyValue, m_defaultFlexboxValues[key]);
             }
         }
     }
@@ -80,17 +80,21 @@ void PropertyHandler::buildPropertyMap() {
     }
 
     // Get qml properties of current object (and its parents)
-    getPropertiesFromMetaObject(m_object->metaObject(), m_qmlProperties);
+    getPropertiesFromObject(m_object, m_qmlProperties, m_defaultQmlValues);
 
     if (m_flexbox) {
-        getPropertiesFromMetaObject(m_flexbox->metaObject(), m_flexboxProperties);
+        getPropertiesFromObject(m_flexbox, m_flexboxProperties, m_defaultFlexboxValues);
     }
 
     m_cached = true;
 }
 
-void PropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject,
-                                                  QMap<QString, QMetaProperty>& propertiesMap) {
+void PropertyHandler::getPropertiesFromObject(const QObject* object,
+                                              QMap<QString, QMetaProperty>& propertiesMap,
+                                              QMap<QString, QVariant>& defaultValuesMap) {
+
+    const QMetaObject* metaObject = object->metaObject();
+
     // we get all prefixed properties from object and its parents
     const int propertyCount = metaObject->propertyCount();
     for (int i = 0; i < propertyCount; ++i) {
@@ -99,12 +103,23 @@ void PropertyHandler::getPropertiesFromMetaObject(const QMetaObject* metaObject,
         if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX)) {
             QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
             propertiesMap.insert(nameWithoutPrefix, p);
+            defaultValuesMap.insert(nameWithoutPrefix, p.read(object));
         }
     }
 }
 
-void PropertyHandler::setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value) {
-    property.write(object, reactCoerceValue(value, property.userType()));
+void PropertyHandler::setValueToObjectProperty(QObject* object,
+                                               QMetaProperty property,
+                                               const QVariant& value,
+                                               const QVariant& defaultValue) {
+    QVariant newValue;
+    if (value.isNull()) {
+        newValue = defaultValue;
+    } else {
+        newValue = reactCoerceValue(value, property.userType());
+    }
+
+    property.write(object, newValue);
     if (m_setPropertyCallback) {
         m_setPropertyCallback(object, property, value);
     }

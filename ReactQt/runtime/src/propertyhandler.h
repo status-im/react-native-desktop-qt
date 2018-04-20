@@ -39,8 +39,13 @@ public:
 
 private:
     void buildPropertyMap();
-    void setValueToObjectProperty(QObject* object, QMetaProperty property, const QVariant& value);
-    void getPropertiesFromMetaObject(const QMetaObject* metaObject, QMap<QString, QMetaProperty>& propertiesMap);
+    void setValueToObjectProperty(QObject* object,
+                                  QMetaProperty property,
+                                  const QVariant& value,
+                                  const QVariant& defaultValue);
+    void getPropertiesFromObject(const QObject* object,
+                                 QMap<QString, QMetaProperty>& propertiesMap,
+                                 QMap<QString, QVariant>& defaultValuesMap);
 
 private:
     bool m_cached = false;
@@ -48,6 +53,8 @@ private:
     Flexbox* m_flexbox = nullptr;
     QMap<QString, QMetaProperty> m_qmlProperties;
     QMap<QString, QMetaProperty> m_flexboxProperties;
+    QMap<QString, QVariant> m_defaultQmlValues;
+    QMap<QString, QVariant> m_defaultFlexboxValues;
     SetPropertyCallback m_setPropertyCallback;
 };
 
