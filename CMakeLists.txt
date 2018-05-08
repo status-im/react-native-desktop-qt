@@ -13,6 +13,10 @@ project(react-native-desktop)
 set(PROJECT_NAME "react-native-desktop")
 set(PROJECT_VERSION "0.0.1")
 
+if(WIN32)
+  set(REACT_BUILD_STATIC_LIB 1)
+endif()
+
 include_directories(./React/Layout)
 enable_testing()
 

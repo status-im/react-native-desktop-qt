@@ -97,6 +97,7 @@ set(
   qml/ReactTextInputArea.qml
   qml/ReactTextInputField.qml
   qml/ReactAlert.qml
+  qml/ReactWebView.qml
 )
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
@@ -131,7 +132,7 @@ qt5_use_modules(react-native ${USED_QT_MODULES})
 
 add_custom_target(
   copy-qmldir ALL
-  COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
 )
 
 configure_file(../../../ubuntu-server.js ../../../ubuntu-server.js COPYONLY)
