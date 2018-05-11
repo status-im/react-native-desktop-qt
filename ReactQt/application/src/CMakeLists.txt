@@ -35,9 +35,15 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../runtime/src)
 
+if (APPLICATION_MAIN_CPP_PATH)
+  set(MAIN_CPP_SOURCE ${APPLICATION_MAIN_CPP_PATH})
+else()
+set(MAIN_CPP_SOURCE main.cpp)
+endif()
+
 add_executable(
   ${APP_NAME}
-  main.cpp
+  ${MAIN_CPP_SOURCE}
   main.qrc
 )
 

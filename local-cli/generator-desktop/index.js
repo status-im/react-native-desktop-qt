@@ -72,6 +72,12 @@ module.exports = yeoman.generators.NamedBase.extend({
       templateParams
     );
 
+    // Custom application main.cpp source
+    this.fs.copyTpl(
+      this.templatePath('../../../ReactQt/application/src/main.cpp'),
+      this.destinationPath(path.join('desktop', 'main.cpp')),
+      templateParams
+    );
     // click
     this.fs.copyTpl(
       this.templatePath('click/manifest.json'),
