@@ -79,7 +79,7 @@ function actuallyRun(args, reject) {
       if (args['arch'].startsWith('arm'))
         appArgs.push('--on-device');
       appArgs.push('--plugins-path=' + args['plugins-path']);
-      child_process.spawnSync('./run-app.sh', appArgs,
+      child_process.spawnSync(process.platform === "win32" ? 'run-app.bat' : './run-app.sh', appArgs,
                               {stdio: 'inherit'});
   } catch (e) {
     console.log(chalk.red('Could not start the app, see the error above.'));
@@ -90,11 +90,19 @@ function actuallyRun(args, reject) {
 }
 
 function startPackagerInNewWindow() {
-  child_process.spawn('gnome-terminal',['-e', 'npm start'],{detached: true});
+  if (process.platform === "win32") {
+    child_process.spawn('cmd', ['/c', 'npm start'],{detached: true});
+  } else {
+    child_process.spawn('gnome-terminal',['-e', 'npm start'],{detached: true});
+  }
 }
 
 function startUbuntuServerInNewWindow() {
-  child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
+  if (process.platform === "win32") {
+    child_process.spawn('cmd', ['/c', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
+  } else {
+    child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
+  }
 }
 
 module.exports = {

@@ -117,12 +117,15 @@ function _buildApplication(args, desktopExternalModules, desktopJSBundlePath) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
-    var buildCommand = './build.sh';
+    var buildCommand = process.platform === "win32" ? "build.bat" : "./build.sh";
     if (typeof desktopExternalModules !== 'undefined' && desktopExternalModules !== null) {
-      buildCommand += ' -e="' + desktopExternalModules.toString().replace(/,/g, ';') + '"';
+      buildCommand += ' -e "' + desktopExternalModules.toString().replace(/,/g, ';') + '"';
     }
     if (typeof desktopJSBundlePath !== 'undefined' && desktopJSBundlePath !== null) {
-      buildCommand += ' -j="' + desktopJSBundlePath.toString() + '"';
+      buildCommand += ' -j "' + desktopJSBundlePath.toString() + '"';
+    }
+    if (process.platform === "win32") {
+      buildCommand += ' -g "' + "MinGW Makefiles" + '"';
     }
     child_process.exec(buildCommand, {cwd: path.join(args.root, 'desktop')},
                         (error, stdout, stderr) => {

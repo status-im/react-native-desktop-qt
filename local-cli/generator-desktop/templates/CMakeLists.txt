@@ -22,9 +22,15 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/Rea
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/runtime/src ${CMAKE_CURRENT_BINARY_DIR}/lib)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/application/src ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
+if (WIN32)
+  set(RUN_SCRIPT_FILE_NAME "run-app.bat")
+else()
+  set(RUN_SCRIPT_FILE_NAME "run-app.sh")
+endif()
+
 configure_file(
-  run-app.sh.in
-  ${CMAKE_CURRENT_BINARY_DIR}/run-app.sh
+  ${RUN_SCRIPT_FILE_NAME}.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${RUN_SCRIPT_FILE_NAME}
   @ONLY
 )
 

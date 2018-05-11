@@ -12,9 +12,9 @@ cd $(dirname $0)
 for i in "$@"
 do
 case $i in
-  -e=*|--externalModulesPaths=*)
+  -e\ *|--externalModulesPaths\ *)
   ExternalModulesPaths="${i#*=}" ;;
-  -j=*|--jsBundlePath=*)
+  -j\ *|--jsBundlePath\ *)
   JsBundlePath="${i#*=}" ;;
 esac
 done
