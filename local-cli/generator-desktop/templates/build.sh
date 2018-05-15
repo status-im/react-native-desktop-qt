@@ -9,14 +9,17 @@
 
 # XXX: Don't move this script
 cd $(dirname $0)
-for i in "$@"
-do
-case $i in
-  -e\ *|--externalModulesPaths\ *)
-  ExternalModulesPaths="${i#*=}" ;;
-  -j\ *|--jsBundlePath\ *)
-  JsBundlePath="${i#*=}" ;;
-esac
+
+while (( "$#" )); do
+if [[ $1 == "-e" ]]; then
+  shift
+	ExternalModulesPaths="$1"
+fi
+if [[ $1 == "-j" ]]; then
+  shift
+	JsBundlePath="$1"
+fi
+shift
 done
 
 echo "build.sh external modules paths: "$ExternalModulesPaths
