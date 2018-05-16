@@ -22,7 +22,7 @@ const Promise = require('promise');
 
 const parseArguments = require('./parseArguments');
 const checkDesktop = require('./checkDesktop');
-const buildDesktop = require('./buildDesktop');
+const buildDesktop = require('./build');
 
 
 function runDesktop(argv, config) {

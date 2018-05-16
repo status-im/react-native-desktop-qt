@@ -41,6 +41,7 @@ const documentedCommands = [
   require('./runAndroid/runAndroid'),
   require('./desktop/genDesktop'),
   require('./desktop/runDesktop'),
+  require('./desktop/buildDesktop'),
   require('./library/library'),
   require('./bundle/bundle'),
   require('./bundle/unbundle'),
