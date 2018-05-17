@@ -46,6 +46,21 @@ Item {
         }
     }
 
+    function keyText(key, text) {
+        var t = text
+        switch(key) {
+        case Qt.Key_Return:
+        case Qt.Key_Enter:
+            t = "Enter"
+            break;
+        case Qt.Key_Backspace:
+            t = "Backspace"
+            break;
+        }
+
+        return t;
+    }
+
     Component.onCompleted: recreateInputControl();
     onP_multilineChanged: recreateInputControl();
 }

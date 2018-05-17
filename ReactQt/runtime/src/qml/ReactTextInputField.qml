@@ -33,7 +33,7 @@ TextField {
         if(textInputManager)
             textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
     }
-    Keys.onPressed:             textInputManager.sendOnKeyPressToJs(textField, event.text)
+    Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField, textInputRoot.keyText(event.key, event.text))
 
     onFocusChanged: {
         if (focus) {
