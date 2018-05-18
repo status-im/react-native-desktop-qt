@@ -40,7 +40,8 @@ Text {
     fontSizeMode: p_allowFontScaling ? 3 : 0
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
     textFormat: Text.RichText
-    wrapMode: Text.WordWrap
+    wrapMode: Text.WrapAnywhere
+    clip: true
     opacity: p_opacity
 
 
