@@ -36,7 +36,7 @@ public slots:
     void sendOnSubmitEditingToJs(QQuickItem* textInput);
     void sendOnEndEditingToJs(QQuickItem* textInput);
     void sendOnFocusToJs(QQuickItem* textInput);
-    void sendOnKeyPressToJs(QQuickItem* textInput, QString keyText);
+    void sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QStringList modifiers);
     void sendOnContentSizeChange(QQuickItem* textInput, double width, double height);
 
 private:
