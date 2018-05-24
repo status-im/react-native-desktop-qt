@@ -33,7 +33,9 @@ Flickable {
 
         onTextChanged: textInputRoot.textInputManager.sendTextEditedToJs(textField)
         onCursorPositionChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
-        Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField, textInputRoot.keyText(event.key, event.text))
+        Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField,
+                                                            textInputRoot.keyText(event.key, event.text),
+                                                            textInputRoot.keyModifiers(event.modifiers))
         onContentSizeChanged: {
             if(textInputManager)
                 textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)

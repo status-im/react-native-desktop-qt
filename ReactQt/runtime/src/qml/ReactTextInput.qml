@@ -61,6 +61,26 @@ Item {
         return t;
     }
 
+    function keyModifiers(modifiers) {
+        var modArray = [];
+
+        if(modifiers & Qt.ShiftModifier) {
+            modArray.push("shift")
+        }
+        if(modifiers & Qt.ControlModifier) {
+            modArray.push("control")
+        }
+        if(modifiers & Qt.AltModifier) {
+            modArray.push("alt")
+        }
+        if(modifiers & Qt.MetaModifier) {
+            modArray.push("meta")
+        }
+
+        return modArray;
+    }
+
+
     Component.onCompleted: recreateInputControl();
     onP_multilineChanged: recreateInputControl();
 }
