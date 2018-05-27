@@ -48,7 +48,7 @@ add_executable(
   main.qrc
 )
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Qt5Svg)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
 
 qt5_use_modules(${APP_NAME} ${USED_QT_MODULES})
 
