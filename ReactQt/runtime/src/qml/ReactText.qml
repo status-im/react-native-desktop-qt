@@ -121,7 +121,7 @@ Text {
         var fontWeight = textManager.nestedPropertyValue(textRoot, "p_fontWeight")
         var fontSize = textManager.nestedPropertyValue(textRoot, "p_fontSize")
         var fontStyle = textManager.nestedPropertyValue(textRoot, "p_fontStyle")
-        var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")        
+        var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")
 
         var result = "<span style=\"" + (fontFamily ? ("font-family:"+fontFamily+";") : "")
                 + (fontSize? ("font-size:"+fontSize+"pt;") : "")
@@ -133,7 +133,7 @@ Text {
                 + "\">"
                 + textString + "</span>";
 
-        return result;
+        return result.replace(/\n/g, '<br>');
     }
 
 
