@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=<%= name %>
-Comment=Description of <%= name %>
-Exec=./<%= name %> --local=./share/js/index.js --plugins-path=./plugins
-Icon=share/icons/<%= name %>.png
-Terminal=false
-Type=Application
-X-Ubuntu-Touch=true

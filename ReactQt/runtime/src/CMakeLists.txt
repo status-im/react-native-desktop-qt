@@ -20,6 +20,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
+find_package(Qt5Svg REQUIRED)
 
 set(
   SRC_RUNTIME
@@ -126,7 +127,7 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
 
 qt5_use_modules(react-native ${USED_QT_MODULES})
 

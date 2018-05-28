@@ -29,4 +29,4 @@ echo "build.sh JS bundle path: "$JsBundlePath
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" . && make && cp ./bin/<%= name %> click/
+cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" . && make
