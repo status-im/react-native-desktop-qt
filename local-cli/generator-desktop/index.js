@@ -78,36 +78,6 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.destinationPath(path.join('desktop', 'main.cpp')),
       templateParams
     );
-    // click
-    this.fs.copyTpl(
-      this.templatePath('click/manifest.json'),
-      this.destinationPath(path.join('desktop', 'click', 'manifest.json')),
-      templateParams
-    );
-    this.fs.copyTpl(
-      this.templatePath('click/desktop'),
-      this.destinationPath(path.join('desktop', 'click', this.name + '.desktop')),
-      templateParams
-    );
-    this.fs.copy(
-      this.templatePath('click/apparmor'),
-      this.destinationPath(path.join('desktop', 'click', this.name + '.apparmor'))
-    );
-    this.fs.copy(
-      this.templatePath('click/icon.png'),
-      this.destinationPath(path.join('desktop', 'click', 'share', 'icons', this.name + '.png'))
-    );
-
-    // snap
-    this.fs.copyTpl(
-      this.templatePath('snap/snapcraft.yaml'),
-      this.destinationPath(path.join('desktop', 'snap', 'snapcraft.yaml')),
-      templateParams
-    );
-    this.fs.copy(
-      this.templatePath('snap/parts/plugins/x-nodejs.py'),
-      this.destinationPath(path.join('desktop', 'snap/parts/plugins', 'x-nodejs.py'))
-    );
 
     mkdirp.sync('desktop/share');
     mkdirp.sync('desktop/plugins');
