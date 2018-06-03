@@ -17,6 +17,10 @@ find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
 
+if (USE_QTWEBKIT)
+  find_package(Qt5WebKit REQUIRED)
+endif()
+
 # Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
 string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_TYPE_NAMES}")
 
@@ -49,6 +53,9 @@ add_executable(
 )
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
+if (USE_QTWEBKIT)
+  set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
+endif()
 
 qt5_use_modules(${APP_NAME} ${USED_QT_MODULES})
 

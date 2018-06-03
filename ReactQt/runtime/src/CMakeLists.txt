@@ -22,6 +22,10 @@ find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
 
+if (USE_QTWEBKIT)
+  find_package(Qt5WebKit REQUIRED)
+endif()
+
 set(
   SRC_RUNTIME
   reactplugin.cpp
@@ -98,8 +102,14 @@ set(
   qml/ReactTextInputArea.qml
   qml/ReactTextInputField.qml
   qml/ReactAlert.qml
-  qml/ReactWebView.qml
 )
+
+if (USE_QTWEBKIT)
+  set(QML ${QML} qml/ReactQtWebKitWebView.qml)
+  ADD_DEFINITIONS(-DUSE_QTWEBKIT)
+else()
+  set(QML ${QML} qml/ReactWebView.qml)
+endif()
 
 if(DEFINED REACT_BUILD_STATIC_LIB)
 add_library(
@@ -132,6 +142,9 @@ endif()
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
+if (USE_QTWEBKIT)
+  set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
+endif()
 
 qt5_use_modules(react-native ${USED_QT_MODULES})
 

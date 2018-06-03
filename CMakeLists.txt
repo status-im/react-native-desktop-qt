@@ -15,6 +15,7 @@ set(PROJECT_VERSION "0.0.1")
 
 if(WIN32)
   set(REACT_BUILD_STATIC_LIB 1)
+  set(USE_QTWEBKIT 1)
 endif()
 
 include_directories(./React/Layout)

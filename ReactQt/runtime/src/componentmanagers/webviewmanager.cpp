@@ -40,7 +40,12 @@ QString WebViewManager::moduleName() {
 }
 
 QString WebViewManager::qmlComponentFile() const {
-    return "qrc:/qml/ReactWebView.qml";
+#ifdef USE_QTWEBKIT
+    const QString reactWebViewComponent = QStringLiteral("qrc:/qml/ReactQtWebKitWebView.qml");
+#else
+    const QString reactWebViewComponent = QStringLiteral("qrc:/qml/ReactWebView.qml");
+#endif
+    return reactWebViewComponent;
 }
 
 void WebViewManager::configureView(QQuickItem* view) const {
