@@ -121,6 +121,10 @@ set_target_properties(
 )
 endif()
 
+if (REACT_NATIVE_DESKTOP_EXTERNAL_PROJECT_DEPS)
+  add_dependencies(react-native ${REACT_NATIVE_DESKTOP_EXTERNAL_PROJECT_DEPS})
+endif()
+
 if (REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS)
   target_link_libraries(react-native ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS})
 endif()
