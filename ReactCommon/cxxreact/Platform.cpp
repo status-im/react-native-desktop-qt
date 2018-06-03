@@ -1,4 +1,5 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
+// clang-format off
 
 #include "Platform.h"
 
@@ -14,7 +15,7 @@ namespace ReactMarker {
 
 LogTaggedMarker logTaggedMarker = nullptr;
 void logMarker(const ReactMarkerId markerId) {
-  logTaggedMarker(markerId, nullptr);
+  //logTaggedMarker(markerId, nullptr);
 }
 
 }

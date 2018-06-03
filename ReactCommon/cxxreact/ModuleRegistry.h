@@ -1,5 +1,5 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
-
+// clang-format off
 #pragma once
 
 #include <memory>
@@ -9,6 +9,10 @@
 #include <cxxreact/JSExecutor.h>
 #include <folly/Optional.h>
 #include <folly/dynamic.h>
+
+#include <QList>
+
+class ModuleData;
 
 #ifndef RN_EXPORT
 #define RN_EXPORT __attribute__((visibility("default")))
@@ -38,6 +42,8 @@ class RN_EXPORT ModuleRegistry {
   ModuleRegistry(std::vector<std::unique_ptr<NativeModule>> modules, ModuleNotFoundCallback callback = nullptr);
   void registerModules(std::vector<std::unique_ptr<NativeModule>> modules);
 
+  void registerModules(QList<ModuleData*> modules);
+
   std::vector<std::string> moduleNames();
 
   folly::Optional<ModuleConfig> getConfig(const std::string& name);
@@ -48,6 +54,8 @@ class RN_EXPORT ModuleRegistry {
  private:
   // This is always populated
   std::vector<std::unique_ptr<NativeModule>> modules_;
+
+  std::vector<ModuleData*> qtModules_;
 
   // This is used to extend the population of modulesByName_ if registerModules is called after moduleNames
   void updateModuleNamesFromIndex(size_t size);
@@ -63,6 +71,8 @@ class RN_EXPORT ModuleRegistry {
   // If the function returns true, ModuleRegistry will try to find the module again (assuming it's registered)
   // If the functon returns false, ModuleRegistry will not try to find the module and return nullptr instead.
   ModuleNotFoundCallback moduleNotFoundCallback_;
+
+  bool qtModulesUsed_ = true;
 };
 
 }

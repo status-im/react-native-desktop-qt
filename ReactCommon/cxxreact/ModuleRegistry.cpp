@@ -1,4 +1,5 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
+// clang-format off
 
 #include "ModuleRegistry.h"
 
@@ -6,6 +7,16 @@
 
 #include "NativeModule.h"
 #include "SystraceSection.h"
+
+#include <QString>
+#include <QVariant>
+#include <QDebug>
+#include <QVector>
+#include <QJsonDocument>
+#include "moduledata.h"
+#include "modulemethod.h"
+
+#include "folly/json.h"
 
 namespace facebook {
 namespace react {
@@ -37,6 +48,15 @@ void ModuleRegistry::updateModuleNamesFromIndex(size_t index) {
   }
 }
 
+void ModuleRegistry::registerModules(QList<ModuleData*> modules) {
+    qtModules_.clear();
+    for (size_t index = 0; index < modules.size(); index++ ) {
+      std::string name = normalizeName(modules[index]->name().toStdString());
+      modulesByName_[name] = index;
+      qtModules_.push_back(modules[index]);
+    }
+}
+
 void ModuleRegistry::registerModules(std::vector<std::unique_ptr<NativeModule>> modules) {
   if (modules_.empty() && unknownModules_.empty()) {
     modules_ = std::move(modules);
@@ -65,8 +85,9 @@ void ModuleRegistry::registerModules(std::vector<std::unique_ptr<NativeModule>> 
 
 std::vector<std::string> ModuleRegistry::moduleNames() {
   std::vector<std::string> names;
-  for (size_t i = 0; i < modules_.size(); i++) {
-    std::string name = normalizeName(modules_[i]->getName());
+  for (size_t i = 0; i < qtModulesUsed_ ? qtModules_.size() : modules_.size(); i++) {
+    std::string name = normalizeName(qtModulesUsed_ ? qtModules_[i]->name().toStdString() :
+                                                      modules_[i]->getName());
     modulesByName_[name] = i;
     names.push_back(std::move(name));
   }
@@ -96,44 +117,54 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
   }
   size_t index = it->second;
 
-  CHECK(index < modules_.size());
-  NativeModule *module = modules_[index].get();
-
   // string name, object constants, array methodNames (methodId is index), [array promiseMethodIds], [array syncMethodIds]
-  folly::dynamic config = folly::dynamic::array(name);
+  folly::dynamic config;
 
-  {
-    SystraceSection s_("getConstants");
-    config.push_back(module->getConstants());
-  }
+  if (qtModulesUsed_) {
+      CHECK(index < qtModules_.size());
+      ModuleData *module = qtModules_[index];
 
-  {
-    SystraceSection s_("getMethods");
-    std::vector<MethodDescriptor> methods = module->getMethods();
+      QVariant moduleInfo = module->info();
+      QJsonDocument doc = QJsonDocument::fromVariant(moduleInfo);
+      config = folly::parseJson(doc.toJson(QJsonDocument::Compact).toStdString());
+  } else {
+      config = folly::dynamic::array(name);
+      CHECK(index < modules_.size());
+      NativeModule *module = modules_[index].get();
 
-    folly::dynamic methodNames = folly::dynamic::array;
-    folly::dynamic promiseMethodIds = folly::dynamic::array;
-    folly::dynamic syncMethodIds = folly::dynamic::array;
-
-    for (auto& descriptor : methods) {
-      // TODO: #10487027 compare tags instead of doing string comparison?
-      methodNames.push_back(std::move(descriptor.name));
-      if (descriptor.type == "promise") {
-        promiseMethodIds.push_back(methodNames.size() - 1);
-      } else if (descriptor.type == "sync") {
-        syncMethodIds.push_back(methodNames.size() - 1);
+      {
+        SystraceSection s_("getConstants");
+        config.push_back(module->getConstants());
       }
-    }
 
-    if (!methodNames.empty()) {
-      config.push_back(std::move(methodNames));
-      if (!promiseMethodIds.empty() || !syncMethodIds.empty()) {
-        config.push_back(std::move(promiseMethodIds));
-        if (!syncMethodIds.empty()) {
-          config.push_back(std::move(syncMethodIds));
+      {
+        SystraceSection s_("getMethods");
+        std::vector<MethodDescriptor> methods = module->getMethods();
+
+        folly::dynamic methodNames = folly::dynamic::array;
+        folly::dynamic promiseMethodIds = folly::dynamic::array;
+        folly::dynamic syncMethodIds = folly::dynamic::array;
+
+        for (auto& descriptor : methods) {
+          // TODO: #10487027 compare tags instead of doing string comparison?
+          methodNames.push_back(std::move(descriptor.name));
+          if (descriptor.type == "promise") {
+            promiseMethodIds.push_back(methodNames.size() - 1);
+          } else if (descriptor.type == "sync") {
+            syncMethodIds.push_back(methodNames.size() - 1);
+          }
+        }
+
+        if (!methodNames.empty()) {
+          config.push_back(std::move(methodNames));
+          if (!promiseMethodIds.empty() || !syncMethodIds.empty()) {
+            config.push_back(std::move(promiseMethodIds));
+            if (!syncMethodIds.empty()) {
+              config.push_back(std::move(syncMethodIds));
+            }
+          }
         }
       }
-    }
   }
 
   if (config.size() == 2 && config[1].empty()) {
@@ -145,11 +176,25 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
 }
 
 void ModuleRegistry::callNativeMethod(unsigned int moduleId, unsigned int methodId, folly::dynamic&& params, int callId) {
-  if (moduleId >= modules_.size()) {
-    throw std::runtime_error(
-      folly::to<std::string>("moduleId ", moduleId, " out of range [0..", modules_.size(), ")"));
+  if (qtModulesUsed_) {
+      if (moduleId >= qtModules_.size()) {
+        throw std::runtime_error(
+          folly::to<std::string>("moduleId ", moduleId, " out of range [0..", qtModules_.size(), ")"));
+      }
+      std::string jsonStr = folly::toJson(params);
+      QVariant jsonVariant = QJsonDocument::fromJson(jsonStr.c_str()).toVariant();
+
+      qDebug() << "ModuleRegistry::callNativeMethod. moduleId: " << moduleId << " methodId: " << methodId
+               << " params: " << jsonVariant.toList() << " callId: " << callId;
+
+      QMetaObject::invokeMethod(qtModules_[moduleId]->method(methodId), "invoke", Qt::AutoConnection, Q_ARG(QVariantList, jsonVariant.toList()));
+  } else {
+      if (moduleId >= modules_.size()) {
+        throw std::runtime_error(
+          folly::to<std::string>("moduleId ", moduleId, " out of range [0..", modules_.size(), ")"));
+      }
+      modules_[moduleId]->invoke(methodId, std::move(params), callId);
   }
-  modules_[moduleId]->invoke(methodId, std::move(params), callId);
 }
 
 MethodCallResult ModuleRegistry::callSerializableNativeHook(unsigned int moduleId, unsigned int methodId, folly::dynamic&& params) {

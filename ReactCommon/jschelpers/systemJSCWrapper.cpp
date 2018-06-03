@@ -6,21 +6,15 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-
+// clang-format off
 #include <jschelpers/JSCWrapper.h>
 
-#if defined(__APPLE__)
-
 #include <mutex>
-
-#include <objc/runtime.h>
 
 // Crash the app (with a descriptive stack trace) if a function that is not supported by
 // the system JSC is called.
 #define UNIMPLEMENTED_SYSTEM_JSC_FUNCTION(FUNC_NAME)            \
-static void Unimplemented_##FUNC_NAME(__unused void* args...) { \
-  assert(false);                                                \
-}
+static void Unimplemented_##FUNC_NAME(void* args...) {}
 
 UNIMPLEMENTED_SYSTEM_JSC_FUNCTION(JSEvaluateBytecodeBundle)
 #if WITH_FBJSCEXTENSIONS
@@ -42,6 +36,21 @@ bool JSSamplingProfilerEnabled() {
 
 const int32_t JSNoBytecodeFileFormatVersion = -1;
 
+void JSGlobalContextEnableDebugger(
+  JSGlobalContextRef ctx, facebook::react::IInspector &globalInspector,
+   const char *title, const std::function<bool()> &checkIsInspectedRemote) {}
+void JSGlobalContextDisableDebugger(
+  JSGlobalContextRef ctx, facebook::react::IInspector &globalInspector) {}
+
+// This is used to substitute an alternate JSC implementation for
+// testing. These calls must all be ABI compatible with the standard JSC.
+JSValueRef JSEvaluateBytecodeBundle(JSContextRef, JSObjectRef, int, JSStringRef,
+                                    JSValueRef *) {
+  return JSValueRef();
+}
+void JSStartSamplingProfilingOnMainJSCThread(JSGlobalContextRef) {}
+JSValueRef JSPokeSamplingProfiler(JSContextRef) { return JSValueRef(); }
+
 namespace facebook {
 namespace react {
 
@@ -53,95 +62,95 @@ const JSCWrapper* systemJSCWrapper() {
   static std::once_flag flag;
   std::call_once(flag, []() {
     s_systemWrapper = {
-      .JSGlobalContextCreateInGroup = JSGlobalContextCreateInGroup,
-      .JSGlobalContextRelease = JSGlobalContextRelease,
-      .JSGlobalContextSetName = JSGlobalContextSetName,
+      .JSGlobalContextCreateInGroup_ = JSGlobalContextCreateInGroup,
+      .JSGlobalContextRelease_ = JSGlobalContextRelease,
+      .JSGlobalContextSetName_ = JSGlobalContextSetName,
 
-      .JSContextGetGlobalContext = JSContextGetGlobalContext,
-      .JSContextGetGlobalObject = JSContextGetGlobalObject,
-      .FBJSContextStartGCTimers =
+      .JSContextGetGlobalContext_ = JSContextGetGlobalContext,
+      .JSContextGetGlobalObject_ = JSContextGetGlobalObject,
+      .FBJSContextStartGCTimers_ =
         (decltype(&FBJSContextStartGCTimers))
         Unimplemented_FBJSContextStartGCTimers,
 
-      .JSEvaluateScript = JSEvaluateScript,
-      .JSEvaluateBytecodeBundle =
+      .JSEvaluateScript_ = JSEvaluateScript,
+      .JSEvaluateBytecodeBundle_ =
         (decltype(&JSEvaluateBytecodeBundle))
         Unimplemented_JSEvaluateBytecodeBundle,
 
-      .JSStringCreateWithUTF8CString = JSStringCreateWithUTF8CString,
-      .JSStringCreateWithCFString = JSStringCreateWithCFString,
+      .JSStringCreateWithUTF8CString_ = JSStringCreateWithUTF8CString,
+      //.JSStringCreateWithCFString_ = JSStringCreateWithCFString,
       #if WITH_FBJSCEXTENSIONS
       .JSStringCreateWithUTF8CStringExpectAscii =
         (decltype(&JSStringCreateWithUTF8CStringExpectAscii))
         Unimplemented_JSStringCreateWithUTF8CStringExpectAscii,
       #endif
-      .JSStringCopyCFString = JSStringCopyCFString,
-      .JSStringGetCharactersPtr = JSStringGetCharactersPtr,
-      .JSStringGetLength = JSStringGetLength,
-      .JSStringGetMaximumUTF8CStringSize = JSStringGetMaximumUTF8CStringSize,
-      .JSStringIsEqualToUTF8CString = JSStringIsEqualToUTF8CString,
-      .JSStringRelease = JSStringRelease,
-      .JSStringRetain = JSStringRetain,
+      //.JSStringCopyCFString_ = JSStringCopyCFString,
+      .JSStringGetCharactersPtr_ = JSStringGetCharactersPtr,
+      .JSStringGetLength_ = JSStringGetLength,
+      .JSStringGetMaximumUTF8CStringSize_ = JSStringGetMaximumUTF8CStringSize,
+      .JSStringIsEqualToUTF8CString_ = JSStringIsEqualToUTF8CString,
+      .JSStringRelease_ = JSStringRelease,
+      .JSStringRetain_ = JSStringRetain,
 
-      .JSClassCreate = JSClassCreate,
-      .JSClassRelease = JSClassRelease,
+      .JSClassCreate_ = JSClassCreate,
+      .JSClassRelease_ = JSClassRelease,
 
-      .JSObjectCallAsConstructor = JSObjectCallAsConstructor,
-      .JSObjectCallAsFunction = JSObjectCallAsFunction,
-      .JSObjectGetPrivate = JSObjectGetPrivate,
-      .JSObjectGetProperty = JSObjectGetProperty,
-      .JSObjectGetPropertyAtIndex = JSObjectGetPropertyAtIndex,
-      .JSObjectIsConstructor = JSObjectIsConstructor,
-      .JSObjectIsFunction = JSObjectIsFunction,
-      .JSObjectMake = JSObjectMake,
-      .JSObjectMakeArray = JSObjectMakeArray,
-      .JSObjectMakeDate = JSObjectMakeDate,
-      .JSObjectMakeError = JSObjectMakeError,
-      .JSObjectMakeFunctionWithCallback = JSObjectMakeFunctionWithCallback,
-      .JSObjectSetPrivate = JSObjectSetPrivate,
-      .JSObjectSetProperty = JSObjectSetProperty,
-      .JSObjectSetPropertyAtIndex = JSObjectSetPropertyAtIndex,
+      .JSObjectCallAsConstructor_ = JSObjectCallAsConstructor,
+      .JSObjectCallAsFunction_ = JSObjectCallAsFunction,
+      .JSObjectGetPrivate_ = JSObjectGetPrivate,
+      .JSObjectGetProperty_ = JSObjectGetProperty,
+      .JSObjectGetPropertyAtIndex_ = JSObjectGetPropertyAtIndex,
+      .JSObjectIsConstructor_ = JSObjectIsConstructor,
+      .JSObjectIsFunction_ = JSObjectIsFunction,
+      .JSObjectMake_ = JSObjectMake,
+      .JSObjectMakeArray_ = JSObjectMakeArray,
+      .JSObjectMakeDate_ = JSObjectMakeDate,
+      .JSObjectMakeError_ = JSObjectMakeError,
+      .JSObjectMakeFunctionWithCallback_ = JSObjectMakeFunctionWithCallback,
+      .JSObjectSetPrivate_ = JSObjectSetPrivate,
+      .JSObjectSetProperty_ = JSObjectSetProperty,
+      .JSObjectSetPropertyAtIndex_ = JSObjectSetPropertyAtIndex,
 
-      .JSObjectCopyPropertyNames = JSObjectCopyPropertyNames,
-      .JSPropertyNameArrayGetCount = JSPropertyNameArrayGetCount,
-      .JSPropertyNameArrayGetNameAtIndex = JSPropertyNameArrayGetNameAtIndex,
-      .JSPropertyNameArrayRelease = JSPropertyNameArrayRelease,
+      .JSObjectCopyPropertyNames_ = JSObjectCopyPropertyNames,
+      .JSPropertyNameArrayGetCount_ = JSPropertyNameArrayGetCount,
+      .JSPropertyNameArrayGetNameAtIndex_ = JSPropertyNameArrayGetNameAtIndex,
+      .JSPropertyNameArrayRelease_ = JSPropertyNameArrayRelease,
 
-      .JSValueCreateJSONString = JSValueCreateJSONString,
-      .JSValueGetType = JSValueGetType,
-      .JSValueMakeFromJSONString = JSValueMakeFromJSONString,
-      .JSValueMakeBoolean = JSValueMakeBoolean,
-      .JSValueMakeNull = JSValueMakeNull,
-      .JSValueMakeNumber = JSValueMakeNumber,
-      .JSValueMakeString = JSValueMakeString,
-      .JSValueMakeUndefined = JSValueMakeUndefined,
-      .JSValueProtect = JSValueProtect,
-      .JSValueToBoolean = JSValueToBoolean,
-      .JSValueToNumber = JSValueToNumber,
-      .JSValueToObject = JSValueToObject,
-      .JSValueToStringCopy = JSValueToStringCopy,
-      .JSValueUnprotect = JSValueUnprotect,
+      .JSValueCreateJSONString_ = JSValueCreateJSONString,
+      .JSValueGetType_ = JSValueGetType,
+      .JSValueMakeFromJSONString_ = JSValueMakeFromJSONString,
+      .JSValueMakeBoolean_ = JSValueMakeBoolean,
+      .JSValueMakeNull_ = JSValueMakeNull,
+      .JSValueMakeNumber_ = JSValueMakeNumber,
+      .JSValueMakeString_ = JSValueMakeString,
+      .JSValueMakeUndefined_ = JSValueMakeUndefined,
+      .JSValueProtect_ = JSValueProtect,
+      .JSValueToBoolean_ = JSValueToBoolean,
+      .JSValueToNumber_ = JSValueToNumber,
+      .JSValueToObject_ = JSValueToObject,
+      .JSValueToStringCopy_ = JSValueToStringCopy,
+      .JSValueUnprotect_ = JSValueUnprotect,
 
-      .JSSamplingProfilerEnabled = JSSamplingProfilerEnabled,
-      .JSPokeSamplingProfiler =
+      .JSSamplingProfilerEnabled_ = JSSamplingProfilerEnabled,
+      .JSPokeSamplingProfiler_ =
         (decltype(&JSPokeSamplingProfiler))
         Unimplemented_JSPokeSamplingProfiler,
-      .JSStartSamplingProfilingOnMainJSCThread =
+      .JSStartSamplingProfilingOnMainJSCThread_ =
         (decltype(&JSStartSamplingProfilingOnMainJSCThread))
         Unimplemented_JSStartSamplingProfilingOnMainJSCThread,
 
-      .JSGlobalContextEnableDebugger =
+      .JSGlobalContextEnableDebugger_ =
         (decltype(&JSGlobalContextEnableDebugger))
         Unimplemented_JSGlobalContextEnableDebugger,
-      .JSGlobalContextDisableDebugger =
+      .JSGlobalContextDisableDebugger_ =
         (decltype(&JSGlobalContextDisableDebugger))
         Unimplemented_JSGlobalContextDisableDebugger,
 
-      .configureJSCForIOS =
+      .configureJSCForIOS_ =
         (decltype(&configureJSCForIOS))Unimplemented_configureJSCForIOS,
 
-      .JSContext = objc_getClass("JSContext"),
-      .JSValue = objc_getClass("JSValue"),
+      //.JSContext_ = objc_getClass("JSContext"),
+      //.JSValue_ = objc_getClass("JSValue"),
 
       .JSBytecodeFileFormatVersion = JSNoBytecodeFileFormatVersion,
     };
@@ -151,4 +160,3 @@ const JSCWrapper* systemJSCWrapper() {
 
 } }
 
-#endif

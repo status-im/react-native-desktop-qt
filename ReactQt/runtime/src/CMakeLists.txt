@@ -26,8 +26,86 @@ if (USE_QTWEBKIT)
   find_package(Qt5WebKit REQUIRED)
 endif()
 
+if(JAVASCRIPTCORE_ENABLED)
+  ADD_DEFINITIONS(-DJAVASCRIPTCORE_ENABLED)
+
+  include_directories("../../../ReactCommon")
+  include_directories("../../../ReactAndroid/src/main/jni/third-party")
+
+  include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+
+  set(JavaScriptCore_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/JavaScriptCore_ep-prefix/src/JavaScriptCore_ep")
+  set(JavaScriptCore_INCLUDE_DIR "${JavaScriptCore_PREFIX}/WebKitBuild/Release/DerivedSources/ForwardingHeaders")
+  set(JavaScriptCore_STATIC_LIB
+      "${JavaScriptCore_PREFIX}/WebKitBuild/Release/lib/${CMAKE_STATIC_LIBRARY_PREFIX}JavaScriptCore${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(bmalloc_STATIC_LIB
+       "${JavaScriptCore_PREFIX}/WebKitBuild/Release/lib/${CMAKE_STATIC_LIBRARY_PREFIX}bmalloc${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(WTF_STATIC_LIB
+       "${JavaScriptCore_PREFIX}/WebKitBuild/Release/lib/${CMAKE_STATIC_LIBRARY_PREFIX}WTF${CMAKE_STATIC_LIBRARY_SUFFIX}")
+
+  include_directories(${JavaScriptCore_INCLUDE_DIR})
+
+  ExternalProject_Add(JavaScriptCore_ep
+    GIT_REPOSITORY git@github.com:WebKit/webkit.git
+    GIT_TAG 06fcd5bda23a9f4844263b60b33f2ad83be4d871
+    BUILD_BYPRODUCTS ${JavaScriptCore_STATIC_LIB}
+    CONFIGURE_COMMAND ${JavaScriptCore_PREFIX}/Tools/Scripts/build-webkit --jsc-only --cmakeargs="-DENABLE_STATIC_JSC=ON -DUSE_THIN_ARCHIVES=OFF"
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+  )
+
+  set(FOLLY_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/folly_ep-prefix/src/folly_ep-install")
+  set(FOLLY_INCLUDE_DIR "${FOLLY_PREFIX}/include")
+  set(FOLLY_STATIC_LIB "${FOLLY_PREFIX}/lib/${CMAKE_STATIC_LIBRARY_PREFIX}folly${CMAKE_STATIC_LIBRARY_SUFFIX}")
+  set(FOLLY_CMAKE_ARGS
+      -DCMAKE_INSTALL_PREFIX:PATH=${FOLLY_PREFIX}
+      -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
+
+  include_directories(${FOLLY_INCLUDE_DIR})
+  MESSAGE(STATUS "FOLLY_INCLUDE_DIR = ${FOLLY_INCLUDE_DIR}")
+
+  ExternalProject_Add(folly_ep
+        URL "https://github.com/facebook/folly/archive/v2018.04.30.00.tar.gz"
+        BUILD_BYPRODUCTS "${FOLLY_STATIC_LIB}"
+        CMAKE_ARGS ${FOLLY_CMAKE_ARGS})
+
+  set(
+    SRC_JAVASCRIPTCORE
+    ../../../ReactCommon/jschelpers/JSCHelpers.cpp
+    ../../../ReactCommon/jschelpers/Unicode.cpp
+    ../../../ReactCommon/jschelpers/Value.cpp
+    ../../../ReactCommon/jschelpers/JSCWrapper.cpp
+    ../../../ReactCommon/jschelpers/systemJSCWrapper.cpp
+
+    ../../../ReactCommon/jsinspector/InspectorInterfaces.cpp
+
+    ../../../ReactCommon/privatedata/PrivateDataBase.cpp
+
+    ../../../ReactCommon/cxxreact/CxxNativeModule.cpp
+    ../../../ReactCommon/cxxreact/Instance.cpp
+    ../../../ReactCommon/cxxreact/JSBigString.cpp
+    ../../../ReactCommon/cxxreact/JSBundleType.cpp
+    ../../../ReactCommon/cxxreact/JSCExecutor.cpp
+    ../../../ReactCommon/cxxreact/JSCLegacyTracing.cpp
+    ../../../ReactCommon/cxxreact/JSCMemory.cpp
+    ../../../ReactCommon/cxxreact/JSCNativeModules.cpp
+    ../../../ReactCommon/cxxreact/JSCPerfStats.cpp
+    ../../../ReactCommon/cxxreact/JSCSamplingProfiler.cpp
+    ../../../ReactCommon/cxxreact/JSCTracing.cpp
+    ../../../ReactCommon/cxxreact/JSCUtils.cpp
+    ../../../ReactCommon/cxxreact/JSIndexedRAMBundle.cpp
+    ../../../ReactCommon/cxxreact/MethodCall.cpp
+    ../../../ReactCommon/cxxreact/ModuleRegistry.cpp
+    ../../../ReactCommon/cxxreact/NativeToJsBridge.cpp
+    ../../../ReactCommon/cxxreact/Platform.cpp
+    ../../../ReactCommon/cxxreact/RAMBundleRegistry.cpp
+    jscutilities.cpp
+    communication/javascriptcoreexecutor.cpp)
+endif()
+
 set(
   SRC_RUNTIME
+  ${SRC_JAVASCRIPTCORE}
   reactplugin.cpp
   valuecoercion.cpp
   blobprovider.cpp
@@ -125,6 +203,7 @@ add_library(
   ${QML}
   react_resources.qrc
 )
+
 set_target_properties(
   react-native
   PROPERTIES LIBRARY_OUTPUT_DIRECTORY React
@@ -137,6 +216,20 @@ endif()
 
 if (REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS)
   target_link_libraries(react-native ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS})
+endif()
+
+if(JAVASCRIPTCORE_ENABLED)
+  add_dependencies(react-native JavaScriptCore_ep folly_ep)
+
+  target_link_libraries(react-native
+    ${JavaScriptCore_STATIC_LIB} ${bmalloc_STATIC_LIB} ${WTF_STATIC_LIB}
+    "-licudata"
+    "-licui18n"
+    "-licuuc"
+    "-lglog"
+    "-ldouble-conversion"
+    ${FOLLY_STATIC_LIB}
+  )
 endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})

@@ -1,4 +1,5 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
+// clang-format off
 
 #include "JSCNativeModules.h"
 
@@ -43,7 +44,7 @@ void JSCNativeModules::reset() {
 }
 
 folly::Optional<Object> JSCNativeModules::createModule(const std::string& name, JSContextRef context) {
-  ReactMarker::logTaggedMarker(ReactMarker::NATIVE_MODULE_SETUP_START, name.c_str());
+  //ReactMarker::logTaggedMarker(ReactMarker::NATIVE_MODULE_SETUP_START, name.c_str());
 
   if (!m_genNativeModuleJS) {
     auto global = Object::getGlobalObject(context);
@@ -64,7 +65,7 @@ folly::Optional<Object> JSCNativeModules::createModule(const std::string& name, 
 
   folly::Optional<Object> module(moduleInfo.asObject().getProperty("module").asObject());
 
-  ReactMarker::logTaggedMarker(ReactMarker::NATIVE_MODULE_SETUP_STOP, name.c_str());
+  //ReactMarker::logTaggedMarker(ReactMarker::NATIVE_MODULE_SETUP_STOP, name.c_str());
 
   return module;
 }

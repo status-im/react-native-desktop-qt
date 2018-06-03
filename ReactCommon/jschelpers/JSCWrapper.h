@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  */
-
+// clang-format off
 #pragma once
 
 #include <functional>
@@ -57,10 +57,8 @@ JSC_IMPORT void FBJSContextStartGCTimers(JSContextRef);
 }
 #endif
 
-#if defined(__APPLE__)
-#import <objc/objc.h>
-#import <JavaScriptCore/JSStringRefCF.h>
-#import <string>
+#include <JavaScriptCore/JSStringRef.h>
+#include <string>
 
 /**
  * JSNoBytecodeFileFormatVersion
@@ -72,7 +70,7 @@ RN_EXPORT extern const int32_t JSNoBytecodeFileFormatVersion;
 namespace facebook {
 namespace react {
 
-#define JSC_WRAPPER_METHOD(m) decltype(&m) m
+#define JSC_WRAPPER_METHOD(m) decltype(&m) m##_
 
 struct JSCWrapper {
   // JSGlobalContext
@@ -91,11 +89,11 @@ struct JSCWrapper {
 
   // JSString
   JSC_WRAPPER_METHOD(JSStringCreateWithUTF8CString);
-  JSC_WRAPPER_METHOD(JSStringCreateWithCFString);
+  //JSC_WRAPPER_METHOD(JSStringCreateWithCFString);
   #if WITH_FBJSCEXTENSIONS
   JSC_WRAPPER_METHOD(JSStringCreateWithUTF8CStringExpectAscii);
   #endif
-  JSC_WRAPPER_METHOD(JSStringCopyCFString);
+  //JSC_WRAPPER_METHOD(JSStringCopyCFString);
   JSC_WRAPPER_METHOD(JSStringGetCharactersPtr);
   JSC_WRAPPER_METHOD(JSStringGetLength);
   JSC_WRAPPER_METHOD(JSStringGetMaximumUTF8CStringSize);
@@ -157,8 +155,8 @@ struct JSCWrapper {
   JSC_WRAPPER_METHOD(configureJSCForIOS);
 
   // Objective-C API
-  Class JSContext;
-  Class JSValue;
+  //Class JSContext;
+  //Class JSValue;
 
   int32_t JSBytecodeFileFormatVersion;
 };
@@ -176,9 +174,7 @@ RN_EXPORT const JSCWrapper *systemJSCWrapper();
 RN_EXPORT const JSCWrapper *customJSCWrapper();
 
 } }
-
-#else
-
+/*
 namespace facebook {
 namespace react {
 
@@ -189,5 +185,4 @@ bool isCustomJSCPtr(T *x) {
 }
 
 } }
-
-#endif
+*/

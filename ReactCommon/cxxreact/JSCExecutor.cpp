@@ -1,5 +1,5 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
-
+// clang-format off
 #include "JSCExecutor.h"
 
 #include <algorithm>
@@ -226,8 +226,8 @@ namespace facebook {
       installNativeHook<&JSCExecutor::nativeFlushQueueImmediate>("nativeFlushQueueImmediate");
       installNativeHook<&JSCExecutor::nativeCallSyncHook>("nativeCallSyncHook");
 
-      installGlobalFunction(m_context, "nativeLoggingHook", JSCNativeHooks::loggingHook);
-      installGlobalFunction(m_context, "nativePerformanceNow", JSCNativeHooks::nowHook);
+      //installGlobalFunction(m_context, "nativeLoggingHook", JSCNativeHooks::loggingHook);
+      //installGlobalFunction(m_context, "nativePerformanceNow", JSCNativeHooks::nowHook);
 
 #if DEBUG
       installGlobalFunction(m_context, "nativeInjectHMRUpdate", nativeInjectHMRUpdate);
@@ -238,7 +238,7 @@ namespace facebook {
       addJSCMemoryHooks(m_context);
       addJSCPerfStatsHooks(m_context);
 
-      JSCNativeHooks::installPerfHooks(m_context);
+      //JSCNativeHooks::installPerfHooks(m_context);
 
       if (canUseSamplingProfiler(m_context)) {
         initSamplingProfilerOnMainJSCThread(m_context);
@@ -380,7 +380,7 @@ namespace facebook {
                         "sourceURL", sourceURL);
 
       std::string scriptName = simpleBasename(sourceURL);
-      ReactMarker::logTaggedMarker(ReactMarker::RUN_JS_BUNDLE_START, scriptName.c_str());
+      // ReactMarker::logTaggedMarker(ReactMarker::RUN_JS_BUNDLE_START, scriptName.c_str());
       String jsSourceURL(m_context, sourceURL.c_str());
 
       // TODO t15069155: reduce the number of overrides here
@@ -434,9 +434,9 @@ namespace facebook {
         JSContextLock lock(m_context);
         {
           SystraceSection s_("JSCExecutor::loadApplicationScript-createExpectingAscii");
-          ReactMarker::logMarker(ReactMarker::JS_BUNDLE_STRING_CONVERT_START);
+          // ReactMarker::logMarker(ReactMarker::JS_BUNDLE_STRING_CONVERT_START);
           jsScript = adoptString(std::move(script));
-          ReactMarker::logMarker(ReactMarker::JS_BUNDLE_STRING_CONVERT_STOP);
+          // ReactMarker::logMarker(ReactMarker::JS_BUNDLE_STRING_CONVERT_STOP);
         }
 
         SystraceSection s_("JSCExecutor::loadApplicationScript-evaluateScript");
@@ -446,7 +446,7 @@ namespace facebook {
       flush();
 
       ReactMarker::logMarker(ReactMarker::CREATE_REACT_CONTEXT_STOP);
-      ReactMarker::logTaggedMarker(ReactMarker::RUN_JS_BUNDLE_STOP, scriptName.c_str());
+      // ReactMarker::logTaggedMarker(ReactMarker::RUN_JS_BUNDLE_STOP, scriptName.c_str());
     }
 
     void JSCExecutor::setBundleRegistry(std::unique_ptr<RAMBundleRegistry> bundleRegistry) {

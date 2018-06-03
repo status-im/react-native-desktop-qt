@@ -18,6 +18,7 @@
 #include "blobprovider.h"
 #include "clipboard.h"
 #include "communication/executor.h"
+#include "communication/javascriptcoreexecutor.h"
 #include "communication/serverconnection.h"
 #include "communication/websocketexecutor.h"
 #include "componentmanagers/activityindicatormanager.h"
@@ -51,6 +52,10 @@
 #include "utilities.h"
 #include "websocketmodule.h"
 
+#ifdef JAVASCRIPTCORE_ENABLED
+#include "jscutilities.h"
+#endif
+
 #include <QDir>
 #include <QJsonDocument>
 #include <QMap>
@@ -82,6 +87,8 @@ public:
     bool remoteJSDebugging = false;
     bool hotReload = false;
     QVariantList externalModules;
+
+    bool useJSC = false;
 
     QObjectList internalModules() {
         return QObjectList{new Timing,
@@ -119,19 +126,52 @@ Bridge::Bridge(QObject* parent) : QObject(parent), d_ptr(new BridgePrivate) {
 
 Bridge::~Bridge() {}
 
+void* Bridge::getJavaScriptContext() {
+    Q_D(Bridge);
+#ifdef JAVASCRIPTCORE_ENABLED
+    JavaScriptCoreExecutor* javaScriptExecutor = qobject_cast<JavaScriptCoreExecutor*>(d->executor);
+    if (javaScriptExecutor) {
+        return javaScriptExecutor->getJavaScriptContext();
+    } else {
+        return nullptr;
+    }
+#else
+    return nullptr;
+#endif
+}
+
+void Bridge::executeOnJavaScriptThread(std::function<void()> func) {
+    Q_D(Bridge);
+#ifdef JAVASCRIPTCORE_ENABLED
+    JavaScriptCoreExecutor* javaScriptExecutor = qobject_cast<JavaScriptCoreExecutor*>(d->executor);
+    if (javaScriptExecutor) {
+        javaScriptExecutor->executeOnJavaScriptThread(func);
+    }
+#endif
+}
+
 void Bridge::setupExecutor() {
     Q_D(Bridge);
 
     if (d->executor) {
         d->executor->deleteLater();
         d->executor = nullptr;
+        d->useJSC = false;
     }
-
 #ifdef RCT_DEV
     if (d->remoteJSDebugging) {
         d->executor = new WebSocketExecutor(QUrl("ws://localhost:8081/debugger-proxy?role=client"), this);
     }
 #endif // RCT_DEV
+
+#ifdef JAVASCRIPTCORE_ENABLED
+    if (!d->executor) {
+        d->useJSC = true;
+        JavaScriptCoreExecutor* javaScriptExecutor = new JavaScriptCoreExecutor(this);
+        javaScriptExecutor->setBridge(this);
+        d->executor = javaScriptExecutor;
+    }
+#endif // JAVASCRIPTCORE_ENABLED
 
     if (!d->executor) {
         ServerConnection* conn =
@@ -154,9 +194,11 @@ void Bridge::init() {
     Q_D(Bridge);
 
     setupExecutor();
-    initModules();
-    injectModules();
-    loadSource();
+    if (!d->useJSC) {
+        initModules();
+        injectModules();
+        loadSource();
+    }
 }
 
 void Bridge::reload() {
@@ -211,6 +253,7 @@ void Bridge::executeSourceCode(const QByteArray& sourceCode) {
 void Bridge::enqueueRunAppCall(const QVariantList& args) {
     if (!d_func()->executor)
         return;
+
     d_func()->executor->executeJSCall("callFunctionReturnFlushedQueue",
                                       QVariantList{"AppRegistry", "runApplication", args},
                                       [=](const QJsonDocument& doc) {
@@ -534,3 +577,8 @@ void Bridge::applicationScriptDone() {
                                           });
     });
 }
+
+void Bridge::partialBatchDidFlush() {}
+void Bridge::batchDidComplete() {}
+
+#include "bridge.moc"

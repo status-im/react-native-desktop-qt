@@ -13,6 +13,16 @@ project(react-native-desktop)
 set(PROJECT_NAME "react-native-desktop")
 set(PROJECT_VERSION "0.0.1")
 
+option(JAVASCRIPTCORE_ENABLED
+    "Build with JavaScriptCore enabled"
+    OFF)
+
+if(JAVASCRIPTCORE_ENABLED)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
+
 if(WIN32)
   set(REACT_BUILD_STATIC_LIB 1)
   set(USE_QTWEBKIT 1)

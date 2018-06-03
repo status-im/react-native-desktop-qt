@@ -23,8 +23,8 @@ class Bridge;
 
 enum class NativeMethodType { Async, Promise, Sync };
 
-class ModuleMethod {
-
+class ModuleMethod : public QObject {
+    Q_OBJECT
 public:
     typedef std::function<QObject*(QVariantList&)> ObjectFunction;
 
@@ -34,7 +34,7 @@ public:
     QString name() const;
     NativeMethodType type() const;
 
-    void invoke(const QVariantList& args);
+    Q_INVOKABLE void invoke(const QVariantList& args);
 
 private:
     ObjectFunction m_objectFunction;
