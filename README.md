@@ -28,16 +28,16 @@ To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.
 
 ### 3rd-party react-native modules support
 Pure JavaScript react-native modules can be used with react-native-desktop without limitations.  
-Creation of custom react-native `native` modules or `adopting of available native modules` is supported and described in following [guideline](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/NativeModulesSupport.md).  
+Creation of custom react-native `native` modules or `adopting of available native modules` is supported and described in following [guideline](docs/ReactQt/NativeModulesSupport.md).  
 
-[List of supported or partially supported native modules](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/SupportedNativeModulesList.md).
+[List of supported or partially supported native modules](docs/ReactQt/SupportedNativeModulesList.md).
 
 ## Documentation
 
-- [List of supported React Native components and APIs ("React Native Qt" column)](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/ComponentsSupport.md)
-- [Linux guide for React Native Desktop contributors](https://github.com/status-im/react-native-desktop/blob/react-native-qt/Development-linux.md)
-- Follow [Ubuntu development guide](https://github.com/status-im/react-native-desktop/blob/react-native-qt/README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
-- [Troubleshooting](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/Troubleshooting.md)
+- [List of supported React Native components and APIs ("React Native Qt" column)](docs/ReactQt/ComponentsSupport.md)
+- [Linux guide for React Native Desktop contributors](Development-linux.md)
+- Follow [Ubuntu development guide](README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
+- [Troubleshooting](docs/ReactQt/Troubleshooting.md)
 
 ## ClojureScript React Native apps support
 

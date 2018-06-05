@@ -1,6 +1,6 @@
 ## Overview
 
-To create react-native apps with `Desktop` platform support extended version of `react-native-cli` package should be [installed globally](https://github.com/status-im/react-native-desktop/blob/master/docs/ReactQt/InstallUpdatedReactNativeCLI.md).  
+To create react-native apps with `Desktop` platform support extended version of `react-native-cli` package should be [installed globally](docs/ReactQt/InstallUpdatedReactNativeCLI.md).  
 
 In order to setup the RN-desktop project, execute these terminal commands:
 
