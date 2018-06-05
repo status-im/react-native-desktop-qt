@@ -19,3 +19,4 @@ Afterwards, execute:
 ```
 ~/DesktopSampleApp$ react-native run-desktop
 ```
+(On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command)
