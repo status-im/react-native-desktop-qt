@@ -9,10 +9,13 @@ In order to setup the RN-desktop project, execute these terminal commands:
 ~/DesktopSampleApp$ react-native desktop
 
 ```
-Afterwards run these commands in separate shells:
+If you're using macOS, run these commands in separate shells:
 ```
 ~/DesktopSampleApp$ npm start
 ~/DesktopSampleApp$ node node_modules/react-native/ubuntu-server.js
-~/DesktopSampleApp$ react-native run-desktop
 ```
 
+Afterwards, execute:
+```
+~/DesktopSampleApp$ react-native run-desktop
+```
