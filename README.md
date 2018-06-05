@@ -16,9 +16,9 @@ Recommended Qt framework of version 5.9.1 LTS.
 
 ## Getting Started
 
-- [Install Prerequisites](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/InstallPrerequisites.md)  
-- [Install adjusted react-native-cli](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/InstallUpdatedReactNativeCLI.md)  
-- [Create new App](https://github.com/status-im/react-native-desktop/blob/react-native-qt/docs/ReactQt/CreateNewApp.md)  
+- [Install Prerequisites](https://github.com/status-im/react-native-desktop/blob/master/docs/ReactQt/InstallPrerequisites.md)  
+- [Install adjusted react-native-cli](https://github.com/status-im/react-native-desktop/blob/master/docs/ReactQt/InstallUpdatedReactNativeCLI.md)  
+- [Create new App](https://github.com/status-im/react-native-desktop/blob/master/docs/ReactQt/CreateNewApp.md)  
 
 
 ### Debugging
