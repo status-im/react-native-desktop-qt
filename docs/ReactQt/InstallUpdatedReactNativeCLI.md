@@ -5,4 +5,5 @@ Original `react-native-cli` is extended with cli commands to generate, build and
 1. git clone https://github.com/status-im/react-native-desktop.git
 2. cd react-native-desktop/react-native-cli
 3. npm update
-4. npm install -g
+4. npm uninstall -g react-native-cli (remove original package if installed) 
+5. npm install -g
