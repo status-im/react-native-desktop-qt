@@ -2,7 +2,7 @@
 # How react-native-desktop works internally
 
 ## Desktop project code
-When you create project with `react-native init SomeProject` you have ios and android-specific files generated immediately. To add desktop platform files you have to invoke `react-native desktop` command (in your project folder). `SomeProject/desktop` folder will be generated. It contains `CMakeLists.txt` for building desktop Qt application.
+When you create a project with `react-native init SomeProject`, you have ios and android-specific files generated immediately. To add desktop platform files, you have to invoke `react-native desktop` command (in your project folder). `SomeProject/desktop` folder generated then. It contains `CMakeLists.txt` for building desktop Qt application.
 
 ## Running the app
 
@@ -12,11 +12,11 @@ There are 3 participants in react-native-desktop application:
 - Bundler
 - JS server (right now called ubuntu-server, but this is subject to change)
 
-`Qt application` - built from project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI. 
+`Qt application` - built from a project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI. 
 
-`Bundler` - this server runs on developer's machine and provides access to js files from project. Also it can generate "bundle" - single js file with all project code in it. Not needed for distribution. 
+`Bundler` - this server runs on developer's machine and provides access to js files from the project. Also, it can generate "bundle" - single js file with all project code in it. Not needed for distribution. 
 
-`JS server` - provides sandbox for running javascript project code. Communicates with Qt Application.
+`JS server` - provides a sandbox for running javascript project code. It communicates with Qt Application.
 
 ### Steps on app start
 
@@ -29,15 +29,15 @@ There are 3 participants in react-native-desktop application:
 
 2. `Qt application` connects to `Bundler` and receives single js file generated from all js files in a project.
 
-This step is valid only for development environment. For production you should manually generate js bundle, mention it in `package.json` and it will be included in application resources.
+This step is valid only for a development environment. For production you should manually generate js bundle, mention it in `package.json`, and it will be included in application resources.
 
 3. `Qt application` connects to `JS server` and sends generated js code to it.
-4. `JS server` invokes received javascript code in sandbox, receives JSON response and sends it back to `Qt application`
-5. `Qt application` parses JSON response that contains intructions (what UI changes should be instantiated) and apply them. At this point user see native desktop Qt application with the UI he described in original JS files.
+4. `JS server` invokes received javascript code in a sandbox, receives JSON response and sends it back to `Qt application`.
+5. `Qt application` parses JSON response that contains instructions (what UI changes should be instantiated) and applies them. At this point, user see native desktop Qt application with the UI he described in original JS files.
 
 
-### Communication when app runs
-`Qt application` and `JS server` maintain connection all the time. When user clicks button, `Qt application` constructs javascript code with information about event and sends it to `JS server`. `JS server` evaluates code and returns JSON response that `Qt application` parses and reacts.
+### Communication when an app runs
+`Qt application` and `JS server` maintain connection all the time. When a user clicks the button, `Qt application` constructs javascript code with information about an event and sends it to `JS server`. `JS server` evaluates code and returns JSON response that `Qt application` parses and reacts.
 
 
 ## Misc
