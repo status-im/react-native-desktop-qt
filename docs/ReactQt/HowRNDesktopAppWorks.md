@@ -12,7 +12,7 @@ There are 3 participants in react-native-desktop application:
 - Bundler
 - JS server (right now called ubuntu-server, but this is subject to change)
 
-`Qt application` - built from project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI.
+`Qt application` - built from project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI. 
 
 `Bundler` - this server runs on developer's machine and provides access to js files from project. Also it can generate "bundle" - single js file with all project code in it. Not needed for distribution. 
 
@@ -24,9 +24,11 @@ There are 3 participants in react-native-desktop application:
 <img src="./react-native-desktop-workflow">
 
 1. When `react-native run-desktop` invoked, `Qt application` is built and launched. 
-`desktop/main.cpp` is the one developer can change. Other sources can be found in `node_modules/react-native/ReactQt/application/src`. If you depend on any 3rd party react-native modules, their code also included at this point. 
+
+`desktop/main.cpp` is the file developer can change to affect app Qt app behavior. Other sources included from `node_modules/react-native/ReactQt/application/src`. If you depend on any 3rd party react-native modules, their code also included at this point. 
 
 2. `Qt application` connects to `Bundler` and receives single js file generated from all js files in a project.
+
 This step is valid only for development environment. For production you should manually generate js bundle, mention it in `package.json` and it will be included in application resources.
 
 3. `Qt application` connects to `JS server` and sends generated js code to it.
@@ -34,7 +36,8 @@ This step is valid only for development environment. For production you should m
 5. `Qt application` parses JSON response that contains intructions (what UI changes should be instantiated) and apply them. At this point user see native desktop Qt application with the UI he described in original JS files.
 
 
-### Steps on app start
+### Communication when app runs
+`Qt application` and `JS server` maintain connection all the time. When user clicks button, `Qt application` constructs javascript code with information about event and sends it to `JS server`. `JS server` evaluates code and returns JSON response that `Qt application` parses and reacts.
 
 
 ## Misc
