@@ -34,6 +34,7 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 ## Documentation
 
+- [How react-native-desktop works internally](docs/ReactQt/HowRNDesktopAppWorks.md)
 - [List of supported React Native components and APIs ("React Native Qt" column)](docs/ReactQt/ComponentsSupport.md)
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
 - Follow [Ubuntu development guide](README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
