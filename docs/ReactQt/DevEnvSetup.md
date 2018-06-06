@@ -49,6 +49,9 @@ In order to get REPL working, use the below elisp code:
   (cider-repl-return))
 ```
 
+`custom-cider-jack-in` sets the correct profile for leiningen, and can be run as soon as emacs is open.
+run `start-figwheel-cljs-repl` once you already have a cider repl session from the jack-in
+
 ## vim-fireplace
 For some reason there is no `.nrepl-port` file in project root, so `vim-fireplace` will not be able to connect automatically. You can either:
   - run `:Connect` and answer a couple of interactive prompts
