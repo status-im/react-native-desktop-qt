@@ -121,3 +121,15 @@ make[2]: *** [modules/react-native-status/desktop/StatusGo/src/github.com/status
 make[1]: *** [modules/react-native-status/desktop/CMakeFiles/StatusGo_ep(.)dir/all] Error 2
 make: *** [all] Error 2
 ```
+
+### inotify errors
+
+upon running `npm start` on linux, watchman may indicate: "The user limit on the total number of inotify watches was reached"
+
+This can be fixed by running the below command. Note, changes will only be as valid as the current terminal session.
+
+```
+echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches && echo 999999 | sudo tee -a
+/proc/sys/fs/inotify/max_queued_events && echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_instances &&
+watchman shutdown-server && sudo sysctl -p
+```
