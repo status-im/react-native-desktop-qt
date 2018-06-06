@@ -1,5 +1,5 @@
 # Prerequisites:
-lein, node.js v.8 , cmake, Qt 5.9.1, Qt's qmake available in PATH
+lein, node.js v.8 , cmake, Qt 5.9.1 (with QtWebEngine components installed), Qt's qmake available in PATH
 
 Note: add qmake to PATH via
 `export PATH=<QT_PATH>/clang_64/bin:$PATH`
@@ -50,7 +50,7 @@ In order to get REPL working, use the below elisp code:
 ```
 
 ## vim-fireplace
-For some reason there is `.nrepl-port` file in project root, so `vim-fireplace` will not be able to connect automatically. You can either:
+For some reason there is no `.nrepl-port` file in project root, so `vim-fireplace` will not be able to connect automatically. You can either:
   - run `:Connect` and answer a couple of interactive prompts
   - create `.nrepl-port` file manually and add a single line containing `7888` (or whatever port REPL is running on)
 
