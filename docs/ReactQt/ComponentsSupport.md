@@ -40,7 +40,7 @@
 | AccessibilityInfo           |           |                |                 |                                |            |
 | ActionSheetIOS              |           |                |                 |                                |            |
 | AdSupportIOS                |           |                |                 |                                |            |
-| Alert                       |           |                |                 |                                |            |
+| Alert                       |           |                | +/-             |                                |            |
 | AlertIOS                    |           |                |                 |                                |            |
 | Animated                    |           | + (View,Text)  |                 |                                | complex    |
 | AppRegistry                 |           | +              | +/-             | Component is JS based          |            |
@@ -49,7 +49,7 @@
 | BackAndroid                 |           |                |                 |                                |            |
 | BackHandler                 |           |                |                 |                                |            |
 | CameraRoll                  |           |                |                 |                                |            |
-| Clipboard                   |           | +              |                 | QClipboard                     | minor      |
+| Clipboard                   |           | +              |  +/-            | QClipboard                     | minor      |
 | DatePickerAndroid           |           |                |                 |                                |            |
 | Dimensions                  |           | +              |                 |                                | medium     |
 | Easing                      |           |                |                 |                                |            |
