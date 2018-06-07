@@ -708,8 +708,8 @@ exports.examples = [
   },
 ];
 
-var fullImage = {uri: 'https://facebook.github.io/react/logo-og.png'};
-var smallImage = {uri: 'https://facebook.github.io/react/img/logo_small_2x.png'};
+var fullImage = {uri: 'https://facebook.github.io/react-native/img/opengraph.png'};
+var smallImage = {uri: 'https://facebook.github.io/react-native/img/favicon.png'};
 
 var styles = StyleSheet.create({
   base: {
