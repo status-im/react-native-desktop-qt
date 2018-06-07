@@ -48,7 +48,7 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
-- [Yoga layout engine usage in react-native-desktop](YogaLayoutEngine.md)
+- [Yoga layout engine in react-native-desktop](YogaLayoutEngine.md)
 
 ## License
 
