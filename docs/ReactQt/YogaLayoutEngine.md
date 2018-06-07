@@ -1,7 +1,6 @@
 
 ### How `Yoga` engine works
 `Yoga` engine has api that works with "nodes". Every `YGNode` has a set of properties. Some of them used to setup layout settings, some - to read the calculated position of the node.
-When 
 
 Every `YGNode` has a set of properties that control the layout of node (like minWidth, alignment, justification, etc.) and set of properties that contain calculated layout results (like x, y, width, height). You can join nodes in hierarchy and `calculate` it. `Yoga` engine will read "controlling" properties and save the result in "position" properties.
 
