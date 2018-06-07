@@ -16,16 +16,6 @@ Can be solved by re-running `npm install react-native` which put the `ReactQt/ru
 
 After last upgrade of react-native-desktop to the v.0.53.3 of original react-native appeared some incompatibility between `react-native` and `web3` packages on npm install. Initially it installed usually fine, but after `react-native desktop` command execution `web3` package is get removed from `node_modules`. Manual install of web3 by `npm install web3` installs `web3` package, but removes `react-native` package. Workaround or solution?
 
-### Node server crashing
-`node ./ubuntu_server.js` log:
-```
-DEBUG [status-im.utils.handlers:36] - Handling re-frame event:  :signal-event {"type":"node.crashed","event":{"error":"node is already running"}}
-DEBUG [status-im.ui.screens.events:350] - :event-str {"type":"node.crashed","event":{"error":"node is already running"}}
-DEBUG [status-im.utils.instabug:8] - Signal event: {"type":"node.crashed","event":{"error":"node is already running"}}
-DEBUG [status-im.ui.screens.events:362] - Event  node.crashed  not handled
-```
-Solution: prevent starting Node when there is an instance already running.
-
 ### ReactButton.qml non-existent property "elide" error upon startup
 ```
 qrc:/qml/ReactButton.qml:33: Error: Cannot assign to non-existent property "elide"
@@ -35,6 +25,7 @@ QQmlComponent: Component is not ready
 "Can't create QML item for componenet qrc:/qml/ReactWebView.qml"
 "RCTWebViewView" has no view for inspecting!
 ```
+Solution: make sure that QtWebEngine components are installed.
 
 ### inotify errors
 
