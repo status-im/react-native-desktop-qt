@@ -20,8 +20,8 @@ It was forked from Canonical/react-native-linux. Canonical in its turn forked fa
 ### Does the bundler step in the diagram only happen once at app startup or is all of the JS code appended to a single file on every reload?
 On every reload Qt app requests single js files and sends it to execution in ubuntu-server. It is like restart, but quicker. Bundler caches that js file, so collecting it together doesn’t take much time.
 
-### Is there a dedicated node mule within status-react for communicating with qt at the javascript code level or does that happen elsewhere, say, in the build pipeline?
-No. Communication doesn’t happen directly in status-react. But status-react uses react-native. And react-native is designed to have own js part and communication with native part.
+### Is there a dedicated node mule within react-native for communicating with qt at the javascript code level or does that happen elsewhere, say, in the build pipeline?
+No. React-native is designed to have own js part and communication with native part.
 Qt code in react-native-desktop contains a bunch of modules that implement controls and API’s natively. 
 When Qt Application starts it sends `config` - information about what modules it implements on native side - their names, ids, lists of functions, constants, etc. From this moment react-native part of js code can “invoke” that native methods just by mentioning them in JSON results.
 
@@ -53,9 +53,6 @@ Here is a JSON result that we receive from function above:
 ]
 ```
 When it is processed on Qt side, it means that function 2 from Module 27 should be invoked with passed params. (react-native knows module ids from config).
-
-### What does `lein figwheel-repl desktop` do?
-It invokes `lein` with two profiles - `figwheel` and `desktop`.
 
 ### Where can I read some intro on React Native internals?
 https://www.logicroom.co/react-native-architecture-explained/, https://facebook.github.io/react-native/docs/communication-ios.html.
