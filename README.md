@@ -48,6 +48,8 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
+[Using GammaRay for inspecting Qt internals](docs/ReactQt/InspectAppWithGammaRay.md)
+
 ## License
 
 React Native Desktop is provided under [BSD licensed](./LICENSE).
