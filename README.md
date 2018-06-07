@@ -49,6 +49,7 @@ Any kind of contribution is welcome! Check the [list of opened issues](https://g
 
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
 - [Yoga layout engine in react-native-desktop](YogaLayoutEngine.md)
+- [Using GammaRay for inspecting Qt internals](docs/ReactQt/InspectAppWithGammaRay.md)
 
 ## License
 
