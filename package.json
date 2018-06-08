@@ -1,11 +1,11 @@
 {
-  "name": "react-native",
+  "name": "react-native-desktop",
   "version": "0.53.3",
   "description": "A framework for building native apps using React",
   "license": "BSD-3-Clause",
   "repository": {
     "type": "git",
-    "url": "git@github.com:facebook/react-native.git"
+    "url": "git@github.com:status-im/react-native-desktop.git"
   },
   "engines": {
     "node": ">=4"
@@ -147,7 +147,7 @@
     "test-android-e2e": "npm run test-android-build && npm run test-android-run-e2e"
   },
   "bin": {
-    "react-native": "local-cli/wrong-react-native.js"
+    "react-native-desktop": "local-cli/wrong-react-native.js"
   },
   "peerDependencies": {
     "react": "16.2.0"
@@ -248,5 +248,9 @@
     "react-test-renderer": "16.2.0",
     "shelljs": "^0.7.8",
     "sinon": "^2.2.0"
+  },
+  "rnpm": {
+    "plugin": "./local-cli/index.js",
+    "platform": "./local-cli/platform.js"
   }
 }

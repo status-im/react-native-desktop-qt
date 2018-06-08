@@ -37,24 +37,18 @@ export type CommandT = {
 
 const documentedCommands = [
   require('./server/server'),
-  require('./runIOS/runIOS'),
-  require('./runAndroid/runAndroid'),
   require('./desktop/genDesktop'),
   require('./desktop/runDesktop'),
   require('./desktop/buildDesktop'),
   require('./library/library'),
   require('./bundle/bundle'),
   require('./bundle/unbundle'),
-  require('./eject/eject'),
   require('./link/link'),
   require('./link/unlink'),
   require('./install/install'),
   require('./install/uninstall'),
   require('./upgrade/upgrade'),
-  require('./logAndroid/logAndroid'),
-  require('./logIOS/logIOS'),
   require('./dependencies/dependencies'),
-  require('./info/info'),
 ];
 
 // The user should never get here because projects are inited by

@@ -23,7 +23,6 @@ const childProcess = require('child_process');
  * run Flow. */
 const commander = require('commander');
 const commands = require('./commands');
-const init = require('./init/init');
 const path = require('path');
 const pkg = require('../package.json');
 
@@ -159,5 +158,4 @@ function run() {
 
 module.exports = {
   run: run,
-  init: init,
 };

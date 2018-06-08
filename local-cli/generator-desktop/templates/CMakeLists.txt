@@ -35,9 +35,9 @@ endforeach(external_module)
 # APPLICATION_MAIN_CPP_PATH contains absolute path to generated template copy of main.cpp for application executable
 get_filename_component(APPLICATION_MAIN_CPP_PATH main.cpp ABSOLUTE)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/React/Layout)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/runtime/src ${CMAKE_CURRENT_BINARY_DIR}/lib)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native/ReactQt/application/src ${CMAKE_CURRENT_BINARY_DIR}/bin)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native-desktop/React/Layout)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native-desktop/ReactQt/runtime/src ${CMAKE_CURRENT_BINARY_DIR}/lib)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../node_modules/react-native-desktop/ReactQt/application/src ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 if (WIN32)
   set(RUN_SCRIPT_FILE_NAME "run-app.bat")

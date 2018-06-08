@@ -10,11 +10,9 @@
  */
 'use strict';
 
-const android = require('./android');
 const Config = require('../util/Config');
 const findPlugins = require('./findPlugins');
 const findAssets = require('./findAssets');
-const ios = require('./ios');
 const wrapCommands = require('./wrapCommands');
 
 /* $FlowFixMe(>=0.54.0 site=react_native_oss) This comment suppresses an error
@@ -89,8 +87,6 @@ const defaultRNConfig = {
 
   getPlatformConfig(): Object {
     return {
-      ios,
-      android,
       ...pluginPlatforms
     };
   },
