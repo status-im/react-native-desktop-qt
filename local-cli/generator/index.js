@@ -50,7 +50,7 @@ module.exports = yeoman.generators.NamedBase.extend({
     }
     if (!this.options['skip-desktop']) {
       this.composeWith('react:desktop', args, {
-        local: require.resolve(path.resolve(__dirname, '..', 'generator-desktop'))
+        local: require.resolve(path.resolve(__dirname, '..', 'templates', 'desktop'))
       });
     }
   },

@@ -11,7 +11,7 @@
 'use strict';
 
 const fs = require('fs');
-var generate = require('../generate/generate');
+var generate = require('../generator/generate');
 const { exec } = require('child_process');
 
 function applyDesktopPlatformPatch() {
