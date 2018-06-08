@@ -92,7 +92,7 @@
     ],
     "testEnvironment": "node"
   },
-  "main": "Libraries/react-native/react-native-implementation.js",
+  "main": "Libraries/react-native-desktop/react-native-desktop-implementation.js",
   "files": [
     ".flowconfig",
     "android",
@@ -136,11 +136,9 @@
     "prettier": "find . -name node_modules -prune -or -name '*.js' -print | xargs prettier --write",
     "start": "/usr/bin/env bash -c './scripts/packager.sh \"$@\" || true' --"
   },
-  "bin": {
-    "react-native-desktop": "local-cli/wrong-react-native.js"
-  },
   "peerDependencies": {
-    "react": "16.2.0"
+    "react": "16.2.0",
+    "react-native": "~0.53.3"
   },
   "dependencies": {
     "absolute-path": "^0.0.0",
