@@ -178,7 +178,7 @@ class WebView extends React.Component {
      * executed immediately as JavaScript.
      */
     injectJavaScript: PropTypes.func,
-    
+
     reload: PropTypes.func,
 
     /**
@@ -328,11 +328,7 @@ class WebView extends React.Component {
   * functionality, look into postMessage/onMessage.
   */
   injectJavaScript = (data) => {
-    UIManager.dispatchViewManagerCommand(
-      this.getWebViewHandle(),
-      UIManager.RCTWebView.Commands.injectJavaScript,
-      [data]
-    );
+    webViewManager.injectJavaScript(data);
   };
 
   /**
