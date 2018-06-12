@@ -17,6 +17,7 @@ WebView {
         webViewManager.s_reload.connect(webViewRoot.reload);
         webViewManager.s_goBack.connect(webViewRoot.goBack);
         webViewManager.s_goForward.connect(webViewRoot.goForward);
+        webViewManager.s_invokeJS.connect(webViewRoot.runJavaScript);
     }
 
     onP_sourceChanged: {

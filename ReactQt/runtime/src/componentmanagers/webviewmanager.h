@@ -21,6 +21,8 @@ class WebViewManager : public ViewManager {
     Q_INTERFACES(ModuleInterface)
     Q_DECLARE_PRIVATE(WebViewManager)
 
+    Q_INVOKABLE void injectJavaScript(const QString& javascript);
+
 public:
     WebViewManager(QObject* parent = 0);
     virtual ~WebViewManager();
@@ -37,6 +39,7 @@ Q_SIGNALS:
     void s_reload();
     void s_goBack();
     void s_goForward();
+    void s_invokeJS(const QString& javascript);
 
 private:
     virtual QString qmlComponentFile() const override;

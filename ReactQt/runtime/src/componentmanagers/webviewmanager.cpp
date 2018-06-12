@@ -69,4 +69,8 @@ void WebViewManager::goForward() {
     Q_EMIT s_goForward();
 }
 
+void WebViewManager::injectJavaScript(const QString& javascript) {
+    Q_EMIT s_invokeJS(javascript);
+}
+
 #include "webviewmanager.moc"
