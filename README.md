@@ -36,7 +36,6 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 - [How react-native-desktop works internally](docs/ReactQt/HowRNDesktopAppWorks.md)
 - [List of supported React Native components and APIs ("React Native Qt" column)](docs/ReactQt/ComponentsSupport.md)
-- [Linux guide for React Native Desktop contributors](Development-linux.md)
 - Follow [Ubuntu development guide](README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
 - [Troubleshooting](docs/ReactQt/Troubleshooting.md)
 
@@ -48,7 +47,9 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
-[Using GammaRay for inspecting Qt internals](docs/ReactQt/InspectAppWithGammaRay.md)
+- [Linux guide for React Native Desktop contributors](Development-linux.md)
+- [Yoga layout engine in react-native-desktop](YogaLayoutEngine.md)
+- [Using GammaRay for inspecting Qt internals](docs/ReactQt/InspectAppWithGammaRay.md)
 
 ## License
 
