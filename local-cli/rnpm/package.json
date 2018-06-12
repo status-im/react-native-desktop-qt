@@ -1,6 +1,6 @@
 {
   "name": "rnpm-plugin-desktop",
-  "version": "0.2.9",
+  "version": "0.1.0",
   "description": "An rnpm plugin that adds desktop support to a react-native project ",
   "main": "index.js",
   "keywords": [

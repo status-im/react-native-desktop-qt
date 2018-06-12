@@ -16,7 +16,7 @@ var path = require('path');
 var yeoman = require('yeoman-environment');
 
 /**
- * Simple utility for running the android yeoman generator.
+ * Simple utility for running the desktop yeoman generator.
  *
  * @param  {String} projectDir root project directory (i.e. contains index.js)
  * @param  {String} name       name of the root JS module for this app
@@ -27,9 +27,9 @@ module.exports = function(projectDir, name) {
 
   var env = yeoman.createEnv();
   var generatorPath = path.join(__dirname, 'generator');
-  env.register(generatorPath, 'react:app');
-  var args = ['react:app', name].concat(process.argv.slice(4));
-  env.run(args, {'skip-ios': true, 'skip-android': true}, function() {
+  env.register(generatorPath, 'react:desktop');
+  var args = ['react:desktop', name].concat(process.argv.slice(4));
+  env.run(args, {}, function() {
     process.chdir(oldCwd);
   });
 };

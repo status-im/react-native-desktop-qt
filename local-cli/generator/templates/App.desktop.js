@@ -1,18 +1,23 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Sample React Native Desktop App
+ * https://github.com/status-im/react-native-desktop
  * @flow
  */
 
 import React, { Component } from 'react';
 import {
-  AppRegistry,
+  Platform,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 
-class <%= name %> extends Component {
+const instructions = Platform.select({
+  desktop: 'Press Ctrl+R for dev menu'
+});
+
+type Props = {};
+export default class App extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
@@ -20,7 +25,10 @@ class <%= name %> extends Component {
           Welcome to React Native!
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.desktop.js
+          To get started, edit App.desktop.js
+        </Text>
+        <Text style={styles.instructions}>
+          {instructions}
         </Text>
       </View>
     );
@@ -45,6 +53,4 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
-
-AppRegistry.registerComponent('<%= name %>', () => <%= name %>);
 

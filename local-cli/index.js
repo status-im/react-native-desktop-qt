@@ -1,3 +1,3 @@
 module.exports = [
-    require("./desktop/runDesktop"),
+  require("./desktop/runDesktop"),
 ];

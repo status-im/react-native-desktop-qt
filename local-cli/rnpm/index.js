@@ -146,7 +146,7 @@ const REACT_NATIVE_DESKTOP_GENERATE_PATH = function() {
 // };
 
 const getInstallPackage = function(version, includeCanary) {
-  return Promise.resolve('\"https://github.com/status-im/react-native-desktop#master\"');
+  return Promise.resolve(`"https://github.com/status-im/react-native-desktop#master"`);
 }
 
 const getReactNativeAppName = function() {
