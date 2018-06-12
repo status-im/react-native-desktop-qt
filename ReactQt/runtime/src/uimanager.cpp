@@ -108,6 +108,7 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
             int childTag = AttachedProperties::get(child)->tag();
             child->setParent(0);
             m_views.remove(childTag);
+            child->setParentItem(nullptr);
             child->deleteLater();
         }
 
