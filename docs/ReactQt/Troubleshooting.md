@@ -26,15 +26,3 @@ QQmlComponent: Component is not ready
 "RCTWebViewView" has no view for inspecting!
 ```
 Solution: make sure that QtWebEngine components are installed.
-
-### inotify errors
-
-upon running `npm start` on linux, watchman may indicate: "The user limit on the total number of inotify watches was reached"
-
-This can be fixed by running the below command. Note, changes will only be as valid as the current terminal session.
-
-```
-echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches && echo 999999 | sudo tee -a
-/proc/sys/fs/inotify/max_queued_events && echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_instances &&
-watchman shutdown-server && sudo sysctl -p
-```
