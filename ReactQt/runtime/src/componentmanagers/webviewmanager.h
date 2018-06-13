@@ -30,6 +30,7 @@ public:
     virtual ViewManager* viewManager() override;
     virtual QString moduleName() override;
     virtual bool shouldLayout() const override;
+    virtual QStringList customDirectEventTypes() override;
 
     Q_INVOKABLE void reload();
     Q_INVOKABLE void goBack();
@@ -40,6 +41,11 @@ Q_SIGNALS:
     void s_goBack();
     void s_goForward();
     void s_invokeJS(const QString& javascript);
+
+public slots:
+    void sendOnLoadEndNotificationToJs(QQuickItem* webView);
+    void sendOnLoadStartNotificationToJs(QQuickItem* webView);
+    void sendOnErrorNotificationToJs(QQuickItem* webView);
 
 private:
     virtual QString qmlComponentFile() const override;

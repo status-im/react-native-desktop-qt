@@ -23,7 +23,12 @@
 #include "modulemethod.h"
 #include "propertyhandler.h"
 #include "utilities.h"
+#include "utilities.h"
 #include "webviewmanager.h"
+
+const QString EVENT_ONERROR = "onLoadingError";
+const QString EVENT_ONLOADFINISH = "onLoadingFinish";
+const QString EVENT_ONLOADSTART = "onLoadingStart";
 
 class WebViewManagerPrivate {};
 
@@ -71,6 +76,22 @@ void WebViewManager::goForward() {
 
 void WebViewManager::injectJavaScript(const QString& javascript) {
     Q_EMIT s_invokeJS(javascript);
+}
+
+void WebViewManager::sendOnLoadEndNotificationToJs(QQuickItem* webView) {
+    notifyJsAboutEvent(tag(webView), EVENT_ONLOADFINISH, {});
+}
+void WebViewManager::sendOnLoadStartNotificationToJs(QQuickItem* webView) {
+    notifyJsAboutEvent(tag(webView), EVENT_ONLOADSTART, {});
+}
+void WebViewManager::sendOnErrorNotificationToJs(QQuickItem* webView) {
+    notifyJsAboutEvent(tag(webView), EVENT_ONERROR, {});
+}
+
+QStringList WebViewManager::customDirectEventTypes() {
+    return QStringList{utilities::normalizeInputEventName(EVENT_ONLOADSTART),
+                       utilities::normalizeInputEventName(EVENT_ONLOADFINISH),
+                       utilities::normalizeInputEventName(EVENT_ONERROR)};
 }
 
 #include "webviewmanager.moc"
