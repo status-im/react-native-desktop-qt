@@ -3,7 +3,7 @@ These are some common issues you may run into while setting up React Native Qt.
 ### `npm install` hangs
 Downgrade to version 5.5.1: `npm install -g npm@5.5.1`.
 
-### `react-native run desktop` complaining about missing `qmldir`:
+### `react-native run-desktop` complaining about missing `qmldir`:
 ```Command failed: ./build.sh -e "node_modules/react-native-i18n/desktop;node_modules/react-native-config/desktop;node_modules/react-native-fs/desktop;node_modules/react-native-http-bridge/desktop;node_modules/react-native-webview-bridge/desktop;modules/react-native-status/desktop"
 Error copying directory from "/path-to-status-react/node_modules/react-native/ReactQt/runtime/src/qmldir" to "/path-to-status-react/desktop/lib/React".
 make[2]: *** [lib/CMakeFiles/copy-qmldir] Error 1
