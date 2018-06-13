@@ -74,9 +74,6 @@ jobs:
           rm -rf ./node_modules/metro
           npm install
 
-      # Apply metro patch to add desktop platform
-      - run: patch --verbose -d ./node_modules/metro/src -i ../../../add-desktop-platform.patch
-
       - type: shell
         name: Start packager
         command: npm start

@@ -98,8 +98,6 @@
     ".flowconfig",
     "ReactQt",
     "ubuntu-server.js",
-    "docs/add-desktop-platform.patch",
-    "docs/increase_bundler_memory_usage.patch",
     "cli.js",
     "init.sh",
     "scripts/launchPackager.bat",
