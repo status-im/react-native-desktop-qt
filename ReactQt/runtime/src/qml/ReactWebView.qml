@@ -9,6 +9,7 @@ WebView {
     property var p_source: ''
     property var webViewManager: null
     property var flexbox: React.Flexbox {control: webViewRoot}
+    property var p_testID
 
     onWebViewManagerChanged: {
         if (!webViewManager) {
@@ -27,4 +28,17 @@ WebView {
         }
     }
 
+    onLoadingChanged: {
+        switch(loadRequest.status) {
+        case WebView.LoadStartedStatus:
+            webViewManager.sendOnLoadStartNotificationToJs(webViewRoot);
+            break;
+        case WebView.LoadSucceededStatus:
+            webViewManager.sendOnLoadEndNotificationToJs(webViewRoot);
+            break;
+        case WebView.LoadFailedStatus:
+            webViewManager.sendOnErrorNotificationToJs(webViewRoot);
+            break;
+        }
+    }
 }
