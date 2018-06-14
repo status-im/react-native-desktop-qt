@@ -16,7 +16,6 @@ var fs = require('fs');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 var mkdirp = require('mkdirp');
-var utils = require('../generator-utils');
 var configUpdater = require("./rn-cli-config-updater");
 
 function validatePackageName(name) {
@@ -48,17 +47,6 @@ module.exports = yeoman.generators.NamedBase.extend({
       throw new Error('Package name ' + this.options.package + ' is invalid');
     }
   },
-
-  // configuring: function() {
-  //   utils.copyAndReplace(
-  //     this.templatePath('../../../.flowconfig'),
-  //     this.destinationPath('.flowconfig'),
-  //     {
-  //       'Libraries\/react-native\/react-native-interface.js' : 'node_modules/react-native/Libraries/react-native/react-native-interface.js',
-  //       '^flow/$' : 'node_modules/react-native/flow\nflow/'
-  //     }
-  //   );
-  // },
 
   writing: function() {
     var templateParams = {
@@ -95,22 +83,22 @@ module.exports = yeoman.generators.NamedBase.extend({
     );
     this.fs.copyTpl(
       this.templatePath('build.sh'),
-      this.destinationPath('desktop/build.sh'),
+      this.destinationPath('desktop/bin/build.sh'),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('build.bat'),
-      this.destinationPath('desktop/build.bat'),
+      this.destinationPath('desktop/bin/build.bat'),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('run-app.sh.in'),
-      this.destinationPath('desktop/run-app.sh.in'),
+      this.destinationPath('desktop/bin/run-app.sh.in'),
       templateParams
     );
     this.fs.copyTpl(
       this.templatePath('run-app.bat.in'),
-      this.destinationPath('desktop/run-app.bat.in'),
+      this.destinationPath('desktop/bin/run-app.bat.in'),
       templateParams
     );
     this.fs.copyTpl(
@@ -128,7 +116,6 @@ module.exports = yeoman.generators.NamedBase.extend({
 
     mkdirp.sync('desktop/share');
     mkdirp.sync('desktop/plugins');
-    mkdirp.sync('desktop/tmp');
   },
 
   end: function() {

@@ -31,4 +31,7 @@ echo "build.bat cmake generator: "%option-g%
 
 @rem Build project
 echo %CD%
-cmake -DCMAKE_BUILD_TYPE=Debug -G %option-g% -DEXTERNAL_MODULES_DIR=%option-e% -DJS_BUNDLE_PATH=%option-j% . && cmake --build .
+if not exist build mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Debug -G %option-g% -DEXTERNAL_MODULES_DIR=%option-e% -DJS_BUNDLE_PATH=%option-j% ..
+cmake --build .

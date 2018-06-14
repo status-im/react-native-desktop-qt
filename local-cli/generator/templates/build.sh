@@ -25,8 +25,12 @@ done
 echo "build.sh external modules paths: "$ExternalModulesPaths
 echo "build.sh JS bundle path: "$JsBundlePath
 
+mkdir -p build
+cd build
+
 # Workaround
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" . && make
+cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" ..
+make

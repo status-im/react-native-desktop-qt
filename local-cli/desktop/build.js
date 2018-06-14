@@ -117,7 +117,7 @@ function _buildApplication(args, desktopExternalModules, desktopJSBundlePath) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
-    var buildCommand = process.platform === "win32" ? "build.bat" : "./build.sh";
+    var buildCommand = process.platform === "win32" ? "bin\\build.bat" : "./bin/build.sh";
     if (typeof desktopExternalModules !== 'undefined' && desktopExternalModules !== null) {
       buildCommand += ' -e "' + desktopExternalModules.toString().replace(/,/g, ';') + '"';
     }

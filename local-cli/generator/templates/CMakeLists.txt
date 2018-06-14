@@ -46,8 +46,8 @@ else()
 endif()
 
 configure_file(
-  ${RUN_SCRIPT_FILE_NAME}.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${RUN_SCRIPT_FILE_NAME}
+  bin/${RUN_SCRIPT_FILE_NAME}.in
+  ${CMAKE_CURRENT_BINARY_DIR}/bin/${RUN_SCRIPT_FILE_NAME}
   @ONLY
 )
 
