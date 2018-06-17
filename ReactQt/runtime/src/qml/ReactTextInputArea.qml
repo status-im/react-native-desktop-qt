@@ -21,11 +21,13 @@ Flickable {
         objectName: textInputRoot.p_nativeID
         horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
         wrapMode: TextEdit.WordWrap
+        font.pointSize: textInputRoot.p_fontSize
 
         selectByKeyboard: true
         selectByMouse: true
 
         background: Rectangle {
+            color: textInputRoot.p_backgroundColor
             border.color: textInputRoot.p_borderColor
             border.width: textInputRoot.p_borderWidth
             radius: textInputRoot.p_borderRadius
@@ -44,6 +46,7 @@ Flickable {
             textInputManager.sendOnSubmitEditingToJs(textField)
             textInputManager.sendOnEndEditingToJs(textField)
         }
+
         onFocusChanged: {
             if (focus) {
                 textInputManager.sendOnFocusToJs(textField)

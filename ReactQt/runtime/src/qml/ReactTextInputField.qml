@@ -17,9 +17,11 @@ TextField {
     objectName: textInputRoot.p_nativeID
     horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
     echoMode: textInputRoot.p_secureTextEntry ? TextInput.Password : TextInput.Normal
+    font.pointSize: textInputRoot.p_fontSize
 
     selectByMouse: true
     background: Rectangle {
+        color: textInputRoot.p_backgroundColor
         border.color: textInputRoot.p_borderColor
         border.width: textInputRoot.p_borderWidth
         radius: textInputRoot.p_borderRadius
