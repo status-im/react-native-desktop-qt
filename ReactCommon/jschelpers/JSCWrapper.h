@@ -1,10 +1,8 @@
 /**
  * Copyright (c) 2016-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 // clang-format off
 #pragma once
@@ -12,10 +10,6 @@
 #include <functional>
 #include <string>
 #include <JavaScriptCore/JavaScript.h>
-
-#if WITH_FBJSCEXTENSIONS
-#include <jsc_stringref.h>
-#endif
 
 #if defined(JSCINTERNAL) || (!defined(__APPLE__))
 #define JSC_IMPORT extern "C"
@@ -143,6 +137,7 @@ struct JSCWrapper {
   JSC_WRAPPER_METHOD(JSValueToObject);
   JSC_WRAPPER_METHOD(JSValueToStringCopy);
   JSC_WRAPPER_METHOD(JSValueUnprotect);
+  JSC_WRAPPER_METHOD(JSValueIsNull);
 
   // Sampling profiler
   JSC_WRAPPER_METHOD(JSSamplingProfilerEnabled);
@@ -174,15 +169,3 @@ RN_EXPORT const JSCWrapper *systemJSCWrapper();
 RN_EXPORT const JSCWrapper *customJSCWrapper();
 
 } }
-/*
-namespace facebook {
-namespace react {
-
-template <typename T>
-bool isCustomJSCPtr(T *x) {
-  // Always use system JSC pointers
-  return false;
-}
-
-} }
-*/

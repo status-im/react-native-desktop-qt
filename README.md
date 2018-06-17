@@ -43,7 +43,7 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 [Re-Natal fork](https://github.com/status-im/re-natal.git) extended with `desktop` platform support.
 
-## Contributing
+Read our [contributing guide](https://facebook.github.io/react-native/docs/contributing.html) to learn about our development process, how to propose bug fixes and improvements, and how to build and test your changes to React Native.
 
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
