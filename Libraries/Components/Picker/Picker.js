@@ -70,42 +70,6 @@ class PickerItem extends React.Component<{
 }
 
 /**
- * Individual selectable item in a Picker.
- */
-class PickerItem extends React.Component<{
- label: string,
- value?: any,
- color?: ColorPropType,
- testID?: string,
-}> {
- static propTypes = {
-   /**
-    * Text to display for this item.
-    */
-   label: PropTypes.string.isRequired,
-   /**
-    * The value to be passed to picker's `onValueChange` callback when
-    * this item is selected. Can be a string or an integer.
-    */
-   value: PropTypes.any,
-   /**
-    * Color of this item's text.
-    * @platform android
-    */
-   color: ColorPropType,
-   /**
-    * Used to locate the item in end-to-end tests.
-    */
-   testID: PropTypes.string,
- };
-
- render() {
-   // The items are not rendered directly
-   throw null;
- }
-}
-
-/**
  * Renders the native picker component on iOS and Android. Example:
  *
  *     <Picker

@@ -32,6 +32,7 @@ public:
 
     Q_INVOKABLE void enableBlobSupport(qlonglong socketId);
     Q_INVOKABLE void disableBlobSupport(qlonglong socketId);
+    Q_INVOKABLE void addNetworkingHandler();
 
 private:
     QScopedPointer<BlobProviderPrivate> d_ptr;

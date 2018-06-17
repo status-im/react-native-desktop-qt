@@ -229,6 +229,7 @@
     "flow-bin": "^0.67.1",
     "jest": "22.4.2",
     "jest-junit": "3.6.0",
+    "patch-package": "^5.1.1",
     "prettier": "1.9.1",
     "react": "16.3.1",
     "react-test-renderer": "16.3.1",

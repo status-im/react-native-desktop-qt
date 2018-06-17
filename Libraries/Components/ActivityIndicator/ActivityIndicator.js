@@ -128,7 +128,7 @@ if (Platform.OS === 'ios') {
     { nativeOnly: { activityIndicatorViewStyle: true } }
   );
 } else if (Platform.OS === 'desktop') {
-    var RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
+    RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
 }
 
 const styles = StyleSheet.create({

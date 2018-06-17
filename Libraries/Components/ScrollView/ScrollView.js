@@ -529,27 +529,6 @@ const ScrollView = createReactClass({
     }
   },
 
-  componentWillMount: function() {
-    this._scrollAnimatedValue = new Animated.Value(this.props.contentOffset ? this.props.contentOffset.y : 0);
-    this._scrollAnimatedValue.setOffset(this.props.contentInset ? this.props.contentInset.top : 0);
-    this._stickyHeaderRefs = new Map();
-    this._headerLayoutYs = new Map();
-  },
-
-  componentDidMount: function() {
-    this._updateAnimatedNodeAttachment();
-  },
-
-  componentDidUpdate: function() {
-    this._updateAnimatedNodeAttachment();
-  },
-
-  componentWillUnmount: function() {
-    if (this._scrollAnimatedValueAttachment) {
-      this._scrollAnimatedValueAttachment.detach();
-    }
-  },
-
   setNativeProps: function(props: Object) {
     this._scrollViewRef && this._scrollViewRef.setNativeProps(props);
   },
