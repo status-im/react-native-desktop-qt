@@ -21,6 +21,8 @@ Item {
     property color p_borderColor: "black"
     property double p_borderWidth: 0
     property double p_borderRadius: 0
+    property color p_backgroundColor: "transparent"
+    property double p_fontSize: 14
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
 
