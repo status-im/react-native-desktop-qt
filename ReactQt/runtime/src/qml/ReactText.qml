@@ -1,7 +1,8 @@
 import QtQuick 2.4
 import React 0.1 as React
+import QtQuick.Controls 2.2
 
-Text {
+TextEdit {
     id: textRoot
 
     property bool p_allowFontScaling: false
@@ -22,6 +23,7 @@ Text {
     property int p_numberOfLines: 1000000
     property var flexbox: null
     property double p_opacity: 1
+    property bool p_selectable: false
 
 
 
@@ -36,13 +38,13 @@ Text {
 
 
     text: textIsTopInBlock ? decoratedText : ""
-    maximumLineCount: p_numberOfLines
-    fontSizeMode: p_allowFontScaling ? 3 : 0
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
     textFormat: Text.RichText
     wrapMode: Text.WrapAnywhere
     clip: true
     opacity: p_opacity
+    readOnly: true
+    selectByMouse: p_selectable
 
 
     onP_allowFontScalingChanged: updateHtmlText();
