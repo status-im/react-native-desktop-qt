@@ -117,6 +117,18 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
   }
   size_t index = it->second;
 
+  CHECK(index < modules_.size());
+  NativeModule *module = modules_[index].get();
+
+  // string name, object constants, array methodNames (methodId is index), [array promiseMethodIds], [array syncMethodIds]
+  folly::dynamic config = folly::dynamic::array(name);
+
+  {
+    SystraceSection s_("getConstants");
+    config.push_back(module->getConstants());
+  }
+  size_t index = it->second;
+
   // string name, object constants, array methodNames (methodId is index), [array promiseMethodIds], [array syncMethodIds]
   folly::dynamic config;
 
@@ -154,7 +166,6 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
             syncMethodIds.push_back(methodNames.size() - 1);
           }
         }
-
         if (!methodNames.empty()) {
           config.push_back(std::move(methodNames));
           if (!promiseMethodIds.empty() || !syncMethodIds.empty()) {

@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
 const log = require('npmlog');
 
 const getProjectDependencies = require('./getProjectDependencies');
@@ -25,7 +32,7 @@ const unlinkDependency = (platforms, project, dependency, packageName, otherDepe
         return;
       }
 
-      const isInstalled = linkConfig.isInstalled(project[platform], dependency[platform]);
+      const isInstalled = linkConfig.isInstalled(project[platform], packageName, dependency[platform]);
 
       if (!isInstalled) {
         log.info(`Platform '${platform}' module ${packageName} is not installed`);
@@ -107,7 +114,7 @@ function unlink(args, config) {
           if (!linkConfig || !linkConfig.unlinkAssets) {
             return;
           }
-    
+
           log.info(`Unlinking assets from ${platform} project`);
           linkConfig.unlinkAssets(assets, project[platform]);
         });
