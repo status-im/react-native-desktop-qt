@@ -79,7 +79,7 @@ function actuallyRun(args, reject) {
       if (args['arch'].startsWith('arm'))
         appArgs.push('--on-device');
       appArgs.push('--plugins-path=' + args['plugins-path']);
-      child_process.spawnSync(process.platform === "win32" ? 'run-app.bat' : './run-app.sh', appArgs,
+      child_process.spawnSync(process.platform === "win32" ? 'build\\bin\\run-app.bat' : './build/bin/run-app.sh', appArgs,
                               {stdio: 'inherit'});
   } catch (e) {
     console.log(chalk.red('Could not start the app, see the error above.'));

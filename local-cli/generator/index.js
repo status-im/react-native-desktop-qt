@@ -1,116 +1,127 @@
+
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (C) 2016, Canonical Ltd.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
+ *
  */
+
 'use strict';
 
+var chalk = require('chalk');
+var fs = require('fs');
 var path = require('path');
 var yeoman = require('yeoman-generator');
-var utils = require('../generator-utils');
+var mkdirp = require('mkdirp');
+var configUpdater = require("./rn-cli-config-updater");
+
+function validatePackageName(name) {
+  // TODO: check that this matches Desktop package reqs as well
+  if (!name.match(/^([a-zA-Z_$][a-zA-Z\d_$]*\.)+([a-zA-Z_$][a-zA-Z\d_$]*)$/)) {
+    return false;
+  }
+  return true;
+}
 
 module.exports = yeoman.generators.NamedBase.extend({
   constructor: function() {
     yeoman.generators.NamedBase.apply(this, arguments);
 
-    this.option('skip-ios', {
-      desc: 'Skip generating iOS files',
-      type: Boolean,
-      defaults: false
-    });
-    this.option('skip-android', {
-      desc: 'Skip generating Android files',
-      type: Boolean,
-      defaults: false
-    });
-    this.option('skip-desktop', {
-      desc: 'Skip generating Desktop files',
-      type: Boolean,
-      defaults: false
-    });
     this.option('upgrade', {
       desc: 'Specify an upgrade',
       type: Boolean,
       defaults: false
     });
-    // this passes command line arguments down to the composed generators
-    var args = {args: arguments[0], options: this.options};
-    if (!this.options['skip-ios']) {
-      this.composeWith('react:ios', args, {
-        local: require.resolve(path.resolve(__dirname, '..', 'generator-ios'))
-      });
-    }
-    if (!this.options['skip-android']) {
-      this.composeWith('react:android', args, {
-        local: require.resolve(path.resolve(__dirname, '..', 'generator-android'))
-      });
-    }
-    if (!this.options['skip-desktop']) {
-      this.composeWith('react:desktop', args, {
-        local: require.resolve(path.resolve(__dirname, '..', 'generator-desktop'))
-      });
-    }
+    this.option('package', {
+      desc: 'Package name for the application (appname.developername)',
+      type: String,
+      defaults: this.name.toLowerCase() + '.dev'
+    });
   },
 
-  configuring: function() {
-    utils.copyAndReplace(
-      this.templatePath('../../../.flowconfig'),
-      this.destinationPath('.flowconfig'),
-      {
-        'Libraries\/react-native\/react-native-interface.js' : 'node_modules/react-native/Libraries/react-native/react-native-interface.js',
-        '^flow/$' : 'node_modules/react-native/flow\nflow/'
-      }
-    );
-
+  initializing: function() {
+    if (!validatePackageName(this.options.package)) {
+      throw new Error('Package name ' + this.options.package + ' is invalid');
+    }
   },
 
   writing: function() {
-    if (this.options.upgrade) {
-      // never upgrade index.*.js files
-      return;
-    }
-    if (!this.options['skip-ios']) {
+    var templateParams = {
+      package: this.options.package,
+      name: this.name,
+      lowerCaseName: this.name.toLowerCase()
+    };
+
+    if (!this.options.upgrade) {
       this.fs.copyTpl(
-        this.templatePath('index.ios.js'),
-        this.destinationPath('index.ios.js'),
-        {name: this.name}
+        this.templatePath('App.desktop.js'),
+        this.destinationPath('App.desktop.js'),
+        templateParams
       );
     }
-    if (!this.options['skip-android']) {
-      this.fs.copyTpl(
-        this.templatePath('index.android.js'),
-        this.destinationPath('index.android.js'),
-        {name: this.name}
-      );
+
+    var configPath = this.destinationPath('rn-cli.config.js');
+    if (this.fs.exists(configPath)) {
+      try {
+        var configContents = this.fs.read(configPath);
+        var updatedConfigContents = configUpdater(configContents);
+        this.fs.write(configPath, updatedConfigContents);
+      } catch (err) {
+        console.warn("Error updating rn-cli.config.js: ", err.message);
+      }
+    } else {
+      this.fs.copyTpl(this.templatePath("rn-cli.config.js"), configPath);
     }
-    if (!this.options['skip-desktop']) {
-      this.fs.copyTpl(
-        this.templatePath('index.desktop.js'),
-        this.destinationPath('index.desktop.js'),
-        {name: this.name}
-      );
-    }
+
+    this.fs.copyTpl(
+      this.templatePath('CMakeLists.txt'),
+      this.destinationPath('desktop/CMakeLists.txt'),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('build.sh'),
+      this.destinationPath('desktop/bin/build.sh'),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('build.bat'),
+      this.destinationPath('desktop/bin/build.bat'),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('run-app.sh.in'),
+      this.destinationPath('desktop/bin/run-app.sh.in'),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('run-app.bat.in'),
+      this.destinationPath('desktop/bin/run-app.bat.in'),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('ubuntu-server.js'),
+      this.destinationPath('desktop/bin/ubuntu-server.js'),
+      templateParams
+    );
+
+    // Custom application main.cpp source
+    this.fs.copyTpl(
+      this.templatePath('../../../ReactQt/application/src/main.cpp'),
+      this.destinationPath('desktop/main.cpp'),
+      templateParams
+    );
+
+    mkdirp.sync('desktop/share');
+    mkdirp.sync('desktop/plugins');
   },
 
-  install: function() {
-    if (this.options.upgrade) {
-      return;
-    }
-
-    var reactNativePackageJson = require('../../package.json');
-    var { peerDependencies } = reactNativePackageJson;
-    if (!peerDependencies) {
-      return;
-    }
-
-    var reactVersion = peerDependencies.react;
-    if (!reactVersion) {
-      return;
-    }
-
-    this.npmInstall(`react@${reactVersion}`, { '--save': true });
+  end: function() {
+    var projectPath = this.destinationRoot();
+    this.log(chalk.white.bold('To run your app on your Desktop natively:'));
+    this.log(chalk.white('   cd ' + projectPath));
+    this.log(chalk.white('   react-native run-desktop'));
   }
 });
