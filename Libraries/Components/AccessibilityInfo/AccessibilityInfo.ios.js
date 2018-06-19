@@ -1,31 +1,29 @@
 /**
  * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @providesModule AccessibilityInfo
  * @flow
  */
 'use strict';
 
-var NativeModules = require('NativeModules');
-var Promise = require('Promise');
-var RCTDeviceEventEmitter = require('RCTDeviceEventEmitter');
+const NativeModules = require('NativeModules');
+const Promise = require('Promise');
+const RCTDeviceEventEmitter = require('RCTDeviceEventEmitter');
 
-var AccessibilityManager = NativeModules.AccessibilityManager;
+const AccessibilityManager = NativeModules.AccessibilityManager;
 
-var VOICE_OVER_EVENT = 'voiceOverDidChange';
-var ANNOUNCEMENT_DID_FINISH_EVENT = 'announcementDidFinish';
+const VOICE_OVER_EVENT = 'voiceOverDidChange';
+const ANNOUNCEMENT_DID_FINISH_EVENT = 'announcementDidFinish';
 
 type ChangeEventName = $Enum<{
   change: string,
   announcementFinished: string
 }>;
 
-var _subscriptions = new Map();
+const _subscriptions = new Map();
 
 /**
  * Sometimes it's useful to know whether or not the device has a screen reader
@@ -36,7 +34,7 @@ var _subscriptions = new Map();
  *
  * See http://facebook.github.io/react-native/docs/accessibilityinfo.html
  */
-var AccessibilityInfo = {
+const AccessibilityInfo = {
 
   /**
    * Query whether a screen reader is currently enabled.
@@ -74,7 +72,7 @@ var AccessibilityInfo = {
     eventName: ChangeEventName,
     handler: Function
   ): Object {
-    var listener;
+    let listener;
 
     if (eventName === 'change') {
       listener = RCTDeviceEventEmitter.addListener(
@@ -129,7 +127,7 @@ var AccessibilityInfo = {
     eventName: ChangeEventName,
     handler: Function
   ): void {
-    var listener = _subscriptions.get(handler);
+    const listener = _subscriptions.get(handler);
     if (!listener) {
       return;
     }

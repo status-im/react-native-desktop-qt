@@ -1,10 +1,8 @@
 /**
  * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
  * @providesModule ActivityIndicator
  * @flow
@@ -23,6 +21,7 @@ const ViewPropTypes = require('ViewPropTypes');
 
 const createReactClass = require('create-react-class');
 const requireNativeComponent = require('requireNativeComponent');
+let RCTActivityIndicator;
 
 const GRAY = '#999999';
 
@@ -122,6 +121,16 @@ const ActivityIndicator = createReactClass({
   }
 });
 
+if (Platform.OS === 'ios') {
+  RCTActivityIndicator = requireNativeComponent(
+    'RCTActivityIndicatorView',
+    ActivityIndicator,
+    { nativeOnly: { activityIndicatorViewStyle: true } }
+  );
+} else if (Platform.OS === 'desktop') {
+    RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
+}
+
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
@@ -136,15 +145,5 @@ const styles = StyleSheet.create({
     height: 36,
   },
 });
-
-if (Platform.OS === 'ios') {
-  var RCTActivityIndicator = requireNativeComponent(
-    'RCTActivityIndicatorView',
-    ActivityIndicator,
-    { nativeOnly: { activityIndicatorViewStyle: true } }
-  );
-} else if (Platform.OS === 'desktop') {
-  var RCTActivityIndicator = requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator);
-}
 
 module.exports = ActivityIndicator;

@@ -32,3 +32,5 @@ QString BlobProvider::moduleName() {
 void BlobProvider::enableBlobSupport(qlonglong socketId) {}
 
 void BlobProvider::disableBlobSupport(qlonglong socketId) {}
+
+void BlobProvider::addNetworkingHandler() {}

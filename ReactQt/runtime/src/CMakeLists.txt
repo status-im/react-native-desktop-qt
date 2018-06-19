@@ -156,6 +156,10 @@ set(
   ../../../ReactCommon/yoga/yoga/YGEnums.cpp
   ../../../ReactCommon/yoga/yoga/YGNode.cpp
   ../../../ReactCommon/yoga/yoga/YGNodePrint.cpp
+  ../../../ReactCommon/yoga/yoga/YGStyle.cpp
+  ../../../ReactCommon/yoga/yoga/YGLayout.cpp
+  ../../../ReactCommon/yoga/yoga/YGEnums.cpp
+  ../../../ReactCommon/yoga/yoga/Utils.cpp
 )
 
 message(STATUS "REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC = ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC}")
