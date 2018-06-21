@@ -36,7 +36,7 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 - [How react-native-desktop works internally](docs/ReactQt/HowRNDesktopAppWorks.md)
 - [List of supported React Native components and APIs ("React Native Qt" column)](docs/ReactQt/ComponentsSupport.md)
-- Follow [Ubuntu development guide](README-ubuntu.md) to get started buiding of react-native-desktop itself and JS apps based on it.
+- Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
 - [Troubleshooting](docs/ReactQt/Troubleshooting.md)
 
 ## ClojureScript React Native apps support

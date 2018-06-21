@@ -29,7 +29,7 @@ Here is an example communication between Qt app and ubuntu-server. In the app th
 
 When user clicks button, we send following code line for execution in Js:
 `__fbBatchedBridge.callFunctionReturnFlushedQueue(\"RCTEventEmitter\",\"receiveEvent\",[2,\"topPress\",{}]);`
-2 - is an id of specific button componennt
+2 - is an id of specific button component
 
 Here is a JSON result that we receive from function above:
 ```
