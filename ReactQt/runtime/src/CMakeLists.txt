@@ -214,6 +214,10 @@ set_target_properties(
 )
 endif()
 
+if (REACT_NATIVE_DESKTOP_EXTERNAL_QT_COMPONENTS)
+  find_package(Qt5 COMPONENTS ${REACT_NATIVE_DESKTOP_EXTERNAL_QT_COMPONENTS} REQUIRED)
+endif()
+
 if (REACT_NATIVE_DESKTOP_EXTERNAL_PROJECT_DEPS)
   add_dependencies(react-native ${REACT_NATIVE_DESKTOP_EXTERNAL_PROJECT_DEPS})
 endif()
@@ -247,7 +251,7 @@ qt5_use_modules(react-native ${USED_QT_MODULES})
 
 add_custom_target(
   copy-qmldir ALL
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
 )
 
 configure_file(../../../ubuntu-server.js ../../../ubuntu-server.js COPYONLY)
