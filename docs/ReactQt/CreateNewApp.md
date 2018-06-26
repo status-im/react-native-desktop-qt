@@ -7,6 +7,7 @@ In order to setup the RN-desktop project, execute these terminal commands:
 ```
 ~$ react-native init DesktopSampleApp && cd DesktopSampleApp
 ~/DesktopSampleApp$ react-native desktop
+~/DesktopSampleApp$ npm install
 
 ```
 If you're using macOS, run these commands in separate shells:
