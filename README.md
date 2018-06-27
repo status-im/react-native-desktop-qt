@@ -28,16 +28,16 @@ To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.
 
 ### 3rd-party react-native modules support
 Pure JavaScript react-native modules can be used with react-native-desktop without limitations.  
-Creation of custom react-native `native` modules or `adopting of available native modules` is supported and described in following [guideline](docs/ReactQt/NativeModulesSupport.md).  
+Creation of custom react-native `native` modules or `adopting of available native modules` is supported and described in following [guideline](docs/NativeModulesSupport.md).
 
-[List of supported or partially supported native modules](docs/ReactQt/SupportedNativeModulesList.md).
+[List of supported or partially supported native modules](docs/SupportedNativeModulesList.md).
 
 ## Documentation
 
-- [How react-native-desktop works internally](docs/ReactQt/HowRNDesktopAppWorks.md)
-- [List of supported React Native components and APIs ("React Native Qt" column)](docs/ReactQt/ComponentsSupport.md)
+- [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
+- [List of supported React Native components and APIs ("React Native Qt" column)](docs/ComponentsSupport.md)
 - Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
-- [Troubleshooting](docs/ReactQt/Troubleshooting.md)
+- [Troubleshooting](docs/Troubleshooting.md)
 
 ## ClojureScript React Native apps support
 
@@ -49,7 +49,7 @@ Any kind of contribution is welcome! Check the [list of opened issues](https://g
 
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
 - [Yoga layout engine in react-native-desktop](YogaLayoutEngine.md)
-- [Using GammaRay for inspecting Qt internals](docs/ReactQt/InspectAppWithGammaRay.md)
+- [Using GammaRay for inspecting Qt internals](docs/InspectAppWithGammaRay.md)
 
 ## License
 
