@@ -11,7 +11,6 @@ Recommended Qt framework of version 5.9.1 LTS.
 
 - [Getting Started](#getting-started)
 - [Documentation](#documentation)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Getting Started
