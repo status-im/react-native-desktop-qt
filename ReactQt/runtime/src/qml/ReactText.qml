@@ -45,6 +45,11 @@ TextEdit {
     opacity: p_opacity
     readOnly: true
     selectByMouse: p_selectable
+    onActiveFocusChanged: {
+        if(!activeFocus && !persistentSelection) {
+            select(0,0)
+        }
+    }
 
 
     onP_allowFontScalingChanged: updateHtmlText();
