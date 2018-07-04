@@ -87,4 +87,20 @@ QObject* createQObjectInstance(const QString& typeName) {
     return mObj->newInstance();
 }
 
+void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent) {
+    if (!item || !parent)
+        return;
+
+    QList<QQuickItem*> childItems = parent->childItems();
+    for (int index = position; index < childItems.size(); ++index) {
+        childItems[index]->setParentItem(nullptr);
+    }
+
+    item->setParentItem(parent);
+
+    for (int index = position; index < childItems.size(); ++index) {
+        childItems[index]->setParentItem(parent);
+    }
+}
+
 } // namespace utilities

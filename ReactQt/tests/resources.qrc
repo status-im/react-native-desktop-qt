@@ -10,5 +10,6 @@
         <file>TestTextInputProps.qml</file>
         <file>TestPickerProps.qml</file>
         <file>TestTextInputClear.qml</file>
+        <file>TestArrayReconciliation.qml</file>
     </qresource>
 </RCC>

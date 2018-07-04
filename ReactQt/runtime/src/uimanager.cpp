@@ -32,6 +32,7 @@
 #include "modulemethod.h"
 #include "reactitem.h"
 #include "uimanager.h"
+#include "utilities.h"
 
 int UIManager::m_nextRootTag = 1;
 
@@ -153,7 +154,7 @@ void UIManager::manageChildren(int containerReactTag,
             if (vm != nullptr) {
                 vm->addChildItem(container, child, i);
             } else {
-                child->setParentItem(container);
+                utilities::insertChildItemAt(child, i, container);
             }
 
             auto containerFlexbox = Flexbox::findFlexbox(container);

@@ -73,7 +73,7 @@ void ScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, 
     // add to parents content item
     QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
     Q_ASSERT(contentItem != nullptr);
-    child->setParentItem(contentItem);
+    utilities::insertChildItemAt(child, position, contentItem);
 }
 
 void ScrollViewManager::scrollBeginDrag() {

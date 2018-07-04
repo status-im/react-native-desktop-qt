@@ -52,7 +52,7 @@ void ModalManager::addChildItem(QQuickItem* modalView, QQuickItem* child, int po
     // add to parents content item
     QQuickItem* contentItem = QQmlProperty(modalView, "contentItem").read().value<QQuickItem*>();
     Q_ASSERT(contentItem != nullptr);
-    child->setParentItem(contentItem);
+    utilities::insertChildItemAt(child, position, contentItem);
 }
 
 QStringList ModalManager::customDirectEventTypes() {

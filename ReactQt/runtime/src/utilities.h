@@ -24,6 +24,7 @@ void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);
 QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl);
 QObject* createQObjectInstance(const QString& typeName);
+void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent);
 
 } // namespace utilities
 

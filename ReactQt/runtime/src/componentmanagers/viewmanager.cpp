@@ -76,7 +76,7 @@ bool ViewManager::shouldLayout() const {
 }
 
 void ViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int position) const {
-    child->setParentItem(container);
+    utilities::insertChildItemAt(child, position, container);
 }
 
 QQuickItem* ViewManager::view(const QVariantMap& properties) const {
