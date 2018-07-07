@@ -38,6 +38,7 @@
 #include "deviceinfo.h"
 #include "eventdispatcher.h"
 #include "exceptionsmanager.h"
+#include "linkingmanager.h"
 #include "moduledata.h"
 #include "moduleinterface.h"
 #include "moduleloader.h"
@@ -97,6 +98,7 @@ public:
                            new Networking,
                            new NetInfo,
                            new Clipboard,
+                           new LinkingManager,
                            new Alert,
                            new DeviceInfo,
                            new BlobProvider,

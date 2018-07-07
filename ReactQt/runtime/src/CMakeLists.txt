@@ -130,6 +130,7 @@ set(
   redbox.cpp
   exceptionsmanager.cpp
   clipboard.cpp
+  linkingmanager.cpp
   alert.cpp
   componentmanagers/slidermanager.cpp
   componentmanagers/viewmanager.cpp
