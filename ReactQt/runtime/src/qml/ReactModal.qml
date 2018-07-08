@@ -10,12 +10,12 @@ Item {
 
     property string p_animationType
     property bool p_onShow: false
-    property bool p_transparent
+    property bool p_transparent: false
     property var contentItem: popup.contentItem
     property var modalManager: null
 
     property var flexbox: React.Flexbox {
-        control: contentItem
+        control: popup.contentItem
         p_minWidth: popup.width
         p_minHeight: popup.height
     }
@@ -27,9 +27,11 @@ Item {
         visible: true
         modal: true
 
-        Component.onCompleted: {
-            //for convenient debugging
-            contentItem.objectName = "ReactModal.contentItem"
+        background: Item {}
+
+        contentItem: Rectangle {
+            objectName: "ReactModal.contentItem"
+            color: modalRoot.p_transparent ? "transparent" : "white"
         }
 
         closePolicy: Popup.NoAutoClose
