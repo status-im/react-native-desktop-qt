@@ -60,7 +60,7 @@
 | InteractionManager          |                      |
 | Keyboard                    |                      |
 | LayoutAnimation             |                      |
-| Linking                     |                      |
+| Linking                     |  +/-                 |
 | NetInfo                     |                      |
 |                             |                      |
 | PanResponder                |                      |
