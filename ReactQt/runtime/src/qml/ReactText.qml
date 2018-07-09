@@ -9,7 +9,7 @@ TextEdit {
     property string p_fontFamily
     property double p_fontSize: font.pointSize
     property bool p_highlighted: false
-    property color p_color
+    property color p_color: "black"
     property color p_backgroundColor: 'transparent'
     property string p_fontStyle
     property string p_fontWeight
@@ -47,6 +47,7 @@ TextEdit {
     readOnly: true
     selectByMouse: p_selectable
     selectionColor: p_selectionColor
+    selectedTextColor: p_color
     onActiveFocusChanged: {
         if(!activeFocus && !persistentSelection) {
             select(0,0)
