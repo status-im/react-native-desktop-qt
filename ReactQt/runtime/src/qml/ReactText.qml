@@ -24,6 +24,7 @@ TextEdit {
     property var flexbox: null
     property double p_opacity: 1
     property bool p_selectable: false
+    property color p_selectionColor: "darkblue"
 
 
 
@@ -45,6 +46,7 @@ TextEdit {
     opacity: p_opacity
     readOnly: true
     selectByMouse: p_selectable
+    selectionColor: p_selectionColor
     onActiveFocusChanged: {
         if(!activeFocus && !persistentSelection) {
             select(0,0)
