@@ -16,7 +16,6 @@ Recommended Qt framework of version 5.9.1 LTS.
 ## Getting Started
 
 - [Install Prerequisites](docs/InstallPrerequisites.md)
-- [Install adjusted react-native-cli](docs/InstallUpdatedReactNativeCLI.md)
 - [Create new App](docs/CreateNewApp.md)
 
 
@@ -35,6 +34,7 @@ Creation of custom react-native `native` modules or `adopting of available nativ
 
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
 - [List of supported React Native components and APIs ("React Native Qt" column)](docs/ComponentsSupport.md)
+- [Installing adjusted react-native-cli](docs/InstallUpdatedReactNativeCLI.md)
 - Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
 - [Troubleshooting](docs/Troubleshooting.md)
 
@@ -47,7 +47,7 @@ Read our [contributing guide](https://facebook.github.io/react-native/docs/contr
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
-- [Yoga layout engine in react-native-desktop](YogaLayoutEngine.md)
+- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
 - [Using GammaRay for inspecting Qt internals](docs/InspectAppWithGammaRay.md)
 
 ## License
