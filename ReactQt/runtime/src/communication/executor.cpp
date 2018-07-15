@@ -51,7 +51,7 @@ Executor::Executor(ServerConnection* conn, QObject* parent) : IExecutor(parent),
 }
 
 Executor::~Executor() {
-    d_ptr->connection()->device()->close();
+    resetConnection();
 }
 
 void ExecutorPrivate::setupStateMachine() {
@@ -108,6 +108,10 @@ ServerConnection* ExecutorPrivate::connection() {
 
 void Executor::init() {
     d_ptr->m_machina->start();
+}
+
+void Executor::resetConnection() {
+    d_ptr->connection()->device()->close();
 }
 
 void ExecutorPrivate::processRequests() {

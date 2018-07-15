@@ -34,6 +34,7 @@ public:
     ~Executor();
 
     virtual void init();
+    virtual void resetConnection();
 
     virtual void injectJson(const QString& name, const QVariant& data);
     virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl);

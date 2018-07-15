@@ -28,6 +28,7 @@ public:
     virtual ~IExecutor() {}
 
     virtual void init() = 0;
+    virtual void resetConnection() = 0;
 
     virtual void injectJson(const QString& name, const QVariant& data) = 0;
     virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl) = 0;

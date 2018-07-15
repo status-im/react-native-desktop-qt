@@ -57,6 +57,7 @@ public:
     void init();
     void reload();
     void loadBundle(const QUrl& bundleUrl);
+    void reset();
 
     void invokePromiseCallback(double callbackCode, const QVariantList& args);
     void enqueueJSCall(const QString& module, const QString& method, const QVariantList& args);
@@ -125,6 +126,7 @@ private:
     void injectModules();
     void processResult(const QJsonDocument& document);
     void setupExecutor();
+    void resetExecutor();
     void setJsAppStarted(bool started);
     void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
     void addModuleData(QObject* module);

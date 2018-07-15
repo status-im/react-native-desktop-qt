@@ -155,11 +155,7 @@ void Bridge::executeOnJavaScriptThread(std::function<void()> func) {
 void Bridge::setupExecutor() {
     Q_D(Bridge);
 
-    if (d->executor) {
-        d->executor->deleteLater();
-        d->executor = nullptr;
-        d->useJSC = false;
-    }
+    resetExecutor();
 #ifdef RCT_DEV
     if (d->remoteJSDebugging) {
         d->executor = new WebSocketExecutor(QUrl("ws://localhost:8081/debugger-proxy?role=client"), this);
@@ -190,6 +186,17 @@ void Bridge::setupExecutor() {
 
     connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
     d->executor->init();
+}
+
+void Bridge::resetExecutor() {
+    Q_D(Bridge);
+
+    if (d->executor) {
+        d->executor->resetConnection();
+        d->executor->deleteLater();
+        d->executor = nullptr;
+        d->useJSC = false;
+    }
 }
 
 void Bridge::init() {
@@ -224,6 +231,12 @@ void Bridge::reload() {
 void Bridge::loadBundle(const QUrl& bundleUrl) {
     setBundleUrl(bundleUrl);
     reload();
+}
+
+void Bridge::reset() {
+    setReady(false);
+    setJsAppStarted(false);
+    resetExecutor();
 }
 
 void Bridge::enqueueJSCall(const QString& module, const QString& method, const QVariantList& args) {

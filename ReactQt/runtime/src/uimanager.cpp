@@ -94,7 +94,7 @@ void UIManager::setChildren(int containerReactTag, const QList<int>& childrenTag
     manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices, QList<int>());
 }
 
-void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices) {
+void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices, bool unregisterAndDelete) {
 
     Q_ASSERT(parent != nullptr);
 
@@ -107,10 +107,14 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
 
         for (QQuickItem* child : itemsToRemove) {
             int childTag = AttachedProperties::get(child)->tag();
-            child->setParent(0);
-            m_views.remove(childTag);
+
             child->setParentItem(nullptr);
-            child->deleteLater();
+
+            if (unregisterAndDelete) {
+                child->setParent(0);
+                m_views.remove(childTag);
+                child->deleteLater();
+            }
         }
 
         auto flexbox = Flexbox::findFlexbox(parent);
@@ -133,20 +137,40 @@ void UIManager::manageChildren(int containerReactTag,
         return;
     }
 
+    Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
+    Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
+
     removeChildren(container, removeAtIndices);
 
+    QList<int> allTags = addChildReactTags;
+    QList<int> allTargetIndices = addAtIndices;
+
+    for (int i = 0; i < moveFromIndicies.size(); ++i) {
+        int indexToMoveFrom = moveFromIndicies.at(i);
+        int indexToMoveTo = moveToIndices.at(i);
+
+        QQuickItem* itemToMove = container->childItems().at(indexToMoveFrom);
+        int itemTagToMove = m_views.key(itemToMove, -1);
+        Q_ASSERT(itemTagToMove != -1);
+
+        allTargetIndices.append(indexToMoveTo);
+        std::sort(allTargetIndices.begin(), allTargetIndices.end());
+        allTags.insert(allTargetIndices.indexOf(indexToMoveTo), itemTagToMove);
+    }
+
+    removeChildren(container, moveFromIndicies, false);
+
     QList<QQuickItem*> children;
-    // XXX: Assumption - addChildReactTags is sorted
-    std::transform(addChildReactTags.begin(), addChildReactTags.end(), std::back_inserter(children), [this](int key) {
-        return m_views.value(key);
-    });
+    // XXX: Assumption - allTags and allTargetIndices are sorted
+    std::transform(
+        allTags.begin(), allTags.end(), std::back_inserter(children), [this](int key) { return m_views.value(key); });
 
     if (children.size() > 0) {
         // on iOS, order of the subviews implies z-order, implicitly its the same in
         // QML, barring some exceptions. revisit - set zorder appears to be the only
         // exception can probably self order items, but it's not an explicit guarantee
         QList<QQuickItem*>::iterator it = children.begin();
-        for (int i : addAtIndices) {
+        for (int i : allTargetIndices) {
             QQuickItem* child = *it++;
 
             // Add to visual hierarchy

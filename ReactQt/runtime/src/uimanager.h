@@ -86,7 +86,7 @@ public:
     QQuickItem* viewForTag(int reactTag);
 
 private:
-    void removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices);
+    void removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
 
 private:
     static int m_nextRootTag;

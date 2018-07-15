@@ -27,6 +27,7 @@ set(REACT_TESTCASE_JS
   JS/TestTextInputClear.js
   JS/TestArrayReconciliationInsertFirst.js
   JS/TestArrayReconciliationDeleteLast.js
+  JS/TestArrayReconciliationItemMove.js
 )
 
 set(
