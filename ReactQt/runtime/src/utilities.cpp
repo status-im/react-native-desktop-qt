@@ -92,14 +92,12 @@ void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent) {
         return;
 
     QList<QQuickItem*> childItems = parent->childItems();
-    for (int index = position; index < childItems.size(); ++index) {
-        childItems[index]->setParentItem(nullptr);
-    }
-
-    item->setParentItem(parent);
-
-    for (int index = position; index < childItems.size(); ++index) {
-        childItems[index]->setParentItem(parent);
+    if (childItems.size() && childItems.size() > position) {
+        QQuickItem* nextItem = childItems.at(position);
+        item->setParentItem(parent);
+        item->stackBefore(nextItem);
+    } else {
+        item->setParentItem(parent);
     }
 }
 
