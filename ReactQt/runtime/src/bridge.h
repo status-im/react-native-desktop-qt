@@ -74,6 +74,8 @@ public:
     QQuickItem* visualParent() const;
     void setVisualParent(QQuickItem* item);
 
+    QQuickItem* topmostVisualParent() const;
+
     QQmlEngine* qmlEngine() const;
     void setQmlEngine(QQmlEngine* qmlEngine);
 

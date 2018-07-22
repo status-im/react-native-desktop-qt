@@ -116,8 +116,7 @@ void Redbox::showErrorMessage(const QString& message, const QList<QVariantMap>& 
     d->redbox->setProperty(REDBOX_MESSAGE_PROPERTY, message);
     d->setStack(stack);
 
-    QQuickItem* rootView = d->bridge->visualParent();
-    d->redbox->setParentItem(rootView);
+    d->redbox->setParentItem(d->bridge->topmostVisualParent());
 }
 
 void Redbox::updateErrorMessage(const QString& message, const QList<QVariantMap>& stack) {

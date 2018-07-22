@@ -45,7 +45,7 @@ void AlertPrivate::createAlertItem(const QVariantMap& config, double callback) {
         return;
     }
 
-    alert->setParentItem(bridge->visualParent()->parentItem());
+    alert->setParentItem(bridge->topmostVisualParent());
     alert->setObjectName("Alert");
     alert->setProperty("alertManager", QVariant::fromValue((QObject*)q_ptr));
     alert->setProperty("buttons", generateQmlButtonsList(config));

@@ -315,6 +315,10 @@ void Bridge::setVisualParent(QQuickItem* item) {
     d->visualParent = item;
 }
 
+QQuickItem* Bridge::topmostVisualParent() const {
+    return visualParent()->parentItem();
+}
+
 QQmlEngine* Bridge::qmlEngine() const {
     return d_func()->qmlEngine;
 }
