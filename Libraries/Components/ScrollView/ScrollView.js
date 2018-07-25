@@ -495,6 +495,16 @@ const ScrollView = createReactClass({
      ]),
   },
 
+  getDefaultProps: function() : any {
+    if (Platform.OS === 'desktop') {
+      return {
+        keyboardShouldPersistTaps: 'always'
+      };
+    } else {
+      return {};
+    }
+  },
+
   mixins: [ScrollResponder.Mixin],
 
   _scrollAnimatedValue: (new AnimatedImplementation.Value(0): AnimatedImplementation.Value),
