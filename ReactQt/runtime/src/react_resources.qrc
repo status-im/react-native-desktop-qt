@@ -21,5 +21,6 @@
         <file>qml/ReactWebView.qml</file>
         <file>qml/ReactQtWebKitWebView.qml</file>
         <file>qml/ReactAlert.qml</file>
+        <file>qml/ReactSwitch.qml</file>
     </qresource>
 </RCC>
