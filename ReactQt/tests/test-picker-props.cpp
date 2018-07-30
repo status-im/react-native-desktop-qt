@@ -34,6 +34,7 @@ void TestPickerProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestPickerProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
 }
 
 QVariantMap TestPickerProps::propValues() const {

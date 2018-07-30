@@ -34,6 +34,7 @@ void TestTextInputProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestTextInputProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
 }
 
 QVariantMap TestTextInputProps::propValues() const {

@@ -20,6 +20,16 @@ class Bridge;
         BaseClass::cleanupTestCase();                                                                                  \
     }
 
+#define INIT_DEFAULT(BaseClass)                                                                                        \
+    virtual void init() override {                                                                                     \
+        BaseClass::init();                                                                                             \
+    }
+
+#define CLEANUP_DEFAULT(BaseClass)                                                                                     \
+    virtual void cleanup() override {                                                                                  \
+        BaseClass::cleanup();                                                                                          \
+    }
+
 class ReactTestCase : public QObject {
     Q_OBJECT
 public:
@@ -44,6 +54,8 @@ protected:
     QQuickItem* topJSComponent() const;
     QVariant valueOfControlProperty(QQuickItem* control, const QString& propertyName);
     void clickItem(QQuickItem* item);
+    virtual void init();
+    virtual void cleanup();
 
 private:
     void registerReactQtTypes();
@@ -51,6 +63,13 @@ private:
 private:
     QQuickView* m_quickView = nullptr;
     QTimer timeoutTimer;
+
+protected:
+    QTimer* clickDelayTimer = nullptr;
+    QTimer* initDelayTimer = nullptr;
+
+    const int CLICK_TIMER_DELAY = 1000;
+    const int INIT_TIMER_DELAY = 4000;
 };
 
 #endif // REACTTESTCASE_H

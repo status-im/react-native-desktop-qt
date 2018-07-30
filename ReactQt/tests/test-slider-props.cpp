@@ -34,6 +34,7 @@ void TestSliderProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestSliderProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
 }
 
 QVariantMap TestSliderProps::propValues() const {

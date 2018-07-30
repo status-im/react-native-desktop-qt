@@ -24,6 +24,8 @@ class TestIntegration : public ReactTestCase {
 private slots:
     INIT_TEST_CASE_DEFAULT(ReactTestCase)
     CLEANUP_TEST_CASE_DEFAULT(ReactTestCase)
+    CLEANUP_DEFAULT(ReactTestCase)
+    INIT_DEFAULT(ReactTestCase)
 
     void testTestModuleMarkTestCompleted();
     void testJSExceptionReceived();
@@ -44,12 +46,6 @@ void TestIntegration::testTestModuleMarkTestCompleted() {
 }
 
 void TestIntegration::testJSExceptionReceived() {
-    QTimer* startupDelayTimer = new QTimer(this);
-    startupDelayTimer->setSingleShot(true);
-    startupDelayTimer->setInterval(1000);
-    startupDelayTimer->start();
-    waitAndVerifyCondition([=]() { return !startupDelayTimer->isActive(); }, "Timer timeout was not triggered");
-
     loadJSBundle("TestJSException", "IntegrationTests/TestJSException");
 
     waitAndVerifyJsAppStarted();

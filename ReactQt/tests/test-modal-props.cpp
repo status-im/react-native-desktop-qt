@@ -34,6 +34,7 @@ void TestModalProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestModalProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
 }
 
 QVariantMap TestModalProps::propValues() const {

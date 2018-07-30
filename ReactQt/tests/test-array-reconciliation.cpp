@@ -22,20 +22,18 @@ class TestArrayReconciliation : public ReactTestCase {
 
 private slots:
     virtual void initTestCase() override;
-    void init();
-    void cleanup();
     CLEANUP_TEST_CASE_DEFAULT(ReactTestCase)
+    CLEANUP_DEFAULT(ReactTestCase)
+    INIT_DEFAULT(ReactTestCase)
 
     void testComponentsArrayFirstElementInsert();
     void testComponentsArrayLastElementDelete();
     void testComponentsArrayItemMove();
 
 private:
-    QTimer* clickDelayTimer = nullptr;
     QQuickItem* topView = nullptr;
     const int INITIAL_ITEMS_COUNT = 3;
     const int CLICKED_ITEMS_COUNT = 2;
-    const int CLICK_TIMER_DELAY = 1000;
 
     void validateComponentsCount(const int expectedItemsCount, const QString& errorMsg);
 };
@@ -43,24 +41,9 @@ private:
 void TestArrayReconciliation::initTestCase() {
     ReactTestCase::initTestCase();
 
-    clickDelayTimer = new QTimer(this);
-    clickDelayTimer->setSingleShot(true);
-    clickDelayTimer->setInterval(CLICK_TIMER_DELAY);
-
     loadQML(QUrl("qrc:/TestArrayReconciliation.qml"));
     waitAndVerifyJsAppStarted();
     showView();
-}
-
-void TestArrayReconciliation::init() {
-    clickDelayTimer->setInterval(4000);
-    clickDelayTimer->start();
-    waitAndVerifyCondition([=]() { return !clickDelayTimer->isActive(); }, "Timer timeout was not triggered");
-    clickDelayTimer->setInterval(CLICK_TIMER_DELAY);
-}
-
-void TestArrayReconciliation::cleanup() {
-    bridge()->reset();
 }
 
 void TestArrayReconciliation::validateComponentsCount(const int expectedItemsCount, const QString& errorMsg) {

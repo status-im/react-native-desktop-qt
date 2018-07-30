@@ -57,6 +57,7 @@ void TestActivityIndicatorProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestActivityIndicatorProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
 }
 
 QVariantMap TestActivityIndicatorProps::propValues() const {

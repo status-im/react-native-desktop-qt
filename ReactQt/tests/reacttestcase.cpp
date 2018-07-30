@@ -19,6 +19,14 @@ ReactTestCase::ReactTestCase(QObject* parent) : QObject(parent) {
 void ReactTestCase::initTestCase() {
     m_quickView = new QQuickView();
     utilities::registerReactTypes();
+
+    clickDelayTimer = new QTimer(this);
+    clickDelayTimer->setSingleShot(true);
+    clickDelayTimer->setInterval(CLICK_TIMER_DELAY);
+
+    initDelayTimer = new QTimer(this);
+    initDelayTimer->setSingleShot(true);
+    initDelayTimer->setInterval(INIT_TIMER_DELAY);
 }
 
 void ReactTestCase::cleanupTestCase() {
@@ -26,6 +34,15 @@ void ReactTestCase::cleanupTestCase() {
         m_quickView->deleteLater();
         m_quickView = nullptr;
     }
+}
+
+void ReactTestCase::init() {
+    initDelayTimer->start();
+    waitAndVerifyCondition([=]() { return !initDelayTimer->isActive(); }, "Timer timeout was not triggered");
+}
+
+void ReactTestCase::cleanup() {
+    bridge()->reset();
 }
 
 void ReactTestCase::loadQML(const QUrl& qmlUrl) {

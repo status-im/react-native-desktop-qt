@@ -33,17 +33,19 @@ public:
     Executor(ServerConnection* conn, QObject* parent = nullptr);
     ~Executor();
 
-    virtual void init();
-    virtual void resetConnection();
+    Q_INVOKABLE virtual void init();
+    Q_INVOKABLE virtual void resetConnection();
 
-    virtual void injectJson(const QString& name, const QVariant& data);
-    virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl);
-    virtual void executeJSCall(const QString& method,
-                               const QVariantList& args = QVariantList(),
-                               const ExecuteCallback& callback = ExecuteCallback());
+    Q_INVOKABLE virtual void injectJson(const QString& name, const QVariant& data);
+    Q_INVOKABLE virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl);
+    Q_INVOKABLE virtual void executeJSCall(const QString& method,
+                                           const QVariantList& args = QVariantList(),
+                                           const Executor::ExecuteCallback& callback = ExecuteCallback());
 
 private:
     QScopedPointer<ExecutorPrivate> d_ptr;
 };
+
+Q_DECLARE_METATYPE(Executor::ExecuteCallback)
 
 #endif // EXECUTOR_H

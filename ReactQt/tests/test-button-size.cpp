@@ -25,6 +25,8 @@ private slots:
 
     virtual void initTestCase() override;
     CLEANUP_TEST_CASE_DEFAULT(ReactTestCase)
+    CLEANUP_DEFAULT(ReactTestCase)
+    INIT_DEFAULT(ReactTestCase)
 
     void testButtonShouldBeVisible();
 };

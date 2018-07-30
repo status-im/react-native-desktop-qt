@@ -37,6 +37,7 @@ void TestImageProps::initTestCase() {
     ReactPropertyTestCase::initTestCase();
     loadQML(QUrl("qrc:/TestImageProps.qml"));
     waitAndVerifyJsAppStarted();
+    ReactPropertyTestCase::init();
     // wait when image loaded. otherwise we can get crash if app quites while loading in progress.
     waitAndVerifyCondition([=]() { return valueOfProperty("imageReady").toBool(); }, "Image can't load source");
 }

@@ -130,7 +130,7 @@ private:
     void setupExecutor();
     void resetExecutor();
     void setJsAppStarted(bool started);
-    void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
+    Q_INVOKABLE void invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args);
     void addModuleData(QObject* module);
 
     QScopedPointer<BridgePrivate> d_ptr;
