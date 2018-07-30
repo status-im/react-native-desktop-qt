@@ -64,6 +64,10 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'ViewExample',
     module: require('./ViewExample'),
+  },
+  {
+    key: 'SwitchExample',
+    module: require('./SwitchExample'),
   }
 ];
 

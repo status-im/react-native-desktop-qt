@@ -145,6 +145,7 @@ set(
   componentmanagers/imagemanager.cpp
   componentmanagers/imageloader.cpp
   componentmanagers/pickermanager.cpp
+  componentmanagers/switchmanager.cpp
   componentmanagers/webviewmanager.cpp
   layout/flexbox.cpp
   utilities.cpp

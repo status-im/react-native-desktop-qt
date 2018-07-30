@@ -31,6 +31,7 @@
 #include "componentmanagers/rawtextmanager.h"
 #include "componentmanagers/scrollviewmanager.h"
 #include "componentmanagers/slidermanager.h"
+#include "componentmanagers/switchmanager.h"
 #include "componentmanagers/textinputmanager.h"
 #include "componentmanagers/textmanager.h"
 #include "componentmanagers/viewmanager.h"
@@ -112,6 +113,7 @@ public:
                            new ActivityIndicatorManager,
                            new TextInputManager,
                            new ButtonManager,
+                           new SwitchManager,
                            new SliderManager,
                            new ModalManager,
                            new PickerManager,
