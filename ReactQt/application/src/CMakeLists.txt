@@ -21,6 +21,8 @@ if (USE_QTWEBKIT)
   find_package(Qt5WebKit REQUIRED)
 endif()
 
+MESSAGE( STATUS "Desktop fonts var: " ${DESKTOP_FONTS} )
+
 # Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
 string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_TYPE_NAMES}")
 
@@ -63,5 +65,3 @@ target_link_libraries(
   ${APP_NAME}
   react-native
 )
-
-
