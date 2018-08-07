@@ -47,7 +47,7 @@ QString TextInputManager::moduleName() {
     return "RCTTextInputViewManager";
 }
 
-QString TextInputManager::qmlComponentFile() const {
+QString TextInputManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactTextInput.qml";
 }
 

@@ -42,6 +42,6 @@ void RawTextManager::configureView(QQuickItem* view) const {
     view->setEnabled(false);
 }
 
-QString RawTextManager::qmlComponentFile() const {
+QString RawTextManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactRawText.qml";
 }

@@ -5,6 +5,7 @@
         <file>qml/ReactView.qml</file>
         <file>qml/ReactNavigator.qml</file>
         <file>qml/ReactScrollView.qml</file>
+        <file>qml/ReactScrollListView.qml</file>
         <file>qml/ReactRedboxItem.qml</file>
         <file>qml/ReactRawText.qml</file>
         <file>qml/ReactText.qml</file>

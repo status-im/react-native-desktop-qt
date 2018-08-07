@@ -40,7 +40,7 @@ QString SwitchManager::moduleName() {
     return "RCTSwitchManager";
 }
 
-QString SwitchManager::qmlComponentFile() const {
+QString SwitchManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactSwitch.qml";
 }
 

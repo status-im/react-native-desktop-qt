@@ -35,7 +35,7 @@ public slots:
     void sendValueChangeToJs(QQuickItem* picker, bool value);
 
 private:
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
     virtual void configureView(QQuickItem* view) const override;
     void updateMeasureFunction(QQuickItem* view) const;
 

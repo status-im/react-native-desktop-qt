@@ -73,7 +73,7 @@ void ButtonManager::sendPressedNotificationToJs(QQuickItem* button) {
     notifyJsAboutEvent(tag(button), EVENT_ONPRESSED, {});
 }
 
-QString ButtonManager::qmlComponentFile() const {
+QString ButtonManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactButton.qml";
 }
 

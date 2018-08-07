@@ -36,7 +36,7 @@ public slots:
     void sendOnShowNotificationToJs(QQuickItem* modal);
 
 private:
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
     virtual void configureView(QQuickItem* modal) const override;
 
 private:

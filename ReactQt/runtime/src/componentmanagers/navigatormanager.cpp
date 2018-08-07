@@ -87,7 +87,7 @@ void NavigatorManager::configureView(QQuickItem* view) const {
     connect(view, SIGNAL(backTriggered()), SLOT(backTriggered()));
 }
 
-QString NavigatorManager::qmlComponentFile() const {
+QString NavigatorManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactNavigator.qml";
 }
 

@@ -26,6 +26,7 @@
 #include "attachedproperties.h"
 #include "bridge.h"
 #include "componentdata.h"
+#include "componentmanagers/scrollviewmanager.h"
 #include "componentmanagers/viewmanager.h"
 #include "layout/flexbox.h"
 #include "moduledata.h"
@@ -106,11 +107,10 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
         }
 
         for (QQuickItem* child : itemsToRemove) {
-            int childTag = AttachedProperties::get(child)->tag();
-
             child->setParentItem(nullptr);
 
             if (unregisterAndDelete) {
+                int childTag = AttachedProperties::get(child)->tag();
                 child->setParent(0);
                 m_views.remove(childTag);
                 child->deleteLater();
@@ -140,7 +140,11 @@ void UIManager::manageChildren(int containerReactTag,
     Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
     Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
 
-    removeChildren(container, removeAtIndices);
+    if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
+        ScrollViewManager::removeListViewItem(container, removeAtIndices);
+    } else {
+        removeChildren(container, removeAtIndices);
+    }
 
     QList<int> allTags = addChildReactTags;
     QList<int> allTargetIndices = addAtIndices;
@@ -149,7 +153,13 @@ void UIManager::manageChildren(int containerReactTag,
         int indexToMoveFrom = moveFromIndicies.at(i);
         int indexToMoveTo = moveToIndices.at(i);
 
-        QQuickItem* itemToMove = container->childItems().at(indexToMoveFrom);
+        QQuickItem* itemToMove = nullptr;
+        if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
+            itemToMove = ScrollViewManager::scrollViewContentItem(container, indexToMoveFrom);
+        } else {
+            itemToMove = container->childItems().at(indexToMoveFrom);
+        }
+
         int itemTagToMove = m_views.key(itemToMove, -1);
         Q_ASSERT(itemTagToMove != -1);
 
@@ -158,7 +168,13 @@ void UIManager::manageChildren(int containerReactTag,
         allTags.insert(allTargetIndices.indexOf(indexToMoveTo), itemTagToMove);
     }
 
-    removeChildren(container, moveFromIndicies, false);
+    if (!moveFromIndicies.isEmpty()) {
+        if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
+            ScrollViewManager::removeListViewItem(container, moveFromIndicies, false);
+        } else {
+            removeChildren(container, moveFromIndicies, false);
+        }
+    }
 
     QList<QQuickItem*> children;
     // XXX: Assumption - allTags and allTargetIndices are sorted
@@ -176,7 +192,12 @@ void UIManager::manageChildren(int containerReactTag,
             // Add to visual hierarchy
             ViewManager* vm = AttachedProperties::get(container)->viewManager();
             if (vm != nullptr) {
-                vm->addChildItem(container, child, i);
+                if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
+                    ScrollViewManager::updateListViewItem(container, child, i);
+                } else {
+                    vm->addChildItem(container, child, i);
+                }
+
             } else {
                 utilities::insertChildItemAt(child, i, container);
             }

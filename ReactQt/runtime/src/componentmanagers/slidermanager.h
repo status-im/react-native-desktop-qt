@@ -33,7 +33,7 @@ public slots:
     void sendSlidingCompleteToJs(QQuickItem* slider);
 
 private:
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
     virtual void configureView(QQuickItem* view) const override;
 
     void notifyJsAboutSliderEvent(QQuickItem* slider, const QString& eventName) const;

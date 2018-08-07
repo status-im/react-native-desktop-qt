@@ -40,7 +40,7 @@ public slots:
     void sendOnContentSizeChange(QQuickItem* textInput, double width, double height);
 
 private:
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
     virtual void configureView(QQuickItem* view) const override;
 
     void sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData = QVariantMap());

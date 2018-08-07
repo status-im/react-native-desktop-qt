@@ -44,7 +44,7 @@ private Q_SLOTS:
 
 private:
     virtual void configureView(QQuickItem* view) const override;
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
 
     void invokeMethod(const QString& methodSignature, QQuickItem* item, const QVariantList& args = QVariantList{});
     QMetaMethod findMethod(const QString& methodSignature, QQuickItem* item);

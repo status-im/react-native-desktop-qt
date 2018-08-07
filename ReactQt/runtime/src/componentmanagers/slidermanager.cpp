@@ -49,6 +49,7 @@ QString SliderManager::moduleName() {
 QStringList SliderManager::customDirectEventTypes() {
     return QStringList{
         normalizeInputEventName(EVENT_ON_VALUE_CHANGED), normalizeInputEventName(EVENT_ON_SLIDING_COMPLETE),
+
     };
 }
 
@@ -64,7 +65,7 @@ void SliderManager::sendSlidingCompleteToJs(QQuickItem* slider) {
     notifyJsAboutSliderEvent(slider, EVENT_ON_SLIDING_COMPLETE);
 }
 
-QString SliderManager::qmlComponentFile() const {
+QString SliderManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactSlider.qml";
 }
 

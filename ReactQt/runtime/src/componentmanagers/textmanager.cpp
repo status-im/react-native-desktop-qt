@@ -51,7 +51,7 @@ bool TextManager::shouldLayout() const {
     return true;
 }
 
-QString TextManager::qmlComponentFile() const {
+QString TextManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactText.qml";
 }
 
@@ -71,7 +71,6 @@ void TextManager::updateMeasureFunction(QQuickItem* textItem) {
 
     if (childIsTopReactTextInTextHierarchy) {
         flexbox->setMeasureFunction([=](YGNodeRef, float width, YGMeasureMode, float, YGMeasureMode) {
-
             resizeToWidth(textItem, width);
             float w = textItem->width();
             float ch = textItem->property("contentHeight").toDouble();

@@ -39,7 +39,7 @@ QString PickerManager::moduleName() {
     return "RCTPickerViewManager";
 }
 
-QString PickerManager::qmlComponentFile() const {
+QString PickerManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactPicker.qml";
 }
 

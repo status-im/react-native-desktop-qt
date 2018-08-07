@@ -38,7 +38,7 @@ QString ActivityIndicatorManager::moduleName() {
     return "RCTActivityIndicatorViewManager";
 }
 
-QString ActivityIndicatorManager::qmlComponentFile() const {
+QString ActivityIndicatorManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactActivityIndicator.qml";
 }
 

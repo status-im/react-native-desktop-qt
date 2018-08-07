@@ -50,10 +50,10 @@ public:
     Q_INVOKABLE void sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height);
 
 protected:
-    QQuickItem* createView() const;
+    QQuickItem* createView(const QVariantMap& properties) const;
     Bridge* bridge() const;
     virtual void configureView(QQuickItem* view) const;
-    virtual QString qmlComponentFile() const;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const;
     void notifyJsAboutEvent(int senderTag, const QString& eventName, const QVariantMap& eventData) const;
 
 private:

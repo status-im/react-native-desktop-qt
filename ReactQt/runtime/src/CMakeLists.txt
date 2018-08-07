@@ -175,6 +175,7 @@ set(
   qml/ReactView.qml
   qml/ReactNavigator.qml
   qml/ReactScrollView.qml
+  qml/ReactScrollListView.qml
   qml/ReactRedboxItem.qml
   qml/ReactText.qml
   qml/ReactRawText.qml

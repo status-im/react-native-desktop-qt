@@ -23,7 +23,6 @@
 #include "modulemethod.h"
 #include "propertyhandler.h"
 #include "utilities.h"
-#include "utilities.h"
 #include "webviewmanager.h"
 
 const QString EVENT_ONERROR = "onLoadingError";
@@ -44,7 +43,7 @@ QString WebViewManager::moduleName() {
     return "RCTWebViewViewManager";
 }
 
-QString WebViewManager::qmlComponentFile() const {
+QString WebViewManager::qmlComponentFile(const QVariantMap& properties) const {
 #ifdef USE_QTWEBKIT
     const QString reactWebViewComponent = QStringLiteral("qrc:/qml/ReactQtWebKitWebView.qml");
 #else

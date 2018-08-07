@@ -70,7 +70,7 @@ void ModalManager::configureView(QQuickItem* modal) const {
     modal->setProperty("modalManager", QVariant::fromValue((QObject*)this));
 }
 
-QString ModalManager::qmlComponentFile() const {
+QString ModalManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactModal.qml";
 }
 

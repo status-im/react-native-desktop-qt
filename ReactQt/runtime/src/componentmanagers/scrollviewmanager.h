@@ -37,6 +37,12 @@ public:
 
     void addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const override;
 
+    static bool isArrayScrollingOptimizationEnabled(QQuickItem* item);
+    static void updateListViewItem(QQuickItem* item, QQuickItem* child, int position);
+    static void
+    removeListViewItem(QQuickItem* item, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
+    static QQuickItem* scrollViewContentItem(QQuickItem* item, int position);
+
 private Q_SLOTS:
     void scrollBeginDrag();
     void scrollEndDrag();
@@ -48,7 +54,11 @@ private Q_SLOTS:
 private:
     QVariantMap buildEventData(QQuickItem* item) const;
     virtual void configureView(QQuickItem* view) const override;
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
+    bool arrayScrollingOptimizationEnabled(QQuickItem* item) const;
+
+    static QMap<QQuickItem*, QQuickItem*> m_scrollViewByListViewItem;
+    static QMap<QQuickItem*, QVariantList> m_modelByScrollView;
 };
 
 #endif // SCROLLVIEWMANAGER_H

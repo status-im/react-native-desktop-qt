@@ -15,6 +15,7 @@
 #include <QQuickItem>
 #include <QString>
 #include <QVariant>
+#include <QVariantList>
 
 #include <QDebug>
 
@@ -29,6 +30,9 @@
 
 using namespace utilities;
 
+QMap<QQuickItem*, QQuickItem*> ScrollViewManager::m_scrollViewByListViewItem;
+QMap<QQuickItem*, QVariantList> ScrollViewManager::m_modelByScrollView;
+
 void ScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
     Q_ASSERT(item != nullptr);
@@ -41,11 +45,17 @@ void ScrollViewManager::scrollToEnd(int reactTag, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
     Q_ASSERT(item != nullptr);
 
-    qreal contentHeight = item->property("contentHeight").toReal();
-    qreal height = item->property("height").toReal();
-    qreal newContentY = (contentHeight > height) ? contentHeight - height : 0;
-
-    QQmlProperty(item, "contentY").write(newContentY);
+    if (arrayScrollingOptimizationEnabled(item)) {
+        int scrollViewModelItemsCount = item->property("count").toInt();
+        QMetaObject::invokeMethod(item, "positionViewAtEnd");
+        QQmlProperty(item, "currentIndex").write(scrollViewModelItemsCount - 1);
+        QMetaObject::invokeMethod(item, "positionViewAtEnd");
+    } else {
+        qreal contentHeight = item->property("contentHeight").toReal();
+        qreal height = item->property("height").toReal();
+        qreal newContentY = (contentHeight > height) ? contentHeight - height : 0;
+        QQmlProperty(item, "contentY").write(newContentY);
+    }
 }
 
 ScrollViewManager::ScrollViewManager(QObject* parent) : ViewManager(parent) {}
@@ -69,11 +79,64 @@ QStringList ScrollViewManager::customDirectEventTypes() {
                        "momentumScrollEnd"};
 }
 
+bool ScrollViewManager::isArrayScrollingOptimizationEnabled(QQuickItem* item) {
+    return m_scrollViewByListViewItem.contains(item);
+}
+
+void ScrollViewManager::updateListViewItem(QQuickItem* item, QQuickItem* child, int position) {
+    QQuickItem* scrollView = m_scrollViewByListViewItem[item];
+    QVariantList& variantList = m_modelByScrollView[scrollView];
+    variantList.insert(position, QVariant::fromValue(child));
+    QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
+}
+
+void ScrollViewManager::removeListViewItem(QQuickItem* item,
+                                           const QList<int>& removeAtIndices,
+                                           bool unregisterAndDelete) {
+    if (removeAtIndices.isEmpty())
+        return;
+
+    QQuickItem* scrollView = m_scrollViewByListViewItem[item];
+    QVariantList& variantList = m_modelByScrollView[scrollView];
+
+    foreach (int idxToRemote, removeAtIndices) {
+        QQuickItem* itemToRemove = variantList.takeAt(idxToRemote).value<QQuickItem*>();
+        itemToRemove->setParentItem(nullptr);
+
+        if (unregisterAndDelete) {
+            itemToRemove->setParent(0);
+            itemToRemove->deleteLater();
+        }
+    }
+
+    auto flexbox = Flexbox::findFlexbox(item);
+    if (flexbox) {
+        flexbox->removeChilds(removeAtIndices);
+    }
+
+    QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
+}
+
+QQuickItem* ScrollViewManager::scrollViewContentItem(QQuickItem* item, int position) {
+    QQuickItem* scrollView = m_scrollViewByListViewItem[item];
+    QVariantList& variantList = m_modelByScrollView[scrollView];
+
+    Q_ASSERT(position < variantList.size());
+    return variantList.takeAt(position).value<QQuickItem*>();
+}
+
 void ScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const {
-    // add to parents content item
-    QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
-    Q_ASSERT(contentItem != nullptr);
-    utilities::insertChildItemAt(child, position, contentItem);
+    if (arrayScrollingOptimizationEnabled(scrollView)) {
+        QVariantList& list = m_modelByScrollView[scrollView];
+        foreach (QQuickItem* item, child->childItems()) { list.append(QVariant::fromValue(item)); }
+        QQmlProperty::write(scrollView, "model", QVariant::fromValue(list));
+        m_scrollViewByListViewItem.insert(child, scrollView);
+    } else {
+        // Flickable items should be children of contentItem
+        QQuickItem* contentItem = QQmlProperty(scrollView, "contentItem").read().value<QQuickItem*>();
+        Q_ASSERT(contentItem != nullptr);
+        utilities::insertChildItemAt(child, position, contentItem);
+    }
 }
 
 void ScrollViewManager::scrollBeginDrag() {
@@ -125,7 +188,8 @@ QVariantMap ScrollViewManager::buildEventData(QQuickItem* item) const {
     QVariantMap ed;
     ed.insert("contentOffset",
               QVariantMap{
-                  {"x", propertyValue<double>(item, "contentX")}, {"y", propertyValue<double>(item, "contentY")},
+                  {"x", propertyValue<double>(item, "contentX") - propertyValue<double>(item, "originX")},
+                  {"y", propertyValue<double>(item, "contentY") - propertyValue<double>(item, "originY")},
               });
     // ed.insert("contentInset", QVariantMap{
     // });
@@ -137,6 +201,7 @@ QVariantMap ScrollViewManager::buildEventData(QQuickItem* item) const {
     ed.insert("layoutMeasurement",
               QVariantMap{
                   {"width", propertyValue<double>(item, "width")}, {"height", propertyValue<double>(item, "height")},
+
               });
     ed.insert("zoomScale", 1);
     return ed;
@@ -144,6 +209,7 @@ QVariantMap ScrollViewManager::buildEventData(QQuickItem* item) const {
 
 void ScrollViewManager::configureView(QQuickItem* view) const {
     ViewManager::configureView(view);
+    view->setProperty("scrollViewManager", QVariant::fromValue((QObject*)this));
     // This would be prettier with a Functor version, but connect doesnt support it
     connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
     connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
@@ -153,8 +219,14 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
     connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
 
-QString ScrollViewManager::qmlComponentFile() const {
-    return "qrc:/qml/ReactScrollView.qml";
+QString ScrollViewManager::qmlComponentFile(const QVariantMap& properties) const {
+
+    return properties.value("enableArrayScrollingOptimization", false).toBool() ? "qrc:/qml/ReactScrollListView.qml"
+                                                                                : "qrc:/qml/ReactScrollView.qml";
+}
+
+bool ScrollViewManager::arrayScrollingOptimizationEnabled(QQuickItem* item) const {
+    return QQmlProperty(item, "p_enableArrayScrollingOptimization").read().toBool();
 }
 
 #include "scrollviewmanager.moc"

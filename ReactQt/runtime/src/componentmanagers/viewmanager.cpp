@@ -80,7 +80,8 @@ void ViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int pos
 }
 
 QQuickItem* ViewManager::view(const QVariantMap& properties) const {
-    QQuickItem* newView = createView();
+    qDebug() << "!!!! ViewManager::view props: " << properties;
+    QQuickItem* newView = createView(properties);
     if (newView) {
         configureView(newView);
     }
@@ -91,7 +92,7 @@ void ViewManager::configureView(QQuickItem* view) const {
     view->setProperty("viewManager", QVariant::fromValue((QObject*)this));
 }
 
-QString ViewManager::qmlComponentFile() const {
+QString ViewManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactView.qml";
 }
 
@@ -114,15 +115,18 @@ void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float wid
     if (!view)
         return;
 
+    qDebug() << " call of ViewManager::sendOnLayoutToJs for " << view;
+
     notifyJsAboutEvent(tag(view),
                        EVENT_ONLAYOUT,
                        QVariantMap{{"layout", QVariantMap{{"x", x}, {"y", y}, {"width", width}, {"height", height}}}});
 }
 
-QQuickItem* ViewManager::createView() const {
-    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlComponentFile()));
+QQuickItem* ViewManager::createView(const QVariantMap& properties) const {
+    qDebug() << "!!!! ViewManager::createView props: " << properties;
+    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlComponentFile(properties)));
     if (item == nullptr) {
-        qCritical() << QString("Can't create QML item for componenet %1").arg(qmlComponentFile());
+        qCritical() << QString("Can't create QML item for componenet %1").arg(qmlComponentFile(properties));
     }
     return item;
 }

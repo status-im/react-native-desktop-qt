@@ -40,7 +40,7 @@ public:
 
 protected:
     virtual void configureView(QQuickItem* view) const override;
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
 };
 
 #endif // RAWTEXTMANAGER_H

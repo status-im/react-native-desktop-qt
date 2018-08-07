@@ -36,7 +36,7 @@ static QMap<ImageLoader::Event, QString> eventNames{{ImageLoader::Event_LoadStar
                                                     {ImageLoader::Event_LoadEnd, "onLoadEnd"}};
 const QString URI_KEY = QStringLiteral("uri");
 const QString FILE_SCHEME = QStringLiteral("file://");
-}
+} // namespace
 
 class ImageManagerPrivate {
 
@@ -103,7 +103,7 @@ void ImageManager::configureView(QQuickItem* view) const {
     view->setEnabled(false);
 }
 
-QString ImageManager::qmlComponentFile() const {
+QString ImageManager::qmlComponentFile(const QVariantMap& properties) const {
     return "qrc:/qml/ReactImage.qml";
 }
 

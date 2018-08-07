@@ -37,7 +37,7 @@ public slots:
 
 private:
     virtual void configureView(QQuickItem* view) const override;
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
 
 private:
     QScopedPointer<ImageManagerPrivate> d_ptr;

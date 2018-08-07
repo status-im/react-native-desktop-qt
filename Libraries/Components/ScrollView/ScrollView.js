@@ -493,6 +493,23 @@ const ScrollView = createReactClass({
        // Opaque type returned by import IMAGE from './image.jpg'
        PropTypes.number,
      ]),
+    /**
+     * Enables rendering optimization for content's items arrays inside scroll view
+     * @platform desktop
+     */
+     enableArrayScrollingOptimization: PropTypes.bool,
+    /**
+     * Scroll view content top padding.
+     * `enableArrayScrollingOptimization` prop should be enabled.
+     * @platform desktop
+     */
+     headerHeight: PropTypes.number,
+    /**
+     * Scroll view content bottom padding.
+     * `enableArrayScrollingOptimization` prop should be enabled.
+     * @platform desktop
+     */
+     footerWidth: PropTypes.number,
   },
 
   getDefaultProps: function() : any {
@@ -902,14 +919,25 @@ const ScrollView = createReactClass({
         );
       }
     }
-    return (
-      /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
-       * comment suppresses an error when upgrading Flow's support for React.
-       * To see the error delete this comment and run Flow. */
-      <ScrollViewClass {...props} ref={this._setScrollViewRef}>
-        {contentContainer}
-      </ScrollViewClass>
-    );
+    if (Platform.OS === 'desktop' && props.enableArrayScrollingOptimization) {
+        return (
+          /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
+           * comment suppresses an error when upgrading Flow's support for React.
+           * To see the error delete this comment and run Flow. */
+          <ScrollViewClass {...props} {...contentSizeChangeProps} ref={this._setScrollViewRef}>
+            {children}
+          </ScrollViewClass>
+        );
+    } else {
+        return (
+          /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
+           * comment suppresses an error when upgrading Flow's support for React.
+           * To see the error delete this comment and run Flow. */
+          <ScrollViewClass {...props} ref={this._setScrollViewRef}>
+            {contentContainer}
+          </ScrollViewClass>
+        );
+    }
   }
 });
 

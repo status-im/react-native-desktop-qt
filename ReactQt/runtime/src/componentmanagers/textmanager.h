@@ -45,7 +45,7 @@ private:
     QQuickItem* parentTextItem(QQuickItem* textItem);
     bool propertyExplicitlySet(QQuickItem* item, const QString& propertyName);
 
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
     virtual void configureView(QQuickItem* view) const override;
 
 private:

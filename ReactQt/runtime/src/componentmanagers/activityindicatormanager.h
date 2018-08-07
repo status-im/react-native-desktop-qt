@@ -29,7 +29,7 @@ public:
     virtual QString moduleName() override;
 
 private:
-    virtual QString qmlComponentFile() const override;
+    virtual QString qmlComponentFile(const QVariantMap& properties) const override;
 
 private:
     QScopedPointer<ActivityIndicatorManagerPrivate> d_ptr;
