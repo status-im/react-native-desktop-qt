@@ -9,11 +9,11 @@
  */
 
 #include <QCommandLineParser>
+#include <QDirIterator>
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QUrl>
-#include <QFontDatabase>
-#include <QDirIterator>
 
 #include "attachedproperties.h"
 #include "reactitem.h"
@@ -123,11 +123,10 @@ void loadFontsFromResources() {
 
     QDirIterator it(":", QDirIterator::Subdirectories);
     while (it.hasNext()) {
-      QString resourceFile = it.next();
-      if(resourceFile.endsWith(".otf", Qt::CaseInsensitive) ||
-         resourceFile.endsWith(".ttf", Qt::CaseInsensitive)) {
-          QFontDatabase::addApplicationFont(resourceFile);
-      }
+        QString resourceFile = it.next();
+        if (resourceFile.endsWith(".otf", Qt::CaseInsensitive) || resourceFile.endsWith(".ttf", Qt::CaseInsensitive)) {
+            QFontDatabase::addApplicationFont(resourceFile);
+        }
     }
 }
 
