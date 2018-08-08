@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Button,
   View,
-  Text
+  Text,
+  Platform
 } from 'react-native';
 
 
@@ -14,25 +15,24 @@ export default class ButtonReactNative extends Component {
     constructor(props) {
       super(props);
       this.state = {
-        buttonColor: 'red' // default button color goes here
+        buttonText: 'red' // default button color goes here
       };
     }
 
-    changeButtonColor = () => {
-        if(this.state.buttonColor === 'red'){
-            this.setState({buttonColor: 'green'})
+    changeButtonText = () => {
+        if(Platform.isMacOs){
+            this.setState({buttonText: 'macos'})
         }
         else{
-            this.setState({buttonColor: 'red'})
+            this.setState({buttonText: 'unknown'})
         }
       }
 
   render() {
     return (
       <Button
-           onPress={this.changeButtonColor}
-           title="Click me"
-           color={this.state.buttonColor}
+           onPress={this.changeButtonText}
+           title={this.state.buttonText}
            accessibilityLabel="Learn more about this purple button"
         >
         </Button>
