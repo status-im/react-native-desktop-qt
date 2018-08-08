@@ -41,7 +41,7 @@ TextEdit {
     text: textIsTopInBlock ? decoratedText : ""
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
     textFormat: Text.RichText
-    wrapMode: Text.WordWrap
+    wrapMode: Text.Wrap
     clip: true
     opacity: p_opacity
     readOnly: true
