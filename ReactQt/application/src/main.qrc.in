@@ -12,5 +12,6 @@
   <qresource>
     <file>main.qml</file>
     ${JS_BUNDLE_RESOURCE}
+    ${FONTS_RESOURCE}
   </qresource>
 </RCC>

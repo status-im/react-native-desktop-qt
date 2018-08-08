@@ -9,6 +9,8 @@
  */
 
 #include <QCommandLineParser>
+#include <QDirIterator>
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QUrl>
@@ -117,10 +119,23 @@ private:
     QString m_executor = "LocalServerConnection";
 };
 
+void loadFontsFromResources() {
+
+    QDirIterator it(":", QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        QString resourceFile = it.next();
+        if (resourceFile.endsWith(".otf", Qt::CaseInsensitive) || resourceFile.endsWith(".ttf", Qt::CaseInsensitive)) {
+            QFontDatabase::addApplicationFont(resourceFile);
+        }
+    }
+}
+
 int main(int argc, char** argv) {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
     Q_INIT_RESOURCE(react_resources);
+
+    loadFontsFromResources();
 
     QQuickView view;
     ReactNativeProperties* rnp = new ReactNativeProperties(&view);

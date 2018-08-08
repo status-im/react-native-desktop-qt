@@ -24,6 +24,9 @@ function build(args, dependencies) {
   console.log("Found desktop external modules: " + desktopExternalModules);
   var desktopJSBundlePath = _findDesktopJSBundlePath(args);
   console.log("Found desktop JS bundle path: " + desktopJSBundlePath);
+  var desktopFonts = _findDesktopFonts(args);
+  console.log("Found desktop fonts: " + desktopFonts);
+
   return _findModules(args).then((dependencies) => {
     return new Promise((resolve, reject) => {
       _findDesktopModules(args, dependencies, resolve, reject);
@@ -37,7 +40,7 @@ function build(args, dependencies) {
       }
     });
   }).then(() => {
-    return _buildApplication(args, desktopExternalModules, desktopJSBundlePath);
+    return _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts);
   });
 }
 
@@ -49,6 +52,11 @@ function _findDesktopExternalModules(args) {
 function _findDesktopJSBundlePath(args) {
   var data = fs.readFileSync(path.join(args.root, 'package.json'));
   return JSON.parse(data).desktopJSBundlePath;
+}
+
+function _findDesktopFonts(args) {
+  var data = fs.readFileSync(path.join(args.root, 'package.json'));
+  return JSON.parse(data).desktopFonts;
 }
 
 function _findModules(args) {
@@ -113,7 +121,7 @@ function _buildModules(args, dependencies, resolve, reject) {
   });
 }
 
-function _buildApplication(args, desktopExternalModules, desktopJSBundlePath) {
+function _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
@@ -123,6 +131,9 @@ function _buildApplication(args, desktopExternalModules, desktopJSBundlePath) {
     }
     if (typeof desktopJSBundlePath !== 'undefined' && desktopJSBundlePath !== null) {
       buildCommand += ' -j "' + desktopJSBundlePath.toString() + '"';
+    }
+    if (typeof desktopFonts !== 'undefined' && desktopFonts !== null) {
+      buildCommand += ' -f "' + desktopFonts.toString().replace(/,/g, ';') + '"';
     }
     if (process.platform === "win32") {
       buildCommand += ' -g "' + "MinGW Makefiles" + '"';
