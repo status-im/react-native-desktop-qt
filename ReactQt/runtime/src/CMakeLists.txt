@@ -111,6 +111,7 @@ set(
   blobprovider.cpp
   bridge.cpp
   deviceinfo.cpp
+  platform.cpp
   eventdispatcher.cpp
   sourcecode.cpp
   componentdata.cpp

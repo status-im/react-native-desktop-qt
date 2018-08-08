@@ -46,6 +46,7 @@
 #include "modulemethod.h"
 #include "netinfo.h"
 #include "networking.h"
+#include "platform.h"
 #include "redbox.h"
 #include "sourcecode.h"
 #include "testmodule.h"
@@ -104,6 +105,7 @@ public:
                            new LinkingManager,
                            new Alert,
                            new DeviceInfo,
+                           new Platform,
                            new BlobProvider,
                            new ViewManager,
                            new RawTextManager,
