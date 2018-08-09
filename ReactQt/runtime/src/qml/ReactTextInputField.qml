@@ -18,6 +18,8 @@ TextField {
     horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
     echoMode: textInputRoot.p_secureTextEntry ? TextInput.Password : TextInput.Normal
     font.pointSize: textInputRoot.p_fontSize
+    font.family: textInputRoot.p_fontFamily
+    font.weight: textInputRoot.p_fontWeightEnum
 
     selectByMouse: true
     background: Rectangle {

@@ -23,10 +23,30 @@ Item {
     property double p_borderRadius: 0
     property color p_backgroundColor: "transparent"
     property double p_fontSize: 14
+    property string p_fontFamily
+    property string p_fontWeight
+    property int p_fontWeightEnum
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
 
     objectName: p_nativeID
+
+    onP_fontWeightChanged: {
+        switch(p_fontWeight) {
+        case "100": p_fontWeightEnum = Font.Thin; break;
+        case "200": p_fontWeightEnum = Font.Light; break;
+        case "300": p_fontWeightEnum = Font.ExtraLight; break;
+        case "400": p_fontWeightEnum = Font.Normal; break;
+        case "500": p_fontWeightEnum = Font.Medium; break;
+        case "600": p_fontWeightEnum = Font.DemiBold; break;
+        case "700": p_fontWeightEnum = Font.Bold; break;
+        case "800": p_fontWeightEnum = Font.ExtraBold; break;
+        case "900": p_fontWeightEnum = Font.Black; break;
+        case "normal": p_fontWeightEnum = Font.Normal; break;
+        case "bold": p_fontWeightEnum = Font.Bold; break;
+        default: p_fontWeightEnum = Font.Normal; break;
+        }
+    }
 
     function recreateInputControl() {
         if(textInputControl) {
