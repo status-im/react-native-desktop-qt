@@ -681,6 +681,10 @@ bool Flexbox::isDirty() {
     return YGNodeIsDirty(d_ptr->m_node);
 }
 
+void Flexbox::markDirty() {
+    YGNodeMarkDirty(d_ptr->m_node);
+}
+
 void Flexbox::printFlexboxHierarchy() {
     d_ptr->printNode();
 }

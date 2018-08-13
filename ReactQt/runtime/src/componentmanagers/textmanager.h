@@ -36,6 +36,7 @@ public:
 
     typedef std::map<QString, QVariant> PropertyMap;
     static void resizeToWidth(QQuickItem* textItem, double width);
+    static void resizeToHeight(QQuickItem* textItem, double height);
 
 public slots:
     QVariant nestedPropertyValue(QQuickItem* item, const QString& propertyName);
