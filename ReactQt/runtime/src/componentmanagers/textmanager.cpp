@@ -70,11 +70,13 @@ void TextManager::updateMeasureFunction(QQuickItem* textItem) {
     bool childIsTopReactTextInTextHierarchy = textItem->property("textIsTopInBlock").toBool();
 
     if (childIsTopReactTextInTextHierarchy) {
-        flexbox->setMeasureFunction([=](YGNodeRef, float width, YGMeasureMode, float, YGMeasureMode) {
+        flexbox->setMeasureFunction([=](
+            YGNodeRef /*node*/, float width, YGMeasureMode /*widthMode*/, float height, YGMeasureMode /*heightMode*/) {
             resizeToWidth(textItem, width);
+            resizeToHeight(textItem, height);
+            float h = textItem->height();
             float w = textItem->width();
-            float ch = textItem->property("contentHeight").toDouble();
-            return YGSize{w, ch};
+            return YGSize{w, h};
         });
     } else {
         flexbox->setMeasureFunction(nullptr);
@@ -82,6 +84,7 @@ void TextManager::updateMeasureFunction(QQuickItem* textItem) {
 }
 
 void TextManager::resizeToWidth(QQuickItem* textItem, double width) {
+    textItem->setWidth(width);
     double contentWidth = textItem->property("contentWidth").value<double>();
     double sw = 0;
     if (std::isnan(width)) {
@@ -90,6 +93,18 @@ void TextManager::resizeToWidth(QQuickItem* textItem, double width) {
         sw = contentWidth == 0 ? width : qMin(contentWidth, width);
     }
     textItem->setWidth(sw);
+}
+
+void TextManager::resizeToHeight(QQuickItem* textItem, double height) {
+    textItem->setHeight(height);
+    double contentHeight = textItem->property("contentHeight").value<double>();
+    double sh = 0;
+    if (std::isnan(height)) {
+        sh = contentHeight;
+    } else {
+        sh = contentHeight == 0 ? height : qMin(contentHeight, height);
+    }
+    textItem->setHeight(sh);
 }
 
 QVariant TextManager::nestedPropertyValue(QQuickItem* item, const QString& propertyName) {

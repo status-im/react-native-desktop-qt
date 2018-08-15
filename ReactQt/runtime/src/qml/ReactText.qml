@@ -161,6 +161,7 @@ TextEdit {
             }
         }
         decoratedText = htmlString;
+        textRoot.flexbox.markDirty();
     }
 
     function isText(obj)
