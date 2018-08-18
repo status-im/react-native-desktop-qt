@@ -134,6 +134,10 @@ Bridge::Bridge(QObject* parent) : QObject(parent), d_ptr(new BridgePrivate) {
 
 Bridge::~Bridge() {
     resetExecutor();
+    if (d_ptr->executorThread) {
+        d_ptr->executorThread->deleteLater();
+        d_ptr->executorThread = nullptr;
+    }
 }
 
 void* Bridge::getJavaScriptContext() {
@@ -210,11 +214,6 @@ void Bridge::resetExecutor() {
         d->executor->deleteLater();
         d->executor = nullptr;
         d->useJSC = false;
-
-        if (d->executorThread) {
-            d->executorThread->deleteLater();
-            d->executorThread = nullptr;
-        }
     }
 }
 
