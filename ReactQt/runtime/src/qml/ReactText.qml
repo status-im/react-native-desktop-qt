@@ -133,7 +133,7 @@ TextEdit {
         var fontStyle = textManager.nestedPropertyValue(textRoot, "p_fontStyle")
         var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")
 
-        var result = "<span style=\"" + (fontFamily ? ("font-family:"+fontFamily+";") : "")
+        var result = "<span style=\"white-space: pre; " + (fontFamily ? ("font-family:"+fontFamily+";") : "")
                 + (fontSize? ("font-size:"+fontSize+"pt;") : "")
                 + (color ? ("color:"+color+";") : "")
                 + ( !Qt.colorEqual(backgroundColor, "transparent") ? ("background-color:"+backgroundColor+";") : "")
