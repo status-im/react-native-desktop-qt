@@ -50,6 +50,11 @@ configure_file(
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../runtime/src)
 
+if (REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_MODULES_INCLUDE_DIRS)
+  include_directories(${REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_MODULES_INCLUDE_DIRS})
+endif()
+
+
 if (APPLICATION_MAIN_CPP_PATH)
   set(MAIN_CPP_SOURCE ${APPLICATION_MAIN_CPP_PATH})
 else()
@@ -73,3 +78,7 @@ target_link_libraries(
   ${APP_NAME}
   react-native
 )
+
+if (REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS)
+  target_link_libraries(${APP_NAME} ${REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS})
+endif()
