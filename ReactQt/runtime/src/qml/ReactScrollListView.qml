@@ -15,6 +15,7 @@ ListView{
     clip: true
     contentHeight: contentItem.childrenRect.height
     contentWidth: contentItem.childrenRect.width
+    highlightFollowsCurrentItem: false
 
     onCountChanged: {
         if(scrollViewManager)
