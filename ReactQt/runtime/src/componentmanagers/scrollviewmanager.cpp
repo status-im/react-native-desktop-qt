@@ -87,6 +87,12 @@ void ScrollViewManager::updateListViewItem(QQuickItem* item, QQuickItem* child, 
     QQuickItem* scrollView = m_scrollViewByListViewItem[item];
     QVariantList& variantList = m_modelByScrollView[scrollView];
     variantList.insert(position, QVariant::fromValue(child));
+
+    if (variantList.size() > 40) {
+        int* doNotCall = nullptr;
+        *doNotCall = 911;
+    }
+
     QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
 }
 
@@ -200,7 +206,8 @@ QVariantMap ScrollViewManager::buildEventData(QQuickItem* item) const {
               });
     ed.insert("layoutMeasurement",
               QVariantMap{
-                  {"width", propertyValue<double>(item, "width")}, {"height", propertyValue<double>(item, "height")},
+                  {"width", propertyValue<double>(item, "width")},
+                  {"height", propertyValue<double>(item, "height")},
 
               });
     ed.insert("zoomScale", 1);
