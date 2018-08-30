@@ -5,6 +5,7 @@ import React 0.1 as React
 Flickable {
     id: scrollViewRoot
 
+    property var scrollViewManager: null
     property bool p_onScroll: false
     property var flexbox: React.Flexbox {control: scrollViewRoot}
     property bool p_enableArrayScrollingOptimization: false
@@ -14,4 +15,14 @@ Flickable {
     clip: true
     contentHeight: contentItem.childrenRect.height
     contentWidth: contentItem.childrenRect.width
+
+    onFlickingChanged: {
+        if(scrollViewManager) {
+            if(flicking) {
+                scrollViewManager.momentumScrollBegin(scrollViewRoot);
+            } else {
+                scrollViewManager.momentumScrollEnd(scrollViewRoot);
+            }
+        }
+    }
 }

@@ -164,17 +164,13 @@ void ScrollViewManager::scroll() {
     }
 }
 
-void ScrollViewManager::momentumScrollBegin() {
+void ScrollViewManager::momentumScrollBegin(QQuickItem* item) {
     // qDebug() << __PRETTY_FUNCTION__;
-    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-    Q_ASSERT(item != nullptr);
     notifyJsAboutEvent(tag(item), "momentumScrollBegin", buildEventData(item));
 }
 
-void ScrollViewManager::momentumScrollEnd() {
+void ScrollViewManager::momentumScrollEnd(QQuickItem* item) {
     // qDebug() << __PRETTY_FUNCTION__;
-    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
-    Q_ASSERT(item != nullptr);
     notifyJsAboutEvent(tag(item), "momentumScrollEnd", buildEventData(item));
 }
 
@@ -214,9 +210,6 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
     connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
     connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
     connect(view, SIGNAL(movingChanged()), SLOT(scroll()));
-
-    connect(view, SIGNAL(flickStarted()), SLOT(momentumScrollBegin()));
-    connect(view, SIGNAL(flickEnded()), SLOT(momentumScrollEnd()));
 }
 
 QString ScrollViewManager::qmlComponentFile(const QVariantMap& properties) const {

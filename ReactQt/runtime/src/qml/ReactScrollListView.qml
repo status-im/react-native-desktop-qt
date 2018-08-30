@@ -13,13 +13,15 @@ ListView{
     property int p_footerWidth: 0
 
     clip: true
-    contentHeight: contentItem.childrenRect.height
-    contentWidth: contentItem.childrenRect.width
     highlightFollowsCurrentItem: false
 
     onCountChanged: {
         if(scrollViewManager)
-            scrollViewManager.sendOnLayoutToJs(scrollViewRoot, contentX, contentY, contentWidth, contentHeight);
+            scrollViewManager.sendOnLayoutToJs(scrollViewRoot,
+                                               contentX,
+                                               contentY,
+                                               contentItem.childrenRect.width,
+                                               contentItem.childrenRect.height);
     }
 
     header: Item {
@@ -40,6 +42,16 @@ ListView{
 
         Component.onDestruction: {
             modelData.parent = null
+        }
+    }
+
+    onFlickingChanged: {
+        if(scrollViewManager) {
+            if(flicking) {
+                scrollViewManager.momentumScrollBegin(scrollViewRoot);
+            } else {
+                scrollViewManager.momentumScrollEnd(scrollViewRoot);
+            }
         }
     }
 }

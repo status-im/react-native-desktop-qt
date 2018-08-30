@@ -43,13 +43,14 @@ public:
     removeListViewItem(QQuickItem* item, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
     static QQuickItem* scrollViewContentItem(QQuickItem* item, int position);
 
+public Q_SLOTS:
+    void momentumScrollBegin(QQuickItem* item);
+    void momentumScrollEnd(QQuickItem* item);
+
 private Q_SLOTS:
     void scrollBeginDrag();
     void scrollEndDrag();
     void scroll();
-
-    void momentumScrollBegin();
-    void momentumScrollEnd();
 
 private:
     QVariantMap buildEventData(QQuickItem* item) const;

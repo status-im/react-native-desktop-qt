@@ -32,6 +32,23 @@ const QString TOUCH_MOVE = "touchMove";
 
 const int RESET_CONTENT_HTTP_STATUS_CODE = 205;
 
+QQuickItem* getChildFromScrollView(QQuickItem* scrollView, const QPointF& scrollViewPos) {
+    QQuickItem* itemAt = nullptr;
+    QQuickItem* contentItem = scrollView->property("contentItem").value<QQuickItem*>();
+    if (!contentItem)
+        return nullptr;
+
+    QPointF contentItemPos = scrollView->mapToItem(contentItem, scrollViewPos);
+    QMetaObject::invokeMethod(scrollView,
+                              "itemAt",
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(QQuickItem*, itemAt),
+                              Q_ARG(qreal, contentItemPos.x()),
+                              Q_ARG(qreal, contentItemPos.y()));
+
+    return itemAt;
+}
+
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     const QPointF& lp = event->localPos();
 
@@ -43,15 +60,23 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     QPointF local = lp;
     forever {
         target = next;
-        next = target->childAt(local.x(), local.y());
-        if (next == nullptr || !next->isEnabled())
+        QString className(target->metaObject()->className());
+
+        if (className.startsWith("ReactScrollListView")) {
+            next = getChildFromScrollView(target, local);
+        } else {
+            next = target->childAt(local.x(), local.y());
+        }
+
+        if (next == nullptr || !next->isEnabled()) {
             break;
+        }
         local = target->mapToItem(next, local);
     }
 
     AttachedProperties* ap = AttachedProperties::get(target, false);
     if (ap == nullptr) {
-        // qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
+        qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
         return e;
     }
 
