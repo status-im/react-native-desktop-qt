@@ -91,9 +91,6 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     e.insert("locationY", local.y());
     e.insert("timestamp", QVariant::fromValue(event->timestamp()));
 
-    qDebug() << "!!! created event target: " << ap->tag();
-    qDebug() << "!!! objectName: " << target->objectName();
-
     return e;
 }
 // TODO:
