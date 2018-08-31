@@ -17,6 +17,7 @@ React.Item {
     property bool p_onLayout: false
     property double p_blurRadius: 0
     property string p_resizeMode: 'cover'
+    property bool isSVG: false
 
     property var imageManager: null
     property string managedSource
@@ -41,6 +42,11 @@ React.Item {
         fillMode: fillModeFromResizeMode(imageRoot.p_resizeMode)
         source: imageRoot.managedSource
         visible: false //image not visible, because it is followed by effects and last effect is visible
+
+        //svg images sometimes contain internal height and width specification and gets
+        //blurry when resized. To avoid this we set sourceSize that supercedes internal svg settings
+        sourceSize.width: isSVG ? flexbox.p_width : undefined
+        sourceSize.height: isSVG ? flexbox.p_height : undefined
     }
 
     FastBlur {

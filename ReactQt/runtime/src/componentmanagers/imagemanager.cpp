@@ -77,6 +77,8 @@ void ImageManager::manageSource(const QVariantMap& imageSource, QQuickItem* imag
         return;
     }
 
+    image->setProperty("isSVG", source.toString(QUrl::RemoveQuery).endsWith("svg"));
+
     if (source.scheme() == "file" && imageSource[URI_KEY].toString().startsWith(FILE_SCHEME)) {
         source = QUrl(imageSource[URI_KEY].toString().replace(FILE_SCHEME, ""));
     }
