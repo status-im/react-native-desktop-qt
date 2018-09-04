@@ -109,10 +109,7 @@ void ScrollViewManager::removeListViewItem(QQuickItem* item,
         }
     }
 
-    auto flexbox = Flexbox::findFlexbox(item);
-    if (flexbox) {
-        flexbox->removeChilds(removeAtIndices);
-    }
+    utilities::removeFlexboxChilds(item, removeAtIndices);
 
     QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
 }

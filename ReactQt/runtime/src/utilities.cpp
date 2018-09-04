@@ -101,4 +101,13 @@ void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent) {
     }
 }
 
+void removeFlexboxChilds(QQuickItem* item, const QList<int>& removeAtIndices) {
+    auto flexbox = Flexbox::findFlexbox(item);
+    if (flexbox) {
+        qDebug() << "utilities::removeFlexboxChilds remove children at indexes" << removeAtIndices
+                 << " from parent item: " << item << " parent flexbox: " << flexbox;
+        flexbox->removeChilds(removeAtIndices);
+    }
+}
+
 } // namespace utilities

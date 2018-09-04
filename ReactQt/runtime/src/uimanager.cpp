@@ -117,10 +117,7 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
             }
         }
 
-        auto flexbox = Flexbox::findFlexbox(parent);
-        if (flexbox) {
-            flexbox->removeChilds(removeAtIndices);
-        }
+        utilities::removeFlexboxChilds(parent, removeAtIndices);
     }
 }
 
@@ -136,6 +133,14 @@ void UIManager::manageChildren(int containerReactTag,
         qWarning() << "Attempting to manage children on an unknown container";
         return;
     }
+
+    qDebug() << "UIManager::manageChildren for containerReactTag: " << containerReactTag
+             << " moveFromIndicies: " << moveFromIndicies << " moveToIndices: " << moveToIndices
+             << " addChildReactTags: " << addChildReactTags << " addAtIndices: " << addAtIndices
+             << " removeAtIndices: " << removeAtIndices;
+
+    qDebug() << "UIManager::manageChildren container->childItems().size(): " << container->childItems().size();
+    qDebug() << "UIManager::manageChildren container->childItems(): " << container->childItems();
 
     Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
     Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
@@ -205,6 +210,9 @@ void UIManager::manageChildren(int containerReactTag,
             auto containerFlexbox = Flexbox::findFlexbox(container);
             auto childFlexbox = Flexbox::findFlexbox(child);
             if (containerFlexbox && childFlexbox) {
+                qDebug() << "UIManager::manageChildren containerFlexbox->addChild Parent container: " << container
+                         << " parent container flexbox: " << containerFlexbox << " Child item: " << child
+                         << " child flexbox: " << childFlexbox << " position to add at: " << i;
                 containerFlexbox->addChild(i, childFlexbox);
             }
         }

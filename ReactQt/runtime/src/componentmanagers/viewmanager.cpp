@@ -120,9 +120,13 @@ void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float wid
 }
 
 QQuickItem* ViewManager::createView(const QVariantMap& properties) const {
-    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlComponentFile(properties)));
+    QString qmlSrc = qmlComponentFile(properties);
+    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlSrc));
     if (item == nullptr) {
-        qCritical() << QString("Can't create QML item for componenet %1").arg(qmlComponentFile(properties));
+        qCritical() << QString("Can't create QML item for component %1").arg(qmlSrc);
+    } else {
+        qDebug() << "View is created. Address: " << item << ". Source QML file: " << qmlSrc
+                 << ". Props: " << properties;
     }
     return item;
 }

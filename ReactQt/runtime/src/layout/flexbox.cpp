@@ -124,6 +124,8 @@ void Flexbox::setMeasureFunction(ygnode_measure_function measureFunction) {
 void Flexbox::addChild(int index, Flexbox* child) {
     Q_ASSERT(child);
 
+    qDebug() << "Flexbox::addChild new YGNode: " << child->d_ptr->m_node << " for flexbox: " << child
+             << " will be inserted at: " << index << " into parent: " << this;
     YGNodeInsertChild(d_ptr->m_node, child->d_ptr->m_node, index);
 }
 
@@ -132,6 +134,8 @@ void Flexbox::removeChilds(const QList<int>& indicesToRemove) {
 
     QList<YGNodeRef> toRemove;
     for (int index : indicesToRemove) {
+        qDebug() << "Flexbox::removeChilds YGNode: " << YGNodeGetChild(d->m_node, index)
+                 << " will be removed at index: " << index << " from: " << this;
         toRemove.push_back(YGNodeGetChild(d->m_node, index));
     }
 
