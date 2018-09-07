@@ -27,6 +27,19 @@ const int MINOR_VERSION = 1;
 
 namespace utilities {
 
+MatrixTransform::MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
+    : QQuickTransform(parent), m_item(qobject_cast<QQuickItem*>(parent)) {
+    memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
+    m_transformMatrix.optimize();
+}
+void MatrixTransform::applyTo(QMatrix4x4* matrix) const {
+    if (m_transformMatrix.isIdentity())
+        return;
+    matrix->translate(m_item->width() / 2, m_item->height() / 2);
+    *matrix *= m_transformMatrix;
+    matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
+}
+
 void registerReactTypes() {
     qmlRegisterUncreatableType<AttachedProperties>(
         "React", MAJOR_VERSION, MINOR_VERSION, "React", "React is not meant to be created directly");

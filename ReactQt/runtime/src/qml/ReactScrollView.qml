@@ -11,6 +11,16 @@ Flickable {
     property bool p_enableArrayScrollingOptimization: false
     property int p_headerHeight: 0
     property int p_footerWidth: 0
+    property var p_transform
+    property bool invertedScroll: false
+
+    onP_transformChanged: {
+        scrollViewManager.addTransformation(scrollViewRoot, p_transform)
+        //if scrollview vertically inveted we should remember that to adjust wheel events
+        var scaleY = p_transform[5];
+        invertedScroll = (scaleY < 0);
+    }
+
 
     clip: true
     contentHeight: contentItem.childrenRect.height

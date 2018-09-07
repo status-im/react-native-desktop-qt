@@ -15,7 +15,7 @@
 
 #include "layout/flexbox.h"
 #include "reactitem.h"
-#include <QMatrix4x4>
+#include "utilities.h"
 
 namespace {
 Qt::PenStyle borderStyleToPenStyle(const QString& borderStyle) {
@@ -39,24 +39,6 @@ QString penStyleToBorderStyle(Qt::PenStyle penStyle) {
     }
 }
 } // namespace
-
-class MatrixTransform : public QQuickTransform {
-public:
-    MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent)
-        : QQuickTransform(parent), m_item(qobject_cast<QQuickItem*>(parent)) {
-        memcpy(m_transformMatrix.data(), transformMatrix.constData(), 16 * sizeof(float));
-        m_transformMatrix.optimize();
-    }
-    void applyTo(QMatrix4x4* matrix) const override {
-        if (m_transformMatrix.isIdentity())
-            return;
-        matrix->translate(m_item->width() / 2, m_item->height() / 2);
-        *matrix *= m_transformMatrix;
-        matrix->translate(-m_item->width() / 2, -m_item->height() / 2);
-    }
-    QMatrix4x4 m_transformMatrix;
-    QQuickItem* m_item;
-};
 
 class ReactItemPrivate {
     Q_DECLARE_PUBLIC(ReactItem)
@@ -422,7 +404,7 @@ void ReactItem::setTransform(QVector<float>& transform) {
     d->transform = transform;
     QQmlListReference r(this, "transform");
     r.clear();
-    r.append(new MatrixTransform(transform, this));
+    r.append(new utilities::MatrixTransform(transform, this));
 }
 
 ReactItem::ReactItem(QQuickItem* parent) : QQuickPaintedItem(parent), d_ptr(new ReactItemPrivate(this)) {}
