@@ -4,7 +4,7 @@
 | ActivityIndicator           | +/-                  |
 | Button                      | +/-                  |
 | DatePickerIOS               |                      |
-| DrawerLayoutAndroid         |                      |
+| DrawerLayoutAndroid         | +/-                  |
 | FlatList                    |                      |
 | Image                       | +/-                  |
 | KeyboardAvoidingView        |                      |

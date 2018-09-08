@@ -234,6 +234,7 @@ QString Flexbox::flexDirection() {
 
 void Flexbox::setFlexDirection(const QString& value) {
     if (value != d_ptr->m_flexDirection) {
+        d_ptr->m_flexDirection = value;
         YGNodeStyleSetFlexDirection(d_ptr->m_node, flexDirectionByString[value]);
         flexDirectionChanged();
     }
@@ -245,6 +246,7 @@ QString Flexbox::justifyContent() {
 
 void Flexbox::setJustifyContent(const QString& value) {
     if (value != d_ptr->m_justifyContent) {
+        d_ptr->m_justifyContent = value;
         YGNodeStyleSetJustifyContent(d_ptr->m_node, justificationByString[value]);
         justifyContentChanged();
     }
@@ -388,6 +390,7 @@ QString Flexbox::alignItems() {
 
 void Flexbox::setAlignItems(const QString& value) {
     if (value != d_ptr->m_alignItems) {
+        d_ptr->m_alignItems = value;
         YGNodeStyleSetAlignItems(d_ptr->m_node, alignByString[value]);
         alignItemsChanged();
     }
@@ -399,6 +402,7 @@ QString Flexbox::alignContent() {
 
 void Flexbox::setAlignContent(const QString& value) {
     if (value != d_ptr->m_alignContent) {
+        d_ptr->m_alignContent = value;
         YGNodeStyleSetAlignContent(d_ptr->m_node, alignByString[value]);
         alignContentChanged();
     }
@@ -410,6 +414,7 @@ QString Flexbox::alignSelf() {
 
 void Flexbox::setAlignSelf(const QString& value) {
     if (value != d_ptr->m_alignSelf) {
+        d_ptr->m_alignSelf = value;
         YGNodeStyleSetAlignSelf(d_ptr->m_node, alignByString[value]);
         alignSelfChanged();
     }
@@ -555,6 +560,7 @@ QString Flexbox::flexWrap() {
 
 void Flexbox::setFlexWrap(const QString& value) {
     if (value != d_ptr->m_flexWrap) {
+        d_ptr->m_flexWrap = value;
         YGNodeStyleSetFlexWrap(d_ptr->m_node, wrapByString[value]);
         flexWrapChanged();
     }
@@ -643,6 +649,7 @@ QString Flexbox::display() {
 
 void Flexbox::setDisplay(const QString& value) {
     if (value != d_ptr->m_display) {
+        d_ptr->m_display = value;
         YGNodeStyleSetDisplay(d_ptr->m_node, displayByString[value]);
         displayChanged();
     }
@@ -654,6 +661,7 @@ QString Flexbox::overflow() {
 
 void Flexbox::setOverflow(const QString& value) {
     if (value != d_ptr->m_overflow) {
+        d_ptr->m_overflow = value;
         YGNodeStyleSetOverflow(d_ptr->m_node, overflowByString[value]);
         overflowChanged();
     }
@@ -665,6 +673,7 @@ QString Flexbox::position() {
 
 void Flexbox::setPosition(const QString& value) {
     if (value != d_ptr->m_position) {
+        d_ptr->m_position = value;
         YGNodeStyleSetPositionType(d_ptr->m_node, positionByString[value]);
         positionChanged();
     }
@@ -676,6 +685,7 @@ QString Flexbox::direction() {
 
 void Flexbox::setDirection(const QString& value) {
     if (value != d_ptr->m_direction) {
+        d_ptr->m_direction = value;
         YGNodeStyleSetDirection(d_ptr->m_node, directionByString[value]);
         directionChanged();
     }

@@ -12,6 +12,8 @@
 #ifndef UTILITIES
 #define UTILITIES
 
+#include <QMatrix4x4>
+#include <QQuickTransform>
 #include <QString>
 #include <QUrl>
 
@@ -19,6 +21,14 @@ class QQuickItem;
 class QQmlEngine;
 
 namespace utilities {
+
+class MatrixTransform : public QQuickTransform {
+public:
+    MatrixTransform(const QVector<float>& transformMatrix, QQuickItem* parent);
+    void applyTo(QMatrix4x4* matrix) const override;
+    QMatrix4x4 m_transformMatrix;
+    QQuickItem* m_item;
+};
 
 void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);

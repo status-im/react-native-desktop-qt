@@ -13,9 +13,11 @@
 
 #include <QQmlComponent>
 #include <QQuickItem>
+#include <QSet>
 #include <QString>
 #include <QVariant>
 #include <QVariantList>
+#include <QWheelEvent>
 
 #include <QDebug>
 
@@ -171,6 +173,55 @@ void ScrollViewManager::momentumScrollEnd(QQuickItem* item) {
     notifyJsAboutEvent(tag(item), "momentumScrollEnd", buildEventData(item));
 }
 
+void ScrollViewManager::addTransformation(QQuickItem* item, QVariantList transform) {
+
+    QVector<float> transformVector;
+    foreach (QVariant v, transform) {
+        if (v.canConvert(QMetaType::Double)) {
+            transformVector << v.value<float>();
+        } else {
+            return;
+        }
+    }
+
+    QQmlListReference r(item, "transform");
+    if (r.canAppend()) {
+        r.clear();
+        r.append(new MatrixTransform(transformVector, item));
+    }
+}
+
+bool ScrollViewManager::eventFilter(QObject* scrollView, QEvent* event) {
+
+    static QSet<QWheelEvent*> artificialEvents;
+
+    if (event->type() == QEvent::Wheel) {
+
+        QWheelEvent* e = static_cast<QWheelEvent*>(event);
+        bool shouldInvertWheelEvents = scrollView->property("invertedScroll").toBool();
+
+        if (shouldInvertWheelEvents && !artificialEvents.contains(e)) {
+            QWheelEvent* modifiedEvent = new QWheelEvent(e->posF(),
+                                                         e->globalPosF(),
+                                                         -e->pixelDelta(),
+                                                         e->angleDelta(),
+                                                         e->delta(),
+                                                         e->orientation(),
+                                                         e->buttons(),
+                                                         e->modifiers(),
+                                                         e->phase(),
+                                                         e->source(),
+                                                         true);
+            artificialEvents.insert(modifiedEvent);
+            QCoreApplication::sendEvent(scrollView, modifiedEvent);
+            artificialEvents.remove(modifiedEvent);
+            delete modifiedEvent;
+            return true;
+        }
+    }
+    return false;
+}
+
 namespace {
 template <typename TP> TP propertyValue(QQuickItem* item, const QString& property) {
     return QQmlProperty(item, property).read().value<TP>();
@@ -204,6 +255,7 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
     ViewManager::configureView(view);
     view->setProperty("scrollViewManager", QVariant::fromValue((QObject*)this));
     // This would be prettier with a Functor version, but connect doesnt support it
+    view->installEventFilter((QObject*)this);
     connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
     connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
     connect(view, SIGNAL(movingChanged()), SLOT(scroll()));

@@ -46,6 +46,10 @@ public:
 public Q_SLOTS:
     void momentumScrollBegin(QQuickItem* item);
     void momentumScrollEnd(QQuickItem* item);
+    void addTransformation(QQuickItem* item, QVariantList transform);
+
+protected:
+    bool eventFilter(QObject* scrollView, QEvent* e) override;
 
 private Q_SLOTS:
     void scrollBeginDrag();
