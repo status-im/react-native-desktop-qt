@@ -17,8 +17,10 @@ Flickable {
     onP_transformChanged: {
         scrollViewManager.addTransformation(scrollViewRoot, p_transform)
         //if scrollview vertically inveted we should remember that to adjust wheel events
-        var scaleY = p_transform[5];
-        invertedScroll = (scaleY < 0);
+        if(p_transform.length > 5) {
+            var scaleY = p_transform[5];
+            invertedScroll = (scaleY < 0);
+        }
     }
 
 

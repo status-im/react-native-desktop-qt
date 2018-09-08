@@ -179,12 +179,19 @@ void ScrollViewManager::momentumScrollEnd(QQuickItem* item) {
 void ScrollViewManager::addTransformation(QQuickItem* item, QVariantList transform) {
 
     QVector<float> transformVector;
-    foreach (QVariant v, transform)
-        transformVector << v.value<float>();
+    foreach (QVariant v, transform) {
+        if (v.canConvert(QMetaType::Double)) {
+            transformVector << v.value<float>();
+        } else {
+            return;
+        }
+    }
 
     QQmlListReference r(item, "transform");
-    r.clear();
-    r.append(new MatrixTransform(transformVector, item));
+    if (r.canAppend()) {
+        r.clear();
+        r.append(new MatrixTransform(transformVector, item));
+    }
 }
 
 bool ScrollViewManager::eventFilter(QObject* scrollView, QEvent* event) {
