@@ -11,6 +11,7 @@ ListView{
     property bool p_enableArrayScrollingOptimization: false
     property int p_headerHeight: 0
     property int p_footerWidth: 0
+    property bool p_inverted: false
 
     clip: true
     highlightFollowsCurrentItem: false
@@ -24,6 +25,8 @@ ListView{
                                                contentItem.childrenRect.height);
     }
 
+    verticalLayoutDirection: p_inverted ? ListView.BottomToTop : ListView.TopToBottom
+
     header: Item {
         height: p_headerHeight
     }
@@ -33,15 +36,15 @@ ListView{
 
     delegate: Item {
         id: componentId
-        height: modelData.height
-        width: modelData.width
+        height: model.display.height
+        width: model.display.width
         Component.onCompleted: {
-            modelData.parent = componentId
-            modelData.anchors.centerIn = componentId
+            model.display.parent = componentId
+            model.display.anchors.centerIn = componentId
         }
 
         Component.onDestruction: {
-            modelData.parent = null
+            model.display.parent = null
         }
     }
 
