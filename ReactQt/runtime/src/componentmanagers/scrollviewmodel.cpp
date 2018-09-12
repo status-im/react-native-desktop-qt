@@ -21,22 +21,6 @@ QVariant ScrollViewModel::data(const QModelIndex& index, int role = Qt::DisplayR
     return m_model[index.row()];
 }
 
-QQuickItem* ScrollViewModel::allocateNewItem() {
-    QUrl fileUrl("qrc:/ScrollViewComponent.qml");
-
-    QQmlComponent component(m_engine);
-    component.loadUrl(fileUrl);
-    if (!component.isReady()) {
-        qCritical() << QString("Component for %1 is not loaded").arg(fileUrl.toString());
-    }
-
-    QObject* createdObject = component.create();
-    if (createdObject == nullptr) {
-        qCritical() << QString("Unable to construct item from component %1").arg(fileUrl.toString());
-    }
-    return qobject_cast<QQuickItem*>(createdObject);
-}
-
 void ScrollViewModel::insert(QQuickItem* item, int position) {
     beginInsertRows(QModelIndex(), position, position);
     m_model.insert(position, QVariant::fromValue(item));
