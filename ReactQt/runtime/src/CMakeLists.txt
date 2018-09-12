@@ -148,6 +148,7 @@ set(
   componentmanagers/pickermanager.cpp
   componentmanagers/switchmanager.cpp
   componentmanagers/webviewmanager.cpp
+  componentmanagers/scrollviewmodel.cpp
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp
