@@ -925,7 +925,6 @@ const ScrollView = createReactClass({
       }
     }
     if (Platform.OS === 'desktop' && props.enableArrayScrollingOptimization) {
-      console.log("props: ", {...props})
         return (
           /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
            * comment suppresses an error when upgrading Flow's support for React.
