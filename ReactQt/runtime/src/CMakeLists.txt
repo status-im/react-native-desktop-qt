@@ -258,5 +258,3 @@ add_custom_target(
   copy-qmldir ALL
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
 )
-
-configure_file(../../../ubuntu-server.js ../../../ubuntu-server.js COPYONLY)
