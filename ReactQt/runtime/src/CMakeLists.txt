@@ -247,7 +247,7 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
   set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
 endif()
