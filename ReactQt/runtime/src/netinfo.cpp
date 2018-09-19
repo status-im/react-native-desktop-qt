@@ -12,6 +12,12 @@
  */
 
 #include <QNetworkAccessManager>
+#include <QTimer>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QDebug>
+
+#include <memory>
 
 #include "bridge.h"
 #include "eventdispatcher.h"
@@ -27,6 +33,8 @@ static QMap<QNetworkAccessManager::NetworkAccessibility, QString> accessibleName
 class NetInfoPrivate {
 public:
     void monitorNetworkAccess() {
+
+
         QObject::connect(bridge->networkAccessManager(),
                          &QNetworkAccessManager::networkAccessibleChanged,
                          [=](QNetworkAccessManager::NetworkAccessibility accessible) {
@@ -34,9 +42,76 @@ public:
                                  "networkStatusDidChange",
                                  QVariantList{QVariantMap{{"connectionType", accessibleName.value(accessible)}}});
                          });
+
+        timer = new QTimer();
+
+        QObject::connect(timer, &QTimer::timeout, 
+          [=]() {
+              QNetworkRequest req(QUrl("http://www.google.com"));
+              nam = new QNetworkAccessManager();
+              QNetworkReply * reply = nam->head(req);
+              auto replyFinishOrTimeout = [=]() {
+                    auto newAccessible = reply->isFinished() ? 
+                                         reply->error() == QNetworkReply::NoError :
+                                         false;
+                    qDebug() << "reply->error(): " << reply->error() << "isFinished: " << reply->isFinished(); 
+                    auto currentAccessible = 
+                      bridge->networkAccessManager()->networkAccessible() == QNetworkAccessManager::Accessible;
+                    qDebug() << "monitorNetworkAccess: " << currentAccessible << " " << newAccessible; 
+                    if (newAccessible != currentAccessible) {
+                      auto networkAccessible = newAccessible ? 
+                                               QNetworkAccessManager::Accessible : 
+                                               QNetworkAccessManager::NotAccessible;
+                      qDebug() << "monitorNetworkAccess: setNetworkAccessible " << networkAccessible;
+                      bridge->networkAccessManager()->setNetworkAccessible(networkAccessible);
+                    }
+                    reply->deleteLater();
+                    //replyTimer->deleteLater();
+                    if (replyTimer != nullptr) {
+                      replyTimer->stop();
+                      delete replyTimer;
+                      replyTimer = nullptr;
+                    }
+
+                    if (nam != nullptr) {
+                      delete nam;
+                      nam = nullptr;
+                    }
+              };
+
+              replyTimer = new QTimer();
+              replyTimer->setSingleShot(true);
+              QObject::connect(replyTimer, &QTimer::timeout, replyFinishOrTimeout);
+              replyTimer->start(1000);
+              //QTimer::singleShot(1000, replyFinishOrTimeout);
+              //QObject::connect(reply, &QNetworkReply::finished, replyFinishOrTimeout);
+        });
+        timer->start(1000);
+
+
     }
 
     Bridge* bridge = nullptr;
+    QTimer* timer = nullptr;
+    QTimer* replyTimer = nullptr;
+    QNetworkAccessManager * nam = nullptr;
+
+    ~NetInfoPrivate() {
+      if (timer != nullptr) {
+        timer->stop();
+        delete timer;
+      }
+
+      if (replyTimer != nullptr) {
+        replyTimer->stop();
+        delete replyTimer;
+      }
+
+      if (nam != nullptr) {
+        delete nam;
+      }
+    }
+
 };
 
 void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& resolve,
@@ -61,3 +136,4 @@ void NetInfo::setBridge(Bridge* bridge) {
 QString NetInfo::moduleName() {
     return "RCTNetInfo";
 }
+
