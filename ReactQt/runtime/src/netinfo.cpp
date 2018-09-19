@@ -32,7 +32,7 @@ public:
                          [=](QNetworkAccessManager::NetworkAccessibility accessible) {
                              bridge->eventDispatcher()->sendDeviceEvent(
                                  "networkStatusDidChange",
-                                 QVariantList{QVariantMap{{"type", accessibleName.value(accessible)}}});
+                                 QVariantList{QVariantMap{{"connectionType", accessibleName.value(accessible)}}});
                          });
     }
 
@@ -45,7 +45,7 @@ void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& r
     Q_D(NetInfo);
     resolve(d->bridge,
             QVariantList{QVariantMap{
-                {"type", accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}});
+                {"connectionType", accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}});
 }
 
 NetInfo::NetInfo(QObject* parent) : QObject(parent), d_ptr(new NetInfoPrivate) {}
