@@ -19,9 +19,9 @@
 
 namespace {
 static QMap<QNetworkAccessManager::NetworkAccessibility, QString> accessibleName{
-    {QNetworkAccessManager::UnknownAccessibility, "UnknownAccessibility"},
-    {QNetworkAccessManager::NotAccessible, "NotAccessible"},
-    {QNetworkAccessManager::Accessible, "Accessible"}};
+    {QNetworkAccessManager::UnknownAccessibility, "unknown"},
+    {QNetworkAccessManager::NotAccessible, "none"},
+    {QNetworkAccessManager::Accessible, "wifi"}};
 }
 
 class NetInfoPrivate {
@@ -32,7 +32,7 @@ public:
                          [=](QNetworkAccessManager::NetworkAccessibility accessible) {
                              bridge->eventDispatcher()->sendDeviceEvent(
                                  "networkStatusDidChange",
-                                 QVariantList{QVariantMap{{"network_info", accessibleName.value(accessible)}}});
+                                 QVariantList{QVariantMap{{"type", accessibleName.value(accessible)}}});
                          });
     }
 
@@ -45,7 +45,7 @@ void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& r
     Q_D(NetInfo);
     resolve(d->bridge,
             QVariantList{QVariantMap{
-                {"network_info", accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}});
+                {"type", accessibleName.value(d->bridge->networkAccessManager()->networkAccessible())}}});
 }
 
 NetInfo::NetInfo(QObject* parent) : QObject(parent), d_ptr(new NetInfoPrivate) {}
