@@ -33,7 +33,7 @@
 using namespace utilities;
 
 QMap<QQuickItem*, QQuickItem*> ScrollViewManager::m_scrollViewByListViewItem;
-QMap<QQuickItem*, QVariantList> ScrollViewManager::m_modelByScrollView;
+QMap<QQuickItem*, ScrollViewModelPtr> ScrollViewManager::m_modelByScrollView;
 
 void ScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
@@ -87,9 +87,9 @@ bool ScrollViewManager::isArrayScrollingOptimizationEnabled(QQuickItem* item) {
 
 void ScrollViewManager::updateListViewItem(QQuickItem* item, QQuickItem* child, int position) {
     QQuickItem* scrollView = m_scrollViewByListViewItem[item];
-    QVariantList& variantList = m_modelByScrollView[scrollView];
-    variantList.insert(position, QVariant::fromValue(child));
-    QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
+    ScrollViewModelPtr model = m_modelByScrollView[scrollView];
+    model->insert(child, position);
+    QQmlProperty::write(scrollView, "model", QVariant::fromValue(model.data()));
 }
 
 void ScrollViewManager::removeListViewItem(QQuickItem* item,
@@ -99,36 +99,38 @@ void ScrollViewManager::removeListViewItem(QQuickItem* item,
         return;
 
     QQuickItem* scrollView = m_scrollViewByListViewItem[item];
-    QVariantList& variantList = m_modelByScrollView[scrollView];
+    ScrollViewModelPtr model = m_modelByScrollView[scrollView];
 
     foreach (int idxToRemote, removeAtIndices) {
-        QQuickItem* itemToRemove = variantList.takeAt(idxToRemote).value<QQuickItem*>();
+        QQuickItem* itemToRemove = model->takeAt(idxToRemote).value<QQuickItem*>();
         itemToRemove->setParentItem(nullptr);
 
         if (unregisterAndDelete) {
-            itemToRemove->setParent(0);
+            itemToRemove->setParent(nullptr);
             itemToRemove->deleteLater();
         }
     }
 
     utilities::removeFlexboxChilds(item, removeAtIndices);
-
-    QQmlProperty::write(scrollView, "model", QVariant::fromValue(variantList));
 }
 
 QQuickItem* ScrollViewManager::scrollViewContentItem(QQuickItem* item, int position) {
     QQuickItem* scrollView = m_scrollViewByListViewItem[item];
-    QVariantList& variantList = m_modelByScrollView[scrollView];
+    ScrollViewModelPtr model = m_modelByScrollView[scrollView];
 
-    Q_ASSERT(position < variantList.size());
-    return variantList.takeAt(position).value<QQuickItem*>();
+    Q_ASSERT(position < model->count());
+    return model->takeAt(position).value<QQuickItem*>();
 }
 
 void ScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const {
     if (arrayScrollingOptimizationEnabled(scrollView)) {
-        QVariantList& list = m_modelByScrollView[scrollView];
-        foreach (QQuickItem* item, child->childItems()) { list.append(QVariant::fromValue(item)); }
-        QQmlProperty::write(scrollView, "model", QVariant::fromValue(list));
+        if (!m_modelByScrollView.contains(scrollView)) {
+            m_modelByScrollView[scrollView] = ScrollViewModelPtr(new ScrollViewModel(bridge()->qmlEngine()));
+        }
+
+        ScrollViewModelPtr model = m_modelByScrollView[scrollView];
+        foreach (QQuickItem* item, child->childItems()) { model->insert(item, model->count()); }
+        QQmlProperty::write(scrollView, "model", QVariant::fromValue(model.data()));
         m_scrollViewByListViewItem.insert(child, scrollView);
     } else {
         // Flickable items should be children of contentItem

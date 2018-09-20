@@ -13,6 +13,7 @@ Flickable {
     property int p_footerWidth: 0
     property var p_transform
     property bool invertedScroll: false
+    property bool p_inverted: false
 
     onP_transformChanged: {
         scrollViewManager.addTransformation(scrollViewRoot, p_transform)

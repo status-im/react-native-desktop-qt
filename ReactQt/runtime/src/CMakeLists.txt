@@ -148,6 +148,7 @@ set(
   componentmanagers/pickermanager.cpp
   componentmanagers/switchmanager.cpp
   componentmanagers/webviewmanager.cpp
+  componentmanagers/scrollviewmodel.cpp
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp
@@ -246,7 +247,7 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
   set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
 endif()
@@ -257,5 +258,3 @@ add_custom_target(
   copy-qmldir ALL
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/React
 )
-
-configure_file(../../../ubuntu-server.js ../../../ubuntu-server.js COPYONLY)

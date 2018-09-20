@@ -494,6 +494,11 @@ const ScrollView = createReactClass({
        PropTypes.number,
      ]),
     /**
+     * Inverts layout of elements within scrollview
+     * @platform desktop
+     */
+     inverted: PropTypes.bool,
+    /**
      * Enables rendering optimization for content's items arrays inside scroll view
      * @platform desktop
      */

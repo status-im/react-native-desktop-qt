@@ -20,10 +20,11 @@ Flickable {
         selectionColor: textInputRoot.p_selectionColor
         objectName: textInputRoot.p_nativeID
         horizontalAlignment: Utils.alignmentQMLValue(textInputRoot.p_textAlign)
-        wrapMode: TextEdit.WordWrap
+        wrapMode: TextEdit.Wrap
         font.pointSize: textInputRoot.p_fontSize
         font.family: textInputRoot.p_fontFamily
         font.weight: textInputRoot.p_fontWeightEnum
+        padding: 0
 
         selectByKeyboard: true
         selectByMouse: true

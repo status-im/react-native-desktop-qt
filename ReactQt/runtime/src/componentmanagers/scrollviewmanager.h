@@ -14,8 +14,8 @@
 #ifndef SCROLLVIEWMANAGER_H
 #define SCROLLVIEWMANAGER_H
 
+#include "scrollviewmodel.h"
 #include "viewmanager.h"
-
 // #define QT_STATICPLUGIN
 
 class ScrollViewManager : public ViewManager {
@@ -63,7 +63,7 @@ private:
     bool arrayScrollingOptimizationEnabled(QQuickItem* item) const;
 
     static QMap<QQuickItem*, QQuickItem*> m_scrollViewByListViewItem;
-    static QMap<QQuickItem*, QVariantList> m_modelByScrollView;
+    static QMap<QQuickItem*, ScrollViewModelPtr> m_modelByScrollView;
 };
 
 #endif // SCROLLVIEWMANAGER_H
