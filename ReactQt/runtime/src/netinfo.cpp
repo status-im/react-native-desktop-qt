@@ -48,6 +48,9 @@ public:
         QObject::connect(timer, &QTimer::timeout, 
           [=]() {
               QNetworkRequest req(QUrl("http://www.google.com"));
+
+              // Need to create a fresh instance of QNetworkAccessManager due to
+              // https://bugreports.qt.io/browse/QTBUG-49760
               nam = new QNetworkAccessManager();
               QNetworkReply * reply = nam->head(req);
               auto replyFinishOrTimeout = [=]() {
