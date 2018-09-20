@@ -18,14 +18,6 @@
     "jsxBracketSameLine": true,
     "parser": "flow"
   },
-  "prettier": {
-    "requirePragma": true,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "bracketSpacing": false,
-    "jsxBracketSameLine": true,
-    "parser": "flow"
-  },
   "jest": {
     "transform": {
       "^.+\\.(bmp|gif|jpg|jpeg|mp4|png|psd|svg|webp)$": "<rootDir>/jest/assetFileTransformer.js",

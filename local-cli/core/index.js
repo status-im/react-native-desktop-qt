@@ -73,7 +73,7 @@ const defaultRNConfig = {
   hasteImplModulePath: require.resolve('../../jest/hasteImpl'),
 
   getPlatforms(): Array<string> {
-    return ['ios', 'android', 'windows', 'web'];
+    return ['ios', 'android', 'windows', 'web', 'desktop'];
   },
 
   getProvidesModuleNodeModules(): Array<string> {
