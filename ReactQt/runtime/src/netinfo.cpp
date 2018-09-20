@@ -40,7 +40,7 @@ public:
                          [=](QNetworkAccessManager::NetworkAccessibility accessible) {
                              bridge->eventDispatcher()->sendDeviceEvent(
                                  "networkStatusDidChange",
-                                 QVariantList{QVariantMap{{"connectionType", accessibleName.value(accessible)}}});
+                                 QVariantMap{{"connectionType", accessibleName.value(accessible)}});
                          });
 
         timer = new QTimer();
@@ -54,15 +54,17 @@ public:
                     auto newAccessible = reply->isFinished() ? 
                                          reply->error() == QNetworkReply::NoError :
                                          false;
-                    qDebug() << "reply->error(): " << reply->error() << "isFinished: " << reply->isFinished(); 
+                    //qDebug() << "reply->error(): " << reply->error() << "isFinished: " << reply->isFinished(); 
                     auto currentAccessible = 
                       bridge->networkAccessManager()->networkAccessible() == QNetworkAccessManager::Accessible;
-                    qDebug() << "monitorNetworkAccess: " << currentAccessible << " " << newAccessible; 
+                    //qDebug() << "monitorNetworkAccess: " << currentAccessible << " " << newAccessible; 
                     if (newAccessible != currentAccessible) {
                       auto networkAccessible = newAccessible ? 
                                                QNetworkAccessManager::Accessible : 
                                                QNetworkAccessManager::NotAccessible;
-                      qDebug() << "monitorNetworkAccess: setNetworkAccessible " << networkAccessible;
+                      qDebug() << "monitorNetworkAccess: setNetworkAccessible " 
+                               << "old: " << currentAccessible
+                               << "new: " << networkAccessible;
                       bridge->networkAccessManager()->setNetworkAccessible(networkAccessible);
                     }
                     reply->deleteLater();
