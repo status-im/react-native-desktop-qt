@@ -27,6 +27,9 @@ const ReactNative = {
   get Button() {
     return require('Button');
   },
+  get NativeButton() {
+    return require('NativeButton');
+  },
   get CheckBox() {
     return require('CheckBox');
   },

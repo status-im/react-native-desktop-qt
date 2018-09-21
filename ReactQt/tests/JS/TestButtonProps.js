@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  Button,
+  NativeButton,
   View,
   Text
 } from 'react-native';
@@ -29,7 +29,7 @@ export default class ButtonReactNative extends Component {
 
   render() {
     return (
-      <Button
+      <NativeButton
            onPress={this.changeButtonColor}
            title="Click me"
            color={this.state.buttonColor}
@@ -38,7 +38,7 @@ export default class ButtonReactNative extends Component {
            disabled={false}
            testID="button"
         >
-        </Button>
+        </NativeButton>
     );
   }
 }
