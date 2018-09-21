@@ -75,15 +75,23 @@ QString normalizeInputEventName(const QString& eventName) {
 
 QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl) {
 
-    QQmlComponent component(qmlEngine);
-    component.loadUrl(fileUrl);
-    if (!component.isReady()) {
+    QmlComponentPtr component = createComponentFromSourceFile(qmlEngine, fileUrl);
+    return createQMLItemFromComponent(component);
+}
+
+QmlComponentPtr createComponentFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl) {
+    QmlComponentPtr component = QmlComponentPtr(new QQmlComponent(qmlEngine));
+    component->loadUrl(fileUrl);
+    if (!component->isReady()) {
         qCritical() << QString("Component for %1 is not loaded").arg(fileUrl.toString());
     }
+    return component;
+}
 
-    QObject* createdObject = component.create();
+QQuickItem* createQMLItemFromComponent(QmlComponentPtr component) {
+    QObject* createdObject = component->create();
     if (createdObject == nullptr) {
-        qCritical() << QString("Unable to construct item from component %1").arg(fileUrl.toString());
+        qCritical() << QString("Unable to construct item from component %1").arg(component->url().toString());
     }
     return qobject_cast<QQuickItem*>(createdObject);
 }
