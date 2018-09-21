@@ -18,7 +18,12 @@ const ViewPropTypes = require('ViewPropTypes');
 
 const createReactClass = require('create-react-class');
 const requireNativeComponent = require('requireNativeComponent');
-let RCTActivityIndicator;
+const RCTActivityIndicator =
+  Platform.OS === 'android'
+    ? require('ProgressBarAndroid')
+    : Platform.OS === 'desktop'
+      ? requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator)
+      : requireNativeComponent('RCTActivityIndicatorView');
 
 import type {NativeComponent} from 'ReactNative';
 import type {ViewProps} from 'ViewPropTypes';
@@ -102,13 +107,6 @@ const ActivityIndicator = (
     </View>
   );
 };
-
-const RCTActivityIndicator =
-  Platform.OS === 'android'
-    ? require('ProgressBarAndroid')
-    : Platform.OS === 'desktop'
-      ? requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator)
-      : requireNativeComponent('RCTActivityIndicatorView');
 
 // $FlowFixMe - TODO T29156721 `React.forwardRef` is not defined in Flow, yet.
 const ActivityIndicatorWithRef = React.forwardRef((props: Props, ref) => {

@@ -15,9 +15,7 @@
 #include <QObject>
 #include <functional>
 
-extern "C" {
 #include "../../../ReactCommon/yoga/yoga/Yoga.h"
-}
 
 typedef std::function<YGSize(
     YGNodeRef node, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)>
