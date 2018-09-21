@@ -28,7 +28,7 @@ TextEdit {
 
 
     property string typeName: "ReactText"
-    property var textManager: null
+    property var textManager
     property string decoratedText
     //ReactText components can be nested. This property indicates if item is parent
     //of current text blocks.
