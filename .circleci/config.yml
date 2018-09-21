@@ -96,7 +96,6 @@ jobs:
       - run:
           name: Run Jest tests
           command: npm run-script test-ci
-          no_output_timeout: 20m
 
       - run:
           name: Run integration tests
