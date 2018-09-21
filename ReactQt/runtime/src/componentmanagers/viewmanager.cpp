@@ -23,7 +23,6 @@
 #include "propertyhandler.h"
 #include "reactitem.h"
 #include "textmanager.h"
-#include "utilities.h"
 #include "valuecoercion.h"
 #include "viewmanager.h"
 
@@ -79,7 +78,7 @@ void ViewManager::addChildItem(QQuickItem* container, QQuickItem* child, int pos
     utilities::insertChildItemAt(child, position, container);
 }
 
-QQuickItem* ViewManager::view(const QVariantMap& properties) const {
+QQuickItem* ViewManager::view(const QVariantMap& properties) {
     QQuickItem* newView = createView(properties);
     if (newView) {
         configureView(newView);
@@ -119,9 +118,15 @@ void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float wid
                        QVariantMap{{"layout", QVariantMap{{"x", x}, {"y", y}, {"width", width}, {"height", height}}}});
 }
 
-QQuickItem* ViewManager::createView(const QVariantMap& properties) const {
+QQuickItem* ViewManager::createView(const QVariantMap& properties) {
     QString qmlSrc = qmlComponentFile(properties);
-    QQuickItem* item = createQMLItemFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlSrc));
+
+    if (!m_components.contains(qmlSrc)) {
+        m_components[qmlSrc] = createComponentFromSourceFile(m_bridge->qmlEngine(), QUrl(qmlSrc));
+    }
+
+    QmlComponentPtr component = m_components[qmlSrc];
+    QQuickItem* item = createQMLItemFromComponent(component);
     if (item == nullptr) {
         qCritical() << QString("Can't create QML item for component %1").arg(qmlSrc);
     } else {
