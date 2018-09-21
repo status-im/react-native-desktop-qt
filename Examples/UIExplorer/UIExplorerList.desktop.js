@@ -84,10 +84,6 @@ var ComponentExamples: Array<UIExplorerExample> = [
     key: 'SegmentedControlIOSExample',
     module: require('./SegmentedControlIOSExample'),
   },
-  {
-    key: 'SliderIOSExample',
-    module: require('./SliderIOSExample'),
-  },
   /*
   {
     key: 'StatusBarExample',
@@ -153,10 +149,6 @@ var APIExamples: Array<UIExplorerExample> = [
     key: 'AnExApp',
     module: require('./AnimatedGratuitousApp/AnExApp'),
   },
-  // {
-  //   key: 'AppStateIOSExample',
-  //   module: require('./AppStateIOSExample'),
-  // },
   {
     key: 'AppStateExample',
     module: require('./AppStateExample'),
