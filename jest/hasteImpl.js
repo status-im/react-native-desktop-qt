@@ -36,7 +36,7 @@ const NAME_REDUCERS /*: Array<[RegExp, string]> */ = [
   // strip .js/.js.flow suffix
   [/^(.*)\.js(\.flow)?$/, '$1'],
   // strip .android/.ios/.native/.web suffix
-  [/^(.*)\.(android|ios|native|web|windows)$/, '$1'],
+  [/^(.*)\.(android|ios|native|web|windows|desktop)$/, '$1'],
 ];
 
 const haste = {

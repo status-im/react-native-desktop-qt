@@ -164,6 +164,8 @@ set(
   ../../../ReactCommon/yoga/yoga/YGLayout.cpp
   ../../../ReactCommon/yoga/yoga/YGEnums.cpp
   ../../../ReactCommon/yoga/yoga/Utils.cpp
+  ../../../ReactCommon/yoga/yoga/YGFloatOptional.cpp
+  ../../../ReactCommon/yoga/yoga/YGConfig.cpp
 )
 
 message(STATUS "REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC = ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_SRC}")

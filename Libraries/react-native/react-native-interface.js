@@ -6,7 +6,6 @@
  *
  * @format
  * @flow
- * @providesModule react-native-interface
  */
 'use strict';
 
