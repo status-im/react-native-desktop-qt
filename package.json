@@ -129,7 +129,8 @@
   ],
   "scripts": {
     "prepare": "patch-package",
-    "test": "jest --verbose",
+    "test": "jest",
+    "test-ci": "JEST_JUNIT_OUTPUT=\"reports/junit/js-test-results.xml\" jest --maxWorkers=2 --ci --testResultsProcessor=\"jest-junit\"",
     "flow": "flow",
     "lint": "eslint .",
     "prettier": "find . -name node_modules -prune -or -name '*.js' -print | xargs prettier --write",
