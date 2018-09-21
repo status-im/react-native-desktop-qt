@@ -210,7 +210,7 @@
     "@babel/core": "7.0.0-rc.2",
     "@babel/generator": "7.0.0-rc.2",
     "async": "^2.4.0",
-    "babel-eslint": "8.2.1",
+    "babel-eslint": "9.0.0-beta.2",
     "eslint": "4.17.0",
     "eslint-config-fb-strict": "22.1.0",
     "eslint-config-fbjs": "2.0.1",
