@@ -129,7 +129,7 @@
   ],
   "scripts": {
     "prepare": "patch-package",
-    "test": "jest",
+    "test": "jest --verbose",
     "flow": "flow",
     "lint": "eslint .",
     "prettier": "find . -name node_modules -prune -or -name '*.js' -print | xargs prettier --write",
