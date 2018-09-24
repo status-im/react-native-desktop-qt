@@ -130,6 +130,7 @@
   "scripts": {
     "prepare": "patch-package",
     "test": "jest",
+    "test-ci": "JEST_JUNIT_OUTPUT=\"reports/junit/js-test-results.xml\" jest --maxWorkers=2 --ci --testResultsProcessor=\"jest-junit\"",
     "flow": "flow",
     "lint": "eslint .",
     "prettier": "find . -name node_modules -prune -or -name '*.js' -print | xargs prettier --write",
@@ -210,7 +211,7 @@
     "@babel/core": "7.0.0-rc.2",
     "@babel/generator": "7.0.0-rc.2",
     "async": "^2.4.0",
-    "babel-eslint": "8.2.1",
+    "babel-eslint": "9.0.0-beta.2",
     "eslint": "4.17.0",
     "eslint-config-fb-strict": "22.1.0",
     "eslint-config-fbjs": "2.0.1",

@@ -3,7 +3,7 @@ import {
   AppRegistry,
   StyleSheet,
   View,
-  Button
+  NativeButton
 } from 'react-native';
 
 const onButtonPress = () => {
@@ -15,10 +15,10 @@ export default class TestButtonSize extends Component {
       return (
          <View nativeID={"TopView"} style = {styles.container}>
                <View nativeID={"Content"} style = {styles.modal}>
-                 <Button testID={"TestButton"}
+                 <NativeButton testID={"TestButton"}
                     onPress={onButtonPress}
                     title='Long enough button'>
-                 </Button>
+                 </NativeButton>
                </View>
          </View>
       )

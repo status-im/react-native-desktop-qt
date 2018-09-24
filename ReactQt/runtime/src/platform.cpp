@@ -34,8 +34,8 @@ public:
     Bridge* bridge = nullptr;
     QString osName;
     int major = 0;
-    int minor = 55;
-    int patch = 4;
+    int minor = 56;
+    int patch = 1;
     int prerelease = 0;
 };
 

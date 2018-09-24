@@ -32,8 +32,8 @@ private slots:
 
 private:
     QQuickItem* topView = nullptr;
-    const int INITIAL_ITEMS_COUNT = 3;
-    const int CLICKED_ITEMS_COUNT = 2;
+    const int INITIAL_ITEMS_COUNT = 4;
+    const int CLICKED_ITEMS_COUNT = 3;
 
     void validateComponentsCount(const int expectedItemsCount, const QString& errorMsg);
 };
@@ -58,33 +58,33 @@ void TestArrayReconciliation::testComponentsArrayFirstElementInsert() {
 
     QCOMPARE(topView->childItems().size(), INITIAL_ITEMS_COUNT);
 
-    QQuickItem* textInput = topView->childItems().at(0);
-    QCOMPARE(valueOfControlProperty(textInput, "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("ThirdButton"));
 
-    clickItem(textInput);
+    QQuickItem* clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(CLICKED_ITEMS_COUNT, "Wrong array items count after 1st click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(INITIAL_ITEMS_COUNT, "Wrong array items count after 2nd click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(CLICKED_ITEMS_COUNT, "Wrong array items count after 3rd click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(INITIAL_ITEMS_COUNT, "Wrong array items count after 4th click");
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("ThirdButton"));
 }
 
 void TestArrayReconciliation::testComponentsArrayLastElementDelete() {
@@ -101,37 +101,37 @@ void TestArrayReconciliation::testComponentsArrayLastElementDelete() {
 
     QCOMPARE(topView->childItems().size(), INITIAL_ITEMS_COUNT);
 
-    QQuickItem* textInput = topView->childItems().at(0);
-    QCOMPARE(valueOfControlProperty(textInput, "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("ThirdButton"));
 
-    clickItem(textInput);
+    QQuickItem* clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(CLICKED_ITEMS_COUNT, "Wrong array items count after 1st click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(INITIAL_ITEMS_COUNT, "Wrong array items count after 2nd click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(CLICKED_ITEMS_COUNT, "Wrong array items count after 3rd click");
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(INITIAL_ITEMS_COUNT, "Wrong array items count after 4th click");
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("ThirdButton"));
 }
 
 void TestArrayReconciliation::testComponentsArrayItemMove() {
-    const int ARRAY_ITEMS_COUNT = 4;
+    const int ARRAY_ITEMS_COUNT = 4 + 1;
 
     loadJSBundle("TestArrayReconciliationItemMove", "ReactQt/tests/JS/TestArrayReconciliationItemMove");
 
@@ -146,40 +146,40 @@ void TestArrayReconciliation::testComponentsArrayItemMove() {
 
     QCOMPARE(topView->childItems().size(), ARRAY_ITEMS_COUNT);
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("ThirdButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "p_title").toString(), QString("FourthButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(4), "objectName").toString(), QString("FourthButton"));
 
-    QQuickItem* textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    QQuickItem* clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(ARRAY_ITEMS_COUNT, "Wrong array items count after 1st click");
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("ThirdButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("FourthButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "p_title").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("FourthButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(4), "objectName").toString(), QString("FirstButton"));
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(ARRAY_ITEMS_COUNT, "Wrong array items count after 2nd click");
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("ThirdButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("FourthButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "p_title").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("FourthButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(4), "objectName").toString(), QString("SecondButton"));
 
-    textInput = topView->childItems().at(0);
-    clickItem(textInput);
+    clickable = topView->childItems().at(0);
+    clickItem(clickable);
 
     validateComponentsCount(ARRAY_ITEMS_COUNT, "Wrong array items count after 3rd click");
 
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(0), "p_title").toString(), QString("FourthButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "p_title").toString(), QString("FirstButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "p_title").toString(), QString("SecondButton"));
-    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "p_title").toString(), QString("ThirdButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(1), "objectName").toString(), QString("FourthButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(2), "objectName").toString(), QString("FirstButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(3), "objectName").toString(), QString("SecondButton"));
+    QCOMPARE(valueOfControlProperty(topView->childItems().at(4), "objectName").toString(), QString("ThirdButton"));
 }
 
 QTEST_MAIN(TestArrayReconciliation)

@@ -29,9 +29,10 @@ class ItemList extends Component {
  render() {
    let items = this.state.longList ? ["FirstButton", "SecondButton", "ThirdButton"] : ["SecondButton", "ThirdButton"];
    return (
-     <View onPress={this.onPress} nativeID={"topView"}>
+     <View nativeID={"topView"}>
+       <Button title="PressMe" onPress={this.onPress}/>
        {items.map(function(name, index) {
-         return <Button key={name} title={name} > </Button>;
+         return <View nativeID={name}><Button key={index} title={name}></Button></View>;
        })}
      </View>
    )
