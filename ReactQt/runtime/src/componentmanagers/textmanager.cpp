@@ -23,7 +23,10 @@
 #include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "textmanager.h"
+#include <QRegExp>
 #include <cmath>
+
+const char FLEXBOX[] = "flexbox";
 
 TextManager::TextManager(QObject* parent) : RawTextManager(parent) {}
 
@@ -81,6 +84,48 @@ void TextManager::updateMeasureFunction(QQuickItem* textItem) {
     } else {
         flexbox->setMeasureFunction(nullptr);
     }
+}
+
+void TextManager::manageFlexbox(QQuickItem* textItem, bool textIsTopInBlock) {
+    // Only topmost text item in a set of nested ones can have a flexbox node.
+    if (textIsTopInBlock) {
+
+        Flexbox* f = new Flexbox(textItem);
+        f->setControl(textItem);
+        f->setViewManager(this);
+        textItem->setProperty(FLEXBOX, QVariant::fromValue(f));
+    } else {
+        QVariant flexboxVar = textItem->property(FLEXBOX);
+        if (flexboxVar.canConvert<Flexbox*>()) {
+            Flexbox* f = flexboxVar.value<Flexbox*>();
+            if (f) {
+                f->deleteLater();
+                textItem->setProperty(FLEXBOX, QVariant::fromValue(nullptr));
+            }
+        }
+    }
+}
+
+QString TextManager::textToHtml(QQuickItem* textItem, const QString& text) {
+    // get props values, own or nested
+    QString fontFamily = nestedPropertyValue(textItem, "p_fontFamily").toString();
+    QString color = nestedPropertyValue(textItem, "p_color").toString();
+    QString backgroundColor = nestedPropertyValue(textItem, "p_backgroundColor").toString();
+    QString fontWeight = nestedPropertyValue(textItem, "p_fontWeight").toString();
+    QString fontSize = nestedPropertyValue(textItem, "p_fontSize").toString();
+    QString fontStyle = nestedPropertyValue(textItem, "p_fontStyle").toString();
+    QString textDecorLine = nestedPropertyValue(textItem, "p_textDecorationLine").toString();
+
+    QString result =
+        "<span style=\"white-space: pre; " + (!fontFamily.isEmpty() ? ("font-family:" + fontFamily + ";") : "") +
+        (!fontSize.isEmpty() ? ("font-size:" + fontSize + "pt;") : "") +
+        (!color.isEmpty() ? ("color:" + color + ";") : "") +
+        (!(backgroundColor == "#00000000") ? ("background-color:" + backgroundColor + ";") : "") +
+        (!fontStyle.isEmpty() ? ("font-style:" + fontStyle + ";") : "") +
+        (!fontWeight.isEmpty() ? ("font-weight:" + fontWeight + ";") : "") +
+        (!textDecorLine.isEmpty() ? ("text-decoration:" + textDecorLine + ";") : "") + "\">" + text + "</span>";
+
+    return result.replace(QRegExp("/\n / g"), "<br>");
 }
 
 void TextManager::resizeToWidth(QQuickItem* textItem, double width) {

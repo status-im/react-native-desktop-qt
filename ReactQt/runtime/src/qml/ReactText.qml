@@ -25,7 +25,7 @@ TextEdit {
     property double p_opacity: 1
     property bool p_selectable: false
     property color p_selectionColor: "darkblue"
-
+    readonly property bool isText: true
 
 
     property string typeName: "ReactText"
@@ -33,10 +33,12 @@ TextEdit {
     property string decoratedText
     //ReactText components can be nested. This property indicates if item is parent
     //of current text blocks.
-    property bool textIsTopInBlock: parent ? (parent.typeName ? (parent.typeName === "ReactText" ? false : true) : true) : true
-    onTextIsTopInBlockChanged: updateMeasureFunction()
+    property bool textIsTopInBlock: parent ? (parent.isText ? false : true) : true
+    onTextIsTopInBlockChanged: {
+        manageFlexbox()
+        updateMeasureFunction()
+    }
     onTextManagerChanged: updateMeasureFunction()
-
 
     text: textIsTopInBlock ? decoratedText : ""
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
@@ -78,21 +80,13 @@ TextEdit {
     }
     onParentChanged: updateHtmlText()
 
+    function manageFlexbox() {
+        if(textManager) {
+            textManager.manageFlexbox(textRoot, textIsTopInBlock)
+        }
+    }
+
     function updateMeasureFunction() {
-
-        //Only topmost text item in a set of nested ones can have a flexbox node.
-        if(textIsTopInBlock) {
-            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot; viewManager: textManager}',
-                                               textRoot, "dynamicSnippet1");
-        }
-        else
-        {
-            if(textRoot.flexbox) {
-                textRoot.flexbox.destroy()
-                textRoot.flexbox = null;
-            }
-        }
-
         if(textManager) {
             textManager.updateMeasureFunction(textRoot)
         }
@@ -102,15 +96,14 @@ TextEdit {
         for (var i = 0; i < textRoot.children.length; i++)
         {
             var child = textRoot.children[i];
-            if(isText(child)) {
+            if(child.isText) {
                 child.decoratedTextChanged.connect(updateHtmlText)
             }
-            else if(isRawText(child)) {
+            else if(child.isRawText) {
                 child.p_textChanged.connect(updateHtmlText)
             }
         }
     }
-
 
     function horizontalAlignmentFromTextAlign(textAlign) {
         switch (textAlign) {
@@ -122,63 +115,22 @@ TextEdit {
         }
     }
 
-    function textToHtml(textString) {
-
-        //get props values, own or nested
-        var fontFamily = textManager.nestedPropertyValue(textRoot, "p_fontFamily")
-        var color = textManager.nestedPropertyValue(textRoot, "p_color")
-        var backgroundColor = textManager.nestedPropertyValue(textRoot, "p_backgroundColor")
-        var fontWeight = textManager.nestedPropertyValue(textRoot, "p_fontWeight")
-        var fontSize = textManager.nestedPropertyValue(textRoot, "p_fontSize")
-        var fontStyle = textManager.nestedPropertyValue(textRoot, "p_fontStyle")
-        var textDecorLine = textManager.nestedPropertyValue(textRoot, "p_textDecorationLine")
-
-        var result = "<span style=\"white-space: pre; " + (fontFamily ? ("font-family:"+fontFamily+";") : "")
-                + (fontSize? ("font-size:"+fontSize+"pt;") : "")
-                + (color ? ("color:"+color+";") : "")
-                + ( !Qt.colorEqual(backgroundColor, "transparent") ? ("background-color:"+backgroundColor+";") : "")
-                + (fontStyle ? ("font-style:"+fontStyle+";") : "")
-                + (fontWeight ? ("font-weight:"+fontWeight+";") : "")
-                + (textDecorLine ? ("text-decoration:"+textDecorLine+";") : "")
-                + "\">"
-                + textString + "</span>";
-
-        return result.replace(/\n/g, '<br>');
-    }
-
-
     function updateHtmlText() {
         var htmlString = "";
 
         for (var i = 0; i < textRoot.children.length; i++)
         {
             var child = textRoot.children[i];
-            if(isText(child) && child.decoratedText) {
+            if(child.isText && child.decoratedText) {
                 htmlString += child.decoratedText
             }
-            else if(isRawText(child) && child.p_text) {
-                htmlString += textToHtml(child.p_text)
+            else if(child.isRawText && child.p_text) {
+                htmlString += textManager.textToHtml(textRoot, child.p_text)
             }
         }
         decoratedText = htmlString;
         if (textRoot.flexbox) {
             textRoot.flexbox.markDirty();
         }
-    }
-
-    function isText(obj)
-    {
-        if(obj && obj.typeName && obj.typeName === "ReactText")
-            return true
-        else
-            return false
-    }
-
-    function isRawText(obj)
-    {
-        if(obj && obj.typeName && obj.typeName === "ReactRawText")
-            return true
-        else
-            return false
     }
 }

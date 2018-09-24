@@ -41,6 +41,8 @@ public:
 public slots:
     QVariant nestedPropertyValue(QQuickItem* item, const QString& propertyName);
     void updateMeasureFunction(QQuickItem* textItem);
+    void manageFlexbox(QQuickItem* textItem, bool textIsTopBlock);
+    QString textToHtml(QQuickItem* textItem, const QString& text);
 
 private:
     QQuickItem* parentTextItem(QQuickItem* textItem);

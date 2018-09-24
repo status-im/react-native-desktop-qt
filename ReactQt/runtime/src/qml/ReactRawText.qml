@@ -6,4 +6,5 @@ Text {
     visible: false
     property string typeName: "ReactRawText"
     property string p_text
+    readonly property bool isRawText: true
 }
