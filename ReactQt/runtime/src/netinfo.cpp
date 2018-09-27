@@ -24,10 +24,12 @@
 #include "netinfo.h"
 
 namespace {
+
 const int NETWORK_REQUEST_TIMEOUT = 3000;
 const int NETWORK_REPLY_CHECK_TIMEOUT = 1000;
 const int MAX_REPLY_CHECK_COUNTER = NETWORK_REQUEST_TIMEOUT / NETWORK_REPLY_CHECK_TIMEOUT;
 } // namespace
+
 
 class NetInfoPrivate : public QObject {
     Q_OBJECT
@@ -113,7 +115,7 @@ void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& r
                                      const ModuleInterface::ListArgumentBlock& reject) {
     Q_UNUSED(reject);
     Q_D(NetInfo);
-    resolve(d->bridge, QVariantList{QVariantMap{{"connectionType", accessibleName.value(d->networkState)}}});
+
 }
 
 NetInfo::NetInfo(QObject* parent) : QObject(parent), d_ptr(new NetInfoPrivate) {}
