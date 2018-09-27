@@ -26,6 +26,8 @@ Item {
     property string p_fontFamily
     property string p_fontWeight
     property int p_fontWeightEnum
+    property bool p_autoFocus: false
+
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
 
