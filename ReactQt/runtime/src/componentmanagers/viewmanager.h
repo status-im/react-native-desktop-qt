@@ -14,9 +14,10 @@
 #ifndef VIEWMANAGER_H
 #define VIEWMANAGER_H
 
-#include <QVariant>
-
 #include "moduleinterface.h"
+#include "utilities.h"
+#include <QMap>
+#include <QVariant>
 
 class QQuickItem;
 
@@ -44,13 +45,13 @@ public:
     virtual bool shouldLayout() const;
     virtual void addChildItem(QQuickItem* parent, QQuickItem* child, int position) const;
 
-    virtual QQuickItem* view(const QVariantMap& properties = QVariantMap()) const;
+    virtual QQuickItem* view(const QVariantMap& properties = QVariantMap());
     static int tag(QQuickItem* view);
 
     Q_INVOKABLE void sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height);
 
 protected:
-    QQuickItem* createView(const QVariantMap& properties) const;
+    QQuickItem* createView(const QVariantMap& properties);
     Bridge* bridge() const;
     virtual void configureView(QQuickItem* view) const;
     virtual QString qmlComponentFile(const QVariantMap& properties) const;
@@ -58,6 +59,7 @@ protected:
 
 private:
     Bridge* m_bridge = nullptr;
+    QMap<QString, utilities::QmlComponentPtr> m_components;
 };
 
 #endif // VIEWMANAGER_H

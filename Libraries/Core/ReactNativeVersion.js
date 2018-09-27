@@ -7,12 +7,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @flow
- * @providesModule ReactNativeVersion
  */
 
 exports.version = {
   major: 0,
-  minor: 55,
-  patch: 4,
+  minor: 56,
+  patch: 1,
   prerelease: null,
 };

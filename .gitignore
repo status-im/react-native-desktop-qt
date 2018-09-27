@@ -50,7 +50,6 @@ local.properties
 node_modules
 *.log
 .nvm
-/danger/node_modules/
 /bots/node_modules/
 
 # TODO: Check in yarn.lock in open source. Right now we need to keep it out
@@ -80,3 +79,9 @@ moc_*.cpp
 /third-party
 CMakeFiles/
 CMakeLists.txt.user
+
+# Root dir shouldn't have Xcode project
+/*.xcodeproj
+
+# ReactCommon subdir shouldn't have Xcode project
+/ReactCommon/**/*.xcodeproj

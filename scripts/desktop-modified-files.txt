@@ -83,4 +83,5 @@ ReactCommon/cxxreact/Platform.cpp
 ReactCommon/cxxreact/Platform.h
 ReactCommon/cxxreact/RAMBundleRegistry.cpp
 ReactCommon/cxxreact/RAMBundleRegistry.h
+Libraries/react-native/react-native-implementation.js
 

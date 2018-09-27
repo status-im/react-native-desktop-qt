@@ -27,16 +27,17 @@ TextEdit {
     property color p_selectionColor: "darkblue"
 
 
-
     property string typeName: "ReactText"
-    property var textManager: null
+    property var textManager
     property string decoratedText
     //ReactText components can be nested. This property indicates if item is parent
     //of current text blocks.
     property bool textIsTopInBlock: parent ? (parent.typeName ? (parent.typeName === "ReactText" ? false : true) : true) : true
-    onTextIsTopInBlockChanged: updateMeasureFunction()
+    onTextIsTopInBlockChanged: {
+        manageFlexbox()
+        updateMeasureFunction()
+    }
     onTextManagerChanged: updateMeasureFunction()
-
 
     text: textIsTopInBlock ? decoratedText : ""
     horizontalAlignment: horizontalAlignmentFromTextAlign(p_textAlign)
@@ -78,8 +79,7 @@ TextEdit {
     }
     onParentChanged: updateHtmlText()
 
-    function updateMeasureFunction() {
-
+    function manageFlexbox() {
         //Only topmost text item in a set of nested ones can have a flexbox node.
         if(textIsTopInBlock) {
             textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot; viewManager: textManager}',
@@ -92,7 +92,9 @@ TextEdit {
                 textRoot.flexbox = null;
             }
         }
+    }
 
+    function updateMeasureFunction() {
         if(textManager) {
             textManager.updateMeasureFunction(textRoot)
         }

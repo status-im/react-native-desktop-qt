@@ -4,7 +4,6 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-// clang-format off
 
 #include <jschelpers/JSCWrapper.h>
 
@@ -92,6 +91,7 @@ const JSCWrapper* systemJSCWrapper() {
       .JSStringRetain_ = JSStringRetain,
 
       .JSClassCreate_ = JSClassCreate,
+      .JSClassRetain_ = JSClassRetain,
       .JSClassRelease_ = JSClassRelease,
 
       .JSObjectCallAsConstructor_ = JSObjectCallAsConstructor,

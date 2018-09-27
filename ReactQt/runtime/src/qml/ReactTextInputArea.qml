@@ -25,6 +25,7 @@ Flickable {
         font.family: textInputRoot.p_fontFamily
         font.weight: textInputRoot.p_fontWeightEnum
         padding: 0
+        focus: textInputRoot.p_autoFocus
 
         selectByKeyboard: true
         selectByMouse: true

@@ -1,5 +1,7 @@
-// Copyright 2004-present Facebook. All Rights Reserved.
-// clang-format off
+// Copyright (c) 2004-present, Facebook, Inc.
+
+// This source code is licensed under the MIT license found in the
+// LICENSE file in the root directory of this source tree.
 
 #include "ModuleRegistry.h"
 
@@ -117,65 +119,54 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
   }
   size_t index = it->second;
 
-  CHECK(index < modules_.size());
-  NativeModule *module = modules_[index].get();
-
-  // string name, object constants, array methodNames (methodId is index), [array promiseMethodIds], [array syncMethodIds]
-  folly::dynamic config = folly::dynamic::array(name);
-
-  {
-    SystraceSection s_("getConstants");
-    config.push_back(module->getConstants());
-  }
-  size_t index = it->second;
-
   // string name, object constants, array methodNames (methodId is index), [array promiseMethodIds], [array syncMethodIds]
   folly::dynamic config;
 
   if (qtModulesUsed_) {
-      CHECK(index < qtModules_.size());
-      ModuleData *module = qtModules_[index];
+    CHECK(index < qtModules_.size());
+    ModuleData *module = qtModules_[index];
 
-      QVariant moduleInfo = module->info();
-      QJsonDocument doc = QJsonDocument::fromVariant(moduleInfo);
-      config = folly::parseJson(doc.toJson(QJsonDocument::Compact).toStdString());
+    QVariant moduleInfo = module->info();
+    QJsonDocument doc = QJsonDocument::fromVariant(moduleInfo);
+    config = folly::parseJson(doc.toJson(QJsonDocument::Compact).toStdString());
   } else {
-      config = folly::dynamic::array(name);
-      CHECK(index < modules_.size());
-      NativeModule *module = modules_[index].get();
+    config = folly::dynamic::array(name);
+    CHECK(index < modules_.size());
+    NativeModule *module = modules_[index].get();
 
-      {
-        SystraceSection s_("getConstants");
-        config.push_back(module->getConstants());
-      }
+    {
+      SystraceSection s_("getConstants");
+      config.push_back(module->getConstants());
+    }
 
-      {
-        SystraceSection s_("getMethods");
-        std::vector<MethodDescriptor> methods = module->getMethods();
+    {
+      SystraceSection s_("getMethods");
+      std::vector<MethodDescriptor> methods = module->getMethods();
 
-        folly::dynamic methodNames = folly::dynamic::array;
-        folly::dynamic promiseMethodIds = folly::dynamic::array;
-        folly::dynamic syncMethodIds = folly::dynamic::array;
+      folly::dynamic methodNames = folly::dynamic::array;
+      folly::dynamic promiseMethodIds = folly::dynamic::array;
+      folly::dynamic syncMethodIds = folly::dynamic::array;
 
-        for (auto& descriptor : methods) {
-          // TODO: #10487027 compare tags instead of doing string comparison?
-          methodNames.push_back(std::move(descriptor.name));
-          if (descriptor.type == "promise") {
-            promiseMethodIds.push_back(methodNames.size() - 1);
-          } else if (descriptor.type == "sync") {
-            syncMethodIds.push_back(methodNames.size() - 1);
-          }
-        }
-        if (!methodNames.empty()) {
-          config.push_back(std::move(methodNames));
-          if (!promiseMethodIds.empty() || !syncMethodIds.empty()) {
-            config.push_back(std::move(promiseMethodIds));
-            if (!syncMethodIds.empty()) {
-              config.push_back(std::move(syncMethodIds));
-            }
-          }
+      for (auto& descriptor : methods) {
+        // TODO: #10487027 compare tags instead of doing string comparison?
+        methodNames.push_back(std::move(descriptor.name));
+        if (descriptor.type == "promise") {
+          promiseMethodIds.push_back(methodNames.size() - 1);
+        } else if (descriptor.type == "sync") {
+          syncMethodIds.push_back(methodNames.size() - 1);
         }
       }
+    }
+
+    if (!methodNames.empty()) {
+      config.push_back(std::move(methodNames));
+      if (!promiseMethodIds.empty() || !syncMethodIds.empty()) {
+        config.push_back(std::move(promiseMethodIds));
+        if (!syncMethodIds.empty()) {
+          config.push_back(std::move(syncMethodIds));
+        }
+      }
+    }
   }
 
   if (config.size() == 2 && config[1].empty()) {

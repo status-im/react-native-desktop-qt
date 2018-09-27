@@ -30,9 +30,13 @@ public:
     QQuickItem* m_item;
 };
 
+using QmlComponentPtr = QSharedPointer<QQmlComponent>;
+
 void registerReactTypes();
 QString normalizeInputEventName(const QString& eventName);
 QQuickItem* createQMLItemFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl);
+QmlComponentPtr createComponentFromSourceFile(QQmlEngine* qmlEngine, const QUrl& fileUrl);
+QQuickItem* createQMLItemFromComponent(QmlComponentPtr component);
 QObject* createQObjectInstance(const QString& typeName);
 void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent);
 void removeFlexboxChilds(QQuickItem* item, const QList<int>& removeAtIndices);

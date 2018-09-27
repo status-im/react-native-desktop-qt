@@ -95,7 +95,7 @@ jobs:
 
       - run:
           name: Run Jest tests
-          command: npm test
+          command: npm run-script test-ci
 
       - run:
           name: Run integration tests
