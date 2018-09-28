@@ -104,8 +104,17 @@ void LocalServerConnection::setLogErrors(bool logErrors) {
 
 RemoteServerConnection::RemoteServerConnection(QObject* parent) : ServerConnection(parent) {
     QString serverHost = qgetenv("REACT_SERVER_HOST");
-    if (!serverHost.isEmpty())
+    if (!serverHost.isEmpty()) {
         m_serverHost = serverHost;
+    }
+
+    QString serverPort = qgetenv("REACT_SERVER_PORT");
+    if (!serverPort.isEmpty()) {
+        int port = serverPort.toInt();
+        if (port != 0) {
+            m_port = port;
+        }
+    }
 
     m_socket = new QTcpSocket(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &RemoteServerConnection::dataReady);
