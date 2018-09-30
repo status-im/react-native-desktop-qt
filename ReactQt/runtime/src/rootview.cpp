@@ -79,6 +79,11 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
         qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
         return e;
     }
+    QString button;
+    if (event->button() & Qt::LeftButton)
+        button = "left";
+    else if (event->button() & Qt::RightButton)
+        button = "right";
 
     e.insert("target", ap->tag());
     e.insert("identifier", 1);
@@ -90,6 +95,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     e.insert("locationX", local.x());
     e.insert("locationY", local.y());
     e.insert("timestamp", QVariant::fromValue(event->timestamp()));
+    e.insert("button", button);
 
     return e;
 }
@@ -162,7 +168,7 @@ private Q_SLOTS:
 RootView::RootView(QQuickItem* parent) : ReactItem(parent), d_ptr(new RootViewPrivate(this)) {
     Q_D(RootView);
 
-    setAcceptedMouseButtons(Qt::LeftButton);
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
     setFiltersChildMouseEvents(true);
 
     d->bridge = new Bridge(this);
