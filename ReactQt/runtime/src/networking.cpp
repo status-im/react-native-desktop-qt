@@ -21,6 +21,7 @@
 
 #include "bridge.h"
 #include "eventdispatcher.h"
+#include "logger.h"
 #include "networking.h"
 
 namespace {
@@ -42,10 +43,10 @@ public:
     void handleGetRequest(int requestId, const QNetworkRequest& request) {
         QNetworkReply* reply = nam->get(request);
         QObject::connect(reply, &QNetworkReply::metaDataChanged, [=]() {
-            qDebug() << "QNetworkReply::metaDataChange: didReceiveNetworkResponse responseCode: "
-                     << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()
-                     << " replyUrl: " << reply->url().toString()
-                     << " headersList: " << headerListToMap(reply->rawHeaderPairs());
+            rnLog(NETWORKING) << "QNetworkReply::metaDataChange: didReceiveNetworkResponse responseCode: "
+                              << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()
+                              << " replyUrl: " << reply->url().toString()
+                              << " headersList: " << headerListToMap(reply->rawHeaderPairs());
             bridge->eventDispatcher()->sendDeviceEvent(
                 "didReceiveNetworkResponse",
                 QVariantList{requestId,
@@ -61,8 +62,8 @@ public:
                                                        QVariantList{requestId, reply->read(bytesReceived)});
         });
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
-            qDebug() << "NetworkingPrivate::handleGetRequest QNetworkReply::finished requestId: " << requestId
-                     << "error: " << reply->errorString();
+            rnLog(NETWORKING) << "NetworkingPrivate::handleGetRequest QNetworkReply::finished requestId: " << requestId
+                              << "error: " << reply->errorString();
             reply->deleteLater();
             bridge->eventDispatcher()->sendDeviceEvent("didReceiveNetworkData",
                                                        QVariantList{requestId, reply->readAll()});
@@ -87,8 +88,8 @@ void Networking::sendRequest(const QString& method,
                              double requestIdCallbackId) {
     Q_D(Networking);
 
-    qDebug() << "Networking::sendRequest url:" << url << " headers:" << headers << " data:" << data
-             << " method: " << method;
+    rnLog(NETWORKING) << "Networking::sendRequest url:" << url << " headers:" << headers << " data:" << data
+                      << " method: " << method;
 
     QNetworkRequest request(url);
 
@@ -107,7 +108,6 @@ void Networking::sendRequest(const QString& method,
 }
 
 void Networking::abortRequest(int requestId) {
-    // qDebug() << __PRETTY_FUNCTION__ << request;
     Q_D(Networking);
     QNetworkReply* reply = d->activeConnections[requestId];
     if (reply == nullptr) {

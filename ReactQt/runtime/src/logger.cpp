@@ -48,6 +48,8 @@ Logger::Logger() {
     registerModule(UIMANAGER);
     registerModule(FLEXBOX);
     registerModule(VIEWMANAGER);
+    registerModule(NETWORKING);
+    registerModule(WEBSOCKET);
 }
 
 QDebug rnLog(const QString& module) {

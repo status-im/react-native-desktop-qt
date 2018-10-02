@@ -19,6 +19,8 @@
 const QString UIMANAGER = "UIManager";
 const QString FLEXBOX = "Flexbox";
 const QString VIEWMANAGER = "ViewManager";
+const QString NETWORKING = "Networking";
+const QString WEBSOCKET = "WebSocketModule";
 
 class Logger {
 
