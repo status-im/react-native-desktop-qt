@@ -19,6 +19,7 @@ if(JAVASCRIPTCORE_ENABLED)
 endif()
 
 set(APP_NAME <%= name %>)
+set(JS_APP_NAME <%= name %>)
 set(REACT_BUILD_STATIC_LIB ON)
 
 if (WIN32)

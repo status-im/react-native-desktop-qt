@@ -65,6 +65,7 @@ moc_*.cpp
 *_automoc.cpp
 *.moc
 *.qmlc
+ReactQt/application/src/main.qrc
 
 # Meld (merge tool)
 *.orig

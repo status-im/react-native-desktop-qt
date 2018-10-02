@@ -8,6 +8,7 @@
 
 include_directories(runtime/src)
 set (APP_NAME "ReactNativeApp")
+set (JS_APP_NAME "ReactNativeApp")
 add_subdirectory(application)
 add_subdirectory(runtime)
 add_subdirectory(tests)
