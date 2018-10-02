@@ -41,6 +41,7 @@ public:
 public slots:
     QVariant nestedPropertyValue(QQuickItem* item, const QString& propertyName);
     void updateMeasureFunction(QQuickItem* textItem);
+    QString escape(const QString& text);
 
 private:
     QQuickItem* parentTextItem(QQuickItem* textItem);

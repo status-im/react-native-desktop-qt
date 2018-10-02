@@ -143,7 +143,7 @@ TextEdit {
                 + (fontWeight ? ("font-weight:"+fontWeight+";") : "")
                 + (textDecorLine ? ("text-decoration:"+textDecorLine+";") : "")
                 + "\">"
-                + textString + "</span>";
+                + textManager.escape(textString) + "</span>";
 
         return result.replace(/\n/g, '<br>');
     }

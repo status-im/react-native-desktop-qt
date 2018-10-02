@@ -83,6 +83,10 @@ void TextManager::updateMeasureFunction(QQuickItem* textItem) {
     }
 }
 
+QString TextManager::escape(const QString& text) {
+    return text.toHtmlEscaped();
+}
+
 void TextManager::resizeToWidth(QQuickItem* textItem, double width) {
     textItem->setWidth(width);
     double contentWidth = textItem->property("contentWidth").value<double>();
