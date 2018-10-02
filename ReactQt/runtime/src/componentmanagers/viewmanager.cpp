@@ -20,6 +20,7 @@
 #include "attachedproperties.h"
 #include "bridge.h"
 #include "layout/flexbox.h"
+#include "logger.h"
 #include "propertyhandler.h"
 #include "reactitem.h"
 #include "textmanager.h"
@@ -130,8 +131,7 @@ QQuickItem* ViewManager::createView(const QVariantMap& properties) {
     if (item == nullptr) {
         qCritical() << QString("Can't create QML item for component %1").arg(qmlSrc);
     } else {
-        qDebug() << "View is created. Address: " << item << ". Source QML file: " << qmlSrc
-                 << ". Props: " << properties;
+        rnLog(VIEWMANAGER) << "Created view: " << item << ". Source QML file: " << qmlSrc << ". Props: " << properties;
     }
     return item;
 }

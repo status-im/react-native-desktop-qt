@@ -29,6 +29,7 @@
 #include "componentmanagers/scrollviewmanager.h"
 #include "componentmanagers/viewmanager.h"
 #include "layout/flexbox.h"
+#include "logger.h"
 #include "moduledata.h"
 #include "modulemethod.h"
 #include "reactitem.h"
@@ -38,8 +39,6 @@
 int UIManager::m_nextRootTag = 1;
 
 void UIManager::removeSubviewsFromContainerWithID(int containerReactTag) {
-    // qDebug() << __PRETTY_FUNCTION__;
-
     QQuickItem* item = m_views.value(containerReactTag);
     if (item == nullptr) {
         qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
@@ -54,8 +53,6 @@ void UIManager::removeSubviewsFromContainerWithID(int containerReactTag) {
 }
 
 void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& callback) {
-    // qDebug() << __PRETTY_FUNCTION__;
-
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
         qWarning() << "Attempting to access unknown view";
@@ -70,8 +67,6 @@ void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& 
 }
 
 void UIManager::updateView(int reactTag, const QString& viewName, const QVariantMap& properties) {
-    // qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << properties;
-
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
         qWarning() << "Attempting to update properties on unknown view; reactTag=" << reactTag
@@ -134,13 +129,13 @@ void UIManager::manageChildren(int containerReactTag,
         return;
     }
 
-    qDebug() << "UIManager::manageChildren for containerReactTag: " << containerReactTag
-             << " moveFromIndicies: " << moveFromIndicies << " moveToIndices: " << moveToIndices
-             << " addChildReactTags: " << addChildReactTags << " addAtIndices: " << addAtIndices
-             << " removeAtIndices: " << removeAtIndices;
+    rnLog(UIMANAGER) << "::manageChildren for containerReactTag: " << containerReactTag
+                     << " moveFromIndicies: " << moveFromIndicies << " moveToIndices: " << moveToIndices
+                     << " addChildReactTags: " << addChildReactTags << " addAtIndices: " << addAtIndices
+                     << " removeAtIndices: " << removeAtIndices;
 
-    qDebug() << "UIManager::manageChildren container->childItems().size(): " << container->childItems().size();
-    qDebug() << "UIManager::manageChildren container->childItems(): " << container->childItems();
+    rnLog(UIMANAGER) << "::manageChildren container->childItems().size(): " << container->childItems().size();
+    rnLog(UIMANAGER) << "::manageChildren container->childItems(): " << container->childItems();
 
     Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
     Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
@@ -210,9 +205,9 @@ void UIManager::manageChildren(int containerReactTag,
             auto containerFlexbox = Flexbox::findFlexbox(container);
             auto childFlexbox = Flexbox::findFlexbox(child);
             if (containerFlexbox && childFlexbox) {
-                qDebug() << "UIManager::manageChildren containerFlexbox->addChild Parent container: " << container
-                         << " parent container flexbox: " << containerFlexbox << " Child item: " << child
-                         << " child flexbox: " << childFlexbox << " position to add at: " << i;
+                rnLog(UIMANAGER) << "::manageChildren containerFlexbox->addChild Parent container: " << container
+                                 << " parent container flexbox: " << containerFlexbox << " Child item: " << child
+                                 << " child flexbox: " << childFlexbox << " position to add at: " << i;
                 containerFlexbox->addChild(i, childFlexbox);
             }
         }
@@ -289,25 +284,18 @@ void UIManager::measureLayoutRelativeToParent(int reactTag,
 void UIManager::setJSResponder(int reactTag, bool blockNativeResponder) {
     Q_UNUSED(reactTag);
     Q_UNUSED(blockNativeResponder);
-
-    // qDebug() << __PRETTY_FUNCTION__;
 }
 
-void UIManager::clearJSResponder() {
-    // qDebug() << __PRETTY_FUNCTION__;
-}
+void UIManager::clearJSResponder() {}
 
 // in iOS, resign first responder (actual)
 void UIManager::blur(int reactTag) {
     Q_UNUSED(reactTag);
-
-    // qDebug() << __PRETTY_FUNCTION__;
 }
 
 void UIManager::createView(int reactTag, const QString& viewName, int rootTag, const QVariantMap& props) {
     Q_UNUSED(rootTag);
 
-    // qDebug() << __PRETTY_FUNCTION__ << reactTag << viewName << rootTag << props;
     ComponentData* cd = m_componentData.value(viewName);
     if (cd == nullptr) {
         qCritical() << "Attempt to create unknown view of type" << viewName;
@@ -363,7 +351,6 @@ void UIManager::findSubviewIn(int reactTag, const QPointF& point, const ModuleIn
 }
 
 void UIManager::dispatchViewManagerCommand(int reactTag, int commandID, const QVariantList& commandArgs) {
-    // qDebug() << __PRETTY_FUNCTION__ << reactTag << commandID << commandArgs;
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
         qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
@@ -390,7 +377,6 @@ void UIManager::takeSnapshot(const QString& target,
                              const QVariantMap& options,
                              const ModuleInterface::ListArgumentBlock& resolve,
                              const ModuleInterface::ListArgumentBlock& reject) {
-    // qDebug() << __PRETTY_FUNCTION__ << target << options;
     QString imageFormat = options.value("format").toString();
     if (imageFormat.isEmpty()) {
         imageFormat = "png";
@@ -464,7 +450,6 @@ void UIManager::reset() {
 }
 
 void UIManager::setBridge(Bridge* bridge) {
-    // qDebug() << __PRETTY_FUNCTION__;
     if (m_bridge != nullptr) {
         qCritical() << "Bridge already set, UIManager already initialised?";
         return;
@@ -517,8 +502,6 @@ QVariantMap UIManager::constantsToExport() {
     QVariantMap rc;
 
     for (const ComponentData* componentData : m_componentData) {
-        // qDebug() << "Checking" << componentData->name();
-
         QVariantMap managerInfo;
 
         managerInfo.insert("Manager", componentData->manager()->moduleName().replace("RCT", ""));
