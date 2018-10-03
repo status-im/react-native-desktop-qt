@@ -151,6 +151,7 @@ set(
   componentmanagers/scrollviewmodel.cpp
   layout/flexbox.cpp
   utilities.cpp
+  logger.cpp
   communication/serverconnection.cpp
   communication/executor.cpp
   communication/websocketexecutor.cpp

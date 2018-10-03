@@ -40,6 +40,7 @@
 #include "eventdispatcher.h"
 #include "exceptionsmanager.h"
 #include "linkingmanager.h"
+#include "logger.h"
 #include "moduledata.h"
 #include "moduleinterface.h"
 #include "moduleloader.h"
@@ -235,6 +236,7 @@ void Bridge::reload() {
     setJsAppStarted(false);
 
     setupExecutor();
+    Logger::getInstance().sync();
 
     d->uiManager->reset();
     for (auto& md : d->modules) {
