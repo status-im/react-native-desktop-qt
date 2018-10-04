@@ -109,11 +109,12 @@ RemoteServerConnection::RemoteServerConnection(QObject* parent) : ServerConnecti
 
     m_socket = new QTcpSocket(this);
     connect(m_socket, &QTcpSocket::readyRead, this, &RemoteServerConnection::dataReady);
-    connect(m_socket, &QTcpSocket::connected, [=]() { emit connectionReady(); });
+    connect(m_socket, &QTcpSocket::connected, this, [=]() { emit connectionReady(); });
     connect(m_socket,
             static_cast<void (QTcpSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+            this,
             [=](QAbstractSocket::SocketError) { emit connectionError(); });
-    connect(m_socket, &QAbstractSocket::disconnected, [=]() { emit connectionError(); });
+    connect(m_socket, &QAbstractSocket::disconnected, this, [=]() { emit connectionError(); });
 }
 
 QIODevice* RemoteServerConnection::device() {

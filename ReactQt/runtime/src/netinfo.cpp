@@ -30,7 +30,6 @@ const int NETWORK_REPLY_CHECK_TIMEOUT = 1000;
 const int MAX_REPLY_CHECK_COUNTER = NETWORK_REQUEST_TIMEOUT / NETWORK_REPLY_CHECK_TIMEOUT;
 } // namespace
 
-
 class NetInfoPrivate : public QObject {
     Q_OBJECT
 public:
@@ -75,6 +74,8 @@ NetInfoPrivate::~NetInfoPrivate() {
 }
 
 void NetInfoPrivate::monitorNetworkAccess() {
+    if (requestTimer.isActive())
+        return;
     QObject::connect(this, &NetInfoPrivate::networkStateChanged, [=]() {
         bridge->eventDispatcher()->sendDeviceEvent("networkStatusDidChange",
                                                    QVariantMap{{"connectionType", accessibleName.value(networkState)}});
@@ -115,7 +116,6 @@ void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& r
                                      const ModuleInterface::ListArgumentBlock& reject) {
     Q_UNUSED(reject);
     Q_D(NetInfo);
-
 }
 
 NetInfo::NetInfo(QObject* parent) : QObject(parent), d_ptr(new NetInfoPrivate) {}
@@ -125,7 +125,12 @@ NetInfo::~NetInfo() {}
 void NetInfo::setBridge(Bridge* bridge) {
     Q_D(NetInfo);
     d->bridge = bridge;
-    d->monitorNetworkAccess();
+
+    connect(d->bridge, &Bridge::jsAppStartedChanged, this, [=]() {
+        if (d->bridge->jsAppStarted()) {
+            d->monitorNetworkAccess();
+        }
+    });
 }
 
 QString NetInfo::moduleName() {
