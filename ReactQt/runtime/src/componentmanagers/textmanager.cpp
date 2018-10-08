@@ -19,10 +19,12 @@
 
 #include <QDebug>
 
+#include "attachedproperties.h"
 #include "bridge.h"
 #include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "textmanager.h"
+#include "utilities.h"
 #include <cmath>
 
 TextManager::TextManager(QObject* parent) : RawTextManager(parent) {}
@@ -128,6 +130,22 @@ QVariant TextManager::nestedPropertyValue(QQuickItem* item, const QString& prope
 
     // no parents has this property explicitly set, so we use default value
     return item->property(propertyName.toStdString().c_str());
+}
+
+// This function simulates a click on textItem
+// It's a simplified version of RootView::makeReactTouchEvent()
+void TextManager::click(QQuickItem* textItem) {
+    AttachedProperties* ap = AttachedProperties::get(textItem, false);
+    QVariantMap e = utilities::createTouchArgs(ap->tag(), QPointF(0, 0), QPointF(0, 0), "left", 0);
+
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter",
+        "receiveTouches",
+        QVariantList{utilities::normalizeInputEventName("touchStart"), QVariantList{e}, QVariantList{0}});
+    bridge()->enqueueJSCall(
+        "RCTEventEmitter",
+        "receiveTouches",
+        QVariantList{utilities::normalizeInputEventName("touchEnd"), QVariantList{e}, QVariantList{0}});
 }
 
 QQuickItem* TextManager::parentTextItem(QQuickItem* textItem) {

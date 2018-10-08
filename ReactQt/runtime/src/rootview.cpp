@@ -50,9 +50,8 @@ QQuickItem* getChildFromScrollView(QQuickItem* scrollView, const QPointF& scroll
 }
 
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
-    const QPointF& lp = event->localPos();
 
-    QVariantMap e;
+    const QPointF& lp = event->localPos();
 
     // Find the deepest match
     QQuickItem* target = nullptr;
@@ -77,7 +76,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     AttachedProperties* ap = AttachedProperties::get(target, false);
     if (ap == nullptr) {
         qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
-        return e;
+        return QVariantMap{};
     }
     QString button;
     if (event->button() & Qt::LeftButton)
@@ -85,20 +84,9 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     else if (event->button() & Qt::RightButton)
         button = "right";
 
-    e.insert("target", ap->tag());
-    e.insert("identifier", 1);
-    e.insert("touches", QVariant());
-    e.insert("changedTouches", QVariant());
-
-    e.insert("pageX", lp.x());
-    e.insert("pageY", lp.y());
-    e.insert("locationX", local.x());
-    e.insert("locationY", local.y());
-    e.insert("timestamp", QVariant::fromValue(event->timestamp()));
-    e.insert("button", button);
-
-    return e;
+    return createTouchArgs(ap->tag(), lp, local, button, event->timestamp());
 }
+
 // TODO:
 QVariantMap makeReactTouchEvent(QQuickItem* item, QTouchEvent* event) {
     return QVariantMap{};

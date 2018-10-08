@@ -134,4 +134,17 @@ void removeFlexboxChilds(QQuickItem* item, const QList<int>& removeAtIndices) {
     }
 }
 
+QVariantMap createTouchArgs(int tag, const QPointF& lp, const QPointF& local, const QString& button, ulong timestamp) {
+    return QVariantMap{{"target", tag},
+                       {"identifier", 1},
+                       {"touches", QVariant()},
+                       {"changedTouches", QVariant()},
+                       {"pageX", lp.x()},
+                       {"pageY", lp.y()},
+                       {"locationX", local.x()},
+                       {"locationY", local.y()},
+                       {"button", button},
+                       {"timestamp", QVariant::fromValue(timestamp)}};
+}
+
 } // namespace utilities
