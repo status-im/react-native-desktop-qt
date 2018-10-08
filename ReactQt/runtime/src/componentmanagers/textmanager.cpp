@@ -19,10 +19,12 @@
 
 #include <QDebug>
 
+#include "attachedproperties.h"
 #include "bridge.h"
 #include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "textmanager.h"
+#include "utilities.h"
 #include <cmath>
 
 TextManager::TextManager(QObject* parent) : RawTextManager(parent) {}
