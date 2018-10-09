@@ -7,6 +7,7 @@ import  "../js/utils.js" as Utils
 Flickable {
     id: textField
     property var textInputRoot: parent
+    property alias cursorPosition: textArea.cursorPosition
     property alias text: textArea.text
     anchors.fill: textInputRoot
     ScrollBar.vertical: ScrollBar {}
@@ -14,7 +15,6 @@ Flickable {
     TextArea.flickable: TextArea {
 
         id: textArea
-        text: textInputRoot.p_text
         color: textInputRoot.p_color
         placeholderText: textInputRoot.p_placeholderText
         selectionColor: textInputRoot.p_selectionColor
@@ -37,7 +37,11 @@ Flickable {
             radius: textInputRoot.p_borderRadius
         }
 
-        onTextChanged: textInputRoot.textInputManager.sendTextEditedToJs(textField)
+        onTextChanged: {
+            if(textInputRoot.sendTextChanged) {
+                textInputRoot.textInputManager.sendTextEditedToJs(textField)
+            }
+        }
         onCursorPositionChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
         Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField,
                                                             textInputRoot.keyText(event.key, event.text),

@@ -10,7 +10,6 @@ TextField {
     property var textInputRoot: parent
 
     anchors.fill: textInputRoot
-    text: textInputRoot.p_text
     color: textInputRoot.p_color
     placeholderText: textInputRoot.p_placeholderText
     selectionColor: textInputRoot.p_selectionColor
@@ -32,7 +31,11 @@ TextField {
         radius: textInputRoot.p_borderRadius
     }
 
-    onTextChanged:              textInputManager.sendTextEditedToJs(textField)
+    onTextChanged: {
+        if(textInputRoot.sendTextChanged) {
+            textInputRoot.textInputManager.sendTextEditedToJs(textField)
+        }
+    }
     onCursorPositionChanged:    textInputManager.sendSelectionChangeToJs(textField)
     onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
     onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
