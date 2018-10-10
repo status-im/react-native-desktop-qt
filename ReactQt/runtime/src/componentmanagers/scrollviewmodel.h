@@ -14,8 +14,8 @@ public slots:
 public:
     ScrollViewModel(QQmlEngine* engine, QObject* parent = nullptr);
 
-    int rowCount(const QModelIndex& parent) const;
-    QVariant data(const QModelIndex& index, int role) const;
+    int rowCount(const QModelIndex& parent = QModelIndex()) const;
+    QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
     void insert(QQuickItem* item, int position);
     QVariant takeAt(int position);
 

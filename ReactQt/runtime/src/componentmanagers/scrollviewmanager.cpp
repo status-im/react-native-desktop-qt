@@ -119,7 +119,7 @@ QQuickItem* ScrollViewManager::scrollViewContentItem(QQuickItem* item, int posit
     ScrollViewModelPtr model = m_modelByScrollView[scrollView];
 
     Q_ASSERT(position < model->count());
-    return model->takeAt(position).value<QQuickItem*>();
+    return model->data(model->index(position)).value<QQuickItem*>();
 }
 
 void ScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, int position) const {

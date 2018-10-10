@@ -812,6 +812,7 @@ const TextInput = createReactClass({
   _inputRef: (undefined: any),
   _focusSubscription: (undefined: ?Function),
   _lastNativeText: (undefined: ?string),
+  _initialDefaultValue: (undefined: ?string),
   _lastNativeSelection: (undefined: ?Selection),
 
   componentDidMount: function() {
@@ -887,6 +888,17 @@ const TextInput = createReactClass({
       ? this.props.value
       : typeof this.props.defaultValue === 'string'
         ? this.props.defaultValue
+        : '';
+  },
+
+  _getTextDesktop: function(): ?string {
+    if(!this._initialDefaultValue && typeof this.props.defaultValue === 'string') {
+      this._initialDefaultValue = this.props.defaultValue;
+    }
+    return typeof this.props.value === 'string'
+      ? this.props.value
+      : typeof this._initialDefaultValue === 'string'
+        ? this._initialDefaultValue
         : '';
   },
 
@@ -1109,7 +1121,7 @@ const TextInput = createReactClass({
         onBlur={this._onBlur}
         onChange={this._onChange}
         onSelectionChangeShouldSetResponder={() => true}
-        text={this._getText()}
+        text={this._getTextDesktop()}
       />
     )
   },
