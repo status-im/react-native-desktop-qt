@@ -8,7 +8,7 @@ Item {
     property var textInputManager: null
     property var textInputControl: null
 
-    property string p_text
+    property string p_text : textInputControl ? textInputControl.text : ""
     property color p_color
     property bool p_multiline: false
     property bool p_onChange: false
