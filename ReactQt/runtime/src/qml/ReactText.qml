@@ -77,7 +77,11 @@ TextEdit {
         subscribeToChildrenTextChanges()
         updateHtmlText()
     }
-    onParentChanged: updateHtmlText()
+    onParentChanged: {
+        if(parent){
+            updateHtmlText()
+        }
+    }
 
     function manageFlexbox() {
         //Only topmost text item in a set of nested ones can have a flexbox node.
