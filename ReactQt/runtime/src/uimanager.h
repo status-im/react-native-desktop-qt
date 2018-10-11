@@ -87,6 +87,7 @@ public:
 
 private:
     void removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
+    void stopTrackingTagsForHierarchy(QQuickItem* topItem);
 
 private:
     static int m_nextRootTag;

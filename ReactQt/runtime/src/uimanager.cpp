@@ -105,14 +105,28 @@ void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtInd
             child->setParentItem(nullptr);
 
             if (unregisterAndDelete) {
-                int childTag = AttachedProperties::get(child)->tag();
-                child->setParent(0);
-                m_views.remove(childTag);
+                child->setParent(nullptr);
+                stopTrackingTagsForHierarchy(child);
                 child->deleteLater();
             }
         }
 
         utilities::removeFlexboxChilds(parent, removeAtIndices);
+    }
+}
+
+void UIManager::stopTrackingTagsForHierarchy(QQuickItem* topItem) {
+    const QObjectList& children = topItem->children();
+    for (QObject* child : children) {
+        QQuickItem* quickItemChild = qobject_cast<QQuickItem*>(child);
+        if (quickItemChild) {
+            stopTrackingTagsForHierarchy(quickItemChild);
+        }
+    }
+    AttachedProperties* ap = AttachedProperties::get(topItem);
+    if (ap) {
+        int childTag = ap->tag();
+        m_views.remove(childTag);
     }
 }
 
