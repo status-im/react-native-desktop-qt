@@ -92,11 +92,12 @@ void ScrollViewManager::updateListViewItem(QQuickItem* item, QQuickItem* child, 
     QQmlProperty::write(scrollView, "model", QVariant::fromValue(model.data()));
 }
 
-void ScrollViewManager::removeListViewItem(QQuickItem* item,
-                                           const QList<int>& removeAtIndices,
-                                           bool unregisterAndDelete) {
+QList<QQuickItem*> ScrollViewManager::removeListViewItems(QQuickItem* item, const QList<int>& removeAtIndices) {
+
+    QList<QQuickItem*> removedChildren;
+
     if (removeAtIndices.isEmpty())
-        return;
+        return removedChildren;
 
     QQuickItem* scrollView = m_scrollViewByListViewItem[item];
     ScrollViewModelPtr model = m_modelByScrollView[scrollView];
@@ -104,14 +105,12 @@ void ScrollViewManager::removeListViewItem(QQuickItem* item,
     foreach (int idxToRemote, removeAtIndices) {
         QQuickItem* itemToRemove = model->takeAt(idxToRemote).value<QQuickItem*>();
         itemToRemove->setParentItem(nullptr);
-
-        if (unregisterAndDelete) {
-            itemToRemove->setParent(nullptr);
-            itemToRemove->deleteLater();
-        }
+        removedChildren.push_back(itemToRemove);
     }
 
     utilities::removeFlexboxChilds(item, removeAtIndices);
+
+    return removedChildren;
 }
 
 QQuickItem* ScrollViewManager::scrollViewContentItem(QQuickItem* item, int position) {

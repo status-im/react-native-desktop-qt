@@ -90,28 +90,31 @@ void UIManager::setChildren(int containerReactTag, const QList<int>& childrenTag
     manageChildren(containerReactTag, QList<int>(), QList<int>(), childrenTags, indices, QList<int>());
 }
 
-void UIManager::removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices, bool unregisterAndDelete) {
+QList<QQuickItem*> UIManager::removeChildrenFromVisualParent(QQuickItem* parent, const QList<int>& removeAtIndices) {
 
     Q_ASSERT(parent != nullptr);
 
+    QList<QQuickItem*> itemsToRemove;
     if (!removeAtIndices.isEmpty()) {
 
-        QList<QQuickItem*> itemsToRemove;
         for (int i : removeAtIndices) {
             itemsToRemove.push_back(parent->childItems().at(i));
         }
 
         for (QQuickItem* child : itemsToRemove) {
             child->setParentItem(nullptr);
-
-            if (unregisterAndDelete) {
-                child->setParent(nullptr);
-                stopTrackingTagsForHierarchy(child);
-                child->deleteLater();
-            }
         }
 
         utilities::removeFlexboxChilds(parent, removeAtIndices);
+    }
+    return itemsToRemove;
+}
+
+void UIManager::destroyComponents(const QList<QQuickItem*> itemsToDestroy) {
+    for (QQuickItem* item : itemsToDestroy) {
+        item->setParent(nullptr);
+        stopTrackingTagsForHierarchy(item);
+        item->deleteLater();
     }
 }
 
@@ -154,11 +157,13 @@ void UIManager::manageChildren(int containerReactTag,
     Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
     Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
 
+    QList<QQuickItem*> toDestroy;
     if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
-        ScrollViewManager::removeListViewItem(container, removeAtIndices);
+        toDestroy = ScrollViewManager::removeListViewItems(container, removeAtIndices);
     } else {
-        removeChildren(container, removeAtIndices);
+        toDestroy = removeChildrenFromVisualParent(container, removeAtIndices);
     }
+    destroyComponents(toDestroy);
 
     QList<int> allTags = addChildReactTags;
     QList<int> allTargetIndices = addAtIndices;
@@ -184,9 +189,9 @@ void UIManager::manageChildren(int containerReactTag,
 
     if (!moveFromIndicies.isEmpty()) {
         if (ScrollViewManager::isArrayScrollingOptimizationEnabled(container)) {
-            ScrollViewManager::removeListViewItem(container, moveFromIndicies, false);
+            ScrollViewManager::removeListViewItems(container, moveFromIndicies);
         } else {
-            removeChildren(container, moveFromIndicies, false);
+            removeChildrenFromVisualParent(container, moveFromIndicies);
         }
     }
 

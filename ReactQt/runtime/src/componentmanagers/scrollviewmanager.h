@@ -39,8 +39,7 @@ public:
 
     static bool isArrayScrollingOptimizationEnabled(QQuickItem* item);
     static void updateListViewItem(QQuickItem* item, QQuickItem* child, int position);
-    static void
-    removeListViewItem(QQuickItem* item, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
+    static QList<QQuickItem*> removeListViewItems(QQuickItem* item, const QList<int>& removeAtIndices);
     static QQuickItem* scrollViewContentItem(QQuickItem* item, int position);
 
 public Q_SLOTS:
