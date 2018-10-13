@@ -42,10 +42,6 @@ ListView{
             model.display.parent = componentId
             model.display.anchors.centerIn = componentId
         }
-
-        Component.onDestruction: {
-            model.display.parent = null
-        }
     }
 
     onFlickingChanged: {

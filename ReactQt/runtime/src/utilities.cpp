@@ -117,9 +117,11 @@ void insertChildItemAt(QQuickItem* item, int position, QQuickItem* parent) {
     if (childItems.size() && childItems.size() > position) {
         QQuickItem* nextItem = childItems.at(position);
         item->setParentItem(parent);
+        item->setParent(parent);
         item->stackBefore(nextItem);
     } else {
         item->setParentItem(parent);
+        item->setParent(parent);
     }
 }
 

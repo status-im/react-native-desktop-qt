@@ -77,12 +77,16 @@ TextEdit {
         subscribeToChildrenTextChanges()
         updateHtmlText()
     }
-    onParentChanged: updateHtmlText()
+    onParentChanged: {
+        if(parent){
+            updateHtmlText()
+        }
+    }
 
     function manageFlexbox() {
         //Only topmost text item in a set of nested ones can have a flexbox node.
         if(textIsTopInBlock) {
-            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot; viewManager: textManager}',
+            textRoot.flexbox = Qt.createQmlObject('import React 0.1 as React; React.Flexbox {control: textRoot; viewManager: (textManager ? textManager : null)}',
                                                textRoot, "dynamicSnippet1");
         }
         else

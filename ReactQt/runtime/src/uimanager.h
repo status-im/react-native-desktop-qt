@@ -84,9 +84,11 @@ public:
     void registerRootView(QQuickItem* root);
 
     QQuickItem* viewForTag(int reactTag);
+    void stopTrackingTagsForHierarchy(QQuickItem* topItem);
 
 private:
-    void removeChildren(QQuickItem* parent, const QList<int>& removeAtIndices, bool unregisterAndDelete = true);
+    QList<QQuickItem*> removeChildrenFromVisualParent(QQuickItem* parent, const QList<int>& removeAtIndices);
+    void destroyComponents(const QList<QQuickItem*> items);
 
 private:
     static int m_nextRootTag;
