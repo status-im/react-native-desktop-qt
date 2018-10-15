@@ -128,6 +128,13 @@ TextEdit {
         }
     }
 
+    onLinkActivated: {
+        var item = textRoot.children[link];
+        console.log("### link: " + link);
+        textManager.click(item);
+    }
+
+
     function textToHtml(textString) {
 
         //get props values, own or nested
@@ -160,7 +167,10 @@ TextEdit {
         {
             var child = textRoot.children[i];
             if(isText(child) && child.decoratedText) {
-                htmlString += child.decoratedText
+                var nestedText = child.decoratedText;
+                console.log("### nestedText: " + nestedText)
+                nestedText = "<a href=\"" + i + "\" style=\"text-decoration: none\">" + nestedText + "</a>"; 
+                htmlString += nestedText
             }
             else if(isRawText(child) && child.p_text) {
                 htmlString += textToHtml(child.p_text)

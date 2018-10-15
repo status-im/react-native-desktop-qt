@@ -24,6 +24,8 @@
 #include "propertyhandler.h"
 #include "textmanager.h"
 #include <cmath>
+#include "attachedproperties.h"
+#include "utilities.h"
 
 TextManager::TextManager(QObject* parent) : RawTextManager(parent) {}
 
@@ -129,6 +131,36 @@ QVariant TextManager::nestedPropertyValue(QQuickItem* item, const QString& prope
     // no parents has this property explicitly set, so we use default value
     return item->property(propertyName.toStdString().c_str());
 }
+
+void TextManager::click(QQuickItem* textItem) {
+    qDebug() << "### click received";   
+
+    QPointF lp(0,0);
+    QPointF local(0,0);
+
+    QVariantMap e;
+    AttachedProperties* ap = AttachedProperties::get(textItem, false);
+    e.insert("target", ap->tag());
+    e.insert("identifier", 1);
+    e.insert("touches", QVariant());
+    e.insert("changedTouches", QVariant());
+
+    e.insert("pageX", lp.x());
+    e.insert("pageY", lp.y());
+    e.insert("locationX", local.x());
+    e.insert("locationY", local.y());
+    e.insert("timestamp", 0);
+
+    qDebug() << "### enqueue call" << ap->tag();
+    bridge()->enqueueJSCall("RCTEventEmitter",
+                             "receiveTouches",
+                             QVariantList{utilities::normalizeInputEventName("touchStart"), QVariantList{e}, QVariantList{0}});
+    bridge()->enqueueJSCall("RCTEventEmitter",
+                             "receiveTouches",
+                             QVariantList{utilities::normalizeInputEventName("touchEnd"), QVariantList{e}, QVariantList{0}});
+
+}
+
 
 QQuickItem* TextManager::parentTextItem(QQuickItem* textItem) {
     if (!textItem)

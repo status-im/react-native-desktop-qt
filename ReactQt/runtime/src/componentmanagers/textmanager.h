@@ -43,6 +43,7 @@ public slots:
     void updateMeasureFunction(QQuickItem* textItem);
     QString escape(const QString& text);
 
+    void click(QQuickItem* textItem);
 private:
     QQuickItem* parentTextItem(QQuickItem* textItem);
     bool propertyExplicitlySet(QQuickItem* item, const QString& propertyName);
