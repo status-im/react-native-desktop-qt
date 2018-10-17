@@ -38,10 +38,15 @@ Item {
         if(textInputControl) {
             sendTextChanged = false
 
-            var cursorPos = textInputControl.cursorPosition
-            textInputControl.text = p_text
-            cursorPos = Math.min(cursorPos+1, p_text.length)
-            textInputControl.cursorPosition = cursorPos
+            if(p_multiline) {
+                var cursorPos = textInputControl.cursorPosition
+                textInputControl.text = p_text
+                cursorPos = Math.min(cursorPos+1, textInputControl.length)
+                textInputControl.cursorPosition = cursorPos
+            }
+            else {
+                textInputControl.text = p_text
+            }
 
             sendTextChanged = true
         }
