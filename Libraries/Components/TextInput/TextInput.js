@@ -172,10 +172,15 @@ type AndroidProps = $ReadOnly<{|
   inlineImagePadding?: ?number,
 |}>;
 
+type DesktopProps = $ReadOnly<{|
+  submitShortcut?: ?object,
+|}>;
+
 type Props = $ReadOnly<{|
   ...ViewProps,
   ...IOSProps,
   ...AndroidProps,
+  ...DesktopProps,
   autoCapitalize?: ?AutoCapitalize,
   autoCorrect?: ?boolean,
   autoFocus?: ?boolean,
@@ -786,6 +791,7 @@ const TextInput = createReactClass({
       'username',
       'password',
     ]),
+    submitShortcut: PropTypes.object,
   },
   getDefaultProps(): Object {
     return {

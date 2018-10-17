@@ -37,15 +37,21 @@ TextField {
         }
     }
     onCursorPositionChanged:    textInputManager.sendSelectionChangeToJs(textField)
-    onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
     onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
     onContentSizeChanged:       {
         if(textInputManager)
             textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
     }
-    Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField,
-                                                        textInputRoot.keyText(event.key, event.text),
-                                                        textInputRoot.keyModifiers(event.modifiers))
+    Keys.onPressed: {
+
+        var keyText = textInputRoot.keyText(event.key, event.text);
+        var modifiers = textInputRoot.keyModifiers(event.modifiers);
+        event.accepted = textInputManager.onKeyPressed(textField,
+                                      keyText,
+                                      modifiers,
+                                      textInputRoot.p_submitShortcut.key,
+                                      textInputRoot.p_submitShortcut.modifiers)
+    }
 
     onFocusChanged: {
         if (focus) {

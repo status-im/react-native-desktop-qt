@@ -90,7 +90,7 @@ void TextInputManager::sendOnFocusToJs(QQuickItem* textInput) {
     sendTextInputEvent(textInput, EVENT_ON_FOCUS);
 }
 
-void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QStringList modifiers) {
+void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QVariantList modifiers) {
     sendTextInputEvent(textInput, EVENT_ON_KEY_PRESS, QVariantMap{{"key", keyText}, {"modifiers", modifiers}});
 }
 
@@ -98,6 +98,21 @@ void TextInputManager::sendOnContentSizeChange(QQuickItem* textInput, double wid
     sendTextInputEvent(textInput,
                        EVENT_ON_CONTENT_SIZE_CHANGE,
                        QVariantMap{{"contentSize", QVariantMap{{"width", width}, {"height", height}}}});
+}
+
+bool TextInputManager::onKeyPressed(QQuickItem* textInput,
+                                    QString keyText,
+                                    QVariantList modifiers,
+                                    QString submitKeyText,
+                                    QVariantList submitModifiers) {
+
+    if (keyText == submitKeyText && modifiers == submitModifiers) {
+        sendOnSubmitEditingToJs(textInput);
+        return true;
+    } else {
+        sendOnKeyPressToJs(textInput, keyText, modifiers);
+        return false;
+    }
 }
 
 void TextInputManager::sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData) {
