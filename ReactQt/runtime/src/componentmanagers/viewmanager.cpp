@@ -131,7 +131,8 @@ QQuickItem* ViewManager::createView(const QVariantMap& properties) {
     if (item == nullptr) {
         qCritical() << QString("Can't create QML item for component %1").arg(qmlSrc);
     } else {
-        rnLog(VIEWMANAGER) << "Created view: " << item << ". Source QML file: " << qmlSrc << ". Props: " << properties;
+        rnLog(VIEWMANAGER) << "Created view: " << item << ". Source QML file: " << qmlSrc
+                           << ". Props keys: " << properties.keys();
     }
     return item;
 }
