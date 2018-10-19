@@ -27,20 +27,16 @@ Item {
     property string p_fontWeight
     property int p_fontWeightEnum
     property bool p_autoFocus: false
-    property var p_submitShortcut: p_multiline ? defaultMultilineSubmitShortcut : defaultSingleLineSubmitShortcut
+    property var p_submitShortcut: defaultShortcut(p_multiline)
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
     property bool sendTextChanged: true
 
-    QtObject {
-        id: defaultMultilineSubmitShortcut
-        property string key: "";
-        property var modifiers: []
-    }
-    QtObject {
-        id: defaultSingleLineSubmitShortcut
-        property string key: "Enter";
-        property var modifiers: []
+    function defaultShortcut(multiline) {
+        if(multiline)
+            return {key: "", modifiers: []};
+        else
+            return {key: "Enter", modifiers: []};
     }
 
     objectName: p_nativeID
