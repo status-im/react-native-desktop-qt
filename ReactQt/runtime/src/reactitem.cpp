@@ -407,7 +407,9 @@ void ReactItem::setTransform(QVector<float>& transform) {
     r.append(new utilities::MatrixTransform(transform, this));
 }
 
-ReactItem::ReactItem(QQuickItem* parent) : QQuickPaintedItem(parent), d_ptr(new ReactItemPrivate(this)) {}
+ReactItem::ReactItem(QQuickItem* parent) : QQuickPaintedItem(parent), d_ptr(new ReactItemPrivate(this)) {
+    setAcceptedMouseButtons(Qt::LeftButton | Qt::RightButton);
+}
 
 ReactItem::~ReactItem() {}
 
