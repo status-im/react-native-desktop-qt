@@ -12,6 +12,8 @@ ListView{
     property int p_headerHeight: 0
     property int p_footerWidth: 0
     property bool p_inverted: false
+    property bool p_showsHorizontalScrollIndicator: true
+    property bool p_showsVerticalScrollIndicator: true
 
     clip: true
     highlightFollowsCurrentItem: false
@@ -53,4 +55,13 @@ ListView{
             }
         }
     }
+
+    ScrollBar.horizontal: ScrollBar { 
+        policy: p_showsHorizontalScrollIndicator ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff;
+    }
+
+    ScrollBar.vertical: ScrollBar { 
+        policy: p_showsVerticalScrollIndicator ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff;
+    }
+
 }

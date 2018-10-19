@@ -14,6 +14,9 @@ Flickable {
     property var p_transform
     property bool invertedScroll: false
     property bool p_inverted: false
+    property bool p_showsHorizontalScrollIndicator: true
+    property bool p_showsVerticalScrollIndicator: true
+
 
     onP_transformChanged: {
         scrollViewManager.addTransformation(scrollViewRoot, p_transform)
@@ -38,4 +41,13 @@ Flickable {
             }
         }
     }
+
+    ScrollBar.horizontal: ScrollBar { 
+        policy: p_showsHorizontalScrollIndicator ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff;
+    }
+
+    ScrollBar.vertical: ScrollBar { 
+        policy: p_showsVerticalScrollIndicator ? ScrollBar.AsNeeded : ScrollBar.AlwaysOff;
+    }
+
 }
