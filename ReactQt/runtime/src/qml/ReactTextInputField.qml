@@ -32,7 +32,7 @@ TextField {
     }
 
     onTextChanged: {
-        if(textInputRoot.sendTextChanged) {
+        if(!textInputRoot.jsTextChange) {
             textInputRoot.textInputManager.sendTextEditedToJs(textField)
         }
     }

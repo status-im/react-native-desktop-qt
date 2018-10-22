@@ -9,6 +9,7 @@ Flickable {
     property var textInputRoot: parent
     property alias cursorPosition: textArea.cursorPosition
     property alias text: textArea.text
+    property alias textAreaLength: textArea.length
     anchors.fill: textInputRoot
     ScrollBar.vertical: ScrollBar {}
 
@@ -38,13 +39,12 @@ Flickable {
         }
 
         onTextChanged: {
-            if(textInputRoot.sendTextChanged) {
+            if(!textInputRoot.jsTextChange) {
                 textInputRoot.textInputManager.sendTextEditedToJs(textField)
             }
         }
         onCursorPositionChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
         Keys.onPressed: {
-
             var keyText = textInputRoot.keyText(event.key, event.text);
             var modifiers = textInputRoot.keyModifiers(event.modifiers);
             event.accepted = textInputManager.onKeyPressed(textField,

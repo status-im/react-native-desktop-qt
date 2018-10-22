@@ -30,7 +30,7 @@ Item {
     property var p_submitShortcut: defaultShortcut(p_multiline)
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
-    property bool sendTextChanged: true
+    property bool jsTextChange: false
 
     function defaultShortcut(multiline) {
         if(multiline)
@@ -42,20 +42,27 @@ Item {
     objectName: p_nativeID
 
     onP_textChanged: {
-        if(textInputControl) {
-            sendTextChanged = false
+        if(textInputControl /*&& !textInputManager.isUserTextChange(textInputControl, p_text)*/) {
+            jsTextChange = true
 
             if(p_multiline) {
-                var cursorPos = textInputControl.cursorPosition
+                var oldCursorPos = textInputControl.cursorPosition
+                var cursorAtEnd = (textInputControl.textAreaLength === textInputControl.cursorPosition)
                 textInputControl.text = p_text
-                cursorPos = Math.min(cursorPos+1, textInputControl.length)
+
+                var cursorPos;
+                if(cursorAtEnd)
+                    cursorPos = textInputControl.textAreaLength
+                else
+                    cursorPos = Math.min(oldCursorPos, textInputControl.textAreaLength)
+
                 textInputControl.cursorPosition = cursorPos
             }
             else {
                 textInputControl.text = p_text
             }
 
-            sendTextChanged = true
+            jsTextChange = false
         }
     }
 
