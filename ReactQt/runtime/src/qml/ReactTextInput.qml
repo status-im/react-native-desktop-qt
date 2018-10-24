@@ -1,4 +1,4 @@
-import QtQuick 2.7
+  import QtQuick 2.7
 import QtQuick.Controls 2.2
 import React 0.1 as React
 import  "../js/utils.js" as Utils
@@ -42,7 +42,7 @@ Item {
     objectName: p_nativeID
 
     onP_textChanged: {
-        if(textInputControl /*&& !textInputManager.isUserTextChange(textInputControl, p_text)*/) {
+        if(textInputControl) {
             jsTextChange = true
 
             if(p_multiline) {
