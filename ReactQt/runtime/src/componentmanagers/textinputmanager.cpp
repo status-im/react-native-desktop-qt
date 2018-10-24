@@ -106,9 +106,7 @@ bool TextInputManager::onKeyPressed(QQuickItem* textInput,
                                     QVariantList modifiers,
                                     QString submitKeyText,
                                     QVariantList submitModifiers) {
-    bool submitKeysSet = !submitKeyText.isEmpty() && !submitModifiers.isEmpty();
-
-    if (submitKeysSet && keyText == submitKeyText && modifiers == submitModifiers) {
+    if (!submitKeyText.isEmpty() && (keyText == submitKeyText) && (modifiers == submitModifiers)) {
         sendOnSubmitEditingToJs(textInput);
         return true;
     } else {
