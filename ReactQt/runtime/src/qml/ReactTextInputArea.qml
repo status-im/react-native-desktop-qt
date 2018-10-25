@@ -7,14 +7,15 @@ import  "../js/utils.js" as Utils
 Flickable {
     id: textField
     property var textInputRoot: parent
+    property alias cursorPosition: textArea.cursorPosition
     property alias text: textArea.text
+    property alias textAreaLength: textArea.length
     anchors.fill: textInputRoot
     ScrollBar.vertical: ScrollBar {}
 
     TextArea.flickable: TextArea {
 
         id: textArea
-        text: textInputRoot.p_text
         color: textInputRoot.p_color
         placeholderText: textInputRoot.p_placeholderText
         selectionColor: textInputRoot.p_selectionColor
@@ -37,17 +38,26 @@ Flickable {
             radius: textInputRoot.p_borderRadius
         }
 
-        onTextChanged: textInputRoot.textInputManager.sendTextEditedToJs(textField)
+        onTextChanged: {
+            if(!textInputRoot.jsTextChange) {
+                textInputRoot.textInputManager.sendTextEditedToJs(textField)
+            }
+        }
         onCursorPositionChanged: textInputRoot.textInputManager.sendSelectionChangeToJs(textField)
-        Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField,
-                                                            textInputRoot.keyText(event.key, event.text),
-                                                            textInputRoot.keyModifiers(event.modifiers))
+        Keys.onPressed: {
+            var keyText = textInputRoot.keyText(event.key, event.text);
+            var modifiers = textInputRoot.keyModifiers(event.modifiers);
+            event.accepted = textInputManager.onKeyPressed(textField,
+                                          keyText,
+                                          modifiers,
+                                          textInputRoot.p_submitShortcut.key,
+                                          textInputRoot.p_submitShortcut.modifiers)
+        }
         onContentSizeChanged: {
             if(textInputManager)
                 textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
         }
         onEditingFinished: {
-            textInputManager.sendOnSubmitEditingToJs(textField)
             textInputManager.sendOnEndEditingToJs(textField)
         }
 

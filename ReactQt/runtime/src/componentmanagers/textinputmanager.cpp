@@ -61,7 +61,8 @@ QStringList TextInputManager::customDirectEventTypes() {
 }
 
 void TextInputManager::sendTextEditedToJs(QQuickItem* textInput) {
-    sendTextInputEvent(textInput, EVENT_ON_TEXT_CHANGE);
+    QString text = textInput->property("text").toString();
+    sendTextInputEvent(textInput, EVENT_ON_TEXT_CHANGE, QVariantMap{{"text", text}});
 }
 
 void TextInputManager::sendSelectionChangeToJs(QQuickItem* textInput) {
@@ -90,7 +91,7 @@ void TextInputManager::sendOnFocusToJs(QQuickItem* textInput) {
     sendTextInputEvent(textInput, EVENT_ON_FOCUS);
 }
 
-void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QStringList modifiers) {
+void TextInputManager::sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QVariantList modifiers) {
     sendTextInputEvent(textInput, EVENT_ON_KEY_PRESS, QVariantMap{{"key", keyText}, {"modifiers", modifiers}});
 }
 
@@ -100,6 +101,20 @@ void TextInputManager::sendOnContentSizeChange(QQuickItem* textInput, double wid
                        QVariantMap{{"contentSize", QVariantMap{{"width", width}, {"height", height}}}});
 }
 
+bool TextInputManager::onKeyPressed(QQuickItem* textInput,
+                                    QString keyText,
+                                    QVariantList modifiers,
+                                    QString submitKeyText,
+                                    QVariantList submitModifiers) {
+    if (!submitKeyText.isEmpty() && (keyText == submitKeyText) && (modifiers == submitModifiers)) {
+        sendOnSubmitEditingToJs(textInput);
+        return true;
+    } else {
+        sendOnKeyPressToJs(textInput, keyText, modifiers);
+        return false;
+    }
+}
+
 void TextInputManager::sendTextInputEvent(QQuickItem* textInput, QString eventName, QVariantMap additionalEventData) {
     if (!textInput)
         return;
@@ -107,13 +122,12 @@ void TextInputManager::sendTextInputEvent(QQuickItem* textInput, QString eventNa
     QString text = textInput->property("text").toString();
     int parentTag = tag(textInput->parentItem());
 
-    QVariantMap eventData = QVariantMap{{"target", parentTag}, {"text", text}};
+    QVariantMap eventData = QVariantMap{{"target", parentTag}};
     if (!additionalEventData.isEmpty()) {
         for (auto iterator = additionalEventData.constBegin(); iterator != additionalEventData.constEnd(); ++iterator) {
             eventData.insert(iterator.key(), iterator.value());
         }
     }
-
     notifyJsAboutEvent(parentTag, eventName, eventData);
 }
 

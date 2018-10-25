@@ -10,7 +10,6 @@ TextField {
     property var textInputRoot: parent
 
     anchors.fill: textInputRoot
-    text: textInputRoot.p_text
     color: textInputRoot.p_color
     placeholderText: textInputRoot.p_placeholderText
     selectionColor: textInputRoot.p_selectionColor
@@ -32,17 +31,27 @@ TextField {
         radius: textInputRoot.p_borderRadius
     }
 
-    onTextChanged:              textInputManager.sendTextEditedToJs(textField)
+    onTextChanged: {
+        if(!textInputRoot.jsTextChange) {
+            textInputRoot.textInputManager.sendTextEditedToJs(textField)
+        }
+    }
     onCursorPositionChanged:    textInputManager.sendSelectionChangeToJs(textField)
-    onAccepted:                 textInputManager.sendOnSubmitEditingToJs(textField)
     onEditingFinished:          textInputManager.sendOnEndEditingToJs(textField)
     onContentSizeChanged:       {
         if(textInputManager)
             textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
     }
-    Keys.onPressed: textInputManager.sendOnKeyPressToJs(textField,
-                                                        textInputRoot.keyText(event.key, event.text),
-                                                        textInputRoot.keyModifiers(event.modifiers))
+    Keys.onPressed: {
+
+        var keyText = textInputRoot.keyText(event.key, event.text);
+        var modifiers = textInputRoot.keyModifiers(event.modifiers);
+        event.accepted = textInputManager.onKeyPressed(textField,
+                                      keyText,
+                                      modifiers,
+                                      textInputRoot.p_submitShortcut.key,
+                                      textInputRoot.p_submitShortcut.modifiers)
+    }
 
     onFocusChanged: {
         if (focus) {

@@ -1,4 +1,4 @@
-import QtQuick 2.7
+  import QtQuick 2.7
 import QtQuick.Controls 2.2
 import React 0.1 as React
 import  "../js/utils.js" as Utils
@@ -8,7 +8,7 @@ Item {
     property var textInputManager: null
     property var textInputControl: null
 
-    property string p_text: textInputControl ? textInputControl.text : ""
+    property string p_text : textInputControl ? textInputControl.text : ""
     property color p_color
     property bool p_multiline: false
     property bool p_onChange: false
@@ -27,11 +27,44 @@ Item {
     property string p_fontWeight
     property int p_fontWeightEnum
     property bool p_autoFocus: false
-
+    property var p_submitShortcut: defaultShortcut(p_multiline)
 
     property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
+    property bool jsTextChange: false
+
+    function defaultShortcut(multiline) {
+        if(multiline)
+            return {key: "", modifiers: []};
+        else
+            return {key: "Enter", modifiers: []};
+    }
 
     objectName: p_nativeID
+
+    onP_textChanged: {
+        if(textInputControl) {
+            jsTextChange = true
+
+            if(p_multiline) {
+                var oldCursorPos = textInputControl.cursorPosition
+                var cursorAtEnd = (textInputControl.textAreaLength === textInputControl.cursorPosition)
+                textInputControl.text = p_text
+
+                var cursorPos;
+                if(cursorAtEnd)
+                    cursorPos = textInputControl.textAreaLength
+                else
+                    cursorPos = Math.min(oldCursorPos, textInputControl.textAreaLength)
+
+                textInputControl.cursorPosition = cursorPos
+            }
+            else {
+                textInputControl.text = p_text
+            }
+
+            jsTextChange = false
+        }
+    }
 
     onP_fontWeightChanged: {
         switch(p_fontWeight) {

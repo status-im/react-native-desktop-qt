@@ -36,8 +36,13 @@ public slots:
     void sendOnSubmitEditingToJs(QQuickItem* textInput);
     void sendOnEndEditingToJs(QQuickItem* textInput);
     void sendOnFocusToJs(QQuickItem* textInput);
-    void sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QStringList modifiers);
+    void sendOnKeyPressToJs(QQuickItem* textInput, QString keyText, QVariantList modifiers);
     void sendOnContentSizeChange(QQuickItem* textInput, double width, double height);
+    bool onKeyPressed(QQuickItem* textInput,
+                      QString keyText,
+                      QVariantList modifiers,
+                      QString submitKeyText,
+                      QVariantList submitModifiers);
 
 private:
     virtual QString qmlComponentFile(const QVariantMap& properties) const override;
