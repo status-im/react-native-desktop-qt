@@ -25,5 +25,6 @@ Rectangle {
     pluginsPath: ReactNativeProperties.pluginsPath
     serverConnectionType: ReactNativeProperties.executor
     externalModules: []
+    properties: ReactNativeProperties.initialProps
   }
 }

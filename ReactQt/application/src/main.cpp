@@ -27,6 +27,7 @@ class ReactNativeProperties : public QObject {
     Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
     Q_PROPERTY(QString executor READ executor WRITE setExecutor NOTIFY executorChanged)
+    Q_PROPERTY(QVariantMap initialProps READ initialProps WRITE setInitialProps NOTIFY initialPropsChanged)
 public:
     ReactNativeProperties(QObject* parent = 0) : QObject(parent) {
         m_codeLocation = m_packagerTemplate.arg(m_packagerHost).arg(m_packagerPort);
@@ -66,6 +67,15 @@ public:
             return;
         m_executor = executor;
         Q_EMIT executorChanged();
+    }
+    QVariantMap initialProps() const {
+        return m_initialProps;
+    }
+    void setInitialProps(const QVariantMap& initialProps) {
+        if (m_initialProps == initialProps)
+            return;
+        m_initialProps = initialProps;
+        Q_EMIT initialPropsChanged();
     }
     QString packagerHost() const {
         return m_packagerHost;
@@ -107,6 +117,7 @@ Q_SIGNALS:
     void codeLocationChanged();
     void pluginsPathChanged();
     void executorChanged();
+    void initialPropsChanged();
 
 private:
     bool m_liveReload = false;
@@ -117,6 +128,7 @@ private:
     QUrl m_codeLocation;
     QString m_pluginsPath;
     QString m_executor = "LocalServerConnection";
+    QVariantMap m_initialProps;
 };
 
 void loadFontsFromResources() {
