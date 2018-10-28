@@ -38,6 +38,13 @@ if (JS_BUNDLE_PATH)
   set(JS_BUNDLE_RESOURCE "<file alias=\"index.desktop.bundle\">${JS_BUNDLE_PATH}</file>")
 endif()
 
+if (BUILD_FOR_BUNDLE)
+  # Set some Win32 Specific Settings
+  if (WIN32)
+    set(GUI_TYPE WIN32)
+  endif(WIN32)
+endif(BUILD_FOR_BUNDLE)
+
 configure_file(
   main.qml.in
   ${CMAKE_CURRENT_SOURCE_DIR}/main.qml
@@ -58,11 +65,12 @@ endif()
 if (APPLICATION_MAIN_CPP_PATH)
   set(MAIN_CPP_SOURCE ${APPLICATION_MAIN_CPP_PATH})
 else()
-set(MAIN_CPP_SOURCE main.cpp)
+  set(MAIN_CPP_SOURCE main.cpp)
 endif()
 
 add_executable(
   ${APP_NAME}
+  ${GUI_TYPE}
   ${MAIN_CPP_SOURCE}
   main.qrc
 )
