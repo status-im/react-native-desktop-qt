@@ -13,5 +13,6 @@
     <file>main.qml</file>
     ${JS_BUNDLE_RESOURCE}
     ${FONTS_RESOURCE}
+    ${ICON_PNG_RESOURCE}
   </qresource>
 </RCC>
