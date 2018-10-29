@@ -37,6 +37,7 @@ string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULE
 if (JS_BUNDLE_PATH)
   set(JS_BUNDLE_RESOURCE "<file alias=\"index.desktop.bundle\">${JS_BUNDLE_PATH}</file>")
 endif()
+set(ICON_PNG_RESOURCE "<file alias=\"icon.png\">${ICON_PNG_RESOURCE_PATH}</file>")
 
 if (BUILD_FOR_BUNDLE)
   # Set some Win32 Specific Settings
@@ -68,11 +69,16 @@ else()
   set(MAIN_CPP_SOURCE main.cpp)
 endif()
 
+if (APPLICATION_MAIN_RC_PATH)
+  set(MAIN_RC_PATH ${APPLICATION_MAIN_RC_PATH})
+endif()
+
 add_executable(
   ${APP_NAME}
   ${GUI_TYPE}
   ${MAIN_CPP_SOURCE}
   main.qrc
+  ${MAIN_RC_PATH}
 )
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
