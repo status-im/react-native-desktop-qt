@@ -34,7 +34,7 @@ const QSettings& Logger::settings() {
 
 void Logger::registerModule(const QString& moduleName) {
     if (!m_settings->contains(moduleName)) {
-        m_settings->setValue(moduleName, true);
+        m_settings->setValue(moduleName, false);
     }
 }
 
