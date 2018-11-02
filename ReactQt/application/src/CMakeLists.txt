@@ -37,6 +37,14 @@ string (REPLACE ";" "," EXTERNAL_MODULES "${REACT_NATIVE_DESKTOP_EXTERNAL_MODULE
 if (JS_BUNDLE_PATH)
   set(JS_BUNDLE_RESOURCE "<file alias=\"index.desktop.bundle\">${JS_BUNDLE_PATH}</file>")
 endif()
+set(ICON_PNG_RESOURCE "<file alias=\"icon.png\">${ICON_PNG_RESOURCE_PATH}</file>")
+
+if (BUILD_FOR_BUNDLE)
+  # Set some Win32 Specific Settings
+  if (WIN32)
+    set(GUI_TYPE WIN32)
+  endif(WIN32)
+endif(BUILD_FOR_BUNDLE)
 
 configure_file(
   main.qml.in
@@ -58,18 +66,24 @@ endif()
 if (APPLICATION_MAIN_CPP_PATH)
   set(MAIN_CPP_SOURCE ${APPLICATION_MAIN_CPP_PATH})
 else()
-set(MAIN_CPP_SOURCE main.cpp)
+  set(MAIN_CPP_SOURCE main.cpp)
+endif()
+
+if (APPLICATION_MAIN_RC_PATH)
+  set(MAIN_RC_PATH ${APPLICATION_MAIN_RC_PATH})
 endif()
 
 add_executable(
   ${APP_NAME}
+  ${GUI_TYPE}
   ${MAIN_CPP_SOURCE}
   main.qrc
+  ${MAIN_RC_PATH}
 )
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
-  set(USED_QT_MODULES ${USED_QT_MODULES} WebKit)
+  set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
 endif()
 
 qt5_use_modules(${APP_NAME} ${USED_QT_MODULES})
@@ -81,8 +95,4 @@ target_link_libraries(
 
 if (REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS)
   target_link_libraries(${APP_NAME} ${REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS})
-endif()
-
-if (REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS)
-  target_link_libraries(${APP_NAME} ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS})
 endif()
