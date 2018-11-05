@@ -70,20 +70,27 @@ Item {
             wrapMode: Text.WordWrap
         }
 
-        footer: DialogButtonBox {
-            Repeater {
-                model: buttons
-                delegate:  Button {
-                    text: buttons[index].text
-                    property var name: buttons[index].name
-                    DialogButtonBox.buttonRole: buttonRole(buttons[index].role)
-                 }
-            }
-            onClicked: {
-                root.closedByButton = true;
-                root.alertManager.sendButtonClickToJs(callback, button.name)
-                dialog.accept();
-            }
+        footer: createButtonBox(buttons)
+
+        function createButtonBox(buttons) {
+            return Qt.createQmlObject('
+                                    import QtQuick 2.4
+                                    import QtQuick.Controls 2.2
+                                    DialogButtonBox {
+                                        Repeater {
+                                            model: buttons
+                                            delegate:  Button {
+                                                text: buttons[index].text
+                                                property var name: buttons[index].name
+                                                DialogButtonBox.buttonRole: buttonRole(buttons[index].role)
+                                            }
+                                         }
+                                         onClicked: {
+                                             root.closedByButton = true;
+                                             root.alertManager.sendButtonClickToJs(callback, button.name)
+                                             dialog.accept();
+                                         }
+                                     }',dialog, "dynamicButtonBox");
         }
     }
 
