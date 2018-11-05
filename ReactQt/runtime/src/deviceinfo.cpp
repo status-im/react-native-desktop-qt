@@ -12,7 +12,9 @@
 #include "bridge.h"
 #include "eventdispatcher.h"
 
+#include <QGuiApplication>
 #include <QQuickItem>
+#include <QScreen>
 
 class DeviceInfoPrivate {
 public:
@@ -39,11 +41,22 @@ QList<ModuleMethod*> DeviceInfo::methodsToExport() {
 QVariantMap DeviceInfo::constantsToExport() {
     Q_D(DeviceInfo);
 
-    // TODO: Populate Dimensions with real data
+    QScreen* screen = QGuiApplication::primaryScreen();
+
     QQuickItem* rootView = d->bridge->visualParent();
     Q_ASSERT(rootView);
-    QVariantMap values{{"fontScale", 8}, {"width", rootView->width()}, {"height", rootView->height()}, {"scale", 8}};
-    QVariantMap screenValues{{"screen", values}, {"window", values}};
+    QVariantMap windowValues{{"fontScale", screen->devicePixelRatio()},
+                             {"width", rootView->width()},
+                             {"height", rootView->height()},
+                             {"scale", screen->devicePixelRatio()}};
 
-    return QVariantMap{{"Dimensions", screenValues}};
+    QRect screenGeometry = screen->geometry();
+    QVariantMap screenValues{{"fontScale", 8},
+                             {"width", screenGeometry.width()},
+                             {"height", screenGeometry.height()},
+                             {"scale", screen->devicePixelRatio()}};
+
+    QVariantMap values{{"screen", screenValues}, {"window", windowValues}};
+
+    return QVariantMap{{"Dimensions", values}};
 }
