@@ -13,10 +13,11 @@
 #include "attachedproperties.h"
 #include "componentmanagers/viewmanager.h"
 
-#include "logger.h"
 #include <QDebug>
 #include <QMap>
 #include <QQuickItem>
+
+Q_LOGGING_CATEGORY(FLEXBOX, "Flexbox")
 
 static QMap<QString, YGFlexDirection> flexDirectionByString{
     {"row", YGFlexDirectionRow},
@@ -125,8 +126,8 @@ void Flexbox::setMeasureFunction(ygnode_measure_function measureFunction) {
 void Flexbox::addChild(int index, Flexbox* child) {
     Q_ASSERT(child);
 
-    rnLog(FLEXBOX) << "::addChild new YGNode: " << child->d_ptr->m_node << " for flexbox: " << child
-                   << " will be inserted at: " << index << " into parent: " << this;
+    qCDebug(FLEXBOX) << "::addChild new YGNode: " << child->d_ptr->m_node << " for flexbox: " << child
+                     << " will be inserted at: " << index << " into parent: " << this;
     YGNodeInsertChild(d_ptr->m_node, child->d_ptr->m_node, index);
 }
 
@@ -135,8 +136,8 @@ void Flexbox::removeChilds(const QList<int>& indicesToRemove) {
 
     QList<YGNodeRef> toRemove;
     for (int index : indicesToRemove) {
-        rnLog(FLEXBOX) << "::removeChilds YGNode: " << YGNodeGetChild(d->m_node, index)
-                       << " will be removed at index: " << index << " from: " << this;
+        qCDebug(FLEXBOX) << "::removeChilds YGNode: " << YGNodeGetChild(d->m_node, index)
+                         << " will be removed at index: " << index << " from: " << this;
         toRemove.push_back(YGNodeGetChild(d->m_node, index));
     }
 

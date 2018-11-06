@@ -16,8 +16,11 @@
 
 #include "moduleinterface.h"
 #include "utilities.h"
+#include <QLoggingCategory>
 #include <QMap>
 #include <QVariant>
+
+Q_DECLARE_LOGGING_CATEGORY(VIEWMANAGER)
 
 class QQuickItem;
 

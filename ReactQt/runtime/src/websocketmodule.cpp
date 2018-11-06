@@ -15,8 +15,9 @@
 
 #include "bridge.h"
 #include "eventdispatcher.h"
-#include "logger.h"
 #include "websocketmodule.h"
+
+Q_LOGGING_CATEGORY(WEBSOCKET, "WebSocketModule")
 
 class WebSocketModulePrivate {
 public:
@@ -29,7 +30,7 @@ public:
 
         QObject::connect(socket, &QWebSocket::connected, [=]() {
 #ifdef RCT_DEV
-            rnLog(WEBSOCKET) << "Socket connected. SocketId:" << socketId;
+            qCDebug(WEBSOCKET) << "Socket connected. SocketId:" << socketId;
 #endif // RCT_DEV
             if (bridge) {
                 bridge->eventDispatcher()->sendDeviceEvent("websocketOpen", QVariantMap{{"id", socketId}});
@@ -40,7 +41,7 @@ public:
             sockets.remove(socketId);
             socket->deleteLater();
 #ifdef RCT_DEV
-            rnLog(WEBSOCKET) << "Socket disconnected. SocketId:" << socketId;
+            qCDebug(WEBSOCKET) << "Socket disconnected. SocketId:" << socketId;
 #endif // RCT_DEV
             if (bridge) {
                 bridge->eventDispatcher()->sendDeviceEvent("websocketClosed",
@@ -53,7 +54,7 @@ public:
 
         QObject::connect(socket, &QWebSocket::textMessageReceived, [=](const QString& message) {
 #ifdef RCT_DEV
-            rnLog(WEBSOCKET) << QString("Text message %1 received for SocketId %2").arg(message).arg(socketId);
+            qCDebug(WEBSOCKET) << QString("Text message %1 received for SocketId %2").arg(message).arg(socketId);
 #endif // RCT_DEV
             if (bridge) {
                 bridge->eventDispatcher()->sendDeviceEvent(
@@ -63,7 +64,7 @@ public:
 
         QObject::connect(socket, &QWebSocket::binaryMessageReceived, [=](const QByteArray& message) {
 #ifdef RCT_DEV
-            rnLog(WEBSOCKET)
+            qCDebug(WEBSOCKET)
                 << QString("Binary message of size %1 received for SocketId %2").arg(message.size()).arg(socketId);
 #endif // RCT_DEV
             if (bridge) {
@@ -76,7 +77,7 @@ public:
                          static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
                          [=](QAbstractSocket::SocketError) {
 #ifdef RCT_DEV
-                             rnLog(WEBSOCKET) << "Socket error: " << socket->errorString();
+                             qCDebug(WEBSOCKET) << "Socket error:" << socket->errorString();
 #endif // RCT_DEV
                          });
 
@@ -91,7 +92,7 @@ void WebSocketModule::connect(const QUrl& url,
     Q_D(WebSocketModule);
 
 #ifdef RCT_DEV
-    rnLog(WEBSOCKET) << "WebSocketModule::connect with args: url: " << url << " socketId: " << socketId;
+    qCDebug(WEBSOCKET) << "WebSocketModule::connect with args: url:" << url << " socketId:" << socketId;
 #endif // RCT_DEV
 
     d->createSocketConnection(url, socketId);
@@ -99,7 +100,7 @@ void WebSocketModule::connect(const QUrl& url,
 
 void WebSocketModule::send(const QString& message, qlonglong socketId) {
 #ifdef RCT_DEV
-    rnLog(WEBSOCKET) << "WebSocketModule::send with args: message: " << message << " socketId: " << socketId;
+    qCDebug(WEBSOCKET) << "WebSocketModule::send with args: message:" << message << " socketId:" << socketId;
 #endif // RCT_DEV
     Q_D(WebSocketModule);
     if (d->sockets.contains(socketId)) {
@@ -110,8 +111,8 @@ void WebSocketModule::send(const QString& message, qlonglong socketId) {
 
 void WebSocketModule::sendBinary(const QString& base64String, qlonglong socketId) {
 #ifdef RCT_DEV
-    rnLog(WEBSOCKET) << "WebSocketModule::sendBinary with args: base64String: " << base64String
-                     << " socketId: " << socketId;
+    qCDebug(WEBSOCKET) << "WebSocketModule::sendBinary with args: base64String:" << base64String
+                       << " socketId:" << socketId;
 #endif // RCT_DEV
     Q_D(WebSocketModule);
     if (d->sockets.contains(socketId)) {
@@ -122,7 +123,7 @@ void WebSocketModule::sendBinary(const QString& base64String, qlonglong socketId
 
 void WebSocketModule::ping(qlonglong socketId) {
 #ifdef RCT_DEV
-    rnLog(WEBSOCKET) << "WebSocketModule::ping with args: socketId: " << socketId;
+    qCDebug(WEBSOCKET) << "WebSocketModule::ping with args: socketId:" << socketId;
 #endif // RCT_DEV
     Q_D(WebSocketModule);
     if (d->sockets.contains(socketId)) {
@@ -133,7 +134,7 @@ void WebSocketModule::ping(qlonglong socketId) {
 
 void WebSocketModule::close(qlonglong socketId) {
 #ifdef RCT_DEV
-    rnLog(WEBSOCKET) << "WebSocketModule::close Closing socket socketId: " << socketId;
+    qCDebug(WEBSOCKET) << "WebSocketModule::close Closing socket socketId:" << socketId;
 #endif // RCT_DEV
     Q_D(WebSocketModule);
     if (d->sockets.contains(socketId)) {

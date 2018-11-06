@@ -12,8 +12,11 @@
 #ifndef FLEXBOX_H
 #define FLEXBOX_H
 
+#include <QLoggingCategory>
 #include <QObject>
 #include <functional>
+
+Q_DECLARE_LOGGING_CATEGORY(FLEXBOX)
 
 #include "../../../ReactCommon/yoga/yoga/Yoga.h"
 

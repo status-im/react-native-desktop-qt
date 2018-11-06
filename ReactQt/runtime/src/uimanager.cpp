@@ -29,19 +29,20 @@
 #include "componentmanagers/scrollviewmanager.h"
 #include "componentmanagers/viewmanager.h"
 #include "layout/flexbox.h"
-#include "logger.h"
 #include "moduledata.h"
 #include "modulemethod.h"
 #include "reactitem.h"
 #include "uimanager.h"
 #include "utilities.h"
 
+Q_LOGGING_CATEGORY(UIMANAGER, "UIManager")
+
 int UIManager::m_nextRootTag = 1;
 
 void UIManager::removeSubviewsFromContainerWithID(int containerReactTag) {
     QQuickItem* item = m_views.value(containerReactTag);
     if (item == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
+        qCWarning(UIMANAGER) << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
         return;
     }
 
@@ -55,7 +56,7 @@ void UIManager::removeSubviewsFromContainerWithID(int containerReactTag) {
 void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& callback) {
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
-        qWarning() << "Attempting to access unknown view";
+        qCWarning(UIMANAGER) << "Attempting to access unknown view";
         callback(m_bridge, QVariantList{});
         return;
     }
@@ -69,8 +70,8 @@ void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& 
 void UIManager::updateView(int reactTag, const QString& viewName, const QVariantMap& properties) {
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
-        qWarning() << "Attempting to update properties on unknown view; reactTag=" << reactTag
-                   << "viewName=" << viewName;
+        qCWarning(UIMANAGER) << "Attempting to update properties on unknown view; reactTag=" << reactTag
+                             << "viewName=" << viewName;
         return;
     }
 
@@ -142,17 +143,17 @@ void UIManager::manageChildren(int containerReactTag,
 
     QQuickItem* container = m_views[containerReactTag];
     if (container == nullptr) {
-        qWarning() << "Attempting to manage children on an unknown container";
+        qCWarning(UIMANAGER) << "Attempting to manage children on an unknown container";
         return;
     }
 
-    rnLog(UIMANAGER) << "::manageChildren for containerReactTag: " << containerReactTag
-                     << " moveFromIndicies: " << moveFromIndicies << " moveToIndices: " << moveToIndices
-                     << " addChildReactTags: " << addChildReactTags << " addAtIndices: " << addAtIndices
-                     << " removeAtIndices: " << removeAtIndices;
+    qCDebug(UIMANAGER) << "::manageChildren for containerReactTag: " << containerReactTag
+                       << " moveFromIndicies: " << moveFromIndicies << " moveToIndices: " << moveToIndices
+                       << " addChildReactTags: " << addChildReactTags << " addAtIndices: " << addAtIndices
+                       << " removeAtIndices: " << removeAtIndices;
 
-    rnLog(UIMANAGER) << "::manageChildren container->childItems().size(): " << container->childItems().size();
-    rnLog(UIMANAGER) << "::manageChildren container->childItems(): " << container->childItems();
+    qCDebug(UIMANAGER) << "::manageChildren container->childItems().size(): " << container->childItems().size();
+    qCDebug(UIMANAGER) << "::manageChildren container->childItems(): " << container->childItems();
 
     Q_ASSERT(moveFromIndicies.size() == moveToIndices.size());
     Q_ASSERT(addChildReactTags.size() == addAtIndices.size());
@@ -224,9 +225,9 @@ void UIManager::manageChildren(int containerReactTag,
             auto containerFlexbox = Flexbox::findFlexbox(container);
             auto childFlexbox = Flexbox::findFlexbox(child);
             if (containerFlexbox && childFlexbox) {
-                rnLog(UIMANAGER) << "::manageChildren containerFlexbox->addChild Parent container: " << container
-                                 << " parent container flexbox: " << containerFlexbox << " Child item: " << child
-                                 << " child flexbox: " << childFlexbox << " position to add at: " << i;
+                qCDebug(UIMANAGER) << "::manageChildren containerFlexbox->addChild Parent container: " << container
+                                   << " parent container flexbox: " << containerFlexbox << " Child item: " << child
+                                   << " child flexbox: " << childFlexbox << " position to add at: " << i;
                 containerFlexbox->addChild(i, childFlexbox);
             }
         }
@@ -238,7 +239,7 @@ void UIManager::manageChildren(int containerReactTag,
 void UIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
     QQuickItem* oldItem = m_views.value(reactTag);
     if (oldItem == nullptr) {
-        qCritical() << __PRETTY_FUNCTION__ << "Attempting to access unknown item";
+        qCCritical(UIMANAGER) << __PRETTY_FUNCTION__ << "Attempting to access unknown item";
         return;
     }
 
@@ -293,7 +294,7 @@ void UIManager::measureLayoutRelativeToParent(int reactTag,
 
     AttachedProperties* ap = AttachedProperties::get(item->parentItem());
     if (ap == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "no parent item!";
+        qCWarning(UIMANAGER) << __PRETTY_FUNCTION__ << "no parent item!";
         return;
     }
     measureLayout(reactTag, ap->tag(), errorCallback, callback);
@@ -317,13 +318,13 @@ void UIManager::createView(int reactTag, const QString& viewName, int rootTag, c
 
     ComponentData* cd = m_componentData.value(viewName);
     if (cd == nullptr) {
-        qCritical() << "Attempt to create unknown view of type" << viewName;
+        qCCritical(UIMANAGER) << "Attempt to create unknown view of type" << viewName;
         return;
     }
 
     QQuickItem* item = cd->createView(reactTag, props);
     if (item == nullptr) {
-        qWarning() << "Failed to create view of type" << viewName;
+        qCWarning(UIMANAGER) << "Failed to create view of type" << viewName;
         return;
     }
 
@@ -340,7 +341,7 @@ void UIManager::createView(int reactTag, const QString& viewName, int rootTag, c
 void UIManager::findSubviewIn(int reactTag, const QPointF& point, const ModuleInterface::ListArgumentBlock& callback) {
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
-        qWarning() << "Attempting to access unknown view";
+        qCWarning(UIMANAGER) << "Attempting to access unknown view";
         callback(m_bridge, QVariantList{});
         return;
     }
@@ -360,7 +361,7 @@ void UIManager::findSubviewIn(int reactTag, const QPointF& point, const ModuleIn
     // XXX: should climb back up to a matching react target?
     AttachedProperties* properties = AttachedProperties::get(target, false);
     if (properties == nullptr) {
-        qWarning() << "Found target on a non react view";
+        qCWarning(UIMANAGER) << "Found target on a non react view";
         callback(m_bridge, QVariantList{});
         return;
     }
@@ -372,7 +373,7 @@ void UIManager::findSubviewIn(int reactTag, const QPointF& point, const ModuleIn
 void UIManager::dispatchViewManagerCommand(int reactTag, int commandID, const QVariantList& commandArgs) {
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
+        qCWarning(UIMANAGER) << __PRETTY_FUNCTION__ << "Attempting to access unknown view";
         return;
     }
     QString moduleName = AttachedProperties::get(item)->viewManager()->moduleName();
@@ -382,7 +383,7 @@ void UIManager::dispatchViewManagerCommand(int reactTag, int commandID, const QV
         moduleName = moduleName.left(mi);
     ComponentData* cd = m_componentData[moduleName];
     if (cd == nullptr) {
-        qWarning() << __PRETTY_FUNCTION__ << "Could not find valid module information";
+        qCWarning(UIMANAGER) << __PRETTY_FUNCTION__ << "Could not find valid module information";
         return;
     }
     ModuleMethod* mm = cd->method(commandID);
@@ -470,7 +471,7 @@ void UIManager::reset() {
 
 void UIManager::setBridge(Bridge* bridge) {
     if (m_bridge != nullptr) {
-        qCritical() << "Bridge already set, UIManager already initialised?";
+        qCCritical(UIMANAGER) << "Bridge already set, UIManager already initialised?";
         return;
     }
 
