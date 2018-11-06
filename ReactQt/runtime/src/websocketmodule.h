@@ -14,10 +14,13 @@
 
 #include <functional>
 
+#include <QLoggingCategory>
 #include <QObject>
 #include <QVariant>
 
 #include "moduleinterface.h"
+
+Q_DECLARE_LOGGING_CATEGORY(WEBSOCKET)
 
 class WebSocketModulePrivate;
 class WebSocketModule : public QObject, public ModuleInterface {

@@ -20,12 +20,13 @@
 #include "attachedproperties.h"
 #include "bridge.h"
 #include "layout/flexbox.h"
-#include "logger.h"
 #include "propertyhandler.h"
 #include "reactitem.h"
 #include "textmanager.h"
 #include "valuecoercion.h"
 #include "viewmanager.h"
+
+Q_LOGGING_CATEGORY(VIEWMANAGER, "ViewManager")
 
 using namespace utilities;
 
@@ -129,10 +130,10 @@ QQuickItem* ViewManager::createView(const QVariantMap& properties) {
     QmlComponentPtr component = m_components[qmlSrc];
     QQuickItem* item = createQMLItemFromComponent(component);
     if (item == nullptr) {
-        qCritical() << QString("Can't create QML item for component %1").arg(qmlSrc);
+        qCCritical(VIEWMANAGER) << QString("Can't create QML item for component %1").arg(qmlSrc);
     } else {
-        rnLog(VIEWMANAGER) << "Created view: " << item << ". Source QML file: " << qmlSrc
-                           << ". Props keys: " << properties.keys();
+        qCDebug(VIEWMANAGER) << "Created view: " << item << ". Source QML file: " << qmlSrc
+                             << ". Props keys: " << properties.keys();
     }
     return item;
 }
