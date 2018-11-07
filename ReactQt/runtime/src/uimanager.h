@@ -14,11 +14,14 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 
+#include <QLoggingCategory>
 #include <QObject>
 #include <QString>
 #include <QVariant>
 
 #include "moduleinterface.h"
+
+Q_DECLARE_LOGGING_CATEGORY(UIMANAGER)
 
 class Bridge;
 class ComponentData;

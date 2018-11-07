@@ -16,10 +16,13 @@
 
 #include <functional>
 
+#include <QLoggingCategory>
 #include <QObject>
 #include <QVariant>
 
 #include "moduleinterface.h"
+
+Q_DECLARE_LOGGING_CATEGORY(NETWORKING)
 
 class NetworkingPrivate;
 class Networking : public QObject, public ModuleInterface {
