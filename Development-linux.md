@@ -33,7 +33,7 @@ Make sure that `CMake` tool is auto-detected by `Qt Creator` or add one manually
 It may be necessary to add:
 
 ```
-set(CMAKE_PREFIX_PATH "<path_to_Qt>/5.9.1/gcc_64/lib/cmake")
+set(CMAKE_PREFIX_PATH "<path_to_Qt>/5.11.2/gcc_64/lib/cmake")
 ```
 
 to the root `CMakeLists.txt` file in `react-native-desktop` repo in order for QtCreator to find the necessary packages.
