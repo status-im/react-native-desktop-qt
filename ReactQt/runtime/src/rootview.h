@@ -89,6 +89,8 @@ protected:
 private Q_SLOTS:
     void bridgeReady();
     void requestPolish();
+    void onSizeChanged();
+    void sendSizeUpdate();
 
 private:
     void componentComplete() override;

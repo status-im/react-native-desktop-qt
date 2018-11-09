@@ -11,12 +11,15 @@
  *
  */
 
+#include <QGuiApplication>
 #include <QQmlEngine>
+#include <QScreen>
 #include <QTimer>
 #include <QVariant>
 
 #include "attachedproperties.h"
 #include "bridge.h"
+#include "eventdispatcher.h"
 #include "layout/flexbox.h"
 #include "rootview.h"
 #include "uimanager.h"
@@ -180,9 +183,9 @@ RootView::RootView(QQuickItem* parent) : ReactItem(parent), d_ptr(new RootViewPr
 
     connect(this, SIGNAL(liveReloadChanged()), d, SLOT(onLiveReloadChanged()));
 
-    connect(this, SIGNAL(widthChanged()), this, SLOT(requestPolish()));
-    connect(this, SIGNAL(heightChanged()), this, SLOT(requestPolish()));
-    connect(this, SIGNAL(scaleChanged()), this, SLOT(requestPolish()));
+    connect(this, SIGNAL(widthChanged()), this, SLOT(onSizeChanged()));
+    connect(this, SIGNAL(heightChanged()), this, SLOT(onSizeChanged()));
+    connect(this, SIGNAL(scaleChanged()), this, SLOT(onSizeChanged()));
 }
 
 RootView::~RootView() {}
@@ -351,6 +354,27 @@ void RootView::requestPolish() {
     if (!d_ptr->bridge->ready())
         return;
     polish();
+}
+
+void RootView::onSizeChanged() {
+    sendSizeUpdate();
+    requestPolish();
+}
+
+void RootView::sendSizeUpdate() {
+    Q_D(RootView);
+    if (!d->bridge->ready())
+        return;
+
+    QScreen* screen = QGuiApplication::primaryScreen();
+
+    QVariantMap values{{"window",
+                        QVariantMap{{"fontScale", screen->devicePixelRatio()},
+                                    {"width", width()},
+                                    {"height", height()},
+                                    {"scale", screen->devicePixelRatio()}}}};
+
+    d->bridge->eventDispatcher()->sendDeviceEvent("didUpdateDimensions", values);
 }
 
 void RootView::componentComplete() {

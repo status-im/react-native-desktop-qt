@@ -80,6 +80,10 @@ const APIExamples: Array<RNTesterExample> = [
       key: 'AlertExample',
       module: require('./AlertExample').AlertExample,
     },
+    {
+      key: 'Dimensions',
+      module: require('./DimensionsExample'),
+    },
 ];
 
 const Modules = {};
