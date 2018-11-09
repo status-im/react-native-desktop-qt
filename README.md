@@ -9,17 +9,12 @@ Supported operating systems:
 - Windows
 
 
->↓↓↓ Move to prerequisites
-
-Recommended Qt framework of version 5.9.1 LTS.
-
-
 <!-- ## Table of contents
 - [Getting Started](#getting-started)
 - [Documentation](#documentation)
 - [License](#license) -->
 
-## Docs udpate TODO:
+## Docs update TODO:
 - Change 5.9.1 -> 5.11.1
 - Get rid of `ubuntu` in filenames
 - More details on how to run Examples
@@ -37,7 +32,6 @@ Recommended Qt framework of version 5.9.1 LTS.
 ## Creating your own app
 - [Create new App](docs/CreateNewApp.md)
 - Learn about [3rd-party react-native modules support](docs/NativeModulesSupport.md)
-- [Installing adjusted react-native-cli](docs/InstallUpdatedReactNativeCLI.md)
 - Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
 - [Troubleshooting](docs/Troubleshooting.md)
 - [FAQ](#docs/FAQ.md)
@@ -53,8 +47,10 @@ To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.
 ## Contributing
 Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
 
-- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
+Docs you may find helpful:
+
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
+- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
 - [Linux guide for React Native Desktop contributors](Development-linux.md)
 - [Cpp code formatting](docs/CodeFormatting.md) TODO!!
 - [Merging React Native](#docs/MergingReactNative.md)
