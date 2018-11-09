@@ -30,6 +30,9 @@ Install:
 Launch `Qt Creator`, select `Tools`->`Options..`->`Build & Run`->`CMake` tab.
 Make sure that `CMake` tool is auto-detected by `Qt Creator` or add one manually.
 
+### Qt Creator clang-format configuration
+** !!! TODO **
+
 ### Build react-native-desktop with Qt Creator
 
 In `Qt Creator` select menu `File`->`Open File or Project...`.  

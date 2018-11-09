@@ -32,7 +32,6 @@ Supported operating systems:
 ## Creating your own app
 - [Create new App](docs/CreateNewApp.md)
 - Learn about [3rd-party react-native modules support](docs/NativeModulesSupport.md)
-- Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
 - [Troubleshooting](docs/Troubleshooting.md)
 - [FAQ](#docs/FAQ.md)
 
@@ -51,8 +50,7 @@ Docs you may find helpful:
 
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
 - [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
-- [Linux guide for React Native Desktop contributors](Development-linux.md)
-- [Cpp code formatting](docs/CodeFormatting.md) TODO!!
+- [Linux guide for React Native Desktop contributors](docs/ContributorEnvSetup.md)
 - [Merging React Native](#docs/MergingReactNative.md)
 
 
