@@ -15,11 +15,8 @@ Supported operating systems:
 - [License](#license) -->
 
 ## Docs update TODO:
-- Change 5.9.1 -> 5.11.1
-- Get rid of `ubuntu` in filenames
-- More details on how to run Examples
 - Add doc on how to run RNTester
-- Add doc on code formatting
+- elaborate debugging
 
 # Documentation
 ## Getting started

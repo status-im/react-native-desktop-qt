@@ -2,43 +2,46 @@
 
 ### Prerequisites
 
-You should have installed `cmake` and `Qt 5.9.1`.
+Install prerequisites [from this document](InstallPrerequisites.md)
+Check `Qt Creator` IDE during Qt installation to install it.
 
-Qt 5.9.1 PPA for Ubuntu Trusty:
+#### Install `clang-format`:
 
-```
-sudo add-apt-repository -y ppa:beineri/opt-qt591-trusty
-```
+Mac: `brew install clang-format`
 
-Qt 5.9.1 PPA for Ubuntu Xenial:
+Windows: `choco install llvm` (llvm includes clang-format)
 
-```
-sudo add-apt-repository -y ppa:beineri/opt-qt591-xenial
-```
+Ubuntu: `sudo apt install clang-format`
 
-Install:
-
-```
-~$ sudo apt-get install -y cmake qt59base qt59graphicaleffects qt59quickcontrols2 qt59declarative
-```
-
-`Qt Creator` IDE should be installed.
 
 ### Qt Creator cmake toolchain configuration
 
 `Qt Creator` should be configured with path to CMake tool.  
-Launch `Qt Creator`, select `Tools`->`Options..`->`Build & Run`->`CMake` tab.
+Launch `Qt Creator`, select `Preferences`->`Kits`->`CMake` tab.
 Make sure that `CMake` tool is auto-detected by `Qt Creator` or add one manually.
+![](./media/qt-creator-cmake-settings.png)
 
-### Qt Creator clang-format configuration
-** !!! TODO **
+### Using clang-format for cpp code formatting
+All cpp code in the project automatically formatted by clang-format. Formatting rules can be found in [react-native-desktop/ReactQt/.clang-format](https://github.com/status-im/react-native-desktop/blob/master/ReactQt/.clang-format)
+
+#### Format with Qt Creator
+Qt Creator automatically formats files when configured properly:
+
+Tab `Preferences`->`Beautifier`->`General`.
+![](./media/qtcreator-pref-beautifier-general.png)
+
+Tab `Preferences`->`Beautifier`->`Clang Format`.
+![](media/qtcreator-pref-beautifier-clangformat.png)
+
+#### Format manually
+Run [fix-formatting.sh](https://github.com/status-im/react-native-desktop/blob/master/fix-code-formatting.sh) to apply clang-format rules to the project code.
 
 ### Build react-native-desktop with Qt Creator
 
 In `Qt Creator` select menu `File`->`Open File or Project...`.  
-Navigate to the root directory of your clone and select `CMakeList.txt` file to open.
+Navigate to the root directory of your `react-native-desktop` clone and select `CMakeList.txt` file to open.
 
-Select Qt 5.9.1 toolchain to configure the project, if prompted.
+Select Qt 5.11.1 toolchain to configure the project, if prompted.
 
 By default, Qt configures `CMake` to do out-of-directory build on one level higher than your repo clone directory.
 
@@ -52,16 +55,26 @@ If `CMake` run finished without error, you can start the build `Build`->`Build A
 
 ### Debugging and running of Examples with Qt Creator
 
-Below we will run TicTacToe example.
+**Note:** You need to start js server and bundler before you run the example. Like you do when [run your new app](CreateNewApp.md#run-the-project)
 
-Select `Build & Run`->`Run`. Create configuration to run `Example` executable.  
-Place value `./Examples/TicTacToe/run-example.sh` into `Executable` field.
-Select `Build`->`Run` to run TicTacToe example application.
 
-To use debugger for step by step C++ code debugging, create new `Run` configuration.  
-Fill `Executable` field with value `qmlscene`.
-Fill `Command line arguments` field with value `qmlscene -I ./ReactQt/runtime/src/ ./Examples/TicTacToe/TicTacToe.qml`.
-Select `Debug`->`Start Debugging`->`Start Debugging`.
+#### To run TicTacToe example.
+
+1. Build and run `react-native-desktop` as described above
+2. Open `Projects` tab in Qt Creator and select `Run` under `Build & Run` section of left pane
+3. Add new `run configuation` for `Custom executable`, and name it `TicTacToe`.
+4. Place path to qmlscene binary in `Executable` field: `/Users/USER_NAME/Qt/5.11.1/clang_64/bin/qmlscene`
+5. In `command line arguments` set `-I ./ReactQt/runtime/src/ ./Examples/TicTacToe/TicTacToe.qml`
+6. in `working directory` set `%{buildDir}`
+7. Select `Build`->`Run` Qt Creator menu option to run TicTacToe example application.
+
+![](media/qtcreator-add-example.png)
+
+#### To debug TicTacToe example.
+To use debugger for step by step C++ code debugging when you finished configuring TicTacToe for run, select `Debug`->`Start Debugging`->`Start Debugging`
+
 Debugger will be attached to started `qmlscene` process and you will able to break on your breakpoints in C++ source code.
 
-You will need to update the paths to run others examples.
+#### Other examples
+To run other examples you need to configure QtCreator similarly but with other path in `Command line arguments` field.
+For example to Run/Debug RNTester use `-I ./ReactQt/runtime/src/ ../RNTester/qml/RNTester.qml`

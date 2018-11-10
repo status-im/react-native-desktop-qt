@@ -42,7 +42,7 @@ react-native run-desktop
 ```
 Compilation of desktop project will start. When it finished and app run you can see following:
 
-![](./react-native-desktop-new-app.png)
+![](./media/react-native-desktop-new-app.png)
 
 **Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command
 

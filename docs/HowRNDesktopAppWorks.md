@@ -19,7 +19,7 @@ There are 3 participants in react-native-desktop application:
 
 ### Steps on app start
 
-![](./react-native-desktop-workflow.svg)
+![](./media/react-native-desktop-workflow.svg)
 
 
 1. When `react-native run-desktop` invoked, `Qt application` is built and launched.

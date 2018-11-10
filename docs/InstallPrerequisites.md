@@ -20,7 +20,7 @@ Recommended way to install required tools and libs is to use [Homebrew](https://
 brew install node watchman cmake
 ```
 
-Download and run [Qt 5.9.1](https://download.qt.io/archive/qt/5.11/5.11.1/qt-opensource-mac-x64-5.11.1.dmg) installer for Mac OS. During installation process on `Select Components` screen check `Qt 5.11.1 / macOS` and `Qt 5.11.1 / Qt WebEngine` components. Finish installation process.
+Download and run [Qt 5.11.1](https://download.qt.io/archive/qt/5.11/5.11.1/qt-opensource-mac-x64-5.11.1.dmg) installer for Mac OS. During installation process on `Select Components` screen check `Qt 5.11.1 / macOS` and `Qt 5.11.1 / Qt WebEngine` components. Finish installation process.
 
 ### Ubuntu
 
@@ -28,7 +28,7 @@ Download and run [Qt 5.9.1](https://download.qt.io/archive/qt/5.11/5.11.1/qt-ope
 sudo apt-get install -y git cmake nodejs-legacy npm
 ```
 
-Download and run [Qt 5.9.1](https://download.qt.io/archive/qt/5.11/5.11.1/qt-opensource-linux-x64-5.11.1.run) installer for Linux. Finish installation process.
+Download and run [Qt 5.11.1](https://download.qt.io/archive/qt/5.11/5.11.1/qt-opensource-linux-x64-5.11.1.run) installer for Linux. Finish installation process.
 
 ### All platforms
 
