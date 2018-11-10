@@ -1,6 +1,7 @@
 ---
-name: 🐛 Bug Report
+name: "\U0001F41B Bug Report"
 about: Report a reproducible bug or regression in the core React Native library.
+
 ---
 
 <!-- Requirements: please go through this checklist before opening a new issue -->

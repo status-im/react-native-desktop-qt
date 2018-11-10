@@ -1,5 +1,5 @@
 ---
-name: 📖 Documentation Issue
+name: "\U0001F4D6 Documentation Issue"
 about: Report issues with the docs at https://github.com/facebook/react-native-website/issues.
 
 ---
