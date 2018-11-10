@@ -47,7 +47,7 @@ Docs you may find helpful:
 
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
 - [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
-- [Linux guide for React Native Desktop contributors](docs/ContributorEnvSetup.md)
+- [Environment setup guide for contributors](docs/ContributorEnvSetup.md)
 - [Merging React Native](#docs/MergingReactNative.md)
 
 
