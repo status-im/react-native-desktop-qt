@@ -13,7 +13,6 @@ Supported operating systems:
 
 - Install [Prerequisites](docs/InstallPrerequisites.md)
 - Take a look at [list of supported React Native components and APIs](docs/ComponentsSupport.md)
-- [Run RNTester](docs/RunRNTester.md) to examine controls and APIs TODO!!
 
 
 ## Creating your own app
