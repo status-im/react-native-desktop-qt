@@ -55,7 +55,16 @@ If `CMake` run finished without error, you can start the build `Build`->`Build A
 
 ### Debugging and running of Examples with Qt Creator
 
-**Note:** You need to start js server and bundler before you run the example. Like you do when [run your new app](CreateNewApp.md#run-the-project)
+**Note:** You need to start js server and bundler before you run the example.
+To do this execute following commands in different terminals:
+```sh
+npm start #starts bundler
+```
+```sh
+node ubuntu-server.js #starts js server
+```
+
+Like you do when [run your new app](CreateNewApp.md#run-the-project)
 
 
 #### To run TicTacToe example.

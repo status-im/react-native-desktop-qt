@@ -8,16 +8,6 @@ Supported operating systems:
 - Mac OS (checked with Mac OS X versions)
 - Windows
 
-
-<!-- ## Table of contents
-- [Getting Started](#getting-started)
-- [Documentation](#documentation)
-- [License](#license) -->
-
-## Docs update TODO:
-- Add doc on how to run RNTester
-- elaborate debugging
-
 # Documentation
 ## Getting started
 
@@ -35,8 +25,10 @@ Supported operating systems:
 
 ### Debugging react-native-desktop apps
 
-To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.  
+To access `In-App Developer Menu` press CTRL+R (Command+R).  
 `In-App Developer Menu` is available in Debug builds.
+
+- [Inspecting JS code](docs/InspectJs.md)
 - [Using GammaRay for inspecting Qt internals](docs/InspectAppWithGammaRay.md)
 
 
@@ -46,8 +38,8 @@ Any kind of contribution is welcome! Check the [list of opened issues](https://g
 Docs you may find helpful:
 
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
-- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
 - [Environment setup guide for contributors](docs/ContributorEnvSetup.md)
+- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
 - [Merging React Native](#docs/MergingReactNative.md)
 
 
