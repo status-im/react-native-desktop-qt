@@ -35,4 +35,4 @@ Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-op
 Make sure that installed Qt's `qmake` tool is available in your PATH.
 On mac and linux you can add following to `.bash_profile`:
 
-`export PATH=$PATH:/Users/MyUser/Qt/5.11.2/clang_64/bin`
+`export PATH=$PATH:/Users/MyUser/Qt/5.11.2/COMPILER_NAME/bin`
