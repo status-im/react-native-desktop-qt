@@ -7,7 +7,7 @@ Steps to build it (inside cloned src folder):
 ```
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=PATH_TO_YOUR_QT_FOLDER/5.11.1/gcc_64/lib/cmake ..
+cmake -DCMAKE_PREFIX_PATH=PATH_TO_YOUR_QT_FOLDER/5.11.2/gcc_64/lib/cmake ..
 make
 make install
 ```

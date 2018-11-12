@@ -6,6 +6,7 @@ Install prerequisites [from this document](InstallPrerequisites.md)
 Check `Qt Creator` IDE during Qt installation to install it.
 
 #### Install `clang-format`:
+Version of `clang-format` should be 3.8
 
 Mac: `brew install clang-format`
 
@@ -41,7 +42,7 @@ Run [fix-formatting.sh](https://github.com/status-im/react-native-desktop/blob/m
 In `Qt Creator` select menu `File`->`Open File or Project...`.  
 Navigate to the root directory of your `react-native-desktop` clone and select `CMakeList.txt` file to open.
 
-Select Qt 5.11.1 toolchain to configure the project, if prompted.
+Select Qt 5.11.2 toolchain to configure the project, if prompted.
 
 By default, Qt configures `CMake` to do out-of-directory build on one level higher than your repo clone directory.
 
@@ -71,8 +72,8 @@ Like you do when [run your new app](CreateNewApp.md#run-the-project)
 
 1. Build and run `react-native-desktop` as described above
 2. Open `Projects` tab in Qt Creator and select `Run` under `Build & Run` section of left pane
-3. Add new `run configuation` for `Custom executable`, and name it `TicTacToe`.
-4. Place path to qmlscene binary in `Executable` field: `/Users/USER_NAME/Qt/5.11.1/clang_64/bin/qmlscene`
+3. Add new `run configuration` for `Custom executable`, and name it `TicTacToe`.
+4. Place path to qmlscene binary in `Executable` field: `/Users/USER_NAME/Qt/5.11.2/clang_64/bin/qmlscene`
 5. In `command line arguments` set `-I ./ReactQt/runtime/src/ ./Examples/TicTacToe/TicTacToe.qml`
 6. in `working directory` set `%{buildDir}`
 7. Select `Build`->`Run` Qt Creator menu option to run TicTacToe example application.
