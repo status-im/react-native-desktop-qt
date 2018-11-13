@@ -19,7 +19,7 @@ Supported operating systems:
 - [Create new App](docs/CreateNewApp.md)
 - Learn about [3rd-party react-native modules support](docs/NativeModulesSupport.md)
 - [Troubleshooting](docs/Troubleshooting.md)
-- [FAQ](#docs/FAQ.md)
+- [FAQ](docs/FAQ.md)
 
 
 ### Debugging react-native-desktop apps
