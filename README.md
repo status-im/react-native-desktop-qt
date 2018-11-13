@@ -1,5 +1,6 @@
 # [React Native Desktop](https://github.com/status-im/react-native-desktop) &middot; [![Circle CI Status](https://circleci.com/gh/status-im/react-native-desktop.svg?style=shield)](https://circleci.com/gh/status-im/react-native-desktop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/status-im/react-native-desktop/issues)
 
+
 Cross-platform React Native Desktop port based on Qt framework.
 
 Supported operating systems:
@@ -7,48 +8,44 @@ Supported operating systems:
 - Mac OS (checked with Mac OS X versions)
 - Windows
 
-Recommended Qt framework of version 5.9.1 LTS.
+# Documentation
+## Getting started
 
-- [Getting Started](#getting-started)
-- [Documentation](#documentation)
-- [License](#license)
+- Install [Prerequisites](docs/InstallPrerequisites.md)
+- Take a look at [list of supported React Native components and APIs](docs/ComponentsSupport.md)
 
-## Getting Started
 
-- [Install Prerequisites](docs/InstallPrerequisites.md)
+## Creating your own app
 - [Create new App](docs/CreateNewApp.md)
+- Learn about [3rd-party react-native modules support](docs/NativeModulesSupport.md)
+- [Troubleshooting](docs/Troubleshooting.md)
+- [FAQ](#docs/FAQ.md)
 
 
-### Debugging
+### Debugging react-native-desktop apps
 
-To access `In-App Developer Menu` ~~start shaking your laptop/PC~~ press CTRL+R.  
+To access `In-App Developer Menu` press CTRL+R (Command+R).  
 `In-App Developer Menu` is available in Debug builds.
 
-### 3rd-party react-native modules support
-Pure JavaScript react-native modules can be used with react-native-desktop without limitations.  
-Creation of custom react-native `native` modules or `adopting of available native modules` is supported and described in following [guideline](docs/NativeModulesSupport.md).
+- [Inspecting JS code](docs/InspectJs.md)
+- [Using GammaRay for inspecting Qt internals](docs/InspectAppWithGammaRay.md)
 
-[List of supported or partially supported native modules](docs/SupportedNativeModulesList.md).
 
-## Documentation
+## Contributing
+Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
+
+Docs you may find helpful:
 
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
-- [List of supported React Native components and APIs ("React Native Qt" column)](docs/ComponentsSupport.md)
-- [Installing adjusted react-native-cli](docs/InstallUpdatedReactNativeCLI.md)
-- Follow [Ubuntu development guide](README-ubuntu.md) to get started building of react-native-desktop itself and JS apps based on it.
-- [Troubleshooting](docs/Troubleshooting.md)
+- [Environment setup guide for contributors](docs/ContributorEnvSetup.md)
+- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
+- [Merging React Native](#docs/MergingReactNative.md)
+
 
 ## ClojureScript React Native apps support
 
 [Re-Natal fork](https://github.com/status-im/re-natal.git) extended with `desktop` platform support.
 
-Read our [contributing guide](https://facebook.github.io/react-native/docs/contributing.html) to learn about our development process, how to propose bug fixes and improvements, and how to build and test your changes to React Native.
-
-Any kind of contribution is welcome! Check the [list of opened issues](https://github.com/status-im/react-native-desktop/issues) or create new one.
-
-- [Linux guide for React Native Desktop contributors](Development-linux.md)
-- [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
-- [Using GammaRay for inspecting Qt internals](docs/InspectAppWithGammaRay.md)
 
 ## License
 

@@ -1,4 +1,3 @@
-
 # How react-native-desktop works internally
 
 ## Desktop project code
@@ -12,20 +11,20 @@ There are 3 participants in react-native-desktop application:
 - Bundler
 - JS server (right now called ubuntu-server, but this is subject to change)
 
-`Qt application` - built from a project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI. 
+`Qt application` - built from a project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI.
 
-`Bundler` - this server runs on developer's machine and provides access to js files from the project. Also, it can generate "bundle" - single js file with all project code in it. Not needed for distribution. 
+`Bundler` - this server runs on developer's machine and provides access to js files from the project. Also, it can generate "bundle" - single js file with all project code in it. Not needed for distribution.
 
 `JS server` - provides a sandbox for running javascript project code. It communicates with Qt Application.
 
 ### Steps on app start
 
-![](./react-native-desktop-workflow.svg)
+![](./media/react-native-desktop-workflow.svg)
 
 
-1. When `react-native run-desktop` invoked, `Qt application` is built and launched. 
+1. When `react-native run-desktop` invoked, `Qt application` is built and launched.
 
-`desktop/main.cpp` is the file developer can change to affect app Qt app behavior. Other sources included from `node_modules/react-native/ReactQt/application/src`. If you depend on any 3rd party react-native modules, their code also included at this point. 
+`desktop/main.cpp` is the file developer can change to affect app Qt app behavior. Other sources included from `node_modules/react-native/ReactQt/application/src`. If you depend on any 3rd party react-native modules, their code also included at this point.
 
 2. `Qt application` connects to `Bundler` and receives single js file generated from all js files in a project.
 
