@@ -174,7 +174,7 @@ void ScrollViewManager::momentumScrollEnd(QQuickItem* item) {
     notifyJsAboutEvent(tag(item), "momentumScrollEnd", buildEventData(item));
 }
 
-void ScrollViewManager::addTransformation(QQuickItem* item, QVariantList transform) {
+void ScrollViewManager::applyTransformation(QQuickItem* item, QVariantList transform) {
 
     QVector<float> transformVector;
     foreach (QVariant v, transform) {

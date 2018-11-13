@@ -17,9 +17,11 @@ Flickable {
     property bool p_showsHorizontalScrollIndicator: true
     property bool p_showsVerticalScrollIndicator: true
 
+    onHeightChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
+    onWidthChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
 
     onP_transformChanged: {
-        scrollViewManager.addTransformation(scrollViewRoot, p_transform)
+        scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
         //if scrollview vertically inveted we should remember that to adjust wheel events
         if(p_transform.length > 5) {
             var scaleY = p_transform[5];
