@@ -26,6 +26,8 @@ Flickable {
             scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
     }
 
+    onHeightChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
+    onWidthChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
 
     onP_transformChanged: {
         scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
