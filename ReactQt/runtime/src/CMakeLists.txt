@@ -251,7 +251,7 @@ include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
-  set (USED_QT_MODULES ${USED_QT_MODULES} WebKit)
+  set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
 endif()
 
 qt5_use_modules(react-native ${USED_QT_MODULES})

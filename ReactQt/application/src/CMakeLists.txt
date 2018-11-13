@@ -83,7 +83,7 @@ add_executable(
 
 set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
-  set(USED_QT_MODULES ${USED_QT_MODULES} WebKit)
+  set (USED_QT_MODULES ${USED_QT_MODULES} Webkit)
 endif()
 
 qt5_use_modules(${APP_NAME} ${USED_QT_MODULES})
@@ -95,8 +95,4 @@ target_link_libraries(
 
 if (REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS)
   target_link_libraries(${APP_NAME} ${REACT_NATIVE_DESKTOP_MAIN_APP_EXTERNAL_PROJECT_DEPS})
-endif()
-
-if (REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS)
-  target_link_libraries(${APP_NAME} ${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_LIBS})
 endif()
