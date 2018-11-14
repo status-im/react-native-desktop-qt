@@ -55,13 +55,6 @@ public:
                              headerListToMap(reply->rawHeaderPairs()),
                              reply->url().toString()});
         });
-        QObject::connect(reply, &QNetworkReply::downloadProgress, [=](qint64 bytesReceived, qint64 bytesTotal) {
-            if (bytesReceived == 0) {
-                return;
-            }
-            bridge->eventDispatcher()->sendDeviceEvent("didReceiveNetworkData",
-                                                       QVariantList{requestId, reply->read(bytesReceived)});
-        });
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
             qCDebug(NETWORKING) << "NetworkingPrivate::handleGetRequest QNetworkReply::finished requestId:" << requestId
                                 << "error:" << reply->errorString();
