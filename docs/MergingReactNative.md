@@ -3,7 +3,7 @@
 - Create new local git branch based on latest master, for example, `merge/rn-0.57`
 - Add original Facebook's react-native repo as remote to you git checkout:
   ```
-  git remote add facebook git@github.com:facebook/react-native.git
+  git remote add facebook https://github.com/facebook/react-native.git
   git fetch --all
   ``` 
 - Determine the name of the source react-native branch to be merged. For example, `0.57-stable`
@@ -16,8 +16,9 @@
 `diffoscope` cmd tool can be used to compare files availability in the diretories. You need to create separate clone of facebook's repository, checkout there merge source branch and do comparison with you working copy:
 ```
 sudo apt-get install diffoscope
-git clone git@github.com:facebook/react-native.git#0.57-stable
+git clone https://github.com/facebook/react-native.git
 cd react-native
+git checkout 0.57-stable
 diffoscope ./ ~/PATH_TO_WORKING_COPY/react-native-desktop/ --text result.txt
 ```
   Resulting `result.txt` file should start with files availability comparison between directories. It's simple to understand what new files were added to the react-native-desktop and manually remove files not related to react-native-desktop fork:
