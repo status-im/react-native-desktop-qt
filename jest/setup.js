@@ -92,7 +92,6 @@ jest
   })
   .mock('ensureComponentIsNative', () => () => true);
 
-const mockEmptyObject = {};
 const mockNativeModules = {
   AlertManager: {
     alertWithArgs: jest.fn(),
@@ -147,9 +146,6 @@ const mockNativeModules = {
     login: jest.fn(),
     logout: jest.fn(),
     queryGraphPath: jest.fn((path, method, params, callback) => callback()),
-  },
-  FbRelayNativeAdapter: {
-    updateCLC: jest.fn(),
   },
   GraphPhotoUpload: {
     upload: jest.fn(),

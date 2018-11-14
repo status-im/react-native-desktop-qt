@@ -4,8 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
+ * @flow strict-local
  * @format
- * @flow
  */
 
 'use strict';
@@ -21,7 +21,10 @@ ReactNativeViewAttributes.UIView = {
   accessibilityLabel: true,
   accessibilityComponentType: true,
   accessibilityLiveRegion: true,
+  accessibilityRole: true,
+  accessibilityStates: true,
   accessibilityTraits: true,
+  accessibilityHint: true,
   importantForAccessibility: true,
   nativeID: true,
   testID: true,

@@ -11,6 +11,8 @@
 
 'use strict';
 
+'use strict';
+
 /**
  * Retrieve an object's values as an array.
  *

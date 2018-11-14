@@ -39,22 +39,24 @@ module.exports = {
   process(src /*: string */, file /*: string */) {
     if (nodeFiles.test(file)) {
       // node specific transforms only
-      return babelTransformSync(
-        src,
-        Object.assign(
-          {filename: file},
-          {sourceType: 'script', ...nodeOptions, ast: false},
-        ),
-      ).code;
+      return babelTransformSync(src, {
+        filename: file,
+        sourceType: 'script',
+        ...nodeOptions,
+        ast: false,
+      }).code;
     }
 
     const {ast} = transformer.transform({
       filename: file,
-      localPath: file,
       options: {
         ast: true, // needed for open source (?) https://github.com/facebook/react-native/commit/f8d6b97140cffe8d18b2558f94570c8d1b410d5c#r28647044
         dev: true,
+        enableBabelRuntime: false,
+        experimentalImportSupport: false,
+        hot: false,
         inlineRequires: true,
+        minify: false,
         platform: '',
         projectRoot: '',
         retainLines: true,

@@ -17,7 +17,7 @@ React Native follows a monthly release train. Every month, a new branch created 
 |  ...    |       ...           |      ...         |
 | 0.56.0  | 1st of June         | 1st of July      |
 | 0.57.0  | 1st of July         | 1st of August    |
-| 0.58.0  | 1st of August       | 1st of October   |
+| 0.58.0  | 1st of August       | 1st of September |
 | ...     | ...                 | ...              |
 
 -------------------
@@ -65,7 +65,7 @@ Circle CI will automatically run the tests and publish to npm with the version y
 
 ### Step 3: Write the release notes
 
-Write the release notes, or post in [React Native Core Contributors](https://www.facebook.com/groups/reactnativeoss/) that the RC is ready to find a voluteer. You can also use [react-native-release-notes](https://github.com/knowbody/react-native-release-notes) to generate a draft of release notes.
+Write the release notes, or post in [React Native Core Contributors](https://www.facebook.com/groups/reactnativeoss/) that the RC is ready to find a volunteer. You can also use [react-native-release-notes](https://github.com/knowbody/react-native-release-notes) to generate a draft of release notes.
 
 To go through all the commits that went into a release, one way is to use the GitHub compare view:
 

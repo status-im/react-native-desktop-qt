@@ -54,19 +54,17 @@ import javax.inject.Provider;
 
   private final ReactInstanceManager mReactInstanceManager;
   private final DefaultHardwareBackBtnHandler mHardwareBackBtnHandler;
-  private final UIImplementationProvider mUIImplementationProvider;
   private final boolean mLazyViewManagersEnabled;
   private final int mMinTimeLeftInFrameForNonBatchedOperationMs;
 
   CoreModulesPackage(
       ReactInstanceManager reactInstanceManager,
       DefaultHardwareBackBtnHandler hardwareBackBtnHandler,
-      UIImplementationProvider uiImplementationProvider,
+      @Nullable UIImplementationProvider uiImplementationProvider,
       boolean lazyViewManagersEnabled,
       int minTimeLeftInFrameForNonBatchedOperationMs) {
     mReactInstanceManager = reactInstanceManager;
     mHardwareBackBtnHandler = hardwareBackBtnHandler;
-    mUIImplementationProvider = uiImplementationProvider;
     mLazyViewManagersEnabled = lazyViewManagersEnabled;
     mMinTimeLeftInFrameForNonBatchedOperationMs = minTimeLeftInFrameForNonBatchedOperationMs;
   }
@@ -165,13 +163,11 @@ import javax.inject.Provider;
         return new UIManagerModule(
             reactContext,
             resolver,
-            mUIImplementationProvider,
             mMinTimeLeftInFrameForNonBatchedOperationMs);
       } else {
         return new UIManagerModule(
             reactContext,
             mReactInstanceManager.getOrCreateViewManagers(reactContext),
-            mUIImplementationProvider,
             mMinTimeLeftInFrameForNonBatchedOperationMs);
       }
     } finally {

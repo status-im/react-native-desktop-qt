@@ -24,8 +24,6 @@ import com.facebook.react.uimanager.events.EventDispatcher;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-import static com.facebook.react.views.swiperefresh.SwipeRefreshLayoutManager.REACT_CLASS;
-
 /**
  * ViewManager for {@link ReactSwipeRefreshLayout} which allows the user to "pull to refresh" a
  * child view. Emits an {@code onRefresh} event when this happens.

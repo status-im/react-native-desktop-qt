@@ -88,13 +88,13 @@ nodejs_not_found()
   exit 2
 }
 
-type $NODE_BINARY >/dev/null 2>&1 || nodejs_not_found
+type "$NODE_BINARY" >/dev/null 2>&1 || nodejs_not_found
 
 # Print commands before executing them (useful for troubleshooting)
 set -x
 DEST=$CONFIGURATION_BUILD_DIR/$UNLOCALIZED_RESOURCES_FOLDER_PATH
 
-if [[ "$CONFIGURATION" = "Debug" && ! "$PLATFORM_NAME" == *simulator ]]; then
+if [[ "$CONFIGURATION" = *Debug* && ! "$PLATFORM_NAME" == *simulator ]]; then
   IP=$(ipconfig getifaddr en0)
   if [ -z "$IP" ]; then
     IP=$(ifconfig | grep 'inet ' | grep -v ' 127.' | cut -d\   -f2  | awk 'NR==1{print $1}')
@@ -105,7 +105,7 @@ fi
 
 BUNDLE_FILE="$DEST/main.jsbundle"
 
-$NODE_BINARY "$CLI_PATH" $BUNDLE_COMMAND \
+"$NODE_BINARY" "$CLI_PATH" $BUNDLE_COMMAND \
   $CONFIG_ARG \
   --entry-file "$ENTRY_FILE" \
   --platform ios \

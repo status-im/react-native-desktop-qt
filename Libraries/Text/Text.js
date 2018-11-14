@@ -64,6 +64,12 @@ const viewConfig = {
     adjustsFontSizeToFit: true,
     minimumFontScale: true,
     textBreakStrategy: true,
+    onTextLayout: true,
+  },
+  directEventTypes: {
+    topTextLayout: {
+      registrationName: 'onTextLayout',
+    },
   },
   uiViewClassName: 'RCTText',
 };
@@ -261,13 +267,17 @@ const RCTVirtualText =
         uiViewClassName: 'RCTVirtualText',
       }));
 
+const Text = (
+  props: TextProps,
+  forwardedRef: ?React.Ref<'RCTText' | 'RCTVirtualText'>,
+) => {
+  return <TouchableText {...props} forwardedRef={forwardedRef} />;
+};
 // $FlowFixMe - TODO T29156721 `React.forwardRef` is not defined in Flow, yet.
-const Text = React.forwardRef((props, ref) => (
-  <TouchableText {...props} forwardedRef={ref} />
-));
-Text.displayName = 'Text';
+const TextToExport = React.forwardRef(Text);
+TextToExport.displayName = 'Text';
 
 // TODO: Deprecate this.
-Text.propTypes = TextPropTypes;
+TextToExport.propTypes = TextPropTypes;
 
-module.exports = ((Text: any): Class<NativeComponent<TextProps>>);
+module.exports = (TextToExport: Class<NativeComponent<TextProps>>);
