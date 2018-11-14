@@ -193,7 +193,7 @@ void ScrollViewManager::applyTransformation(QQuickItem* item, QVariantList trans
 }
 
 bool ScrollViewManager::eventFilter(QObject* scrollView, QEvent* event) {
-
+#if defined(Q_OS_MACOS)
     static QSet<QWheelEvent*> artificialEvents;
 
     if (event->type() == QEvent::Wheel) {
@@ -220,6 +220,7 @@ bool ScrollViewManager::eventFilter(QObject* scrollView, QEvent* event) {
             return true;
         }
     }
+#endif
     return false;
 }
 
