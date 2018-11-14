@@ -17,8 +17,14 @@ Flickable {
     property bool p_showsHorizontalScrollIndicator: true
     property bool p_showsVerticalScrollIndicator: true
 
-    onHeightChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
-    onWidthChanged: scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
+    onHeightChanged: {
+        if(p_transform)
+            scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
+    }
+    onWidthChanged: {
+        if(p_transform)
+            scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
+    }
 
     onP_transformChanged: {
         scrollViewManager.applyTransformation(scrollViewRoot, p_transform)
