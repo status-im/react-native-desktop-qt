@@ -19,7 +19,7 @@ Supported operating systems:
 - [Create new App](docs/CreateNewApp.md)
 - Learn about [3rd-party react-native modules support](docs/NativeModulesSupport.md)
 - [Troubleshooting](docs/Troubleshooting.md)
-- [FAQ](#docs/FAQ.md)
+- [FAQ](docs/FAQ.md)
 
 
 ### Debugging react-native-desktop apps
@@ -39,7 +39,7 @@ Docs you may find helpful:
 - [How react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
 - [Environment setup guide for contributors](docs/ContributorEnvSetup.md)
 - [Yoga layout engine in react-native-desktop](docs/YogaLayoutEngine.md)
-- [Merging React Native](#docs/MergingReactNative.md)
+- [Merging React Native](docs/MergingReactNative.md)
 
 
 ## ClojureScript React Native apps support
