@@ -60,96 +60,97 @@ const JSCWrapper* systemJSCWrapper() {
   static std::once_flag flag;
   std::call_once(flag, []() {
     s_systemWrapper = {
-      .JSGlobalContextCreateInGroup_ = JSGlobalContextCreateInGroup,
-      .JSGlobalContextRelease_ = JSGlobalContextRelease,
-      .JSGlobalContextSetName_ = JSGlobalContextSetName,
+      .JSGlobalContextCreateInGroup = JSGlobalContextCreateInGroup,
+      .JSGlobalContextRelease = JSGlobalContextRelease,
+      .JSGlobalContextSetName = JSGlobalContextSetName,
 
-      .JSContextGetGlobalContext_ = JSContextGetGlobalContext,
-      .JSContextGetGlobalObject_ = JSContextGetGlobalObject,
-      .FBJSContextStartGCTimers_ =
+      .JSContextGetGlobalContext = JSContextGetGlobalContext,
+      .JSContextGetGlobalObject = JSContextGetGlobalObject,
+      .FBJSContextStartGCTimers =
         (decltype(&FBJSContextStartGCTimers))
         Unimplemented_FBJSContextStartGCTimers,
 
-      .JSEvaluateScript_ = JSEvaluateScript,
-      .JSEvaluateBytecodeBundle_ =
+      .JSEvaluateScript = JSEvaluateScript,
+      .JSEvaluateBytecodeBundle =
         (decltype(&JSEvaluateBytecodeBundle))
         Unimplemented_JSEvaluateBytecodeBundle,
 
-      .JSStringCreateWithUTF8CString_ = JSStringCreateWithUTF8CString,
-      //.JSStringCreateWithCFString_ = JSStringCreateWithCFString,
+      .JSStringCreateWithUTF8CString = JSStringCreateWithUTF8CString,
+      // .JSStringCreateWithCFString = JSStringCreateWithCFString,
       #if WITH_FBJSCEXTENSIONS
       .JSStringCreateWithUTF8CStringExpectAscii =
         (decltype(&JSStringCreateWithUTF8CStringExpectAscii))
         Unimplemented_JSStringCreateWithUTF8CStringExpectAscii,
       #endif
-      //.JSStringCopyCFString_ = JSStringCopyCFString,
-      .JSStringGetCharactersPtr_ = JSStringGetCharactersPtr,
-      .JSStringGetLength_ = JSStringGetLength,
-      .JSStringGetMaximumUTF8CStringSize_ = JSStringGetMaximumUTF8CStringSize,
-      .JSStringIsEqualToUTF8CString_ = JSStringIsEqualToUTF8CString,
-      .JSStringRelease_ = JSStringRelease,
-      .JSStringRetain_ = JSStringRetain,
+      // .JSStringCopyCFString = JSStringCopyCFString,
+      .JSStringGetCharactersPtr = JSStringGetCharactersPtr,
+      .JSStringGetLength = JSStringGetLength,
+      .JSStringGetMaximumUTF8CStringSize = JSStringGetMaximumUTF8CStringSize,
+      .JSStringIsEqualToUTF8CString = JSStringIsEqualToUTF8CString,
+      .JSStringRelease = JSStringRelease,
+      .JSStringRetain = JSStringRetain,
 
-      .JSClassCreate_ = JSClassCreate,
-      .JSClassRetain_ = JSClassRetain,
-      .JSClassRelease_ = JSClassRelease,
+      .JSClassCreate = JSClassCreate,
+      .JSClassRetain = JSClassRetain,
+      .JSClassRelease = JSClassRelease,
 
-      .JSObjectCallAsConstructor_ = JSObjectCallAsConstructor,
-      .JSObjectCallAsFunction_ = JSObjectCallAsFunction,
-      .JSObjectGetPrivate_ = JSObjectGetPrivate,
-      .JSObjectGetProperty_ = JSObjectGetProperty,
-      .JSObjectGetPropertyAtIndex_ = JSObjectGetPropertyAtIndex,
-      .JSObjectIsConstructor_ = JSObjectIsConstructor,
-      .JSObjectIsFunction_ = JSObjectIsFunction,
-      .JSObjectMake_ = JSObjectMake,
-      .JSObjectMakeArray_ = JSObjectMakeArray,
-      .JSObjectMakeDate_ = JSObjectMakeDate,
-      .JSObjectMakeError_ = JSObjectMakeError,
-      .JSObjectMakeFunctionWithCallback_ = JSObjectMakeFunctionWithCallback,
-      .JSObjectSetPrivate_ = JSObjectSetPrivate,
-      .JSObjectSetProperty_ = JSObjectSetProperty,
-      .JSObjectSetPropertyAtIndex_ = JSObjectSetPropertyAtIndex,
+      .JSObjectCallAsConstructor = JSObjectCallAsConstructor,
+      .JSObjectCallAsFunction = JSObjectCallAsFunction,
+      .JSObjectGetPrivate = JSObjectGetPrivate,
+      .JSObjectGetProperty = JSObjectGetProperty,
+      .JSObjectGetPropertyAtIndex = JSObjectGetPropertyAtIndex,
+      .JSObjectIsConstructor = JSObjectIsConstructor,
+      .JSObjectIsFunction = JSObjectIsFunction,
+      .JSObjectMake = JSObjectMake,
+      .JSObjectMakeArray = JSObjectMakeArray,
+      .JSObjectMakeDate = JSObjectMakeDate,
+      .JSObjectMakeError = JSObjectMakeError,
+      .JSObjectMakeFunctionWithCallback = JSObjectMakeFunctionWithCallback,
+      .JSObjectSetPrivate = JSObjectSetPrivate,
+      .JSObjectSetProperty = JSObjectSetProperty,
+      .JSObjectSetPropertyAtIndex = JSObjectSetPropertyAtIndex,
 
-      .JSObjectCopyPropertyNames_ = JSObjectCopyPropertyNames,
-      .JSPropertyNameArrayGetCount_ = JSPropertyNameArrayGetCount,
-      .JSPropertyNameArrayGetNameAtIndex_ = JSPropertyNameArrayGetNameAtIndex,
-      .JSPropertyNameArrayRelease_ = JSPropertyNameArrayRelease,
+      .JSObjectCopyPropertyNames = JSObjectCopyPropertyNames,
+      .JSPropertyNameArrayGetCount = JSPropertyNameArrayGetCount,
+      .JSPropertyNameArrayGetNameAtIndex = JSPropertyNameArrayGetNameAtIndex,
+      .JSPropertyNameArrayRelease = JSPropertyNameArrayRelease,
 
-      .JSValueCreateJSONString_ = JSValueCreateJSONString,
-      .JSValueGetType_ = JSValueGetType,
-      .JSValueMakeFromJSONString_ = JSValueMakeFromJSONString,
-      .JSValueMakeBoolean_ = JSValueMakeBoolean,
-      .JSValueMakeNull_ = JSValueMakeNull,
-      .JSValueMakeNumber_ = JSValueMakeNumber,
-      .JSValueMakeString_ = JSValueMakeString,
-      .JSValueMakeUndefined_ = JSValueMakeUndefined,
-      .JSValueProtect_ = JSValueProtect,
-      .JSValueToBoolean_ = JSValueToBoolean,
-      .JSValueToNumber_ = JSValueToNumber,
-      .JSValueToObject_ = JSValueToObject,
-      .JSValueToStringCopy_ = JSValueToStringCopy,
-      .JSValueUnprotect_ = JSValueUnprotect,
+      .JSValueCreateJSONString = JSValueCreateJSONString,
+      .JSValueGetType = JSValueGetType,
+      .JSValueMakeFromJSONString = JSValueMakeFromJSONString,
+      .JSValueMakeBoolean = JSValueMakeBoolean,
+      .JSValueMakeNull = JSValueMakeNull,
+      .JSValueMakeNumber = JSValueMakeNumber,
+      .JSValueMakeString = JSValueMakeString,
+      .JSValueMakeUndefined = JSValueMakeUndefined,
+      .JSValueProtect = JSValueProtect,
+      .JSValueToBoolean = JSValueToBoolean,
+      .JSValueToNumber = JSValueToNumber,
+      .JSValueToObject = JSValueToObject,
+      .JSValueToStringCopy = JSValueToStringCopy,
+      .JSValueUnprotect = JSValueUnprotect,
+      .JSValueIsNull = JSValueIsNull,
 
-      .JSSamplingProfilerEnabled_ = JSSamplingProfilerEnabled,
-      .JSPokeSamplingProfiler_ =
+      .JSSamplingProfilerEnabled = JSSamplingProfilerEnabled,
+      .JSPokeSamplingProfiler =
         (decltype(&JSPokeSamplingProfiler))
         Unimplemented_JSPokeSamplingProfiler,
-      .JSStartSamplingProfilingOnMainJSCThread_ =
+      .JSStartSamplingProfilingOnMainJSCThread =
         (decltype(&JSStartSamplingProfilingOnMainJSCThread))
         Unimplemented_JSStartSamplingProfilingOnMainJSCThread,
 
-      .JSGlobalContextEnableDebugger_ =
+      .JSGlobalContextEnableDebugger =
         (decltype(&JSGlobalContextEnableDebugger))
         Unimplemented_JSGlobalContextEnableDebugger,
-      .JSGlobalContextDisableDebugger_ =
+      .JSGlobalContextDisableDebugger =
         (decltype(&JSGlobalContextDisableDebugger))
         Unimplemented_JSGlobalContextDisableDebugger,
 
-      .configureJSCForIOS_ =
+      .configureJSCForIOS =
         (decltype(&configureJSCForIOS))Unimplemented_configureJSCForIOS,
 
-      //.JSContext_ = objc_getClass("JSContext"),
-      //.JSValue_ = objc_getClass("JSValue"),
+      // .JSContext = objc_getClass("JSContext"),
+      // .JSValue = objc_getClass("JSValue"),
 
       .JSBytecodeFileFormatVersion = JSNoBytecodeFileFormatVersion,
     };

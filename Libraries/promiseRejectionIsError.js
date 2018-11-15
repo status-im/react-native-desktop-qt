@@ -7,9 +7,6 @@
  * @format
  * @flow
  */
-'use strict';
-
-'use strict';
 
 'use strict';
 

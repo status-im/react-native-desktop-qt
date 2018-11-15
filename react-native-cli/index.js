@@ -281,7 +281,7 @@ function run(root, projectName, options) {
   } else {
     if (yarnVersion) {
       console.log('Using yarn v' + yarnVersion);
-      console.log( 'Installing ' + getInstallPackage(rnPackage) + '...');
+      console.log('Installing ' + getInstallPackage(rnPackage) + '...');
       installCommand = 'yarn add ' + getInstallPackage(rnPackage) + ' --exact';
       if (options.verbose) {
         installCommand += ' --verbose';

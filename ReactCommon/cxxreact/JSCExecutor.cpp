@@ -46,7 +46,6 @@
 #if defined(WITH_FB_JSC_TUNING) && defined(__ANDROID__)
 #include <jsc_config_android.h>
 #endif
-    }
 
 namespace facebook {
 namespace react {

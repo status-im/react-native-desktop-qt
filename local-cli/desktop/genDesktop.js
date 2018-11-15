@@ -15,17 +15,8 @@ var generate = require('../generate/generate');
 const { exec } = require('child_process');
 
 function applyDesktopPlatformPatch() {
-  exec('pwd && patch --verbose -d ./node_modules/metro/src -i ../../react-native/add-desktop-platform.patch', (err, stdout, stderr) => {
-     console.log(`Std output: ${stdout}`);
-     if (err) {
-       console.error(`exec error: ${err}`);
-       return;
-     }
-   });
-}
-
-function applyIncreseBundlerMemoryPatch() {
-  exec('pwd && patch --verbose -d ./node_modules/metro/src/JSTransformer -i ../../../react-native/increase_bundler_memory_usage.patch', (err, stdout, stderr) => {
+  exec('git apply --reverse ./node_modules/react-native/patches/metro-config+0.48.3.patch');
+  exec('git apply ./node_modules/react-native/patches/metro-config+0.48.3.patch', (err, stdout, stderr) => {
      console.log(`Std output: ${stdout}`);
      if (err) {
        console.error(`exec error: ${err}`);
@@ -36,7 +27,6 @@ function applyIncreseBundlerMemoryPatch() {
 
 function genDesktop(args, config) {
   applyDesktopPlatformPatch();
-  applyIncreseBundlerMemoryPatch();
   return generate([
      '--platform', 'desktop',
      '--project-path', process.cwd(),

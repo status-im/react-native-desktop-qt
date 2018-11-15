@@ -45,12 +45,12 @@ typedef struct YGValue {
 extern const YGValue YGValueUndefined;
 extern const YGValue YGValueAuto;
 
-#ifdef __cplusplus
+// #ifdef __cplusplus
 
-extern bool operator==(const YGValue& lhs, const YGValue& rhs);
-extern bool operator!=(const YGValue& lhs, const YGValue& rhs);
+// extern bool operator==(const YGValue& lhs, const YGValue& rhs);
+// extern bool operator!=(const YGValue& lhs, const YGValue& rhs);
 
-#endif
+// #endif
 
 typedef struct YGConfig* YGConfigRef;
 
