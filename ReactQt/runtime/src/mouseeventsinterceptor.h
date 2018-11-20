@@ -1,13 +1,11 @@
 
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
- *
- * Author: Justin McPherson <justin.mcpherson@canonical.com>
  *
  */
 
@@ -26,7 +24,6 @@ class MouseEventsInterceptorPrivate;
 class MouseEventsInterceptor : public QQuickItem {
     Q_OBJECT
 
-
     Q_DECLARE_PRIVATE(MouseEventsInterceptor)
 
 public:
@@ -36,13 +33,11 @@ public:
     void setBridge(Bridge* bridge);
 
 private:
-
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
     void sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver);
-
 
     QScopedPointer<MouseEventsInterceptorPrivate> d_ptr;
 };
