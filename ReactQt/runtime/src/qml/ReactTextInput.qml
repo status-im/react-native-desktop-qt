@@ -29,7 +29,11 @@ Item {
     property bool p_autoFocus: false
     property var p_submitShortcut: defaultShortcut(p_multiline)
 
-    property var flexbox: React.Flexbox {control: textInputRoot; viewManager: textInputManager}
+    property var flexbox: React.Flexbox {
+        control: textInputRoot;
+        viewManager: textInputManager
+        p_height: 25
+    }
     property bool jsTextChange: false
 
     function defaultShortcut(multiline) {

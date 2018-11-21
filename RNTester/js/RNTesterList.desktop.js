@@ -164,11 +164,11 @@ const ComponentExamples: Array<RNTesterExample> = [
   // },
   {
     key: 'TextExample',
-    module: require('./TextExample.ios'),
+    module: require('./TextExample'),
   },
   {
     key: 'TextInputExample',
-    module: require('./TextInputExample.ios'),
+    module: require('./TextInputExample'),
   },
   {
     key: 'TouchableExample',
