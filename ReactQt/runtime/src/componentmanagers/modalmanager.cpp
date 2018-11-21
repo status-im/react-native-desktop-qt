@@ -24,6 +24,7 @@
 #include "imageloader.h"
 #include "layout/flexbox.h"
 #include "modalmanager.h"
+#include "mouseeventsinterceptor.h"
 #include "propertyhandler.h"
 #include "utilities.h"
 
@@ -68,6 +69,8 @@ void ModalManager::sendOnShowNotificationToJs(QQuickItem* modal) {
 void ModalManager::configureView(QQuickItem* modal) const {
     ViewManager::configureView(modal);
     modal->setProperty("modalManager", QVariant::fromValue((QObject*)this));
+    MouseEventsInterceptor* contentItem = QQmlProperty(modal, "contentItem").read().value<MouseEventsInterceptor*>();
+    contentItem->setBridge(bridge());
 }
 
 QString ModalManager::qmlComponentFile(const QVariantMap& properties) const {

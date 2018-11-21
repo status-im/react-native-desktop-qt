@@ -26,12 +26,15 @@ Item {
         height: ApplicationWindow.overlay ? ApplicationWindow.overlay.height : 0
         visible: true
         modal: true
+        margins: 0
 
         background: Item {}
 
-        contentItem: Rectangle {
-            objectName: "ReactModal.contentItem"
-            color: modalRoot.p_transparent ? "transparent" : "white"
+        contentItem: React.MouseEventsInterceptor {
+            Rectangle {
+                objectName: "ReactModal.contentItem"
+                color: modalRoot.p_transparent ? "transparent" : "white"
+            }
         }
 
         closePolicy: Popup.NoAutoClose

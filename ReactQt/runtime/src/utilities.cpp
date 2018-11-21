@@ -18,6 +18,7 @@
 #include "componentmanagers/imagemanager.h"
 #include "componentmanagers/viewmanager.h"
 #include "layout/flexbox.h"
+#include "mouseeventsinterceptor.h"
 #include "reactitem.h"
 #include "rootview.h"
 #include "utilities.h"
@@ -45,6 +46,8 @@ void registerReactTypes() {
         "React", MAJOR_VERSION, MINOR_VERSION, "React", "React is not meant to be created directly");
     qmlRegisterType<ReactItem>("React", MAJOR_VERSION, MINOR_VERSION, "Item");
     qmlRegisterType<RootView>("React", MAJOR_VERSION, MINOR_VERSION, "RootView");
+    qmlRegisterType<MouseEventsInterceptor>("React", MAJOR_VERSION, MINOR_VERSION, "MouseEventsInterceptor");
+
     qmlRegisterType<Flexbox>("React", MAJOR_VERSION, MINOR_VERSION, "Flexbox");
     qmlRegisterUncreatableType<ImageManager>("React",
                                              MAJOR_VERSION,
@@ -144,6 +147,77 @@ QVariantMap createTouchArgs(int tag, const QPointF& lp, const QPointF& local, co
                        {"locationY", local.y()},
                        {"button", button},
                        {"timestamp", QVariant::fromValue(timestamp)}};
+}
+
+QQuickItem* getChildFromScrollView(QQuickItem* scrollView, const QPointF& scrollViewPos) {
+    QQuickItem* itemAt = nullptr;
+    QQuickItem* contentItem = scrollView->property("contentItem").value<QQuickItem*>();
+    if (!contentItem)
+        return nullptr;
+
+    QPointF contentItemPos = scrollView->mapToItem(contentItem, scrollViewPos);
+    QMetaObject::invokeMethod(scrollView,
+                              "itemAt",
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(QQuickItem*, itemAt),
+                              Q_ARG(qreal, contentItemPos.x()),
+                              Q_ARG(qreal, contentItemPos.y()));
+
+    return itemAt;
+}
+
+QQuickItem* getChildFromText(QQuickItem* text, const QPointF& pos) {
+    QString linkAt;
+
+    QMetaObject::invokeMethod(text,
+                              "linkAt",
+                              Qt::DirectConnection,
+                              Q_RETURN_ARG(QString, linkAt),
+                              Q_ARG(qreal, pos.x()),
+                              Q_ARG(qreal, pos.y()));
+
+    return text->childItems().at(linkAt.toInt());
+}
+
+QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
+
+    const QPointF& lp = event->localPos();
+
+    // Find the deepest match
+    QQuickItem* target = nullptr;
+    QQuickItem* next = item;
+    QPointF local = lp;
+    forever {
+        target = next;
+        QString className(target->metaObject()->className());
+
+        if (className.startsWith("ReactScrollListView")) {
+            next = getChildFromScrollView(target, local);
+        } else if (className.startsWith("ReactText")) {
+            target = getChildFromText(target, local);
+            break;
+        } else {
+            next = target->childAt(local.x(), local.y());
+        }
+
+        if (next == nullptr || !next->isEnabled()) {
+            break;
+        }
+        local = target->mapToItem(next, local);
+    }
+
+    AttachedProperties* ap = AttachedProperties::get(target, false);
+    if (ap == nullptr) {
+        qWarning() << __PRETTY_FUNCTION__ << "target was not a reactItem";
+        return QVariantMap{};
+    }
+    QString button;
+    if (event->button() & Qt::LeftButton)
+        button = "left";
+    else if (event->button() & Qt::RightButton)
+        button = "right";
+
+    return createTouchArgs(ap->tag(), lp, local, button, event->timestamp());
 }
 
 } // namespace utilities

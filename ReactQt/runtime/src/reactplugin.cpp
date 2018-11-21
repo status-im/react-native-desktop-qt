@@ -14,6 +14,15 @@
 #include "reactplugin.h"
 #include "utilities.h"
 
+#include <QLoggingCategory>
+
 void ReactPlugin::registerTypes(const char* uri) {
     utilities::registerReactTypes();
+    //#ifdef QT_DEBUG
+    //    QLoggingCategory::setFilterRules("UIManager=true\n"
+    //                                     "Flexbox=true\n"
+    //                                     "WebSocketModule=true\n"
+    //                                     "Networking=true\n"
+    //                                     "ViewManager=true\n");
+    //#endif
 }
