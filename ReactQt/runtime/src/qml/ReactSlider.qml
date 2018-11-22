@@ -17,12 +17,13 @@ Slider {
     property bool p_disabled: false
     property string p_thumbTintColor
     property string p_testID
-    property var flexbox: React.Flexbox {control: sliderRoot}
+    property var flexbox: React.Flexbox {
+        control: sliderRoot
+        p_minWidth: sliderRoot.implicitWidth
+        p_minHeight: sliderRoot.implicitHeight
+    }
 
     objectName: p_testID
-
-    implicitHeight: 40
-    implicitWidth: 100
 
     value: p_value
     stepSize: p_step
