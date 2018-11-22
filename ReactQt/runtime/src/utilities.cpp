@@ -176,7 +176,16 @@ QQuickItem* getChildFromText(QQuickItem* text, const QPointF& pos) {
                               Q_ARG(qreal, pos.x()),
                               Q_ARG(qreal, pos.y()));
 
-    return text->childItems().at(linkAt.toInt());
+    if (linkAt.isEmpty()) {
+        return nullptr;
+    }
+
+    int childId = linkAt.toInt();
+    if (childId < 0 || childId >= text->childItems().length()) {
+        return nullptr;
+    }
+
+    return text->childItems().at(childId);
 }
 
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
@@ -194,7 +203,10 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
         if (className.startsWith("ReactScrollListView")) {
             next = getChildFromScrollView(target, local);
         } else if (className.startsWith("ReactText")) {
-            target = getChildFromText(target, local);
+            QQuickItem* child = getChildFromText(target, local);
+            if (child) {
+                target = child;
+            }
             break;
         } else {
             next = target->childAt(local.x(), local.y());
