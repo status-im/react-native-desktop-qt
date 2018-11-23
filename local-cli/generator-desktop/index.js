@@ -54,16 +54,24 @@ module.exports = yeoman.generators.NamedBase.extend({
       this.destinationPath(path.join('desktop', 'CMakeLists.txt')),
       templateParams
     );
-    var buildScriptPath = process.platform === "win32" ? "build.bat" : "build.sh";
     this.fs.copyTpl(
-      this.templatePath(buildScriptPath),
-      this.destinationPath(path.join('desktop', buildScriptPath)),
+      this.templatePath('build.bat'),
+      this.destinationPath(path.join('desktop', 'build.bat')),
       templateParams
     );
-    var runScriptPath = process.platform === "win32" ? "run-app.bat.in" : "run-app.sh.in";
     this.fs.copyTpl(
-      this.templatePath(runScriptPath),
-      this.destinationPath(path.join('desktop', runScriptPath)),
+      this.templatePath('build.sh'),
+      this.destinationPath(path.join('desktop', 'build.sh')),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('run-app.bat.in'),
+      this.destinationPath(path.join('desktop', 'run-app.bat.in')),
+      templateParams
+    );
+    this.fs.copyTpl(
+      this.templatePath('run-app.sh.in'),
+      this.destinationPath(path.join('desktop', 'run-app.sh.in')),
       templateParams
     );
     this.fs.copyTpl(
