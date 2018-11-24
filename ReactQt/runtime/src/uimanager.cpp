@@ -67,6 +67,20 @@ void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& 
     callback(m_bridge, QVariantList{item->x(), item->y(), item->width(), item->height(), rvo.x(), rvo.y()});
 }
 
+void UIManager::measureInWindow(int reactTag, const ModuleInterface::ListArgumentBlock& callback) {
+    QQuickItem* item = m_views.value(reactTag);
+    if (item == nullptr) {
+        qCWarning(UIMANAGER) << "Attempting to access unknown view";
+        callback(m_bridge, QVariantList{});
+        return;
+    }
+
+    QPointF rvo(item->x(), item->y());
+    rvo = item->mapToGlobal(rvo);
+
+    callback(m_bridge, QVariantList{item->x(), item->y(), item->width(), item->height()});
+}
+
 void UIManager::updateView(int reactTag, const QString& viewName, const QVariantMap& properties) {
     QQuickItem* item = m_views.value(reactTag);
     if (item == nullptr) {
