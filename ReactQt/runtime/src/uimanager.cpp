@@ -78,7 +78,7 @@ void UIManager::measureInWindow(int reactTag, const ModuleInterface::ListArgumen
     QPointF rvo(item->x(), item->y());
     rvo = item->mapToGlobal(rvo);
 
-    callback(m_bridge, QVariantList{item->x(), item->y(), item->width(), item->height()});
+    callback(m_bridge, QVariantList{rvo.x(), rvo.y(), item->width(), item->height()});
 }
 
 void UIManager::updateView(int reactTag, const QString& viewName, const QVariantMap& properties) {
