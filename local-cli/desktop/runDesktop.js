@@ -53,7 +53,6 @@ function _runDesktop(args, config) {
         console.log(chalk.bold('Starting JS server...'));
         startPackagerInNewWindow();
       }
-      startUbuntuServerInNewWindow();
       actuallyRun(args, reject);
     }));
   });
@@ -71,11 +70,8 @@ function actuallyRun(args, reject) {
         appArgs.push('--host=' + args['host']);
       if (args['port'])
         appArgs.push('--port=' + args['port']);
-      if (args['executor']) {
+      if (args['executor'])
         appArgs.push('--executor=' + args['executor']);
-      } else {
-        appArgs.push('--executor=RemoteServerConnection');
-      }
       if (args['arch'].startsWith('arm'))
         appArgs.push('--on-device');
       appArgs.push('--plugins-path=' + args['plugins-path']);
@@ -94,14 +90,6 @@ function startPackagerInNewWindow() {
     child_process.spawn('cmd', ['/c', 'npm start'],{detached: true});
   } else {
     child_process.spawn('gnome-terminal',['-e', 'npm start'],{detached: true});
-  }
-}
-
-function startUbuntuServerInNewWindow() {
-  if (process.platform === "win32") {
-    child_process.spawn('cmd', ['/c', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
-  } else {
-    child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
   }
 }
 

@@ -28,15 +28,12 @@ react-native desktop
 ```
 
 ### Run the project
-If you're using macOS, run these commands in 2 different shells (from `DesktopSampleApp` dir):
+If you're using macOS, run this command in a different shell (from `DesktopSampleApp` dir):
 ```sh
 npm start #starts bundler
 ```
-```sh
-node node_modules/react-native/ubuntu-server.js #starts js server
-```
 
-Afterwards, in a 3rd shell execute:
+Afterwards, execute in a another shell:
 ```sh
 react-native run-desktop
 ```
@@ -44,7 +41,7 @@ Compilation of desktop project will start. When it finished and app run you can 
 
 ![](./media/react-native-desktop-new-app.png)
 
-**Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command
+**Note:** On non-macOS systems, `npm start` will be executed automatically by the above command
 
 
-**If you want to know why you had to start bundler and js server** - check the doc on [how react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
+**If you want to know why you had to start bundler** - check the doc on [how react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
