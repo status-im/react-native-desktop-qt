@@ -98,7 +98,6 @@ void NetInfoPrivate::startNetworkAccessMonitoring() {
 
     connect(this, &NetInfoPrivate::networkStateChanged, [=]() {
         if (bridge) {
-            qDebug() << "!! send event";
             bridge->eventDispatcher()->sendDeviceEvent("networkStatusDidChange", networkInfo());
         }
     });
