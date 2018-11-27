@@ -143,14 +143,14 @@ void ScrollViewManager::scrollBeginDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-    notifyJsAboutEvent(tag(item), "scrollBeginDrag", {});
+    notifyJsAboutEvent(tag(item), "scrollBeginDrag", buildEventData(item));
 }
 
 void ScrollViewManager::scrollEndDrag() {
     // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
-    notifyJsAboutEvent(tag(item), "scrollEndDrag", {});
+    notifyJsAboutEvent(tag(item), "scrollEndDrag", buildEventData(item));
 }
 
 void ScrollViewManager::scroll() {

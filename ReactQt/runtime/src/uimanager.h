@@ -37,6 +37,7 @@ class UIManager : public QObject, public ModuleInterface {
     // Q_INVOKABLE void setMainScrollViewTag();
     // Q_INVOKABLE void focus();
     Q_INVOKABLE void measure(int reactTag, const ModuleInterface::ListArgumentBlock& callback);
+    Q_INVOKABLE void measureInWindow(int reactTag, const ModuleInterface::ListArgumentBlock& callback);
     // Q_INVOKABLE void removeRootView();
     Q_INVOKABLE void updateView(int reactTag, const QString& viewName, const QVariantMap& properties);
     Q_INVOKABLE void manageChildren(int containerReactTag,
