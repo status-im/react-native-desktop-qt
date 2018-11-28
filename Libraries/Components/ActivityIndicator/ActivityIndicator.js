@@ -18,15 +18,16 @@ const ViewPropTypes = require('ViewPropTypes');
 
 const createReactClass = require('create-react-class');
 const requireNativeComponent = require('requireNativeComponent');
+
+import type {NativeComponent} from 'ReactNative';
+import type {ViewProps} from 'ViewPropTypes';
+
 const RCTActivityIndicator =
   Platform.OS === 'android'
     ? require('ProgressBarAndroid')
     : Platform.OS === 'desktop'
       ? requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator)
       : requireNativeComponent('RCTActivityIndicatorView');
-
-import type {NativeComponent} from 'ReactNative';
-import type {ViewProps} from 'ViewPropTypes';
 
 const GRAY = '#999999';
 
@@ -115,21 +116,14 @@ const ActivityIndicator = (
 
 // $FlowFixMe - TODO T29156721 `React.forwardRef` is not defined in Flow, yet.
 const ActivityIndicatorWithRef = React.forwardRef(ActivityIndicator);
-
-ActivityIndicatorWithRef.defaultProps = {
-  animating: true,
-  color: Platform.OS === 'ios' ? GRAY : null,
-  hidesWhenStopped: true,
-  size: 'small',
-};
-
-ActivityIndicatorWithRef.defaultProps = {
-  animating: true,
-  color: Platform.OS === 'ios' ? GRAY : null,
-  hidesWhenStopped: true,
-  size: 'small',
-};
 ActivityIndicatorWithRef.displayName = 'ActivityIndicator';
+
+ActivityIndicatorWithRef.defaultProps = {
+  animating: true,
+  color: Platform.OS === 'ios' ? GRAY : null,
+  hidesWhenStopped: true,
+  size: 'small',
+};
 
 const styles = StyleSheet.create({
   container: {

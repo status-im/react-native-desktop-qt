@@ -159,6 +159,8 @@ type IOSProps = $ReadOnly<{|
     | 'telephoneNumber'
     | 'username'
     | 'password'
+    | 'newPassword'
+    | 'oneTimeCode'
   ),
   scrollEnabled?: ?boolean,
 |}>;
@@ -584,10 +586,6 @@ const TextInput = createReactClass({
      */
     onScroll: PropTypes.func,
     /**
-     * The string that will be rendered before text input has been entered.
-     */
-    placeholder: PropTypes.node,
-    /**
      * The text color of the placeholder string.
      */
     placeholderTextColor: ColorPropType,
@@ -787,6 +785,8 @@ const TextInput = createReactClass({
       'telephoneNumber',
       'username',
       'password',
+      'newPassword',
+      'oneTimeCode',
     ]),
     submitShortcut: PropTypes.object,
   },
@@ -1071,16 +1071,6 @@ const TextInput = createReactClass({
     );
     if (childCount > 1) {
       children = <Text>{children}</Text>;
-    }
-    if (props.selection && props.selection.end == null) {
-      props.selection = {start: props.selection.start, end: props.selection.start};
-    }
-
-    if (props.selection && props.selection.end == null) {
-      props.selection = {
-        start: props.selection.start,
-        end: props.selection.start,
-      };
     }
 
     if (props.selection && props.selection.end == null) {

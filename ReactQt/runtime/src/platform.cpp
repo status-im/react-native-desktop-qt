@@ -35,7 +35,7 @@ public:
     QString osName;
     int major = 0;
     int minor = 57;
-    int patch = 5;
+    int patch = 8;
     int prerelease = 0;
 };
 

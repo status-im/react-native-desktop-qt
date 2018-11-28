@@ -16,6 +16,8 @@ Libraries/Components/ScrollView/ScrollView.js
 Libraries/Components/TextInput/TextInput.js
 Libraries/Components/Picker/Picker.js
 Libraries/Utilities/Platform.desktop.js
+jest/hasteImpl.js
+jest/__tests__/hasteImpl-test.js
 package.json
 cli.js
 .circleci/config.yml
@@ -33,6 +35,7 @@ cli.js
 LICENSE
 package-lock.json
 README.md
+ReactCommon/yoga/yoga/Yoga.h
 ReactCommon/jschelpers/JSCHelpers.cpp
 ReactCommon/jschelpers/JSCHelpers.h
 ReactCommon/jschelpers/Unicode.cpp
