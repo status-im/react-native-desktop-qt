@@ -27,6 +27,12 @@
 #include "moduleinterface.h"
 #include "netinfo.h"
 
+namespace {
+const int NETWORK_REQUEST_TIMEOUT = 3000;
+const int NETWORK_REPLY_CHECK_TIMEOUT = 1000;
+const int MAX_REPLY_CHECK_COUNTER = NETWORK_REQUEST_TIMEOUT / NETWORK_REPLY_CHECK_TIMEOUT;
+} // namespace
+
 const QString CON_TYPE_NONE = "none";
 const QString CON_TYPE_UNKNOWNN = "unknown";
 const QString CON_TYPE_WIFI = "wifi";
@@ -44,7 +50,8 @@ public:
     void setConnectionType(const QString& state);
 
 public slots:
-    void checkInterfaces();
+    QString getTypeFromAvailableInterfaces();
+    void checkReachability();
 
 public:
     QNetworkConfigurationManager networkManager;
@@ -52,6 +59,9 @@ public:
     QString connectionType = CON_TYPE_NONE;
     QString effectiveConnectionType = EFCON_TYPE_UNKNOWNN;
     int replyStateCheckCounter = 0;
+    QTimer requestTimer;
+    QTimer replyTimer;
+    QString checkUrl = "http://www.google.com";
 
 Q_SIGNALS:
     void networkStateChanged();
@@ -64,15 +74,20 @@ void NetInfoPrivate::setConnectionType(const QString& type) {
     }
 }
 
-NetInfoPrivate::NetInfoPrivate() {}
+NetInfoPrivate::NetInfoPrivate() {
+    replyTimer.setInterval(NETWORK_REPLY_CHECK_TIMEOUT);
+}
 
-NetInfoPrivate::~NetInfoPrivate() {}
+NetInfoPrivate::~NetInfoPrivate() {
+    requestTimer.stop();
+    replyTimer.stop();
+}
 
 QVariantMap NetInfoPrivate::networkInfo() {
     return QVariantMap{{"connectionType", connectionType}, {"effectiveConnectionType", effectiveConnectionType}};
 }
 
-void NetInfoPrivate::checkInterfaces() {
+QString NetInfoPrivate::getTypeFromAvailableInterfaces() {
     auto type = CON_TYPE_NONE;
 
     foreach (QNetworkInterface interface, QNetworkInterface::allInterfaces()) {
@@ -91,10 +106,40 @@ void NetInfoPrivate::checkInterfaces() {
                 }
             }
     }
-    setConnectionType(type);
+    return type;
+}
+
+void NetInfoPrivate::checkReachability() {
+
+    QNetworkRequest req(checkUrl);
+
+    replyStateCheckCounter = 0;
+
+    QNetworkReply* reply = bridge->networkAccessManager()->head(req);
+    auto replyFinishOrTimeout = [=]() {
+        auto success = reply->isFinished() ? reply->error() == QNetworkReply::NoError : false;
+        bool timeout = ++replyStateCheckCounter >= MAX_REPLY_CHECK_COUNTER;
+
+        if (success) {
+            setConnectionType(getTypeFromAvailableInterfaces());
+        } else if (timeout) {
+            setConnectionType(CON_TYPE_NONE);
+        }
+
+        if (success || timeout) {
+            replyTimer.stop();
+            reply->deleteLater();
+        }
+
+    };
+
+    QObject::connect(&replyTimer, &QTimer::timeout, reply, replyFinishOrTimeout);
+    replyTimer.start();
 }
 
 void NetInfoPrivate::startNetworkAccessMonitoring() {
+    if (requestTimer.isActive())
+        return;
 
     connect(this, &NetInfoPrivate::networkStateChanged, [=]() {
         if (bridge) {
@@ -102,7 +147,8 @@ void NetInfoPrivate::startNetworkAccessMonitoring() {
         }
     });
 
-    connect(&networkManager, &QNetworkConfigurationManager::updateCompleted, this, &NetInfoPrivate::checkInterfaces);
+    connect(&requestTimer, &QTimer::timeout, this, &NetInfoPrivate::checkReachability);
+    requestTimer.start(NETWORK_REQUEST_TIMEOUT);
 }
 
 void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& resolve,
@@ -112,6 +158,10 @@ void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& r
     Q_ASSERT(d->bridge);
 
     resolve(d->bridge, QVariantList{d->networkInfo()});
+}
+
+void NetInfo::setConnectionCheckUrl(const QString& url) {
+    d_ptr->checkUrl = url;
 }
 
 NetInfo::NetInfo(QObject* parent) : QObject(parent), d_ptr(new NetInfoPrivate) {
