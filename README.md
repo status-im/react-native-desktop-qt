@@ -8,6 +8,8 @@ Supported operating systems:
 - Mac OS (checked with Mac OS X versions)
 - Windows
 
+[Apps using react-native-desktop](docs/AppsUsingRnd.md)
+
 # Documentation
 ## Getting started
 
