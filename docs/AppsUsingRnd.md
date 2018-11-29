@@ -9,4 +9,4 @@ A free (libre) open source, mobile OS for Ethereum
 
 **github:** https://github.com/status-im/status-react
 
-**download:**: https://status.im/nightly
+**download:** https://status.im/nightly
