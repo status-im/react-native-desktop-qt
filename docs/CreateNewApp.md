@@ -4,7 +4,7 @@
 React native projects creating goes with the help of command line interface (`react-native-cli` package). `react-native-desktop` adds a modification to that package to support desktop platform.
 
 #### Use modified `react-native-cli` globally
-If all the projects you develop need desktop support, you can install modified command line interface globally by following [these steps](docs/InstallUpdatedReactNativeCLI.md)
+If all the projects you develop need desktop support, you can install modified command line interface globally by following [these steps](./InstallUpdatedReactNativeCLI.md)
 
 After that you create a new project:
 ```sh
@@ -47,4 +47,4 @@ Compilation of desktop project will start. When it finished and app run you can 
 **Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command
 
 
-**If you want to know why you had to start bundler and js server** - check the doc on [how react-native-desktop works internally](docs/HowRNDesktopAppWorks.md)
+**If you want to know why you had to start bundler and js server** - check the doc on [how react-native-desktop works internally](./HowRNDesktopAppWorks.md)
