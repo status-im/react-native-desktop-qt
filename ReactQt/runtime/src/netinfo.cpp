@@ -46,6 +46,7 @@ public:
     ~NetInfoPrivate();
 
     void startNetworkAccessMonitoring();
+    void stopNetworkAccessMonitoring();
     QVariantMap networkInfo();
     void setConnectionType(const QString& state);
 
@@ -138,17 +139,22 @@ void NetInfoPrivate::checkReachability() {
 }
 
 void NetInfoPrivate::startNetworkAccessMonitoring() {
+
     if (requestTimer.isActive())
         return;
 
     connect(this, &NetInfoPrivate::networkStateChanged, [=]() {
-        if (bridge) {
+        if (bridge && bridge->ready()) {
             bridge->eventDispatcher()->sendDeviceEvent("networkStatusDidChange", networkInfo());
         }
     });
 
     connect(&requestTimer, &QTimer::timeout, this, &NetInfoPrivate::checkReachability);
     requestTimer.start(NETWORK_REQUEST_TIMEOUT);
+}
+
+void NetInfoPrivate::stopNetworkAccessMonitoring() {
+    requestTimer.stop();
 }
 
 void NetInfo::getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& resolve,
@@ -173,6 +179,14 @@ NetInfo::~NetInfo() {}
 void NetInfo::setBridge(Bridge* bridge) {
     Q_D(NetInfo);
     d->bridge = bridge;
+
+    connect(d->bridge, &Bridge::readyChanged, this, [=]() {
+        if (d->bridge->ready()) {
+            d->startNetworkAccessMonitoring();
+        } else {
+            d->stopNetworkAccessMonitoring();
+        }
+    });
 }
 
 QString NetInfo::moduleName() {
