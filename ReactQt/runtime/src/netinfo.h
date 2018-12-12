@@ -24,6 +24,8 @@ class NetInfo : public QObject, public ModuleInterface {
     Q_INVOKABLE REACT_PROMISE void getCurrentConnectivity(const ModuleInterface::ListArgumentBlock& resolve,
                                                           const ModuleInterface::ListArgumentBlock& reject);
 
+    Q_INVOKABLE void setConnectionCheckUrl(const QString& url);
+
     Q_DECLARE_PRIVATE(NetInfo)
 
 public:
