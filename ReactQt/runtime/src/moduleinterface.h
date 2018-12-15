@@ -45,6 +45,10 @@ public:
         Q_UNUSED(bridge);
     }
 
+    virtual void registerJSObjects(Bridge* bridge) {
+        Q_UNUSED(bridge);
+    }
+
     // TODO: this doesnt seem right
     virtual ViewManager* viewManager() {
         return nullptr;

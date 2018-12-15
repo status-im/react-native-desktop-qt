@@ -9,8 +9,6 @@
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
   ADD_DEFINITIONS(-DRCT_DEV)
@@ -21,6 +19,11 @@ find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
+
+if (QTWEBENGINE_ENABLED)
+  find_package(Qt5WebEngine REQUIRED)
+  find_package(Qt5WebEngineWidgets REQUIRED)
+endif()
 
 if (USE_QTWEBKIT)
   find_package(Qt5WebKit REQUIRED)
@@ -103,9 +106,17 @@ if(JAVASCRIPTCORE_ENABLED)
     communication/javascriptcoreexecutor.cpp)
 endif()
 
+if (QTWEBENGINE_ENABLED)
+  ADD_DEFINITIONS(-DQTWEBENGINE_ENABLED)
+  set(SRC_QTWEBENGINE
+      communication/webengineqtexecutor.cpp)
+endif()
+
+
 set(
   SRC_RUNTIME
   ${SRC_JAVASCRIPTCORE}
+  ${SRC_QTWEBENGINE}
   reactplugin.cpp
   valuecoercion.cpp
   blobprovider.cpp
@@ -250,7 +261,7 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent WebEngine WebEngineWidgets)
 if (USE_QTWEBKIT)
   set (USED_QT_MODULES ${USED_QT_MODULES} WebKit)
 endif()

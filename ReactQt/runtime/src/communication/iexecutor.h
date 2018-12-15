@@ -36,11 +36,16 @@ public:
                                const QVariantList& args = QVariantList(),
                                const ExecuteCallback& callback = ExecuteCallback()) = 0;
 
+    virtual void registerJSObject(const QString &, QObject *) {}
+    virtual void initJSconstraints() {}
+
 Q_SIGNALS:
     // TODO: KOZIEIEV: remove from Executor. Maybe in Bridge. Executor shouldn't know about app-related things.
     void applicationScriptDone();
 
     void commandReceived(int size);
 };
+
+Q_DECLARE_METATYPE(IExecutor::ExecuteCallback)
 
 #endif // IEXECUTOR_H

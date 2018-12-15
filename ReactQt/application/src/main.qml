@@ -20,7 +20,7 @@ Rectangle {
     anchors.fill: parent
     liveReload: ReactNativeProperties.liveReload
 
-    moduleName: "ReactNativeApp"
+    moduleName: "RNTesterApp"
     codeLocation: ReactNativeProperties.codeLocation
     pluginsPath: ReactNativeProperties.pluginsPath
     serverConnectionType: ReactNativeProperties.executor

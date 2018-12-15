@@ -114,6 +114,8 @@ public:
     void loadSource();
     void initModules();
 
+    void registerJSObject(const QString &id, QObject *object);
+
 Q_SIGNALS:
     void readyChanged();
     void jsAppStartedChanged();

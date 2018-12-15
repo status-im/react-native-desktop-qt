@@ -11,9 +11,11 @@
 #include <QCommandLineParser>
 #include <QDirIterator>
 #include <QFontDatabase>
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQuickView>
 #include <QUrl>
+
+#include <qtwebengineglobal.h>
 
 #include "attachedproperties.h"
 #include "reactitem.h"
@@ -124,10 +126,10 @@ private:
     QString m_packagerHost = "localhost";
     QString m_packagerPort = "8081";
     QString m_localSource;
-    QString m_packagerTemplate = "http://%1:%2/index.desktop.bundle?platform=desktop&dev=true";
+    QString m_packagerTemplate = "http://%1:%2/RNTester/js/RNTesterApp.desktop.bundle?platform=desktop&dev=true";
     QUrl m_codeLocation;
     QString m_pluginsPath;
-    QString m_executor = "LocalServerConnection";
+    QString m_executor = "RemoteServerConnection";
     QVariantMap m_initialProps;
 };
 
@@ -143,11 +145,15 @@ void loadFontsFromResources() {
 }
 
 int main(int argc, char** argv) {
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication app(argc, argv);
     Q_INIT_RESOURCE(react_resources);
 
+    QLoggingCategory::setFilterRules("js=true");
+
     loadFontsFromResources();
+
+    QtWebEngine::initialize();
 
     QQuickView view;
     ReactNativeProperties* rnp = new ReactNativeProperties(&view);

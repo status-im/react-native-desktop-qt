@@ -12,8 +12,14 @@
  */
 
 #include "executor.h"
+#include "bridge.h"
+
 #include <QJsonDocument>
 #include <QSharedPointer>
+
+#include <QStandardPaths>
+
+#include <QNetworkProxy>
 
 class ExecutorPrivate : public QObject {
 public:
@@ -47,7 +53,10 @@ Executor::Executor(ServerConnection* conn, QObject* parent) : IExecutor(parent),
     d->m_connection = QSharedPointer<ServerConnection>(conn);
     connect(d->connection(), &ServerConnection::dataReady, d, &ExecutorPrivate::readReply);
 
-    qRegisterMetaType<Executor::ExecuteCallback>();
+    qRegisterMetaType<IExecutor::ExecuteCallback>();
+}
+
+void Executor::initJSconstraints() {
 }
 
 Executor::~Executor() {
@@ -85,7 +94,7 @@ void Executor::executeApplicationScript(const QByteArray& script, const QUrl& /*
 
 void Executor::executeJSCall(const QString& method,
                              const QVariantList& args,
-                             const Executor::ExecuteCallback& callback) {
+                             const IExecutor::ExecuteCallback& callback) {
 
     QByteArrayList stringifiedArgs;
     for (const QVariant& arg : args) {
@@ -99,6 +108,9 @@ void Executor::executeJSCall(const QString& method,
 
     d_ptr->processRequest(
         QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");", callback);
+}
+
+void Executor::registerJSObject(const QString &id, QObject *object) {
 }
 
 ServerConnection* ExecutorPrivate::connection() {

@@ -55,6 +55,10 @@
 #include "utilities.h"
 #include "websocketmodule.h"
 
+#ifdef QTWEBENGINE_ENABLED
+#include "communication/webengineqtexecutor.h"
+#endif
+
 #ifdef JAVASCRIPTCORE_ENABLED
 #include "jscutilities.h"
 #endif
@@ -183,6 +187,10 @@ void Bridge::setupExecutor() {
     }
 #endif // JAVASCRIPTCORE_ENABLED
 
+#ifdef QTWEBENGINE_ENABLED
+    d->executor = new WebEngineQtExecutor(this);
+#endif
+
     if (!d->executor) {
         if (!d->executorThread) {
             d->executorThread = new QThread();
@@ -267,7 +275,7 @@ void Bridge::enqueueJSCall(const QString& module, const QString& method, const Q
         Qt::AutoConnection,
         Q_ARG(const QString&, "callFunctionReturnFlushedQueue"),
         Q_ARG(const QVariantList&, list),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args) {
@@ -280,7 +288,7 @@ void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args
         Qt::AutoConnection,
         Q_ARG(const QString&, "invokeCallbackAndReturnFlushedQueue"),
         Q_ARG(const QVariantList&, list),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
@@ -292,7 +300,7 @@ void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
         Qt::AutoConnection,
         Q_ARG(const QString&, method),
         Q_ARG(const QVariantList&, args),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::executeSourceCode(const QByteArray& sourceCode) {
@@ -309,7 +317,7 @@ void Bridge::enqueueRunAppCall(const QVariantList& args) {
                               Qt::AutoConnection,
                               Q_ARG(QString, "callFunctionReturnFlushedQueue"),
                               Q_ARG(QVariantList, list),
-                              Q_ARG(Executor::ExecuteCallback, [=](const QJsonDocument& doc) {
+                              Q_ARG(IExecutor::ExecuteCallback, [=](const QJsonDocument& doc) {
                                   processResult(doc);
                                   setJsAppStarted(true);
                               }));
@@ -483,7 +491,7 @@ void Bridge::sourcesFinished() {
                                       Qt::AutoConnection,
                                       Q_ARG(const QString&, "callFunctionReturnFlushedQueue"),
                                       Q_ARG(const QVariantList&, args),
-                                      Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) {
+                                      Q_ARG(const IExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) {
                                           qDebug() << "Enabling HMRClient response";
                                           processResult(doc);
                                       }));
@@ -537,6 +545,16 @@ void Bridge::initModules() {
     addModuleData(d->uiManager);
 }
 
+void Bridge::registerJSObject(const QString &id, QObject *object)
+{
+    d_func()->executor->registerJSObject(id, object);
+    /*QMetaObject::invokeMethod(d_func()->executor,
+                              "registerJSObject",
+                              Qt::AutoConnection,
+                              Q_ARG(const QString&, id),
+                              Q_ARG(QObject*, object));*/
+}
+
 void Bridge::addModuleData(QObject* module) {
     ModuleInterface* moduleInterface = qobject_cast<ModuleInterface*>(module);
     if (!moduleInterface) {
@@ -557,6 +575,7 @@ void Bridge::loadExternalModules(QObjectList* modules) {
     if (modules == nullptr)
         return;
 
+    QList<ModuleInterface*> externalModuleList;
     foreach (QVariant moduleTypeName, d->externalModules) {
         QObject* instance = utilities::createQObjectInstance(moduleTypeName.toString());
         if (!instance) {
@@ -565,12 +584,19 @@ void Bridge::loadExternalModules(QObjectList* modules) {
         }
         ModuleInterface* externalModule = dynamic_cast<ModuleInterface*>(instance);
         if (externalModule) {
-            externalModule->setBridge(this);
+            externalModule->registerJSObjects(this);
             modules->append(instance);
+            externalModuleList.append(externalModule);
         } else {
             qDebug() << "External module " << moduleTypeName.toString() << " must inherit ModuleInterface";
         }
     }
+
+    d_func()->executor->initJSconstraints();
+    foreach(ModuleInterface* module, externalModuleList) {
+        module->setBridge(this);
+    }
+
 }
 
 void Bridge::injectModules() {
@@ -649,7 +675,7 @@ void Bridge::applicationScriptDone() {
                                   Qt::AutoConnection,
                                   Q_ARG(const QString&, "flushedQueue"),
                                   Q_ARG(const QVariantList&, QVariantList()),
-                                  Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) {
+                                  Q_ARG(const IExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) {
                                       processResult(doc);
                                       setReady(true);
                                   }));

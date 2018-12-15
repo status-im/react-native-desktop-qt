@@ -1,36 +1,30 @@
 
 /**
- * Copyright (C) 2016, Canonical Ltd.
+ * Copyright (c) 2017-present, Status Research and Development GmbH.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * Author: Justin McPherson <justin.mcpherson@canonical.com>
- *
  */
 
-#ifndef EXECUTOR_H
-#define EXECUTOR_H
+#ifndef WEBENGINEQTEXECUTOR_H
+#define WEBENGINEQTEXECUTOR_H
 
 #include <QByteArray>
-#include <QIODevice>
-#include <QQueue>
-#include <QStateMachine>
 
 #include "iexecutor.h"
-#include "serverconnection.h"
 
-class ExecutorPrivate;
-class Executor : public IExecutor {
+class WebEngineQtExecutorPrivate;
+class WebEngineQtExecutor : public IExecutor {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(Executor)
+    Q_DECLARE_PRIVATE(WebEngineQtExecutor)
 
 public:
 
-    Executor(ServerConnection* conn, QObject* parent = nullptr);
-    ~Executor();
+    WebEngineQtExecutor(QObject* parent = nullptr);
+    ~WebEngineQtExecutor();
 
     Q_INVOKABLE virtual void init();
     Q_INVOKABLE virtual void resetConnection();
@@ -46,7 +40,7 @@ public:
     Q_INVOKABLE void initJSconstraints() override;
 
 private:
-    QScopedPointer<ExecutorPrivate> d_ptr;
+    QScopedPointer<WebEngineQtExecutorPrivate> d_ptr;
 };
 
-#endif // EXECUTOR_H
+#endif // WEBENGINEQTEXECUTOR_H
