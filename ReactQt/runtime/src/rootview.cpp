@@ -21,6 +21,7 @@
 #include "bridge.h"
 #include "eventdispatcher.h"
 #include "layout/flexbox.h"
+#include "reactnetworkaccessmanager.h"
 #include "rootview.h"
 #include "uimanager.h"
 #include "utilities.h"
@@ -310,6 +311,9 @@ void RootView::componentComplete() {
 #ifdef RCT_DEV
     loadDevMenu();
 #endif // RCT_DEV
+
+    ReactNetworkAccessManagerFactory* networkManagerFactory = new ReactNetworkAccessManagerFactory();
+    qmlEngine(this)->setNetworkAccessManagerFactory(networkManagerFactory);
 
     QTimer::singleShot(0, [=]() {
         // TODO: setQmlEngine && setNetworkAccessManager to be just setQmlEngine && then internal?
