@@ -87,6 +87,7 @@ void Networking::sendRequest(const QString& method,
 
     QNetworkRequest request(url);
 
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     for (const QString& key : headers.keys()) {
         request.setRawHeader(key.toLocal8Bit(), headers[key].toString().toLocal8Bit());
     }

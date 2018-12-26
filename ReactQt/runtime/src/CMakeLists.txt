@@ -125,6 +125,7 @@ set(
   asynclocalstorage.cpp
   reactitem.cpp
   rootview.cpp
+  reactnetworkaccessmanager.cpp
   mouseeventsinterceptor.cpp
   testmodule.cpp
   attachedproperties.cpp
