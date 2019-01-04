@@ -128,7 +128,7 @@
     "patches"
   ],
   "scripts": {
-    "prepare": "patch-package",
+    "prepare": "npm run snyk-protect; patch-package",
     "test": "jest",
     "test-ci": "JEST_JUNIT_OUTPUT=\"reports/junit/js-test-results.xml\" jest --maxWorkers=2 --ci --testResultsProcessor=\"jest-junit\"",
     "flow": "flow",
@@ -144,7 +144,8 @@
     "test-android-all": "npm run test-android-build && npm run test-android-run-unit && npm run test-android-run-instrumentation && npm run test-android-run-e2e",
     "test-android-instrumentation": "npm run test-android-build && npm run test-android-run-instrumentation",
     "test-android-unit": "npm run test-android-build && npm run test-android-run-unit",
-    "test-android-e2e": "npm run test-android-build && npm run test-android-run-e2e"
+    "test-android-e2e": "npm run test-android-build && npm run test-android-run-e2e",
+    "snyk-protect": "snyk protect"
   },
   "bin": {
     "react-native": "local-cli/wrong-react-native.js"
@@ -205,7 +206,8 @@
     "xmldoc": "^0.4.0",
     "yargs": "^9.0.0",
     "yeoman-environment": "^1.2.7",
-    "yeoman-generator": "^0.20.3"
+    "yeoman-generator": "^0.23.0",
+    "snyk": "^1.120.1"
   },
   "devDependencies": {
     "@babel/core": "7.0.0-rc.2",
@@ -230,5 +232,6 @@
     "react-test-renderer": "16.4.1",
     "shelljs": "^0.7.8",
     "sinon": "^2.2.0"
-  }
+  },
+  "snyk": true
 }
