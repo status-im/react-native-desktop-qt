@@ -20,16 +20,16 @@ class ConnectionInfoSubscription extends React.Component<{}, $FlowFixMeState> {
   };
 
   componentDidMount() {
-    NetInfo.addEventListener('connectionChange', this._handleConnectionInfoChange);
+    NetInfo.addEventListener('change', this._handleConnectionInfoChange);
   }
 
   componentWillUnmount() {
-    NetInfo.removeEventListener('connectionChange', this._handleConnectionInfoChange);
+    NetInfo.removeEventListener('change', this._handleConnectionInfoChange);
   }
 
   _handleConnectionInfoChange = connectionInfo => {
     const connectionInfoHistory = this.state.connectionInfoHistory.slice();
-    connectionInfoHistory.push(connectionInfo.type);
+    connectionInfoHistory.push(connectionInfo);
     this.setState({
       connectionInfoHistory,
     });
@@ -46,18 +46,18 @@ class ConnectionInfoSubscription extends React.Component<{}, $FlowFixMeState> {
 
 class ConnectionInfoCurrent extends React.Component<{}, $FlowFixMeState> {
   state = {
-    connectionInfo: {type: 'not fetched', effectiveType: 'not fetched'},
+    connectionInfo: null,
   };
 
   componentDidMount() {
-    NetInfo.addEventListener('connectionChange', this._handleConnectionInfoChange);
-    NetInfo.getConnectionInfo().then(connectionInfo => {
+    NetInfo.addEventListener('change', this._handleConnectionInfoChange);
+    NetInfo.fetch().done(connectionInfo => {
       this.setState({connectionInfo});
     });
   }
 
   componentWillUnmount() {
-    NetInfo.removeEventListener('connectionChange', this._handleConnectionInfoChange);
+    NetInfo.removeEventListener('change', this._handleConnectionInfoChange);
   }
 
   _handleConnectionInfoChange = connectionInfo => {
@@ -69,8 +69,7 @@ class ConnectionInfoCurrent extends React.Component<{}, $FlowFixMeState> {
   render() {
     return (
       <View>
-        <Text>Type: {this.state.connectionInfo.type}</Text>
-        <Text>Effective type: {this.state.connectionInfo.effectiveType}</Text>
+        <Text>{this.state.connectionInfo}</Text>
       </View>
     );
   }
@@ -83,7 +82,7 @@ class IsConnected extends React.Component<{}, $FlowFixMeState> {
 
   componentDidMount() {
     NetInfo.isConnected.addEventListener(
-      'connectionChange',
+      'change',
       this._handleConnectivityChange,
     );
     NetInfo.isConnected.fetch().done(isConnected => {
@@ -93,7 +92,7 @@ class IsConnected extends React.Component<{}, $FlowFixMeState> {
 
   componentWillUnmount() {
     NetInfo.isConnected.removeEventListener(
-      'connectionChange',
+      'change',
       this._handleConnectivityChange,
     );
   }

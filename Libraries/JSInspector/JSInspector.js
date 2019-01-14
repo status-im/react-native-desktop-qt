@@ -5,12 +5,12 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
- * @flow
+ * @flow strict-local
  */
 
 'use strict';
 
-import type EventSender from 'InspectorAgent';
+import type {EventSender} from 'InspectorAgent';
 
 interface Agent {
   constructor(eventSender: EventSender): void;

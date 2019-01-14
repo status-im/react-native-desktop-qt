@@ -10,7 +10,7 @@ package com.facebook.react.uimanager;
 import android.annotation.TargetApi;
 import android.content.res.Resources;
 import android.os.Build;
-import android.util.Log;
+import com.facebook.common.logging.FLog;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -123,7 +123,7 @@ public class NativeViewHierarchyManager {
     try {
       updateInstanceHandle(resolveView(tag), instanceHandle);
     } catch (IllegalViewOperationException e) {
-      Log.e(TAG, "Unable to update properties for view tag " + tag, e);
+      FLog.e(TAG, "Unable to update properties for view tag " + tag, e);
     }
   }
 
@@ -138,7 +138,7 @@ public class NativeViewHierarchyManager {
         viewManager.updateProperties(viewToUpdate, props);
       }
     } catch (IllegalViewOperationException e) {
-      Log.e(TAG, "Unable to update properties for view tag " + tag, e);
+      FLog.e(TAG, "Unable to update properties for view tag " + tag, e);
     }
   }
 
@@ -409,11 +409,12 @@ public class NativeViewHierarchyManager {
         if (mLayoutAnimationEnabled &&
             mLayoutAnimator.shouldAnimateLayout(viewToRemove) &&
             arrayContains(tagsToDelete, viewToRemove.getId())) {
-          // The view will be removed and dropped by the 'delete' layout animation
-          // instead, so do nothing
-        } else {
-          viewManager.removeViewAt(viewToManage, indexToRemove);
+          // Display the view in the parent after removal for the duration of the layout animation,
+          // but pretend that it doesn't exist when calling other ViewGroup methods.
+          viewManager.startViewTransition(viewToManage, viewToRemove);
         }
+
+        viewManager.removeViewAt(viewToManage, indexToRemove);
 
         lastIndexToRemove = indexToRemove;
       }
@@ -459,7 +460,9 @@ public class NativeViewHierarchyManager {
           mLayoutAnimator.deleteView(viewToDestroy, new LayoutAnimationListener() {
             @Override
             public void onAnimationEnd() {
-              viewManager.removeView(viewToManage, viewToDestroy);
+              // Already removed from the ViewGroup, we can just end the transition here to
+              // release the child.
+              viewManager.endViewTransition(viewToManage, viewToDestroy);
               dropView(viewToDestroy);
             }
           });
@@ -560,6 +563,11 @@ public class NativeViewHierarchyManager {
    */
   protected synchronized void dropView(View view) {
     UiThreadUtil.assertOnUiThread();
+    if (mTagsToViewManagers.get(view.getId()) == null) {
+      // This view has already been dropped (likely due to a threading issue caused by async js
+      // execution). Ignore this drop operation.
+      return;
+    }
     if (!mRootTags.get(view.getId())) {
       // For non-root views we notify viewmanager with {@link ViewManager#onDropInstance}
       resolveViewManager(view.getId()).onDropViewInstance(view);
@@ -570,7 +578,9 @@ public class NativeViewHierarchyManager {
       ViewGroupManager viewGroupManager = (ViewGroupManager) viewManager;
       for (int i = viewGroupManager.getChildCount(viewGroup) - 1; i >= 0; i--) {
         View child = viewGroupManager.getChildAt(viewGroup, i);
-        if (mTagsToViews.get(child.getId()) != null) {
+        if (child == null) {
+            FLog.e(TAG, "Unable to drop null child view");
+        } else if (mTagsToViews.get(child.getId()) != null) {
           dropView(child);
         }
       }

@@ -7,16 +7,10 @@
 
 package com.facebook.react.uimanager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.WeakHashMap;
-
 import android.view.View;
 import android.view.ViewGroup;
-
+import java.util.List;
+import java.util.WeakHashMap;
 import javax.annotation.Nullable;
 
 /**
@@ -91,6 +85,14 @@ public abstract class ViewGroupManager <T extends ViewGroup>
     for (int i = getChildCount(parent) - 1; i >= 0; i--) {
       removeViewAt(parent, i);
     }
+  }
+
+  public void startViewTransition(T parent, View view) {
+    parent.startViewTransition(view);
+  }
+
+  public void endViewTransition(T parent, View view) {
+    parent.endViewTransition(view);
   }
 
   /**

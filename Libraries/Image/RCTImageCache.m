@@ -18,7 +18,7 @@
 
 #import "RCTImageUtils.h"
 
-static const NSUInteger RCTMaxCachableDecodedImageSizeInBytes = 1048576; // 1MB
+static const NSUInteger RCTMaxCachableDecodedImageSizeInBytes = 2097152; // 2 MB
 
 static NSString *RCTCacheKeyForImage(NSString *imageTag, CGSize size, CGFloat scale,
                                      RCTResizeMode resizeMode, NSString *responseDate)
@@ -36,8 +36,8 @@ static NSString *RCTCacheKeyForImage(NSString *imageTag, CGSize size, CGFloat sc
 - (instancetype)init
 {
   _decodedImageCache = [NSCache new];
-  _decodedImageCache.totalCostLimit = 5 * 1024 * 1024; // 5MB
-  
+  _decodedImageCache.totalCostLimit = 20 * 1024 * 1024; // 20 MB
+
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(clearCache)
                                                name:UIApplicationDidReceiveMemoryWarningNotification
@@ -46,7 +46,6 @@ static NSString *RCTCacheKeyForImage(NSString *imageTag, CGSize size, CGFloat sc
                                            selector:@selector(clearCache)
                                                name:UIApplicationWillResignActiveNotification
                                              object:nil];
-  
   return self;
 }
 

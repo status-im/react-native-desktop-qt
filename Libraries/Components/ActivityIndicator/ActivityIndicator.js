@@ -18,15 +18,16 @@ const ViewPropTypes = require('ViewPropTypes');
 
 const createReactClass = require('create-react-class');
 const requireNativeComponent = require('requireNativeComponent');
+
+import type {NativeComponent} from 'ReactNative';
+import type {ViewProps} from 'ViewPropTypes';
+
 const RCTActivityIndicator =
   Platform.OS === 'android'
     ? require('ProgressBarAndroid')
     : Platform.OS === 'desktop'
       ? requireNativeComponent('RCTActivityIndicatorView', ActivityIndicator)
       : requireNativeComponent('RCTActivityIndicatorView');
-
-import type {NativeComponent} from 'ReactNative';
-import type {ViewProps} from 'ViewPropTypes';
 
 const GRAY = '#999999';
 
@@ -73,12 +74,10 @@ type Props = $ReadOnly<{|
  * See http://facebook.github.io/react-native/docs/activityindicator.html
  */
 const ActivityIndicator = (
-  props: $ReadOnly<{|
-    ...Props,
-    forwardedRef?: ?React.Ref<'RCTActivityIndicatorView'>,
-  |}>,
+  props: Props,
+  forwardedRef?: ?React.Ref<'RCTActivityIndicatorView'>,
 ) => {
-  const {onLayout, style, forwardedRef, ...restProps} = props;
+  const {onLayout, style, ...restProps} = props;
   let sizeStyle;
 
   switch (props.size) {
@@ -102,16 +101,22 @@ const ActivityIndicator = (
   };
 
   return (
-    <View onLayout={onLayout} style={[styles.container, style]}>
+    <View
+      onLayout={onLayout}
+      style={StyleSheet.compose(
+        styles.container,
+        style,
+      )}>
+      {/* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was
+        * found when making Flow check .android.js files. */}
       <RCTActivityIndicator {...nativeProps} />
     </View>
   );
 };
 
 // $FlowFixMe - TODO T29156721 `React.forwardRef` is not defined in Flow, yet.
-const ActivityIndicatorWithRef = React.forwardRef((props: Props, ref) => {
-  return <ActivityIndicator {...props} forwardedRef={ref} />;
-});
+const ActivityIndicatorWithRef = React.forwardRef(ActivityIndicator);
+ActivityIndicatorWithRef.displayName = 'ActivityIndicator';
 
 ActivityIndicatorWithRef.defaultProps = {
   animating: true,
@@ -119,7 +124,6 @@ ActivityIndicatorWithRef.defaultProps = {
   hidesWhenStopped: true,
   size: 'small',
 };
-ActivityIndicatorWithRef.displayName = 'ActivityIndicator';
 
 const styles = StyleSheet.create({
   container: {

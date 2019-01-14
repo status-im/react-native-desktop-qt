@@ -14,6 +14,8 @@
 namespace facebook {
 namespace react {
 
+class ModuleRegistry;
+
 /**
  * Holds and creates JS representations of the modules in ModuleRegistry
  */

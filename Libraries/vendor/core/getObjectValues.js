@@ -7,7 +7,6 @@
  * @format
  * @typechecks
  */
-'use strict';
 
 'use strict';
 

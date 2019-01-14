@@ -1,7 +1,6 @@
 ---
-name: "\U0001F4AC Question"
-about: If you need help with your React Native app, the right place to go depends
-  on the type of help that you need.
+name: 💬 Question
+about: If you need help with your React Native app, the right place to go depends on the type of help that you need.
 
 ---
 

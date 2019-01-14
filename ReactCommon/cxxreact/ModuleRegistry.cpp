@@ -60,6 +60,7 @@ void ModuleRegistry::registerModules(QList<ModuleData*> modules) {
 }
 
 void ModuleRegistry::registerModules(std::vector<std::unique_ptr<NativeModule>> modules) {
+  SystraceSection s_("ModuleRegistry::registerModules");
   if (modules_.empty() && unknownModules_.empty()) {
     modules_ = std::move(modules);
   } else {
@@ -86,6 +87,7 @@ void ModuleRegistry::registerModules(std::vector<std::unique_ptr<NativeModule>> 
 }
 
 std::vector<std::string> ModuleRegistry::moduleNames() {
+  SystraceSection s_("ModuleRegistry::moduleNames");
   std::vector<std::string> names;
   for (size_t i = 0; i < qtModulesUsed_ ? qtModules_.size() : modules_.size(); i++) {
     std::string name = normalizeName(qtModulesUsed_ ? qtModules_[i]->name().toStdString() :
@@ -140,7 +142,7 @@ folly::Optional<ModuleConfig> ModuleRegistry::getConfig(const std::string& name)
     }
 
     {
-      SystraceSection s_("getMethods");
+      SystraceSection s_("ModuleRegistry::getMethods", "module", name);
       std::vector<MethodDescriptor> methods = module->getMethods();
 
       folly::dynamic methodNames = folly::dynamic::array;
