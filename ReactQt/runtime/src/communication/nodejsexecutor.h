@@ -19,19 +19,17 @@
 #include <QQueue>
 #include <QStateMachine>
 
-#include "iexecutor.h"
+#include "ijsexecutor.h"
 #include "serverconnection.h"
 
-class ExecutorPrivate;
-class Executor : public IExecutor {
+class NodeJsExecutorPrivate;
+class NodeJsExecutor : public IJsExecutor {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(Executor)
+    Q_DECLARE_PRIVATE(NodeJsExecutor)
 
 public:
-    typedef std::function<void(const QJsonDocument&)> ExecuteCallback;
-
-    Executor(ServerConnection* conn, QObject* parent = nullptr);
-    ~Executor();
+    NodeJsExecutor(ServerConnection* conn, QObject* parent = nullptr);
+    ~NodeJsExecutor();
 
     Q_INVOKABLE virtual void init();
     Q_INVOKABLE virtual void resetConnection();
@@ -40,12 +38,10 @@ public:
     Q_INVOKABLE virtual void executeApplicationScript(const QByteArray& script, const QUrl& sourceUrl);
     Q_INVOKABLE virtual void executeJSCall(const QString& method,
                                            const QVariantList& args = QVariantList(),
-                                           const Executor::ExecuteCallback& callback = ExecuteCallback());
+                                           const IJsExecutor::ExecuteCallback& callback = ExecuteCallback());
 
 private:
-    QScopedPointer<ExecutorPrivate> d_ptr;
+    QScopedPointer<NodeJsExecutorPrivate> d_ptr;
 };
-
-Q_DECLARE_METATYPE(Executor::ExecuteCallback)
 
 #endif // EXECUTOR_H

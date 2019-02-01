@@ -15,7 +15,7 @@ jobs:
             add-apt-repository -y ppa:beineri/opt-qt-5.11.1-xenial
             apt-get update -qy
             apt-get install -qy --force-yes dbus xvfb curl cmake clang-format mesa-common-dev \
-                qt511base qt511graphicaleffects qt511quickcontrols2 qt511declarative qt511websockets qt511svg
+                qt511base qt511graphicaleffects qt511quickcontrols2 qt511declarative qt511websockets qt511svg qt511webengine
 
       - run:
           name: Configure Qt environment
@@ -25,6 +25,7 @@ jobs:
             echo 'export LD_LIBRARY_PATH=/opt/qt511/lib/x86_64-linux-gnu:/opt/qt511/lib:$LD_LIBRARY_PATH' >> $BASH_ENV
             echo 'export PKG_CONFIG_PATH=/opt/qt511/lib/pkgconfig:$PKG_CONFIG_PATH' >> $BASH_ENV
             echo '/opt/qt511/bin/qt511-env.sh' >> ~/.circlerc
+            echo 'export QTWEBENGINE_DISABLE_SANDBOX=1' >> $BASH_ENV
 
       - checkout
 

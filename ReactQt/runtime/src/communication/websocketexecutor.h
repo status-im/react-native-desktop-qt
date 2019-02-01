@@ -18,10 +18,10 @@
 
 #include <QUrl>
 
-#include "iexecutor.h"
+#include "ijsexecutor.h"
 
 class WebSocketExecutorPrivate;
-class WebSocketExecutor : public IExecutor {
+class WebSocketExecutor : public IJsExecutor {
     Q_OBJECT
     Q_DECLARE_PRIVATE(WebSocketExecutor)
 

@@ -17,8 +17,9 @@
 #include "asynclocalstorage.h"
 #include "blobprovider.h"
 #include "clipboard.h"
-#include "communication/executor.h"
 #include "communication/javascriptcoreexecutor.h"
+#include "communication/jswebengineexecutor.h"
+#include "communication/nodejsexecutor.h"
 #include "communication/serverconnection.h"
 #include "communication/websocketexecutor.h"
 #include "componentmanagers/activityindicatormanager.h"
@@ -75,7 +76,8 @@ public:
     bool ready = false;
     bool jsAppStarted = false;
     QString serverConnectionType = "NetExecutor";
-    IExecutor* executor = nullptr;
+    QString jsExecutor = "NodeJsExecutor";
+    IJsExecutor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
     QQuickItem* visualParent = nullptr;
     Redbox* redbox = nullptr;
@@ -184,22 +186,27 @@ void Bridge::setupExecutor() {
 #endif // JAVASCRIPTCORE_ENABLED
 
     if (!d->executor) {
-        if (!d->executorThread) {
-            d->executorThread = new QThread();
-        }
-        d->executorThread->start();
-        ServerConnection* conn =
-            qobject_cast<ServerConnection*>(utilities::createQObjectInstance(d->serverConnectionType));
 
-        if (conn == nullptr) {
-            qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
-                       << "constructing default (LocalServerConnection)";
-            conn = new LocalServerConnection();
-        }
+        if (d->jsExecutor == "JSWebEngineExecutor") {
+            d->executor = new JSWebEngineExecutor();
+        } else if (d->jsExecutor == "NodeJsExecutor") {
+            if (!d->executorThread) {
+                d->executorThread = new QThread();
+            }
+            d->executorThread->start();
+            ServerConnection* conn =
+                qobject_cast<ServerConnection*>(utilities::createQObjectInstance(d->serverConnectionType));
 
-        d->executor = new Executor(conn);
-        conn->moveToThread(d->executorThread);
-        d->executor->moveToThread(d->executorThread);
+            if (conn == nullptr) {
+                qWarning() << __PRETTY_FUNCTION__ << "Could not construct connection: " << d->serverConnectionType
+                           << "constructing default (LocalServerConnection)";
+                conn = new LocalServerConnection();
+            }
+
+            d->executor = new NodeJsExecutor(conn);
+            conn->moveToThread(d->executorThread);
+            d->executor->moveToThread(d->executorThread);
+        }
     }
 
     connect(d->executor, SIGNAL(applicationScriptDone()), SLOT(applicationScriptDone()));
@@ -267,7 +274,7 @@ void Bridge::enqueueJSCall(const QString& module, const QString& method, const Q
         Qt::AutoConnection,
         Q_ARG(const QString&, "callFunctionReturnFlushedQueue"),
         Q_ARG(const QVariantList&, list),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IJsExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args) {
@@ -280,7 +287,7 @@ void Bridge::invokePromiseCallback(double callbackCode, const QVariantList& args
         Qt::AutoConnection,
         Q_ARG(const QString&, "invokeCallbackAndReturnFlushedQueue"),
         Q_ARG(const QVariantList&, list),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IJsExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
@@ -292,7 +299,7 @@ void Bridge::invokeAndProcess(const QString& method, const QVariantList& args) {
         Qt::AutoConnection,
         Q_ARG(const QString&, method),
         Q_ARG(const QVariantList&, args),
-        Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
+        Q_ARG(const IJsExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) { processResult(doc); }));
 }
 
 void Bridge::executeSourceCode(const QByteArray& sourceCode) {
@@ -309,7 +316,7 @@ void Bridge::enqueueRunAppCall(const QVariantList& args) {
                               Qt::AutoConnection,
                               Q_ARG(QString, "callFunctionReturnFlushedQueue"),
                               Q_ARG(QVariantList, list),
-                              Q_ARG(Executor::ExecuteCallback, [=](const QJsonDocument& doc) {
+                              Q_ARG(IJsExecutor::ExecuteCallback, [=](const QJsonDocument& doc) {
                                   processResult(doc);
                                   setJsAppStarted(true);
                               }));
@@ -408,6 +415,17 @@ void Bridge::setPluginsPath(const QString& pluginsPath) {
     d->pluginsPath = pluginsPath;
 }
 
+QString Bridge::jsExecutor() const {
+    return d_func()->jsExecutor;
+}
+
+void Bridge::setJsExecutor(const QString& jsExecutor) {
+    Q_D(Bridge);
+    if (d->jsExecutor == jsExecutor)
+        return;
+    d->jsExecutor = jsExecutor;
+}
+
 QString Bridge::serverConnectionType() const {
     return d_func()->serverConnectionType;
 }
@@ -483,7 +501,7 @@ void Bridge::sourcesFinished() {
                                       Qt::AutoConnection,
                                       Q_ARG(const QString&, "callFunctionReturnFlushedQueue"),
                                       Q_ARG(const QVariantList&, args),
-                                      Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) {
+                                      Q_ARG(const IJsExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) {
                                           qDebug() << "Enabling HMRClient response";
                                           processResult(doc);
                                       }));
@@ -649,7 +667,7 @@ void Bridge::applicationScriptDone() {
                                   Qt::AutoConnection,
                                   Q_ARG(const QString&, "flushedQueue"),
                                   Q_ARG(const QVariantList&, QVariantList()),
-                                  Q_ARG(const Executor::ExecuteCallback&, [=](const QJsonDocument& doc) {
+                                  Q_ARG(const IJsExecutor::ExecuteCallback&, [=](const QJsonDocument& doc) {
                                       processResult(doc);
                                       setReady(true);
                                   }));
