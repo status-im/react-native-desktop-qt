@@ -8,6 +8,7 @@
  *
  */
 
+#include <QLoggingCategory>
 #include <QSignalSpy>
 #include <QTest>
 #include <QTimer>

@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef IEXECUTOR_H
-#define IEXECUTOR_H
+#ifndef IJSEXECUTOR_H
+#define IJSEXECUTOR_H
 
 #include <functional>
 
@@ -18,14 +18,14 @@
 #include <QObject>
 #include <QVariant>
 
-class IExecutor : public QObject {
+class IJsExecutor : public QObject {
     Q_OBJECT
 
 public:
     typedef std::function<void(const QJsonDocument&)> ExecuteCallback;
 
-    IExecutor(QObject* parent = nullptr) : QObject(parent) {}
-    virtual ~IExecutor() {}
+    IJsExecutor(QObject* parent = nullptr) : QObject(parent) {}
+    virtual ~IJsExecutor() {}
 
     virtual void init() = 0;
     virtual void resetConnection() = 0;
@@ -43,4 +43,6 @@ Q_SIGNALS:
     void commandReceived(int size);
 };
 
-#endif // IEXECUTOR_H
+Q_DECLARE_METATYPE(IJsExecutor::ExecuteCallback)
+
+#endif // IJSEXECUTOR_H

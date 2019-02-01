@@ -32,6 +32,7 @@ class RootView : public ReactItem {
     Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
     Q_PROPERTY(QVariantMap properties READ properties WRITE setProperties NOTIFY propertiesChanged)
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
+    Q_PROPERTY(QString jsExecutor READ jsExecutor WRITE setJsExecutor NOTIFY jsExecutorChanged)
     Q_PROPERTY(
         QString serverConnectionType READ serverConnectionType WRITE setServerConnectionType NOTIFY executorChanged)
     Q_PROPERTY(QVariantList externalModules READ externalModules WRITE setExternalModules NOTIFY externalModulesChanged)
@@ -60,6 +61,9 @@ public:
     QString pluginsPath() const;
     void setPluginsPath(const QString& pluginsPath);
 
+    QString jsExecutor() const;
+    void setJsExecutor(const QString& jsExecutor);
+
     QString serverConnectionType() const;
     void setServerConnectionType(const QString& serverConnectionType);
 
@@ -82,6 +86,7 @@ Q_SIGNALS:
     void pluginsPathChanged();
     void executorChanged();
     void externalModulesChanged();
+    void jsExecutorChanged();
 
 protected:
     virtual void updatePolish() override;
