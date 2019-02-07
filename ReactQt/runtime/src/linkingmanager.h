@@ -28,6 +28,8 @@ class LinkingManager : public QObject, public ModuleInterface {
                                               const ModuleInterface::ListArgumentBlock& resolve,
                                               const ModuleInterface::ListArgumentBlock& reject);
 
+    Q_INVOKABLE QString getInitialURL();
+
 public:
     LinkingManager(QObject* parent = 0);
     virtual ~LinkingManager();
