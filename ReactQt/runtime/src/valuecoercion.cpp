@@ -99,8 +99,14 @@ QMap<int, coerce_function> coerceFunctions{
          return QVariant::fromValue(QPointF(s[0].toDouble(), s[1].toDouble()));
      }},
     {qMetaTypeId<QColor>(), [](const QVariant& value) {
-         Q_ASSERT(value.canConvert<uint>());
-         return QVariant::fromValue(QColor::fromRgba(value.toUInt()));
+         QColor res;
+         if (value.type() == QMetaType::QString) {
+             qDebug() << value.toString();
+             res.setNamedColor(value.toString());
+         } else if (value.canConvert<uint>()) {
+             res = QColor::fromRgba(value.toUInt());
+         }
+         return QVariant::fromValue(res);
      }}};
 
 QVariant reactCoerceValue(const QVariant& data, int parameterType, const coerce_map* userCoercions) {
