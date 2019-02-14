@@ -101,7 +101,6 @@ QMap<int, coerce_function> coerceFunctions{
     {qMetaTypeId<QColor>(), [](const QVariant& value) {
          QColor res;
          if (value.type() == QMetaType::QString) {
-             qDebug() << value.toString();
              res.setNamedColor(value.toString());
          } else if (value.canConvert<uint>()) {
              res = QColor::fromRgba(value.toUInt());
