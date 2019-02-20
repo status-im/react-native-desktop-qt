@@ -212,9 +212,13 @@ float Flexbox::width() {
     return YGNodeStyleGetWidth(d_ptr->m_node).value;
 }
 
-void Flexbox::setWidth(float value) {
-    if (value != width()) {
-        YGNodeStyleSetWidth(d_ptr->m_node, value);
+void Flexbox::setWidth(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetWidthPercent(d_ptr->m_node, percents);
+        widthChanged();
+    } else if (value.toFloat() != width()) {
+        YGNodeStyleSetWidth(d_ptr->m_node, value.toFloat());
         widthChanged();
     }
 }
@@ -223,9 +227,13 @@ float Flexbox::height() {
     return YGNodeStyleGetHeight(d_ptr->m_node).value;
 }
 
-void Flexbox::setHeight(float value) {
-    if (value != height()) {
-        YGNodeStyleSetHeight(d_ptr->m_node, value);
+void Flexbox::setHeight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetHeightPercent(d_ptr->m_node, percents);
+        heightChanged();
+    } else if (value.toFloat() != height()) {
+        YGNodeStyleSetHeight(d_ptr->m_node, value.toFloat());
         heightChanged();
     }
 }
@@ -258,9 +266,13 @@ float Flexbox::margin() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeAll).value;
 }
 
-void Flexbox::setMargin(float value) {
-    if (value != margin()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeAll, value);
+void Flexbox::setMargin(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeAll, percents);
+        marginChanged();
+    } else if (value.toFloat() != margin()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeAll, value.toFloat());
         marginChanged();
     }
 }
@@ -269,9 +281,13 @@ float Flexbox::marginTop() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeTop).value;
 }
 
-void Flexbox::setMarginTop(float value) {
-    if (value != marginTop()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeTop, value);
+void Flexbox::setMarginTop(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeTop, percents);
+        marginTopChanged();
+    } else if (value.toFloat() != marginTop()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeTop, value.toFloat());
         marginTopChanged();
     }
 }
@@ -280,9 +296,13 @@ float Flexbox::marginBottom() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeBottom).value;
 }
 
-void Flexbox::setMarginBottom(float value) {
-    if (value != marginBottom()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeBottom, value);
+void Flexbox::setMarginBottom(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeBottom, percents);
+        marginBottomChanged();
+    } else if (value.toFloat() != marginBottom()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeBottom, value.toFloat());
         marginBottomChanged();
     }
 }
@@ -291,9 +311,13 @@ float Flexbox::marginLeft() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeLeft).value;
 }
 
-void Flexbox::setMarginLeft(float value) {
-    if (value != marginLeft()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeLeft, value);
+void Flexbox::setMarginLeft(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeLeft, percents);
+        marginLeftChanged();
+    } else if (value.toFloat() != marginLeft()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeLeft, value.toFloat());
         marginLeftChanged();
     }
 }
@@ -302,9 +326,13 @@ float Flexbox::marginRight() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeRight).value;
 }
 
-void Flexbox::setMarginRight(float value) {
-    if (value != marginRight()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeRight, value);
+void Flexbox::setMarginRight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeRight, percents);
+        marginRightChanged();
+    } else if (value.toFloat() != marginRight()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeRight, value.toFloat());
         marginRightChanged();
     }
 }
@@ -313,9 +341,13 @@ float Flexbox::marginHorizontal() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeHorizontal).value;
 }
 
-void Flexbox::setMarginHorizontal(float value) {
-    if (value != marginHorizontal()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeHorizontal, value);
+void Flexbox::setMarginHorizontal(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeHorizontal, percents);
+        marginHorizontalChanged();
+    } else if (value.toFloat() != marginHorizontal()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeHorizontal, value.toFloat());
         marginHorizontalChanged();
     }
 }
@@ -324,9 +356,13 @@ float Flexbox::marginVertical() {
     return YGNodeStyleGetMargin(d_ptr->m_node, YGEdgeVertical).value;
 }
 
-void Flexbox::setMarginVertical(float value) {
-    if (value != marginVertical()) {
-        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeVertical, value);
+void Flexbox::setMarginVertical(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMarginPercent(d_ptr->m_node, YGEdgeVertical, percents);
+        marginVerticalChanged();
+    } else if (value.toFloat() != marginVertical()) {
+        YGNodeStyleSetMargin(d_ptr->m_node, YGEdgeVertical, value.toFloat());
         marginVerticalChanged();
     }
 }
@@ -437,8 +473,13 @@ float Flexbox::top() {
     return YGNodeLayoutGetTop(d_ptr->m_node);
 }
 
-void Flexbox::setTop(float value) {
-    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeTop, value);
+void Flexbox::setTop(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPositionPercent(d_ptr->m_node, YGEdgeTop, percents);
+    } else {
+        YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeTop, value.toFloat());
+    }
     topChanged();
 }
 
@@ -446,8 +487,14 @@ float Flexbox::bottom() {
     return YGNodeLayoutGetBottom(d_ptr->m_node);
 }
 
-void Flexbox::setBottom(float value) {
-    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeBottom, value);
+void Flexbox::setBottom(QVariant value) {
+
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPositionPercent(d_ptr->m_node, YGEdgeBottom, percents);
+    } else {
+        YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeBottom, value.toFloat());
+    }
     bottomChanged();
 }
 
@@ -455,16 +502,26 @@ float Flexbox::left() {
     return YGNodeLayoutGetLeft(d_ptr->m_node);
 }
 
-void Flexbox::setLeft(float value) {
-    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeLeft, value);
+void Flexbox::setLeft(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPositionPercent(d_ptr->m_node, YGEdgeLeft, percents);
+    } else {
+        YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeLeft, value.toFloat());
+    }
     leftChanged();
 }
 
 float Flexbox::right() {
     return YGNodeLayoutGetRight(d_ptr->m_node);
 }
-void Flexbox::setRight(float value) {
-    YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeRight, value);
+void Flexbox::setRight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPositionPercent(d_ptr->m_node, YGEdgeRight, percents);
+    } else {
+        YGNodeStyleSetPosition(d_ptr->m_node, YGEdgeRight, value.toFloat());
+    }
     rightChanged();
 }
 
@@ -472,9 +529,13 @@ float Flexbox::minWidth() {
     return YGNodeStyleGetMinWidth(d_ptr->m_node).value;
 }
 
-void Flexbox::setMinWidth(float value) {
-    if (value != minWidth()) {
-        YGNodeStyleSetMinWidth(d_ptr->m_node, value);
+void Flexbox::setMinWidth(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMinWidthPercent(d_ptr->m_node, percents);
+        minWidthChanged();
+    } else if (value.toFloat() != minWidth()) {
+        YGNodeStyleSetMinWidth(d_ptr->m_node, value.toFloat());
         minWidthChanged();
     }
 }
@@ -483,9 +544,13 @@ float Flexbox::minHeight() {
     return YGNodeStyleGetMinHeight(d_ptr->m_node).value;
 }
 
-void Flexbox::setMinHeight(float value) {
-    if (value != minHeight()) {
-        YGNodeStyleSetMinHeight(d_ptr->m_node, value);
+void Flexbox::setMinHeight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMinHeightPercent(d_ptr->m_node, percents);
+        minHeightChanged();
+    } else if (value.toFloat() != minHeight()) {
+        YGNodeStyleSetMinHeight(d_ptr->m_node, value.toFloat());
         minHeightChanged();
     }
 }
@@ -494,9 +559,13 @@ float Flexbox::maxWidth() {
     return YGNodeStyleGetMaxWidth(d_ptr->m_node).value;
 }
 
-void Flexbox::setMaxWidth(float value) {
-    if (value != maxWidth()) {
-        YGNodeStyleSetMaxWidth(d_ptr->m_node, value);
+void Flexbox::setMaxWidth(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMaxWidthPercent(d_ptr->m_node, percents);
+        maxWidthChanged();
+    } else if (value.toFloat() != maxWidth()) {
+        YGNodeStyleSetMaxWidth(d_ptr->m_node, value.toFloat());
         maxWidthChanged();
     }
 }
@@ -505,9 +574,13 @@ float Flexbox::maxHeight() {
     return YGNodeStyleGetMaxHeight(d_ptr->m_node).value;
 }
 
-void Flexbox::setMaxHeight(float value) {
-    if (value != maxHeight()) {
-        YGNodeStyleSetMaxHeight(d_ptr->m_node, value);
+void Flexbox::setMaxHeight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetMaxHeightPercent(d_ptr->m_node, percents);
+        maxHeightChanged();
+    } else if (value.toFloat() != maxHeight()) {
+        YGNodeStyleSetMaxHeight(d_ptr->m_node, value.toFloat());
         maxHeightChanged();
     }
 }
@@ -527,9 +600,13 @@ float Flexbox::flexBasis() {
     return YGNodeStyleGetFlexBasis(d_ptr->m_node).value;
 }
 
-void Flexbox::setFlexBasis(float value) {
-    if (value != flexBasis()) {
-        YGNodeStyleSetFlexBasis(d_ptr->m_node, value);
+void Flexbox::setFlexBasis(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetFlexBasisPercent(d_ptr->m_node, percents);
+        flexBasisChanged();
+    } else if (value.toFloat() != flexBasis()) {
+        YGNodeStyleSetFlexBasis(d_ptr->m_node, value.toFloat());
         flexBasisChanged();
     }
 }
@@ -572,9 +649,13 @@ float Flexbox::padding() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeAll).value;
 }
 
-void Flexbox::setPadding(float value) {
-    if (value != padding()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeAll, value);
+void Flexbox::setPadding(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeAll, percents);
+        paddingChanged();
+    } else if (value.toFloat() != padding()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeAll, value.toFloat());
         paddingChanged();
     }
 }
@@ -583,9 +664,13 @@ float Flexbox::paddingTop() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeTop).value;
 }
 
-void Flexbox::setPaddingTop(float value) {
-    if (value != paddingTop()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeTop, value);
+void Flexbox::setPaddingTop(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeTop, percents);
+        paddingTopChanged();
+    } else if (value.toFloat() != paddingTop()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeTop, value.toFloat());
         paddingTopChanged();
     }
 }
@@ -594,9 +679,13 @@ float Flexbox::paddingBottom() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeBottom).value;
 }
 
-void Flexbox::setPaddingBottom(float value) {
-    if (value != paddingBottom()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeBottom, value);
+void Flexbox::setPaddingBottom(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeBottom, percents);
+        paddingBottomChanged();
+    } else if (value.toFloat() != paddingBottom()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeBottom, value.toFloat());
         paddingBottomChanged();
     }
 }
@@ -605,9 +694,13 @@ float Flexbox::paddingLeft() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeLeft).value;
 }
 
-void Flexbox::setPaddingLeft(float value) {
-    if (value != paddingLeft()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeLeft, value);
+void Flexbox::setPaddingLeft(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeLeft, percents);
+        paddingLeftChanged();
+    } else if (value.toFloat() != paddingLeft()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeLeft, value.toFloat());
         paddingLeftChanged();
     }
 }
@@ -616,9 +709,13 @@ float Flexbox::paddingRight() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeRight).value;
 }
 
-void Flexbox::setPaddingRight(float value) {
-    if (value != paddingRight()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeRight, value);
+void Flexbox::setPaddingRight(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeRight, percents);
+        paddingRightChanged();
+    } else if (value.toFloat() != paddingRight()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeRight, value.toFloat());
         paddingRightChanged();
     }
 }
@@ -627,9 +724,13 @@ float Flexbox::paddingHorizontal() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeHorizontal).value;
 }
 
-void Flexbox::setPaddingHorizontal(float value) {
-    if (value != paddingHorizontal()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeHorizontal, value);
+void Flexbox::setPaddingHorizontal(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeHorizontal, percents);
+        paddingHorizontalChanged();
+    } else if (value.toFloat() != paddingHorizontal()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeHorizontal, value.toFloat());
         paddingHorizontalChanged();
     }
 }
@@ -638,9 +739,13 @@ float Flexbox::paddingVertical() {
     return YGNodeStyleGetPadding(d_ptr->m_node, YGEdgeVertical).value;
 }
 
-void Flexbox::setPaddingVertical(float value) {
-    if (value != paddingVertical()) {
-        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeVertical, value);
+void Flexbox::setPaddingVertical(QVariant value) {
+    float percents;
+    if (parsePercents(value, percents)) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeVertical, percents);
+        paddingVerticalChanged();
+    } else if (value.toFloat() != paddingVertical()) {
+        YGNodeStyleSetPadding(d_ptr->m_node, YGEdgeVertical, value.toFloat());
         paddingVerticalChanged();
     }
 }
@@ -695,6 +800,22 @@ void Flexbox::setDirection(const QString& value) {
 
 bool Flexbox::isDirty() {
     return YGNodeIsDirty(d_ptr->m_node);
+}
+
+bool Flexbox::parsePercents(QVariant& value, float& result) {
+    if (value.type() == QMetaType::QString) {
+        QString valueString = value.toString();
+        if (valueString.back() == '%') {
+            valueString.chop(1);
+            bool success = false;
+            result = valueString.toFloat(&success);
+            if (success) {
+                return true;
+            }
+        }
+        qCDebug(FLEXBOX) << "Unable to parse value " << valueString;
+    }
+    return false;
 }
 
 void Flexbox::markDirty() {
