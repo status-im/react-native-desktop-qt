@@ -54,7 +54,7 @@ public:
     Q_INVOKABLE void sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height);
 
 protected:
-    QQuickItem* createView(const QVariantMap& properties);
+    virtual QQuickItem* createView(const QVariantMap& properties);
     Bridge* bridge() const;
     virtual void configureView(QQuickItem* view) const;
     virtual QString qmlComponentFile(const QVariantMap& properties) const;
