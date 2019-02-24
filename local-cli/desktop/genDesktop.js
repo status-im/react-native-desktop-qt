@@ -15,8 +15,8 @@ var generate = require('../generate/generate');
 const { exec } = require('child_process');
 
 function applyDesktopPlatformPatch() {
-  exec('git apply --reverse ./node_modules/react-native/patches/metro-config+0.48.3.patch');
-  exec('git apply ./node_modules/react-native/patches/metro-config+0.48.3.patch', (err, stdout, stderr) => {
+  exec('git apply --reverse ./node_modules/react-native/patches/metro-config+0.48.5.patch');
+  exec('git apply ./node_modules/react-native/patches/metro-config+0.48.5.patch', (err, stdout, stderr) => {
      console.log(`Std output: ${stdout}`);
      if (err) {
        console.error(`exec error: ${err}`);
