@@ -24,6 +24,7 @@ static QMap<QString, YGFlexDirection> flexDirectionByString{
     {"row-reverse", YGFlexDirectionRowReverse},
     {"column", YGFlexDirectionColumn},
     {"column-reverse", YGFlexDirectionColumnReverse},
+    {"", YGFlexDirectionColumn},
 };
 
 static QMap<QString, YGJustify> justificationByString{
@@ -32,35 +33,37 @@ static QMap<QString, YGJustify> justificationByString{
     {"center", YGJustifyCenter},
     {"space-between", YGJustifySpaceBetween},
     {"space-around", YGJustifySpaceAround},
+    {"", YGJustifyFlexStart},
 };
 
-static QMap<QString, YGAlign> alignByString{
-    {"flex-start", YGAlignFlexStart},
-    {"flex-end", YGAlignFlexEnd},
-    {"center", YGAlignCenter},
-    {"stretch", YGAlignStretch},
-    {"baseline", YGAlignBaseline},
-    {"space-between", YGAlignSpaceBetween},
-    {"space-around", YGAlignSpaceAround},
-};
+static QMap<QString, YGAlign> alignByString{{"flex-start", YGAlignFlexStart},
+                                            {"flex-end", YGAlignFlexEnd},
+                                            {"center", YGAlignCenter},
+                                            {"stretch", YGAlignStretch},
+                                            {"baseline", YGAlignBaseline},
+                                            {"space-between", YGAlignSpaceBetween},
+                                            {"space-around", YGAlignSpaceAround},
+                                            {"", YGAlignStretch}};
 
 static QMap<QString, YGWrap> wrapByString{
-    {"wrap", YGWrapWrap}, {"nowrap", YGWrapNoWrap},
+    {"wrap", YGWrapWrap}, {"nowrap", YGWrapNoWrap}, {"", YGWrapNoWrap},
 };
 
 static QMap<QString, YGDisplay> displayByString{
-    {"none", YGDisplayNone}, {"flex", YGDisplayFlex},
+    {"none", YGDisplayNone}, {"flex", YGDisplayFlex}, {"", YGDisplayFlex},
 };
 
 static QMap<QString, YGOverflow> overflowByString{
-    {"visible", YGOverflowVisible}, {"hidde", YGOverflowHidden}, {"scroll", YGOverflowScroll}};
+    {"visible", YGOverflowVisible}, {"hidden", YGOverflowHidden}, {"scroll", YGOverflowScroll}, {"", YGOverflowVisible},
+};
 
 static QMap<QString, YGPositionType> positionByString{
-    {"relative", YGPositionTypeRelative}, {"absolute", YGPositionTypeAbsolute},
+    {"relative", YGPositionTypeRelative}, {"absolute", YGPositionTypeAbsolute}, {"", YGPositionTypeRelative},
 };
 
 static QMap<QString, YGDirection> directionByString{
-    {"inherit", YGDirectionInherit}, {"ltr", YGDirectionLTR}, {"rtl", YGDirectionRTL}};
+    {"inherit", YGDirectionInherit}, {"ltr", YGDirectionLTR}, {"rtl", YGDirectionRTL}, {"", YGDirectionInherit},
+};
 
 const char LAYOUT_UPDATED_SIGNAL_NAME[] = "layoutUpdated";
 
@@ -826,11 +829,17 @@ void Flexbox::printFlexboxHierarchy() {
     d_ptr->printNode();
 }
 
+void printYGNode(YGNodeRef node, const QString& nodeName) {
+    qDebug() << nodeName << ": width: " << YGNodeLayoutGetWidth(node) << " height: " << YGNodeLayoutGetHeight(node)
+             << " x: " << YGNodeLayoutGetLeft(node) << " y: " << YGNodeLayoutGetTop(node);
+}
+
 void FlexboxPrivate::printNode() {
     static int level = 1;
 
     QString separator(level, '-');
     qDebug() << separator << " - " << m_control;
+    printYGNode(m_node, "");
 
     ++level;
     for (int i = 0; i < YGNodeGetChildCount(m_node); ++i) {
@@ -839,11 +848,6 @@ void FlexboxPrivate::printNode() {
         fp->printNode();
     }
     --level;
-}
-
-void printYGNode(YGNodeRef node, const QString& nodeName) {
-    qDebug() << nodeName << ": width: " << YGNodeLayoutGetWidth(node) << " height: " << YGNodeLayoutGetHeight(node)
-             << " x: " << YGNodeLayoutGetLeft(node) << " y: " << YGNodeLayoutGetTop(node);
 }
 
 #include "flexbox.moc"

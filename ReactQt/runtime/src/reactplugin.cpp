@@ -19,10 +19,10 @@
 void ReactPlugin::registerTypes(const char* uri) {
     utilities::registerReactTypes();
     //#ifdef QT_DEBUG
-    //    QLoggingCategory::setFilterRules("UIManager=true\n"
-    //                                     "Flexbox=true\n"
-    //                                     "WebSocketModule=true\n"
-    //                                     "Networking=true\n"
-    //                                     "ViewManager=true\n");
+    //    QLoggingCategory::setFilterRules("UIManager=false\n"
+    //                                     "Flexbox=false\n"
+    //                                     "WebSocketModule=false\n"
+    //                                     "Networking=false\n"
+    //                                     "ViewManager=false\n");
     //#endif
 }
