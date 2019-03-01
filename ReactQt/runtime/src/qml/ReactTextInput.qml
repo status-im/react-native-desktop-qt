@@ -38,8 +38,6 @@ Item {
     }
 
     function onJsPropertiesSet() {
-        heightSetInternally = false;
-
         if(flexbox) {
             if(flexbox.isUndefined(flexbox.p_height)) {
                 flexbox.p_height = textInputRoot.defaultHeight
