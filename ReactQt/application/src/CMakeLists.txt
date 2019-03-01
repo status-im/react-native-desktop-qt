@@ -81,7 +81,7 @@ add_executable(
   ${MAIN_RC_PATH}
 )
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg)
+set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
 if (USE_QTWEBKIT)
   set(USED_QT_MODULES ${USED_QT_MODULES} WebKit)
 endif()
