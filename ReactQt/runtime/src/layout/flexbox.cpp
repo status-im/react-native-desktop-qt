@@ -822,7 +822,13 @@ bool Flexbox::parsePercents(QVariant& value, float& result) {
 }
 
 void Flexbox::markDirty() {
-    YGNodeMarkDirty(d_ptr->m_node);
+    if (d_ptr->m_node) {
+        YGNodeMarkDirty(d_ptr->m_node);
+    }
+}
+
+bool Flexbox::isUndefined(float value) {
+    return YGFloatIsUndefined(value);
 }
 
 void Flexbox::printFlexboxHierarchy() {

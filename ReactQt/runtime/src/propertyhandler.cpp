@@ -58,6 +58,13 @@ void PropertyHandler::applyProperties(const QVariantMap& properties) {
             }
         }
     }
+
+    // when all props received from js are set we notify components
+    const QMetaObject* meta = m_object->metaObject();
+    int jsPropsSetMethodIndex = meta->indexOfMethod("onJsPropertiesSet()");
+    if (jsPropsSetMethodIndex != -1) {
+        meta->method(jsPropsSetMethodIndex).invoke(m_object);
+    }
 }
 
 QVariant PropertyHandler::value(const QString& propertyName) {

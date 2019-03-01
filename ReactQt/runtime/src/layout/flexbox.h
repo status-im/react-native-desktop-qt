@@ -130,6 +130,7 @@ signals:
     void positionChanged();
     void directionChanged();
     void isDirtyChanged();
+    //    void recalculated();
 
 public:
     Flexbox(QObject* parent = 0);
@@ -242,6 +243,7 @@ private:
 
 public slots:
     void markDirty();
+    bool isUndefined(float value);
 
 private:
     QScopedPointer<FlexboxPrivate> d_ptr;

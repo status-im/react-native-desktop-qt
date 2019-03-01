@@ -11,10 +11,8 @@ Flickable {
     property alias text: textArea.text
     property alias textAreaLength: textArea.length
     anchors.fill: textInputRoot
-    ScrollBar.vertical: ScrollBar {}
 
     TextArea.flickable: TextArea {
-
         id: textArea
         color: textInputRoot.p_color
         placeholderText: textInputRoot.p_placeholderText
@@ -53,9 +51,19 @@ Flickable {
                                           textInputRoot.p_submitShortcut.key,
                                           textInputRoot.p_submitShortcut.modifiers)
         }
-        onContentSizeChanged: {
+        onContentSizeChanged: {            
             if(textInputManager)
                 textInputManager.sendOnContentSizeChange(textField, contentWidth, contentHeight)
+
+            var fl = textInputRoot.flexbox;
+
+            if(fl && textInputRoot.heightSetInternally){
+                textInputRoot.flexbox.p_height = contentHeight;
+                if(textInputRoot.textInputManager) {
+                    textInputRoot.textInputManager.requestRootPolish();
+                }
+            }
+
         }
         onEditingFinished: {
             textInputManager.sendOnEndEditingToJs(textField)
