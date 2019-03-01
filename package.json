@@ -193,8 +193,8 @@
     "xcode": "^1.0.0",
     "xmldoc": "^0.4.0",
     "yargs": "^9.0.0",
-    "yeoman-environment": "^1.2.7",
-    "yeoman-generator": "^0.20.3"
+    "yeoman-environment": "^2.3.4",
+    "yeoman-generator": "^3.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
