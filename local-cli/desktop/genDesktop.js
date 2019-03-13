@@ -26,14 +26,7 @@ function applyDesktopPlatformPatch() {
 }
 
 function genDesktop(args, config) {
-  applyDesktopPlatformPatch();
-  return generate([
-     '--platform', 'desktop',
-     '--project-path', process.cwd(),
-     '--project-name', JSON.parse(
-       fs.readFileSync('package.json', 'utf8')
-     ).name
-    ], config);
+  return applyDesktopPlatformPatch();
 }
 
 module.exports = {
