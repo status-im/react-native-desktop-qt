@@ -436,6 +436,12 @@ void ReactItem::paint(QPainter* painter) {
                     painter->fillPath(ap.subtracted(path), d->backgroundColor);
                 }
             } else {
+                if (d->backgroundColor.isValid() && d->backgroundColor.alpha() != 0) {
+                    QPainterPath backgroundPath;
+                    backgroundPath.addRect(area);
+                    painter->fillPath(backgroundPath, d->backgroundColor);
+                }
+
                 d->calculateCornerRects(area, border);
                 QPainterPath path;
                 // TODO: background

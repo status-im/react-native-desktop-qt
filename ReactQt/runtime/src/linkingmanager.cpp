@@ -34,6 +34,13 @@ void LinkingManager::canOpenURL(const QString& url,
     resolve(d->bridge, QVariantList{true});
 }
 
+void LinkingManager::getInitialURL(const ModuleInterface::ListArgumentBlock& resolve,
+                                   const ModuleInterface::ListArgumentBlock& reject) {
+    Q_D(LinkingManager);
+    Q_UNUSED(reject);
+    resolve(d->bridge, QVariantList{});
+}
+
 LinkingManager::LinkingManager(QObject* parent) : QObject(parent), d_ptr(new LinkingManagerPrivate) {}
 
 LinkingManager::~LinkingManager() {}

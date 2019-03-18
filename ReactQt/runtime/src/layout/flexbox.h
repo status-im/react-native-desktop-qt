@@ -33,17 +33,18 @@ class Flexbox : public QObject {
 
     Q_PROPERTY(QQuickItem* control READ control WRITE setControl NOTIFY controlChanged)
     Q_PROPERTY(QObject* viewManager READ viewManager WRITE setViewManager NOTIFY viewManagerChanged)
-    Q_PROPERTY(int p_width READ width WRITE setWidth NOTIFY widthChanged)
-    Q_PROPERTY(int p_height READ height WRITE setHeight NOTIFY heightChanged)
+    Q_PROPERTY(QVariant p_width READ width WRITE setWidth NOTIFY widthChanged)
+    Q_PROPERTY(QVariant p_height READ height WRITE setHeight NOTIFY heightChanged)
     Q_PROPERTY(QString p_flexDirection READ flexDirection WRITE setFlexDirection NOTIFY flexDirectionChanged)
     Q_PROPERTY(QString p_justifyContent READ justifyContent WRITE setJustifyContent NOTIFY justifyContentChanged)
-    Q_PROPERTY(float p_margin READ margin WRITE setMargin NOTIFY marginChanged)
-    Q_PROPERTY(float p_marginTop READ marginTop WRITE setMarginTop NOTIFY marginTopChanged)
-    Q_PROPERTY(float p_marginBottom READ marginBottom WRITE setMarginBottom NOTIFY marginBottomChanged)
-    Q_PROPERTY(float p_marginLeft READ marginLeft WRITE setMarginLeft NOTIFY marginLeftChanged)
-    Q_PROPERTY(float p_marginRight READ marginRight WRITE setMarginRight NOTIFY marginRightChanged)
-    Q_PROPERTY(float p_marginHorizontal READ marginHorizontal WRITE setMarginHorizontal NOTIFY marginHorizontalChanged)
-    Q_PROPERTY(float p_marginVertical READ marginVertical WRITE setMarginVertical NOTIFY marginVerticalChanged)
+    Q_PROPERTY(QVariant p_margin READ margin WRITE setMargin NOTIFY marginChanged)
+    Q_PROPERTY(QVariant p_marginTop READ marginTop WRITE setMarginTop NOTIFY marginTopChanged)
+    Q_PROPERTY(QVariant p_marginBottom READ marginBottom WRITE setMarginBottom NOTIFY marginBottomChanged)
+    Q_PROPERTY(QVariant p_marginLeft READ marginLeft WRITE setMarginLeft NOTIFY marginLeftChanged)
+    Q_PROPERTY(QVariant p_marginRight READ marginRight WRITE setMarginRight NOTIFY marginRightChanged)
+    Q_PROPERTY(
+        QVariant p_marginHorizontal READ marginHorizontal WRITE setMarginHorizontal NOTIFY marginHorizontalChanged)
+    Q_PROPERTY(QVariant p_marginVertical READ marginVertical WRITE setMarginVertical NOTIFY marginVerticalChanged)
     Q_PROPERTY(float p_borderWidth READ borderWidth WRITE setBorderWidth NOTIFY borderWidthChanged)
     Q_PROPERTY(float p_borderTopWidth READ borderTopWidth WRITE setBorderTopWidth NOTIFY borderTopWidthChanged)
     Q_PROPERTY(
@@ -54,16 +55,16 @@ class Flexbox : public QObject {
     Q_PROPERTY(QString p_alignContent READ alignContent WRITE setAlignContent NOTIFY alignContentChanged)
     Q_PROPERTY(QString p_alignSelf READ alignSelf WRITE setAlignSelf NOTIFY alignSelfChanged)
     Q_PROPERTY(float p_aspectRatio READ aspectRatio WRITE setAspectRatio NOTIFY aspectRatioChanged)
-    Q_PROPERTY(float p_bottom READ bottom WRITE setBottom NOTIFY bottomChanged)
-    Q_PROPERTY(float p_left READ left WRITE setLeft NOTIFY leftChanged)
-    Q_PROPERTY(float p_right READ right WRITE setRight NOTIFY rightChanged)
-    Q_PROPERTY(float p_top READ top WRITE setTop NOTIFY topChanged)
-    Q_PROPERTY(float p_maxWidth READ maxWidth WRITE setMaxWidth NOTIFY maxWidthChanged)
-    Q_PROPERTY(float p_maxHeight READ maxHeight WRITE setMaxHeight NOTIFY maxHeightChanged)
-    Q_PROPERTY(float p_minWidth READ minWidth WRITE setMinWidth NOTIFY minWidthChanged)
-    Q_PROPERTY(float p_minHeight READ minHeight WRITE setMinHeight NOTIFY minHeightChanged)
+    Q_PROPERTY(QVariant p_bottom READ bottom WRITE setBottom NOTIFY bottomChanged)
+    Q_PROPERTY(QVariant p_left READ left WRITE setLeft NOTIFY leftChanged)
+    Q_PROPERTY(QVariant p_right READ right WRITE setRight NOTIFY rightChanged)
+    Q_PROPERTY(QVariant p_top READ top WRITE setTop NOTIFY topChanged)
+    Q_PROPERTY(QVariant p_maxWidth READ maxWidth WRITE setMaxWidth NOTIFY maxWidthChanged)
+    Q_PROPERTY(QVariant p_maxHeight READ maxHeight WRITE setMaxHeight NOTIFY maxHeightChanged)
+    Q_PROPERTY(QVariant p_minWidth READ minWidth WRITE setMinWidth NOTIFY minWidthChanged)
+    Q_PROPERTY(QVariant p_minHeight READ minHeight WRITE setMinHeight NOTIFY minHeightChanged)
     Q_PROPERTY(float p_flex READ flex WRITE setFlex NOTIFY flexChanged)
-    Q_PROPERTY(float p_flexBasis READ flexBasis WRITE setFlexBasis NOTIFY flexBasisChanged)
+    Q_PROPERTY(QVariant p_flexBasis READ flexBasis WRITE setFlexBasis NOTIFY flexBasisChanged)
     Q_PROPERTY(float p_flexGrow READ flexGrow WRITE setFlexGrow NOTIFY flexGrowChanged)
     Q_PROPERTY(float p_flexShrink READ flexShrink WRITE setFlexShrink NOTIFY flexShrinkChanged)
     Q_PROPERTY(QString p_flexWrap READ flexWrap WRITE setFlexWrap NOTIFY flexWrapChanged)
@@ -129,6 +130,7 @@ signals:
     void positionChanged();
     void directionChanged();
     void isDirtyChanged();
+    //    void recalculated();
 
 public:
     Flexbox(QObject* parent = 0);
@@ -147,27 +149,27 @@ public:
     QObject* viewManager();
     void setViewManager(QObject* value);
     float width();
-    void setWidth(float value);
+    void setWidth(QVariant value);
     float height();
-    void setHeight(float value);
+    void setHeight(QVariant value);
     QString flexDirection();
     void setFlexDirection(const QString& value);
     QString justifyContent();
     void setJustifyContent(const QString& value);
     float margin();
-    void setMargin(float value);
+    void setMargin(QVariant value);
     float marginTop();
-    void setMarginTop(float value);
+    void setMarginTop(QVariant value);
     float marginBottom();
-    void setMarginBottom(float value);
+    void setMarginBottom(QVariant value);
     float marginLeft();
-    void setMarginLeft(float value);
+    void setMarginLeft(QVariant value);
     float marginRight();
-    void setMarginRight(float value);
+    void setMarginRight(QVariant value);
     float marginHorizontal();
-    void setMarginHorizontal(float value);
+    void setMarginHorizontal(QVariant value);
     float marginVertical();
-    void setMarginVertical(float value);
+    void setMarginVertical(QVariant value);
     float borderWidth();
     void setBorderWidth(float value);
     float borderTopWidth();
@@ -187,25 +189,25 @@ public:
     float aspectRatio();
     void setAspectRatio(float value);
     float top();
-    void setTop(float value);
+    void setTop(QVariant value);
     float bottom();
-    void setBottom(float value);
+    void setBottom(QVariant value);
     float left();
-    void setLeft(float value);
+    void setLeft(QVariant value);
     float right();
-    void setRight(float value);
+    void setRight(QVariant value);
     float minWidth();
-    void setMinWidth(float value);
+    void setMinWidth(QVariant value);
     float minHeight();
-    void setMinHeight(float value);
+    void setMinHeight(QVariant value);
     float maxWidth();
-    void setMaxWidth(float value);
+    void setMaxWidth(QVariant value);
     float maxHeight();
-    void setMaxHeight(float value);
+    void setMaxHeight(QVariant value);
     float flex();
     void setFlex(float value);
     float flexBasis();
-    void setFlexBasis(float value);
+    void setFlexBasis(QVariant value);
     float flexGrow();
     void setFlexGrow(float value);
     float flexShrink();
@@ -213,19 +215,19 @@ public:
     QString flexWrap();
     void setFlexWrap(const QString& value);
     float padding();
-    void setPadding(float value);
+    void setPadding(QVariant value);
     float paddingTop();
-    void setPaddingTop(float value);
+    void setPaddingTop(QVariant value);
     float paddingBottom();
-    void setPaddingBottom(float value);
+    void setPaddingBottom(QVariant value);
     float paddingLeft();
-    void setPaddingLeft(float value);
+    void setPaddingLeft(QVariant value);
     float paddingRight();
-    void setPaddingRight(float value);
+    void setPaddingRight(QVariant value);
     float paddingHorizontal();
-    void setPaddingHorizontal(float value);
+    void setPaddingHorizontal(QVariant value);
     float paddingVertical();
-    void setPaddingVertical(float value);
+    void setPaddingVertical(QVariant value);
     QString display();
     void setDisplay(const QString& value);
     QString overflow();
@@ -236,8 +238,12 @@ public:
     void setDirection(const QString& value);
     bool isDirty();
 
+private:
+    bool parsePercents(QVariant& value, float& result);
+
 public slots:
     void markDirty();
+    bool isUndefined(float value);
 
 private:
     QScopedPointer<FlexboxPrivate> d_ptr;

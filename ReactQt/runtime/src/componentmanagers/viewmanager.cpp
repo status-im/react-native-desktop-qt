@@ -120,6 +120,12 @@ void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float wid
                        QVariantMap{{"layout", QVariantMap{{"x", x}, {"y", y}, {"width", width}, {"height", height}}}});
 }
 
+void ViewManager::requestRootPolish() {
+    if (bridge() && bridge()->visualParent()) {
+        bridge()->visualParent()->polish();
+    }
+}
+
 QQuickItem* ViewManager::createView(const QVariantMap& properties) {
     QString qmlSrc = qmlComponentFile(properties);
 

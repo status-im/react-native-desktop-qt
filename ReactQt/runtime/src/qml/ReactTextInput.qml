@@ -29,11 +29,23 @@ Item {
     property bool p_autoFocus: false
     property var p_submitShortcut: defaultShortcut(p_multiline)
 
+    readonly property int defaultHeight: 21
+    property bool heightSetInternally: false
+
     property var flexbox: React.Flexbox {
         control: textInputRoot;
         viewManager: textInputManager
-        p_height: 25
     }
+
+    function onJsPropertiesSet() {
+        if(flexbox) {
+            if(flexbox.isUndefined(flexbox.p_height)) {
+                flexbox.p_height = textInputRoot.defaultHeight
+                heightSetInternally = true;
+            }
+        }
+    }
+
     property bool jsTextChange: false
 
     function defaultShortcut(multiline) {
