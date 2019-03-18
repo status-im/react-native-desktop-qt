@@ -38,7 +38,7 @@ void LinkingManager::getInitialURL(const ModuleInterface::ListArgumentBlock& res
                                    const ModuleInterface::ListArgumentBlock& reject) {
     Q_D(LinkingManager);
     Q_UNUSED(reject);
-    resolve(d->bridge, QVariantList{QString()});
+    resolve(d->bridge, QVariantList{});
 }
 
 LinkingManager::LinkingManager(QObject* parent) : QObject(parent), d_ptr(new LinkingManagerPrivate) {}
