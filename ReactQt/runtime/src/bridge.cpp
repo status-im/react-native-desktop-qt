@@ -188,7 +188,17 @@ void Bridge::setupExecutor() {
     if (!d->executor) {
 
         if (d->jsExecutor == "JSWebEngineExecutor") {
+
             d->executor = new JSWebEngineExecutor();
+
+            //            if (!d->executorThread) {
+            //                d->executorThread = new QThread();
+            //            }
+            //            d->executorThread->start();
+
+            //            d->executor = new JSWebEngineExecutor();
+            //            d->executor->moveToThread(d->executorThread);
+
         } else if (d->jsExecutor == "NodeJsExecutor") {
             if (!d->executorThread) {
                 d->executorThread = new QThread();

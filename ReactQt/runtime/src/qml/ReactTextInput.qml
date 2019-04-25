@@ -154,6 +154,6 @@ Item {
     }
 
 
-    Component.onCompleted: recreateInputControl();
-    onP_multilineChanged: recreateInputControl();
+//    Component.onCompleted: recreateInputControl();
+//    onP_multilineChanged: recreateInputControl();
 }

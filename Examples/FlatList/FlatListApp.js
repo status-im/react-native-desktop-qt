@@ -6,13 +6,15 @@ import {
   Button,
   View,
   Text,
+  Image,
   TextInput,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  TouchableHighlight
 } from 'react-native';
 
 var userData = [];
-for (var i = 1; i <= 20; i++) {
+for (var i = 1; i <= 500; i++) {
    var numberedTitle = "Button "+ i;
    userData.push({id: i, title: numberedTitle});
 }
@@ -24,15 +26,21 @@ class MyListItem extends React.PureComponent {
   };
 
   render() {
+
+    console.log("---- RENDER LISTITEM")
+
     const textColor = this.props.selected ? "red" : "black";
     return (
-      <TouchableOpacity onPress={this._onPress} style={{height: 50, backgroundColor: "lightyellow"}}>
-        <View>
+
+      <TouchableHighlight onPress={this._onPress} style={{height: 50, backgroundColor: "lightyellow"}}>
+        <View style={{flexDirection: "row"}}>
+          <Image style={{height: 50, width: 50}} source={{uri: "https://facebook.github.io/react-native/img/header_logo.png"}}>
+          </Image>
           <Text style={{ color: textColor }}>
             {this.props.title}
           </Text>
         </View>
-      </TouchableOpacity>
+      </TouchableHighlight>
     );
   }
 }
@@ -42,7 +50,7 @@ export default class FlatListReactNative extends Component {
   data: userData,
   height: 50};
 
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.id.toString();
 
   _onPressItem = (id: string) => {
     // updater functions are preferred for transactional updates
@@ -60,6 +68,7 @@ _renderItem = ({item}) => (
     onPressItem={this._onPressItem}
     selected={!!this.state.selected.get(item.id)}
     title={item.title}
+    debug={true}
   />
 );
 
@@ -70,28 +79,31 @@ updateSize = (height) => {
 }
 
 render() {
+
+  console.log("---- RENDER FLATLIST")
+
   let newStyle = {
       height: this.state.height
     }
 
   return (
     <View style={{backgroundColor: "lightRed", flex: 1}} >
-        <View style={{height: 50, backgroundColor: "lightgreen"}}>
-        <Text> header </Text>
-        </View>
+        {/*<View style={{height: 50, backgroundColor: "lightgreen"}}>*/}
+        {/*<Text> header </Text>*/}
+        {/*</View>*/}
         <FlatList
           data={this.state.data}
           extraData={this.state}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
-          inverted={true}
+          scrollEventThrottle={0}
         />
-        <TextInput defaultValue="Footer text input"
-        style={[newStyle]}
-        multiline={true}
-        onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}
-        >
-        </TextInput>
+        {/*<TextInput defaultValue="Footer text input"*/}
+        {/*style={[newStyle]}*/}
+        {/*multiline={true}*/}
+        {/*onContentSizeChange={(e) => this.updateSize(e.nativeEvent.contentSize.height)}*/}
+        {/*>*/}
+        {/*</TextInput>*/}
     </View>
       );
 }

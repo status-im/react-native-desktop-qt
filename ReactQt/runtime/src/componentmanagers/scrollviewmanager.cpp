@@ -34,6 +34,7 @@ using namespace utilities;
 
 QMap<QQuickItem*, QQuickItem*> ScrollViewManager::m_scrollViewByListViewItem;
 QMap<QQuickItem*, ScrollViewModelPtr> ScrollViewManager::m_modelByScrollView;
+QMap<QQuickItem*, QTimer*> ScrollViewManager::m_scrollTimers;
 
 void ScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
@@ -157,10 +158,25 @@ void ScrollViewManager::scroll() {
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
 
-    bool scrollFlagSet = item->property("p_onScroll").toBool();
+    QTimer* timer = nullptr;
+    if (!m_scrollTimers.contains(item)) {
+        timer = new QTimer(this);
+        m_scrollTimers.insert(item, timer);
+        connect(timer, &QTimer::timeout, this, [=]() {
+            bool scrollFlagSet = item->property("p_onScroll").toBool();
+            if (scrollFlagSet) {
+                notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
+            }
+        });
+    } else {
+        timer = m_scrollTimers[item];
+    }
 
-    if (scrollFlagSet) {
-        notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
+    bool isMoving = item->property("moving").toBool();
+    if (isMoving) {
+        timer->start(300);
+    } else {
+        timer->stop();
     }
 }
 

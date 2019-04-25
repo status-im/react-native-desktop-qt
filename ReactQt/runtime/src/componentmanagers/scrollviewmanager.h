@@ -63,6 +63,7 @@ private:
 
     static QMap<QQuickItem*, QQuickItem*> m_scrollViewByListViewItem;
     static QMap<QQuickItem*, ScrollViewModelPtr> m_modelByScrollView;
+    static QMap<QQuickItem*, QTimer*> m_scrollTimers;
 };
 
 #endif // SCROLLVIEWMANAGER_H

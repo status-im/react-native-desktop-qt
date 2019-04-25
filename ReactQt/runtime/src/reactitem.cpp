@@ -114,7 +114,7 @@ void ReactItem::setBackgroundColor(const QColor& backgroundColor) {
     if (d->backgroundColor == backgroundColor)
         return;
     d->backgroundColor = backgroundColor;
-    update();
+    // update();
     Q_EMIT backgroundColorChanged();
 }
 
@@ -131,7 +131,7 @@ void ReactItem::setBorderColor(const QColor& borderColor) {
         d->borderColors[i] = borderColor;
     }
     d->customBorderColors = false;
-    update();
+    // update();
     Q_EMIT borderColorChanged();
 }
 
@@ -145,7 +145,7 @@ void ReactItem::setBorderTopColor(const QColor& borderTopColor) {
         return;
     d->borderColors[0] = borderTopColor;
     d->customBorderColors = true;
-    update();
+    // update();
     Q_EMIT borderTopColorChanged();
 }
 
@@ -159,7 +159,7 @@ void ReactItem::setBorderRightColor(const QColor& borderRightColor) {
         return;
     d->borderColors[1] = borderRightColor;
     d->customBorderColors = true;
-    update();
+    // update();
     Q_EMIT borderRightColorChanged();
 }
 
@@ -173,7 +173,7 @@ void ReactItem::setBorderBottomColor(const QColor& borderBottomColor) {
         return;
     d->borderColors[2] = borderBottomColor;
     d->customBorderColors = true;
-    update();
+    // update();
     Q_EMIT borderBottomColorChanged();
 }
 
@@ -187,7 +187,7 @@ void ReactItem::setBorderLeftColor(const QColor& borderLeftColor) {
         return;
     d->borderColors[3] = borderLeftColor;
     d->customBorderColors = true;
-    update();
+    // update();
     Q_EMIT borderLeftColorChanged();
 }
 
@@ -204,7 +204,7 @@ void ReactItem::setBorderRadius(double borderRadius) {
         d->borderRadiuses[i] = borderRadius;
     }
     d->customBorderRadius = false;
-    update();
+    // update();
     Q_EMIT borderRadiusChanged();
 }
 
@@ -218,7 +218,7 @@ void ReactItem::setBorderTopLeftRadius(double borderTopLeftRadius) {
         return;
     d->borderRadiuses[0] = borderTopLeftRadius;
     d->customBorderRadius = true;
-    update();
+    // update();
     Q_EMIT borderTopLeftRadiusChanged();
 }
 
@@ -232,7 +232,7 @@ void ReactItem::setBorderTopRightRadius(double borderTopRightRadius) {
         return;
     d->borderRadiuses[1] = borderTopRightRadius;
     d->customBorderRadius = true;
-    update();
+    // update();
     Q_EMIT borderTopRightRadiusChanged();
 }
 
@@ -246,7 +246,7 @@ void ReactItem::setBorderBottomLeftRadius(double borderBottomLeftRadius) {
         return;
     d->borderRadiuses[3] = borderBottomLeftRadius;
     d->customBorderRadius = true;
-    update();
+    // update();
     Q_EMIT borderBottomLeftRadiusChanged();
 }
 
@@ -260,7 +260,7 @@ void ReactItem::setBorderBottomRightRadius(double borderBottomRightRadius) {
         return;
     d->borderRadiuses[2] = borderBottomRightRadius;
     d->customBorderRadius = true;
-    update();
+    // update();
     Q_EMIT borderBottomRightRadiusChanged();
 }
 
@@ -274,7 +274,7 @@ void ReactItem::setBorderStyle(const QString& borderStyle) {
     if (d->borderStyle == bs)
         return;
     d->borderStyle = bs;
-    update();
+    // update();
     Q_EMIT borderStyleChanged();
 }
 
@@ -291,7 +291,7 @@ void ReactItem::setBorderWidth(double borderWidth) {
         d->borderWidths[i] = borderWidth;
     }
     d->customBorderWidths = false;
-    update();
+    // update();
     Q_EMIT borderWidthChanged();
 }
 
@@ -305,7 +305,7 @@ void ReactItem::setBorderTopWidth(double borderTopWidth) {
         return;
     d->borderWidths[0] = borderTopWidth;
     d->customBorderWidths = true;
-    update();
+    // update();
     Q_EMIT borderTopWidthChanged();
 }
 
@@ -319,7 +319,7 @@ void ReactItem::setBorderRightWidth(double borderRightWidth) {
         return;
     d->borderWidths[1] = borderRightWidth;
     d->customBorderWidths = true;
-    update();
+    // update();
     Q_EMIT borderRightWidthChanged();
 }
 
@@ -333,7 +333,7 @@ void ReactItem::setBorderBottomWidth(double borderBottomWidth) {
         return;
     d->borderWidths[2] = borderBottomWidth;
     d->customBorderWidths = true;
-    update();
+    // update();
     Q_EMIT borderBottomWidthChanged();
 }
 
@@ -347,7 +347,7 @@ void ReactItem::setBorderLeftWidth(double borderLeftWidth) {
         return;
     d->borderWidths[3] = borderLeftWidth;
     d->customBorderWidths = true;
-    update();
+    // update();
     Q_EMIT borderLeftWidthChanged();
 }
 

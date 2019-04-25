@@ -161,7 +161,7 @@ TextEdit {
             var child = textRoot.children[i];
             if(isText(child) && child.decoratedText) {
                 var nestedText = child.decoratedText;
-                nestedText = "<a href=\"" + i + "\" style=\"text-decoration: none\">" + nestedText + "</a>"; 
+                nestedText = "<a href=\"" + i + "\" style=\"text-decoration: none\">" + nestedText + "</a>";
                 htmlString += nestedText
             }
             else if(isRawText(child) && child.p_text) {
