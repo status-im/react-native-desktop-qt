@@ -53,7 +53,7 @@ public:
     RootView* q_ptr;
     bool remoteJSDebugging = false;
     QNetworkReply* liveReloadUrlReply = nullptr;
-    QSet<ulong> m_processedEvents;
+    // QSet<ulong> m_processedEvents;
 
     RootViewPrivate(RootView* q) : q_ptr(q) {}
 
@@ -331,11 +331,11 @@ void RootView::componentComplete() {
 void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
     Q_D(RootView);
 
-    if (d->m_processedEvents.contains(event->timestamp())) {
-        return;
-    } else {
-        d->m_processedEvents.clear();
-    }
+    // if (d->m_processedEvents.contains(event->timestamp())) {
+    //     return;
+    // } else {
+    //     d->m_processedEvents.clear();
+    // }
 
     QVariantMap e = makeReactTouchEvent(receiver, event);
     if (e.isEmpty())
@@ -344,7 +344,7 @@ void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQui
     d->bridge->enqueueJSCall("RCTEventEmitter",
                              "receiveTouches",
                              QVariantList{normalizeInputEventName(eventType), QVariantList{e}, QVariantList{0}});
-    d->m_processedEvents.insert(event->timestamp());
+    // d->m_processedEvents.insert(event->timestamp());
     event->setAccepted(true);
 }
 
