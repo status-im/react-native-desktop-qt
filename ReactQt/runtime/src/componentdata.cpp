@@ -56,7 +56,7 @@ QVariantMap ComponentData::viewConfig() const {
         qWarning() << name() << "has no view for inspecting!";
         return rc;
     }
-    view->deleteLater();
+    //    view->deleteLater();
 
     PropertyHandler* ph = m_moduleInterface->propertyHandler(view);
     ph->deleteLater(); // XXX:

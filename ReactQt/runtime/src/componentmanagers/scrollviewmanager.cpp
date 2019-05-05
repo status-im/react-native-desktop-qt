@@ -74,12 +74,12 @@ QString ScrollViewManager::moduleName() {
 }
 
 QStringList ScrollViewManager::customDirectEventTypes() {
-    return QStringList{"scrollBeginDrag",
+    return QStringList{normalizeInputEventName("scrollBeginDrag"),
                        normalizeInputEventName("onScroll"),
-                       "scrollEndDrag",
-                       "scrollAnimationEnd",
-                       "momentumScrollBegin",
-                       "momentumScrollEnd"};
+                       normalizeInputEventName("scrollEndDrag"),
+                       normalizeInputEventName("scrollAnimationEnd"),
+                       normalizeInputEventName("momentumScrollBegin"),
+                       normalizeInputEventName("momentumScrollEnd")};
 }
 
 bool ScrollViewManager::isArrayScrollingOptimizationEnabled(QQuickItem* item) {
@@ -180,6 +180,18 @@ void ScrollViewManager::scroll() {
     }
 }
 
+void ScrollViewManager::onDraggingChanged() {
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
+
+    bool isDragging = item->property("dragging").toBool();
+    if (isDragging) {
+        scrollBeginDrag();
+    } else {
+        scrollEndDrag();
+    }
+}
+
 void ScrollViewManager::momentumScrollBegin(QQuickItem* item) {
     // qDebug() << __PRETTY_FUNCTION__;
     notifyJsAboutEvent(tag(item), "momentumScrollBegin", buildEventData(item));
@@ -274,8 +286,7 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
     view->setProperty("scrollViewManager", QVariant::fromValue((QObject*)this));
     // This would be prettier with a Functor version, but connect doesnt support it
     view->installEventFilter((QObject*)this);
-    connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
-    connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
+    connect(view, SIGNAL(draggingChanged()), SLOT(onDraggingChanged()));
     connect(view, SIGNAL(movingChanged()), SLOT(scroll()));
 }
 

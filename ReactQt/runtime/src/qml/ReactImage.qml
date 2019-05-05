@@ -42,6 +42,7 @@ React.Item {
         fillMode: fillModeFromResizeMode(imageRoot.p_resizeMode)
         source: imageRoot.managedSource
         visible: false //image not visible, because it is followed by effects and last effect is visible
+        asynchronous: true
 
         //svg images sometimes contain internal height and width specification and gets
         //blurry when resized. To avoid this we set sourceSize that supercedes internal svg settings

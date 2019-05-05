@@ -189,15 +189,13 @@ void Bridge::setupExecutor() {
 
         if (d->jsExecutor == "JSWebEngineExecutor") {
 
+            if (!d->executorThread) {
+                d->executorThread = new QThread();
+            }
+            d->executorThread->start();
+
             d->executor = new JSWebEngineExecutor();
-
-            //            if (!d->executorThread) {
-            //                d->executorThread = new QThread();
-            //            }
-            //            d->executorThread->start();
-
-            //            d->executor = new JSWebEngineExecutor();
-            //            d->executor->moveToThread(d->executorThread);
+            d->executor->moveToThread(d->executorThread);
 
         } else if (d->jsExecutor == "NodeJsExecutor") {
             if (!d->executorThread) {
@@ -647,6 +645,10 @@ void Bridge::processResult(const QJsonDocument& doc) {
                                   Q_ARG(int, methodIDs[i].toInt()),
                                   Q_ARG(QList<QVariant>, paramArrays[i].toList()));
     }
+    //    qDebug() << "------------------- processResult -------------------------";
+    //    qDebug() << "-----------------------------------------------------------";
+    //    qDebug() << "-----------------------------------------------------------";
+    //    qDebug() << "-----------------------------------------------------------";
 }
 
 void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args) {
@@ -665,7 +667,7 @@ void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args
     }
 
     // readable log of methods invoked via bridge
-    // qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
+    //    qDebug() << "INVOKE: " << moduleData->name() << "::" << method->name() << "( " << args << " )";
 
     method->invoke(args);
 }

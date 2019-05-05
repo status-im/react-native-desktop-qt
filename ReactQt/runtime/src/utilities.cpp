@@ -11,9 +11,6 @@
 
 #include "utilities.h"
 
-#include <QMetaType>
-#include <QtQml>
-
 #include "attachedproperties.h"
 #include "componentmanagers/imagemanager.h"
 #include "componentmanagers/viewmanager.h"
@@ -22,6 +19,9 @@
 #include "reactitem.h"
 #include "rootview.h"
 #include "utilities.h"
+#include <QMetaType>
+#include <QQmlIncubator>
+#include <QtQml>
 
 const int MAJOR_VERSION = 0;
 const int MINOR_VERSION = 1;
@@ -91,13 +91,25 @@ QmlComponentPtr createComponentFromSourceFile(QQmlEngine* qmlEngine, const QUrl&
     return component;
 }
 
+static QQmlIncubator incubator(QQmlIncubator::Asynchronous);
+
 QQuickItem* createQMLItemFromComponent(QmlComponentPtr component) {
     QObject* createdObject = component->create();
+
+    //    component->create(incubator);
+
+    //    while (!incubator.isReady()) {
+    //        QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
+    //    }
+
+    //    QObject* createdObject = incubator.object();
+
     if (createdObject == nullptr) {
         qCritical() << QString("Unable to construct item from component %1").arg(component->url().toString());
     }
     return qobject_cast<QQuickItem*>(createdObject);
 }
+
 
 QObject* createQObjectInstance(const QString& typeName) {
     const int connectionType = QMetaType::type((typeName + "*").toLocal8Bit());

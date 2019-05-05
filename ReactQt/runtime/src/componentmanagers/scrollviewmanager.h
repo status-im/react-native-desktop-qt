@@ -54,6 +54,7 @@ private Q_SLOTS:
     void scrollBeginDrag();
     void scrollEndDrag();
     void scroll();
+    void onDraggingChanged();
 
 private:
     QVariantMap buildEventData(QQuickItem* item) const;

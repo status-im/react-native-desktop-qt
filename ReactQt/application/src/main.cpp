@@ -153,6 +153,13 @@ int main(int argc, char** argv) {
     ReactNativeProperties* rnp = new ReactNativeProperties(&view);
 
     utilities::registerReactTypes();
+    //#ifdef QT_DEBUG
+    QLoggingCategory::setFilterRules("UIManager=false\n"
+                                     "Flexbox=false\n"
+                                     "WebSocketModule=false\n"
+                                     "Networking=false\n"
+                                     "ViewManager=false\n");
+    //#endif
 
     QCommandLineParser p;
     p.setApplicationDescription("React Native host application");
