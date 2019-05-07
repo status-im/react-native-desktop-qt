@@ -47,6 +47,7 @@ React.Item {
         //blurry when resized. To avoid this we set sourceSize that supercedes internal svg settings
         sourceSize.width: isSVG ? flexbox.p_width : undefined
         sourceSize.height: isSVG ? flexbox.p_height : undefined
+        asynchronous: true
     }
 
     FastBlur {
