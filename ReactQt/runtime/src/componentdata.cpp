@@ -65,22 +65,23 @@ QVariantMap ComponentData::viewConfig() const {
     QStringList bubblingEvents;
 
     // {{{ propTypes
-    QMap<QString, QMetaProperty> properties = ph->availableProperties();
+    QMap<QString, QString> properties = ph->availableProperties();
 
     // XXX: sort out the callback events..
     QVariantMap propTypes;
     for (auto& propName : properties.keys()) {
-        auto pName = propName;
-        auto p = properties.value(propName);
+        auto qmlPropName = properties[propName];
+
+        QMetaProperty p = ph->metaProperty(propName);
 
         if (p.userType() == qMetaTypeId<ModuleInterface::BubblingEventBlock>()) {
-            propTypes.insert(p.name(), "bool");
-            bubblingEvents << p.name();
+            propTypes.insert(qmlPropName, "bool");
+            bubblingEvents << qmlPropName;
         } else if (p.userType() == qMetaTypeId<ModuleInterface::DirectEventBlock>()) {
-            propTypes.insert(p.name(), "bool");
-            directEvents << p.name();
+            propTypes.insert(qmlPropName, "bool");
+            directEvents << qmlPropName;
         } else {
-            propTypes.insert(pName, p.typeName());
+            propTypes.insert(propName, p.typeName());
         }
     }
 

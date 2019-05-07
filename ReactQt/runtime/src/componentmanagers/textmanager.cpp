@@ -40,8 +40,8 @@ PropertyHandler* TextManager::propertyHandler(QObject* object) {
 
     // we keep track of all assigned properties because if property not assigned explicitly,
     // it should be taken from parent
-    return new PropertyHandler(object, [&](QObject* object, QMetaProperty property, const QVariant& value) {
-        m_explicitlySetProps[object].insert(property.name());
+    return new PropertyHandler(object, [&](QObject* object, const QString& propertyName, const QVariant& value) {
+        m_explicitlySetProps[object].insert(propertyName);
     });
 }
 

@@ -29,8 +29,8 @@ struct Props {
 
     Props() {
         //        qDebug() << "props created";
-        m_qmlProperties = new QMap<QString, QMetaProperty>();
-        m_flexboxProperties = new QMap<QString, QMetaProperty>();
+        m_qmlProperties = new QMap<QString, QString>();
+        m_flexboxProperties = new QMap<QString, QString>();
         m_defaultQmlValues = new QMap<QString, QVariant>();
         m_defaultFlexboxValues = new QMap<QString, QVariant>();
     };
@@ -43,13 +43,13 @@ struct Props {
         delete m_defaultFlexboxValues;
     }
 
-    QMap<QString, QMetaProperty>* m_qmlProperties = nullptr;
-    QMap<QString, QMetaProperty>* m_flexboxProperties = nullptr;
+    QMap<QString, QString>* m_qmlProperties = nullptr;
+    QMap<QString, QString>* m_flexboxProperties = nullptr;
     QMap<QString, QVariant>* m_defaultQmlValues = nullptr;
     QMap<QString, QVariant>* m_defaultFlexboxValues = nullptr;
 };
 
-using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
+using SetPropertyCallback = std::function<void(QObject* object, const QString& propertyName, const QVariant& value)>;
 
 class PropertyHandler : public QObject {
     Q_OBJECT
@@ -58,18 +58,19 @@ public:
     PropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
     virtual ~PropertyHandler();
 
-    virtual QMap<QString, QMetaProperty> availableProperties();
+    virtual QMap<QString, QString> availableProperties();
     virtual void applyProperties(const QVariantMap& properties);
-    QVariant value(const QString& propertyName);
+    QMetaProperty metaProperty(const QString& propertyName);
 
 private:
     void buildPropertyMap();
     void setValueToObjectProperty(QObject* object,
-                                  QMetaProperty property,
+                                  const QString& property,
+                                  const QString& qmlPropertyName,
                                   const QVariant& value,
                                   const QVariant& defaultValue);
     void getPropertiesFromObject(const QObject* object,
-                                 QMap<QString, QMetaProperty>* propertiesMap,
+                                 QMap<QString, QString>* propertiesMap,
                                  QMap<QString, QVariant>* defaultValuesMap);
 
 private:
@@ -78,8 +79,8 @@ private:
     Flexbox* m_flexbox = nullptr;
     QString m_className;
 
-    const QMap<QString, QMetaProperty>* qmlProperties();
-    const QMap<QString, QMetaProperty>* flexboxProperties();
+    const QMap<QString, QString>* qmlProperties();
+    const QMap<QString, QString>* flexboxProperties();
     const QMap<QString, QVariant>* defaultQmlValues();
     const QMap<QString, QVariant>* defaultFlexboxValues();
     static QMap<QString, Props*> m_propsForClass;
