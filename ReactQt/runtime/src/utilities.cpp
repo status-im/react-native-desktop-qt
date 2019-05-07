@@ -110,7 +110,6 @@ QQuickItem* createQMLItemFromComponent(QmlComponentPtr component) {
     return qobject_cast<QQuickItem*>(createdObject);
 }
 
-
 QObject* createQObjectInstance(const QString& typeName) {
     const int connectionType = QMetaType::type((typeName + "*").toLocal8Bit());
     if (connectionType == QMetaType::UnknownType) {
