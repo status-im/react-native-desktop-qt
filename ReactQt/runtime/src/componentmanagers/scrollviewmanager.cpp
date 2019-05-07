@@ -34,6 +34,7 @@ using namespace utilities;
 
 QMap<QQuickItem*, QQuickItem*> ScrollViewManager::m_scrollViewByListViewItem;
 QMap<QQuickItem*, ScrollViewModelPtr> ScrollViewManager::m_modelByScrollView;
+QMap<QQuickItem*, QTimer*> ScrollViewManager::m_scrollTimers;
 
 void ScrollViewManager::scrollTo(int reactTag, double offsetX, double offsetY, bool animated) {
     QQuickItem* item = bridge()->uiManager()->viewForTag(reactTag);
@@ -73,12 +74,12 @@ QString ScrollViewManager::moduleName() {
 }
 
 QStringList ScrollViewManager::customDirectEventTypes() {
-    return QStringList{"scrollBeginDrag",
+    return QStringList{normalizeInputEventName("scrollBeginDrag"),
                        normalizeInputEventName("onScroll"),
-                       "scrollEndDrag",
-                       "scrollAnimationEnd",
-                       "momentumScrollBegin",
-                       "momentumScrollEnd"};
+                       normalizeInputEventName("scrollEndDrag"),
+                       normalizeInputEventName("scrollAnimationEnd"),
+                       normalizeInputEventName("momentumScrollBegin"),
+                       normalizeInputEventName("momentumScrollEnd")};
 }
 
 bool ScrollViewManager::isArrayScrollingOptimizationEnabled(QQuickItem* item) {
@@ -157,10 +158,37 @@ void ScrollViewManager::scroll() {
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
 
-    bool scrollFlagSet = item->property("p_onScroll").toBool();
+    QTimer* timer = nullptr;
+    if (!m_scrollTimers.contains(item)) {
+        timer = new QTimer(this);
+        m_scrollTimers.insert(item, timer);
+        connect(timer, &QTimer::timeout, this, [=]() {
+            bool scrollFlagSet = item->property("p_onScroll").toBool();
+            if (scrollFlagSet) {
+                notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
+            }
+        });
+    } else {
+        timer = m_scrollTimers[item];
+    }
 
-    if (scrollFlagSet) {
-        notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
+    bool isMoving = item->property("moving").toBool();
+    if (isMoving) {
+        timer->start(300);
+    } else {
+        timer->stop();
+    }
+}
+
+void ScrollViewManager::onDraggingChanged() {
+    QQuickItem* item = qobject_cast<QQuickItem*>(sender());
+    Q_ASSERT(item != nullptr);
+
+    bool isDragging = item->property("dragging").toBool();
+    if (isDragging) {
+        scrollBeginDrag();
+    } else {
+        scrollEndDrag();
     }
 }
 
@@ -258,8 +286,7 @@ void ScrollViewManager::configureView(QQuickItem* view) const {
     view->setProperty("scrollViewManager", QVariant::fromValue((QObject*)this));
     // This would be prettier with a Functor version, but connect doesnt support it
     view->installEventFilter((QObject*)this);
-    connect(view, SIGNAL(movementStarted()), SLOT(scrollBeginDrag()));
-    connect(view, SIGNAL(movementEnded()), SLOT(scrollEndDrag()));
+    connect(view, SIGNAL(draggingChanged()), SLOT(onDraggingChanged()));
     connect(view, SIGNAL(movingChanged()), SLOT(scroll()));
 }
 
