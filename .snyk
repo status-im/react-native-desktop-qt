@@ -1,0 +1,110 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - metro > babel-preset-fbjs > @babel/plugin-transform-modules-commonjs > @babel/helper-module-transforms > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-environment > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - inquirer > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/register > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-environment > grouped-queue > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-generator > async > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > async > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-environment > inquirer > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-generator > yeoman-environment > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > react-transform-hmr > react-proxy > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/core > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-generator > yeoman-environment > inquirer > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-generator > yeoman-environment > grouped-queue > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/core > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/core > @babel/traverse > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/core > @babel/traverse > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-modules-commonjs > @babel/helper-module-transforms > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-define-map > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > @babel/traverse > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - yeoman-generator > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > react-transform-hmr > react-proxy > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/core > @babel/traverse > @babel/generator > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/core > @babel/helpers > @babel/traverse > @babel/generator > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-classes > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > metro-babel7-plugin-react-transform > @babel/helper-module-imports > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/helper-hoist-variables > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/helper-hoist-variables > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > babel-preset-fbjs > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/helper-hoist-variables > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-object-super > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/plugin-proposal-class-properties > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-classes > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > @babel/core > @babel/helpers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-classes > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - fbjs-scripts > babel-preset-fbjs > @babel/plugin-transform-parameters > @babel/helper-call-delegate > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro-babel-register > @babel/plugin-transform-async-to-generator > @babel/helper-remap-async-to-generator > @babel/helper-wrap-function > @babel/traverse > @babel/helper-function-name > @babel/helper-get-function-arity > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'
+    - metro > metro-react-native-babel-preset > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2019-07-03T22:21:28.065Z'

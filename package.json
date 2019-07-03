@@ -126,13 +126,14 @@
     "patches"
   ],
   "scripts": {
-    "prepare": "patch-package",
+    "prepare": "npm run snyk-protect; patch-package",
     "start": "node ./local-cli/cli.js start",
     "test": "jest",
     "test-ci": "JEST_JUNIT_OUTPUT=\"reports/junit/js-test-results.xml\" jest --maxWorkers=2 --ci --testResultsProcessor=\"jest-junit\"",
     "flow": "flow",
     "lint": "eslint .",
-    "prettier": "prettier \"./**/*.js\" --write"
+    "prettier": "prettier \"./**/*.js\" --write",
+    "snyk-protect": "snyk protect"
   },
   "bin": {
     "react-native": "local-cli/wrong-react-native.js"
@@ -194,7 +195,8 @@
     "xmldoc": "^0.4.0",
     "yargs": "^9.0.0",
     "yeoman-environment": "^2.3.4",
-    "yeoman-generator": "^3.2.0"
+    "yeoman-generator": "^3.2.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
@@ -233,5 +235,6 @@
         "name": "iPhone 8"
       }
     }
-  }
+  },
+  "snyk": true
 }
