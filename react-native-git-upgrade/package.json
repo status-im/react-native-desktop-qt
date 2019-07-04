@@ -25,6 +25,12 @@
     "rimraf": "^2.5.4",
     "semver": "^5.0.3",
     "shelljs": "^0.7.5",
-    "yeoman-environment": "1.5.3"
-  }
+    "yeoman-environment": "1.5.3",
+    "snyk": "^1.189.0"
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
+  },
+  "snyk": true
 }
