@@ -126,27 +126,49 @@ function _buildApplication(args, desktopExternalModules, desktopJSBundlePath, de
     console.log(chalk.bold('Building the app...'));
 
     var buildCommand = process.platform === "win32" ? "build.bat" : "./build.sh";
+    var buildArguments = [];
+
     if (typeof desktopExternalModules !== 'undefined' && desktopExternalModules !== null) {
-      buildCommand += ' -e "' + desktopExternalModules.toString().replace(/,/g, ';') + '"';
+      buildArguments.push("-e");
+      buildArguments.push(desktopExternalModules.toString().replace(/,/g, ';'));
     }
     if (typeof desktopJSBundlePath !== 'undefined' && desktopJSBundlePath !== null) {
-      buildCommand += ' -j "' + desktopJSBundlePath.toString() + '"';
+      buildArguments.push("-j");
+      buildArguments.push(desktopJSBundlePath.toString());
     }
     if (typeof desktopFonts !== 'undefined' && desktopFonts !== null) {
-      buildCommand += ' -f "' + desktopFonts.toString().replace(/,/g, ';') + '"';
+      buildArguments.push("-f");
+      buildArguments.push(desktopFonts.toString().replace(/,/g, ';'));
     }
     if (process.platform === "win32") {
-      buildCommand += ' -g "' + "MinGW Makefiles" + '"';
+      buildArguments.push("-g");
+      buildArguments.push("MinGW Makefiles");
     }
-    child_process.exec(buildCommand, {cwd: path.join(args.root, 'desktop')},
-                        (error, stdout, stderr) => {
-                          if (error)
-                            reject(error);
-                          else {
-                            console.log(stdout);
-                            resolve();
-                          }
-                        });
+    var child = child_process.spawn(buildCommand, buildArguments, {cwd: path.join(args.root, 'desktop')});
+
+    var stdoutOutput;
+    var stderrOutput;
+    child.stdout.on('data', function (data) {
+      console.log('stdout: ' + data);
+      stdoutOutput += data;
+    });
+
+    child.stderr.on('data', function (data) {
+      console.log('stderr: ' + data);
+      stderrOutput += data;
+    });
+
+    child.on('close', function (code) {
+        console.log('child process exited with code ' + code);
+        if (code != 0) {
+          reject()
+        }
+        else {
+          resolve();
+        }
+    });
+
+
   });
 }
 
