@@ -8,6 +8,7 @@ React.Item {
     property var viewManager: null
     property string p_nativeID
     property int p_zIndex: 0
+    property string p_pointerEvents: "auto"
     property var flexbox: React.Flexbox {control: viewRoot; viewManager: viewRoot.viewManager}
 
     objectName: p_nativeID

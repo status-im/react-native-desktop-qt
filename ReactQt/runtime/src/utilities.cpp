@@ -188,6 +188,20 @@ QQuickItem* getChildFromText(QQuickItem* text, const QPointF& pos) {
     return text->childItems().at(childId);
 }
 
+bool pointerEventsBlocked(QQuickItem* item) {
+    QQuickItem* parent = item;
+    while (parent) {
+        QVariant pointerEvents = parent->property("p_pointerEvents");
+        if (pointerEvents.isValid() && pointerEvents.toString() == "none") {
+            return true;
+        }
+
+        parent = parent->parentItem();
+    }
+
+    return false;
+}
+
 QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
 
     const QPointF& lp = event->localPos();
@@ -198,6 +212,11 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     QPointF local = lp;
     forever {
         target = next;
+
+        if (pointerEventsBlocked(target)) {
+            return QVariantMap{};
+        }
+
         QString className(target->metaObject()->className());
 
         if (className.startsWith("ReactScrollListView")) {
