@@ -53,7 +53,6 @@ public:
     RootView* q_ptr;
     bool remoteJSDebugging = false;
     QNetworkReply* liveReloadUrlReply = nullptr;
-    QSet<ulong> m_processedEvents;
 
     RootViewPrivate(RootView* q) : q_ptr(q) {}
 
@@ -328,24 +327,20 @@ void RootView::componentComplete() {
     });
 }
 
-void RootView::sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
+bool RootView::sendMouseEventToJs(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
     Q_D(RootView);
 
-    if (d->m_processedEvents.contains(event->timestamp())) {
-        return;
-    } else {
-        d->m_processedEvents.clear();
-    }
-
     QVariantMap e = makeReactTouchEvent(receiver, event);
-    if (e.isEmpty())
-        return;
+    if (e.isEmpty()) {
+        return false;
+    }
 
     d->bridge->enqueueJSCall("RCTEventEmitter",
                              "receiveTouches",
                              QVariantList{normalizeInputEventName(eventType), QVariantList{e}, QVariantList{0}});
-    d->m_processedEvents.insert(event->timestamp());
+
     event->setAccepted(true);
+    return true;
 }
 
 #ifdef RCT_DEV
@@ -361,16 +356,16 @@ void RootView::loadDevMenu() {
 #endif // RCT_DEV
 
 void RootView::mousePressEvent(QMouseEvent* event) {
-    sendMouseEvent(event, TOUCH_START, this);
+    sendMouseEventToJs(event, TOUCH_START, this);
 }
 
 // TODO: optimize this
 void RootView::mouseMoveEvent(QMouseEvent* event) {
-    sendMouseEvent(event, TOUCH_MOVE, this);
+    sendMouseEventToJs(event, TOUCH_MOVE, this);
 }
 
 void RootView::mouseReleaseEvent(QMouseEvent* event) {
-    sendMouseEvent(event, TOUCH_END, this);
+    sendMouseEventToJs(event, TOUCH_END, this);
 }
 
 bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
@@ -395,9 +390,8 @@ bool RootView::childMouseEventFilter(QQuickItem* item, QEvent* event) {
         eventName = TOUCH_MOVE;
     }
 
-    sendMouseEvent(static_cast<QMouseEvent*>(event), eventName, item);
-
-    return false;
+    bool stopEventPropagation = sendMouseEventToJs(static_cast<QMouseEvent*>(event), eventName, item);
+    return stopEventPropagation;
 }
 
 #include "rootview.moc"

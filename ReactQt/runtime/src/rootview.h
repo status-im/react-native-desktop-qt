@@ -98,7 +98,7 @@ private:
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     bool childMouseEventFilter(QQuickItem* item, QEvent* event) override;
-    void sendMouseEvent(QMouseEvent* event, const QString& eventType, QQuickItem* receiver);
+    bool sendMouseEventToJs(QMouseEvent* event, const QString& eventType, QQuickItem* receiver);
 #ifdef RCT_DEV
     void loadDevMenu();
 #endif // RCT_DEV
