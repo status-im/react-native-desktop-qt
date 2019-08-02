@@ -13,6 +13,7 @@
 const ImageStylePropTypes = require('ImageStylePropTypes');
 const TextStylePropTypes = require('TextStylePropTypes');
 const ViewStylePropTypes = require('ViewStylePropTypes');
+const ReactPropTypes = require('prop-types');
 
 const invariant = require('fbjs/lib/invariant');
 
@@ -84,5 +85,6 @@ const allStylePropTypes = {};
 StyleSheetValidation.addValidStylePropTypes(ImageStylePropTypes);
 StyleSheetValidation.addValidStylePropTypes(TextStylePropTypes);
 StyleSheetValidation.addValidStylePropTypes(ViewStylePropTypes);
+StyleSheetValidation.addValidStylePropTypes({boxShadow: ReactPropTypes.string});
 
 module.exports = StyleSheetValidation;
