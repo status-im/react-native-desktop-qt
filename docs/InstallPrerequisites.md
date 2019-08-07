@@ -25,7 +25,7 @@ Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-op
 ### Ubuntu
 
 ```
-sudo apt-get install -y git cmake nodejs-legacy npm
+sudo apt-get install -y git cmake nodejs npm
 ```
 
 Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-opensource-linux-x64-5.11.2.run) installer for Linux. Finish installation process.
