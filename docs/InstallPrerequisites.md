@@ -36,6 +36,12 @@ Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-op
 sudo dnf install -y nodejs npm cmake git qt5-devel
 ```
 
+### Archlinux/Manjaro
+
+```
+sudo pacman -Syu qt5-base nodejs npm git cmake
+```
+
 ### All platforms
 
 Make sure that installed Qt's `qmake` tool is available in your PATH.
