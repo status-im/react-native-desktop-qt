@@ -44,7 +44,7 @@ Compilation of desktop project will start. When it finished and app run you can 
 
 ![](./media/react-native-desktop-new-app.png)
 
-**Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command
+**Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command(`react-native run-desktop`)
 
 
 **If you want to know why you had to start bundler and js server** - check the doc on [how react-native-desktop works internally](./HowRNDesktopAppWorks.md)
