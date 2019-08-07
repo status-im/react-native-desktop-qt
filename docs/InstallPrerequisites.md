@@ -25,7 +25,7 @@ Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-op
 ### Ubuntu
 
 ```
-sudo apt-get install -y git cmake nodejs-legacy npm
+sudo apt-get install -y git cmake nodejs-legacy npm gnome-terminal
 ```
 
 Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-opensource-linux-x64-5.11.2.run) installer for Linux. Finish installation process.
@@ -33,7 +33,7 @@ Download and run [Qt 5.11.2](https://download.qt.io/archive/qt/5.11/5.11.2/qt-op
 ### Fedora
 
 ```
-sudo dnf install -y nodejs npm cmake git qt5-devel
+sudo dnf install -y nodejs npm cmake git qt5-devel gnome-terminal
 ```
 
 ### All platforms
