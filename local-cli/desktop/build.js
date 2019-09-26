@@ -26,6 +26,8 @@ function build(args, dependencies) {
   console.log("Found desktop JS bundle path: " + desktopJSBundlePath);
   var desktopFonts = _findDesktopFonts(args);
   console.log("Found desktop fonts: " + desktopFonts);
+  var desktopImages = _findDesktopImages(args);
+  console.log("Found desktop images: " + desktopImages);
 
   return _findModules(args).then((dependencies) => {
     return new Promise((resolve, reject) => {
@@ -40,7 +42,7 @@ function build(args, dependencies) {
       }
     });
   }).then(() => {
-    return _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts);
+    return _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts, desktopImages);
   });
 }
 
@@ -57,6 +59,11 @@ function _findDesktopJSBundlePath(args) {
 function _findDesktopFonts(args) {
   var data = fs.readFileSync(path.join(args.root, 'package.json'));
   return JSON.parse(data).desktopFonts;
+}
+
+function _findDesktopImages(args) {
+  var data = fs.readFileSync(path.join(args.root, 'package.json'));
+  return JSON.parse(data).desktopImages;
 }
 
 function _findModules(args) {
@@ -121,7 +128,7 @@ function _buildModules(args, dependencies, resolve, reject) {
   });
 }
 
-function _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts) {
+function _buildApplication(args, desktopExternalModules, desktopJSBundlePath, desktopFonts, desktopImages) {
   return new Promise((resolve, reject) => {
     console.log(chalk.bold('Building the app...'));
 
@@ -139,6 +146,10 @@ function _buildApplication(args, desktopExternalModules, desktopJSBundlePath, de
     if (typeof desktopFonts !== 'undefined' && desktopFonts !== null) {
       buildArguments.push("-f");
       buildArguments.push(desktopFonts.toString().replace(/,/g, ';'));
+    }
+    if (typeof desktopImages !== 'undefined' && desktopImages !== null) {
+      buildArguments.push("-i");
+      buildArguments.push(desktopImages.toString().replace(/,/g, ';'));
     }
     if (process.platform === "win32") {
       buildArguments.push("-g");

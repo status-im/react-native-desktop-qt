@@ -127,7 +127,7 @@ private:
     QString m_packagerTemplate = "http://%1:%2/index.desktop.bundle?platform=desktop&dev=true";
     QUrl m_codeLocation;
     QString m_pluginsPath;
-    QString m_executor = "LocalServerConnection";
+    QString m_executor = "RemoteServerConnection";
     QVariantMap m_initialProps;
 };
 

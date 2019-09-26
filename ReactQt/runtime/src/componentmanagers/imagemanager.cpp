@@ -43,6 +43,7 @@ class ImageManagerPrivate {
 public:
     bool isBase64ImageUrl(const QUrl& url) const;
     void setSource(QObject* image, const QUrl& url);
+    bool isStoredInResources(const QString& fileName);
 };
 
 ImageManager::ImageManager(QObject* parent) : ViewManager(parent), d_ptr(new ImageManagerPrivate) {}
@@ -70,26 +71,28 @@ void ImageManager::manageSource(const QVariantMap& imageSource, QQuickItem* imag
 
     auto imageLoader = bridge()->imageLoader();
 
-    QUrl source = imageSource[URI_KEY].toUrl();
+    QUrl imageSourceUrl = imageSource[URI_KEY].toUrl();
+    QString imageSourceStr = imageSource[URI_KEY].toString();
 
-    if (d->isBase64ImageUrl(source)) {
-        d->setSource(image, source);
+    if (d->isBase64ImageUrl(imageSourceUrl)) {
+        d->setSource(image, imageSourceUrl);
         return;
     }
 
-    image->setProperty("isSVG", source.toString(QUrl::RemoveQuery).endsWith("svg"));
+    image->setProperty("isSVG", imageSourceUrl.toString(QUrl::RemoveQuery).endsWith("svg"));
 
-    if (source.scheme() == "file" && imageSource[URI_KEY].toString().startsWith(FILE_SCHEME)) {
-        source = QUrl(imageSource[URI_KEY].toString().replace(FILE_SCHEME, ""));
+    if (imageSourceUrl.scheme() == "file" && imageSource[URI_KEY].toString().startsWith(FILE_SCHEME)) {
+        imageSourceUrl = QUrl(imageSourceStr.replace(FILE_SCHEME, ""));
+    }
+    if (d->isStoredInResources(imageSourceStr)) {
+        imageSourceUrl = QUrl(QString("qrc:/") + imageSourceStr);
+    } else if (imageSourceUrl.isRelative()) {
+        imageSourceUrl = QUrl::fromLocalFile(QFileInfo(imageSourceUrl.toString()).absoluteFilePath());
     }
 
-    if (source.isRelative()) {
-        source = QUrl::fromLocalFile(QFileInfo(source.toString()).absoluteFilePath());
-    }
-
-    imageLoader->loadImage(source, [=](ImageLoader::Event event, const QVariantMap& data) {
+    imageLoader->loadImage(imageSourceUrl, [=](ImageLoader::Event event, const QVariantMap& data) {
         if (event == ImageLoader::Event_LoadSuccess) {
-            d->setSource(image, source);
+            d->setSource(image, imageSourceUrl);
         }
         bool eventHandlerSet =
             image->property(QString(QML_PROPERTY_PREFIX + eventNames[event]).toStdString().c_str()).toBool();
@@ -115,6 +118,12 @@ bool ImageManagerPrivate::isBase64ImageUrl(const QUrl& url) const {
 
 void ImageManagerPrivate::setSource(QObject* image, const QUrl& url) {
     image->setProperty("managedSource", url);
+}
+
+bool ImageManagerPrivate::isStoredInResources(const QString& fileName) {
+
+    QFile file(QString(":/") + fileName);
+    return file.exists();
 }
 
 #include "imagemanager.moc"
