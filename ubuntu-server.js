@@ -141,5 +141,5 @@ if (process.argv.indexOf('--pipe') != -1) {
     DEBUG && console.error("-- Connection from RN client");
     if(!closeDangerousConnection(sock))
       rnUbuntuServer(sock, sock);
-  }).listen(port, function() { console.error("-- Server starting") });
+  }).listen(port, function() { console.error("-- Server starting on port", port) });
 }

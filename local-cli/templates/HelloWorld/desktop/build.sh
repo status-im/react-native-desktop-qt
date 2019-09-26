@@ -23,15 +23,20 @@ if [[ $1 == "-f" ]]; then
   shift
 	desktopFonts="$1"
 fi
+if [[ $1 == "-i" ]]; then
+  shift
+  desktopImages="$1"
+fi
 shift
 done
 
 echo "build.sh external modules paths: "$ExternalModulesPaths
 echo "build.sh JS bundle path: "$JsBundlePath
 echo "build.sh desktop fonts: "$desktopFonts
+echo "build.sh desktop images: "$desktopImages
 
 # Workaround
 rm -rf CMakeFiles CMakeCache.txt cmake_install.cmake Makefile
 
 # Build project
-cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" -DDESKTOP_FONTS="$desktopFonts" . && make
+cmake -DCMAKE_BUILD_TYPE=Debug -DEXTERNAL_MODULES_DIR="$ExternalModulesPaths" -DJS_BUNDLE_PATH="$JsBundlePath" -DDESKTOP_FONTS="$desktopFonts" -DDESKTOP_IMAGES="$desktopImages" . && make

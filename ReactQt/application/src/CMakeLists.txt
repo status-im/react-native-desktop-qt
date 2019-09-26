@@ -11,6 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 set(FONTS_RESOURCE "")
+set(IMAGES_RESOURCE "")
 
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Qml REQUIRED)
@@ -29,6 +30,15 @@ foreach(FONT_PATH ${DESKTOP_FONTS})
     STRING(CONCAT TMP ${FONTS_RESOURCE} "<file alias=\"${FONT_FILENAME}\">${FONT_PATH}</file>")
     SET(FONTS_RESOURCE ${TMP})
 endforeach(FONT_PATH)
+
+
+# Add all external desktop images to resources. Images will be outside of directory with qrc,
+# so we are using aliases to load them
+foreach(IMAGE_PATH ${DESKTOP_IMAGES})
+    get_filename_component(IMAGE_FILENAME ${IMAGE_PATH} NAME_WE)
+    STRING(CONCAT TMP ${IMAGES_RESOURCE} "<file alias=\"${IMAGE_FILENAME}\">${IMAGE_PATH}</file>")
+    SET(IMAGES_RESOURCE ${TMP})
+endforeach(IMAGE_PATH)
 
 
 # Format EXTERNAL_MODULES to contain array of external modules type names defined as strings
