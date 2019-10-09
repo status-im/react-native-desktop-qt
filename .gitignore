@@ -62,6 +62,7 @@ moc_*.cpp
 *.moc
 *.qmlc
 ReactQt/application/src/main.qrc
+ReactQt/application/src/main.qml
 
 # Meld (merge tool)
 *.orig
