@@ -21,7 +21,8 @@ find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
-find_package(Qt5WebEngine REQUIRED)
+find_package(Qt5WebEngineWidgets REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 
 if (USE_QTWEBKIT)
   find_package(Qt5WebKit REQUIRED)
@@ -253,12 +254,11 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent WebEngineWidgets)
-if (USE_QTWEBKIT)
-  set (USED_QT_MODULES ${USED_QT_MODULES} WebKit)
-endif()
+target_link_libraries(react-native Qt5::Core Qt5::Qml Qt5::Quick Qt5::WebSockets Qt5::Svg Qt5::Concurrent Qt5::WebEngineWidgets)
 
-qt5_use_modules(react-native ${USED_QT_MODULES})
+if (USE_QTWEBKIT)
+  target_link_libraries(react-native Qt5::WebKit)
+endif()
 
 add_custom_target(
   copy-qmldir ALL
