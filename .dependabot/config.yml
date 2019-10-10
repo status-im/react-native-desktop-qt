@@ -1,0 +1,17 @@
+# https://dependabot.com/docs/config-file/
+
+version: 1
+update_configs:
+  - package_manager: "java:gradle"
+    directory: "/"
+    update_schedule: "weekly"
+    default_reviewers:
+    - "vkjr"
+    allowed_updates:
+      - match:
+          update_type: "security"
+  - package_manager: "javascript"
+    directory: "/"
+    update_schedule: "weekly"
+    default_reviewers:
+    - "vkjr"
