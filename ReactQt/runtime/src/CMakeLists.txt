@@ -22,6 +22,7 @@ find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
 find_package(Qt5WebEngineWidgets REQUIRED)
+find_package(Qt5WebChannel REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
 if (USE_QTWEBKIT)
@@ -254,7 +255,7 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-target_link_libraries(react-native Qt5::Core Qt5::Qml Qt5::Quick Qt5::WebSockets Qt5::Svg Qt5::Concurrent Qt5::WebEngineWidgets)
+target_link_libraries(react-native Qt5::Core Qt5::Qml Qt5::Quick Qt5::WebSockets Qt5::Svg Qt5::Concurrent Qt5::WebEngineWidgets Qt5::WebChannel)
 
 if (USE_QTWEBKIT)
   target_link_libraries(react-native Qt5::WebKit)

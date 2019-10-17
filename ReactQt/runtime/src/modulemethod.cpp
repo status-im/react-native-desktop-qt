@@ -30,6 +30,8 @@ QString ModuleMethod::name() const {
 NativeMethodType ModuleMethod::type() const {
     if (QString(m_metaMethod.tag()) == "REACT_PROMISE") {
         return NativeMethodType::Promise;
+    } else if (QString(m_metaMethod.tag()) == "REACT_SYNC") {
+        return NativeMethodType::Sync;
     }
 
     return NativeMethodType::Async;

@@ -19,6 +19,15 @@
 
 #include "ijsexecutor.h"
 
+// This is an example class that shows how C++ functions can be accessed from js using QWebEngine
+class WebClass : public QObject {
+    Q_OBJECT
+public slots:
+    QString jscallme() {
+        return "Test";
+    }
+};
+
 class JSWebEngineExecutorPrivate;
 class JSWebEngineExecutor : public IJsExecutor {
     Q_OBJECT

@@ -17,31 +17,44 @@
 #include <QJsonDocument>
 #include <QJsonDocument>
 #include <QSharedPointer>
+#include <QWebChannel>
 #include <QWebEnginePage>
 #include <QWebEngineSettings>
 
+const QString INIT_CHANNEL_FROM_JS = "new QWebChannel(qt.webChannelTransport, \
+ function(channel){ \
+ var webobj = channel.objects.webobj; \
+ window.foo = webobj;  \
+ });";
+
+const int WORLD_ID = 0;
+
 class JSWebEngineExecutorPrivate : public QObject {
 public:
-    JSWebEngineExecutorPrivate(JSWebEngineExecutor* e) : QObject(e), q_ptr(e) {}
+    JSWebEngineExecutorPrivate(JSWebEngineExecutor* e) : QObject(e), q_ptr(e) {
+        loadEmptyPage();
+        // Uncomment when there is a need to setup web channel
+        // initializeWebChannel();
+    }
 
 public:
     QJsonDocument jsValueToJson(const QJSValue& value);
 
+private:
+    void loadEmptyPage();
+    void initializeWebChannel();
+
 public:
     JSWebEngineExecutor* q_ptr = nullptr;
     QWebEnginePage m_webPage;
+    QWebChannel* m_Channel = nullptr;
+    WebClass* m_WebObj = nullptr;
 };
 
 JSWebEngineExecutor::JSWebEngineExecutor(QObject* parent)
     : IJsExecutor(parent), d_ptr(new JSWebEngineExecutorPrivate(this)) {
     Q_D(JSWebEngineExecutor);
     qRegisterMetaType<IJsExecutor::ExecuteCallback>();
-
-    // without following react doesn't show js exceptions happened in code correctly.
-    QEventLoop* eventLoop = new QEventLoop();
-    connect(&d->m_webPage, &QWebEnginePage::loadFinished, this, [=](bool finished) { eventLoop->exit(); });
-    d->m_webPage.setHtml(QString(""));
-    eventLoop->exec();
 }
 
 JSWebEngineExecutor::~JSWebEngineExecutor() {}
@@ -52,13 +65,13 @@ void JSWebEngineExecutor::injectJson(const QString& name, const QVariant& data) 
     QJsonDocument doc = QJsonDocument::fromVariant(data);
     QString code = name.toLocal8Bit() + "=" + doc.toJson(QJsonDocument::Compact) + ";";
 
-    d->m_webPage.runJavaScript(code, 0, [](const QVariant& v) {});
+    d->m_webPage.runJavaScript(code, WORLD_ID, [](const QVariant&) {});
 }
 
 void JSWebEngineExecutor::executeApplicationScript(const QByteArray& script, const QUrl& /*sourceUrl*/) {
     Q_D(JSWebEngineExecutor);
 
-    d->m_webPage.runJavaScript(script, 0, [=](const QVariant& v) {
+    d->m_webPage.runJavaScript(script, WORLD_ID, [=](const QVariant& v) {
         if (v.isValid()) {
         }
 
@@ -83,12 +96,9 @@ void JSWebEngineExecutor::executeJSCall(const QString& method,
     }
     QByteArray code = QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");";
 
-    d->m_webPage.runJavaScript(code, 0, [=](const QVariant& v) {
+    d->m_webPage.runJavaScript(code, WORLD_ID, [=](const QVariant& v) {
         QJsonDocument doc;
         if (v != "undefined") {
-            //            qDebug() << "========== executeJSCall result: ==========";
-            //            qDebug() << v;
-
             doc = QJsonDocument::fromVariant(v);
         }
         callback(doc);
@@ -108,4 +118,31 @@ QJsonDocument JSWebEngineExecutorPrivate::jsValueToJson(const QJSValue& value) {
     }
 
     return QJsonDocument();
+}
+
+void JSWebEngineExecutorPrivate::loadEmptyPage() {
+    // without following react doesn't show js exceptions happened in code correctly.
+    QEventLoop* eventLoop = new QEventLoop();
+    connect(&m_webPage, &QWebEnginePage::loadFinished, this, [=](bool finished) { eventLoop->exit(); });
+    m_webPage.setHtml(QString(""));
+    eventLoop->exec();
+}
+
+void JSWebEngineExecutorPrivate::initializeWebChannel() {
+    m_WebObj = new WebClass();
+    m_Channel = new QWebChannel(this);
+    m_Channel->registerObject("webobj", m_WebObj);
+    m_webPage.setWebChannel(m_Channel);
+
+    QFile apiFile(":/qtwebchannel/qwebchannel.js"); // load the API from the resources
+    if (!apiFile.open(QIODevice::ReadOnly)) {
+        qDebug() << "Couldn't load Qt's QWebChannel API!";
+        return;
+    }
+    QString apiScript = QString::fromLatin1(apiFile.readAll());
+    apiFile.close();
+
+    m_webPage.runJavaScript(apiScript, WORLD_ID, [=](const QVariant&) {
+        m_webPage.runJavaScript(INIT_CHANNEL_FROM_JS, WORLD_ID, [=](const QVariant&) {});
+    });
 }
