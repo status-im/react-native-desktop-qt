@@ -165,7 +165,7 @@
     "lodash": "^4.17.5",
     "metro": "^0.48.1",
     "metro-babel-register": "^0.48.1",
-    "metro-core": "^0.48.1",
+    "metro-core": "^0.57.0",
     "metro-memory-fs": "^0.48.1",
     "mime": "^1.3.4",
     "minimist": "^1.2.0",
