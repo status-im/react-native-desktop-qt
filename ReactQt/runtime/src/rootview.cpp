@@ -48,7 +48,7 @@ public:
     QUrl codeLocation;
     QVariantMap properties;
     QString pluginsPath;
-    QString jsExecutor = "JSWebEngineExecutor";
+    QString jsExecutor = "NodeJsExecutor";
     QString serverConnectionType = "RemoteServerConnection";
     Bridge* bridge = nullptr;
     RootView* q_ptr;
