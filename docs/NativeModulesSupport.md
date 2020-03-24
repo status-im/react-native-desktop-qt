@@ -5,7 +5,7 @@ Pure JavaScript react-native modules can be used with react-native-desktop witho
 
 ## Modules with native implementation
 
-Check [List of supported or partially supported native modules](/SupportedNativeModulesList.md), maybe the module you need already ported for desktop. If not, creation of custom react-native `native` modules or `adopting of available native modules` described below:
+Check [List of supported or partially supported native modules](./SupportedNativeModulesList.md), maybe the module you need already ported for desktop. If not, creation of custom react-native `native` modules or `adopting of available native modules` described below:
 
 ### Implementing 3rd party modules
 react-native-desktop provides support for 3rd party native modules to extend functionality of original framework.
