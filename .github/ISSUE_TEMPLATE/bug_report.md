@@ -4,9 +4,9 @@ about: Report a reproducible bug or regression in the core React Native library.
 ---
 
 <!-- Requirements: please go through this checklist before opening a new issue -->
-  - [ ] Review the documentation: https://facebook.github.io/react-native
-  - [ ] Search for existing issues: https://github.com/facebook/react-native/issues
-  - [ ] Use the latest React Native release: https://github.com/facebook/react-native/releases
+  - [ ] Review the documentation: https://facebook.github.io/react-native https://github.com/status-im/react-native-desktop/tree/master/docs
+  - [ ] Search for existing issues: https://github.com/facebook/react-native/issues https://github.com/status-im/react-native-desktop/issues
+  - [ ] Use the latest React Native release: https://github.com/facebook/react-native/releases https://github.com/status-im/react-native-desktop/releases
 
 ## Environment
 Run `react-native info` in your terminal and paste its contents here.
