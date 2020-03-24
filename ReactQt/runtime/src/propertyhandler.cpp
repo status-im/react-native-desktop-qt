@@ -18,43 +18,42 @@
 #include "valuecoercion.h"
 #include <QQuickItem>
 
+QMap<QString, Props*> PropertyHandler::m_propsForClass = QMap<QString, Props*>();
+
 PropertyHandler::PropertyHandler(QObject* object, SetPropertyCallback callback)
     : QObject(object), m_object(object), m_setPropertyCallback(callback) {
     Q_ASSERT(object);
 
     m_flexbox = Flexbox::findFlexbox(qobject_cast<QQuickItem*>(object));
+    m_className = object->metaObject()->className();
 }
 
 PropertyHandler::~PropertyHandler() {}
 
-QMap<QString, QMetaProperty> PropertyHandler::availableProperties() {
-    buildPropertyMap();
-
-    QMap<QString, QMetaProperty> allProps;
-    allProps.unite(m_qmlProperties);
-    allProps.unite(m_flexboxProperties);
+QMap<QString, QString> PropertyHandler::availableProperties() {
+    QMap<QString, QString> allProps;
+    allProps.unite(*qmlProperties());
+    allProps.unite(*flexboxProperties());
 
     return allProps;
 }
 
 void PropertyHandler::applyProperties(const QVariantMap& properties) {
-    buildPropertyMap();
-    // qDebug() << __PRETTY_FUNCTION__ << m_object << properties;
 
-    for (const QString& key : properties.keys()) {
-        QVariant propertyValue = properties.value(key);
+    for (const QString& property : properties.keys()) {
+        QVariant propertyValue = properties.value(property);
 
-        auto it = m_qmlProperties.find(key);
-        if (it != m_qmlProperties.end()) {
-            QMetaProperty property = it.value();
-            setValueToObjectProperty(m_object, property, propertyValue, m_defaultQmlValues[key]);
+        if (qmlProperties()->contains(property)) {
+            QString qmlPropName = qmlProperties()->value(property);
+            setValueToObjectProperty(
+                m_object, property, qmlPropName, propertyValue, defaultQmlValues()->value(property));
         }
 
         if (m_flexbox) {
-            it = m_flexboxProperties.find(key);
-            if (it != m_flexboxProperties.end()) {
-                QMetaProperty property = it.value();
-                setValueToObjectProperty(m_flexbox, property, propertyValue, m_defaultFlexboxValues[key]);
+            if (flexboxProperties()->contains(property)) {
+                QString qmlPropName = flexboxProperties()->value(property);
+                setValueToObjectProperty(
+                    m_flexbox, property, qmlPropName, propertyValue, defaultFlexboxValues()->value(property));
             }
         }
     }
@@ -67,38 +66,41 @@ void PropertyHandler::applyProperties(const QVariantMap& properties) {
     }
 }
 
-QVariant PropertyHandler::value(const QString& propertyName) {
-    buildPropertyMap();
-
-    QVariant value;
-
-    if (m_flexbox && m_flexboxProperties.contains(propertyName)) {
-        value = m_flexboxProperties[propertyName].read(m_flexbox);
-    } else if (m_qmlProperties.contains(propertyName)) {
-        value = m_qmlProperties[propertyName].read(m_object);
+QMetaProperty PropertyHandler::metaProperty(const QString& propertyName) {
+    const QMetaObject* mo = nullptr;
+    QString qmlPropName;
+    if (m_flexbox && flexboxProperties()->contains(propertyName)) {
+        mo = m_flexbox->metaObject();
+        qmlPropName = flexboxProperties()->value(propertyName);
+    } else if (qmlProperties()->contains(propertyName)) {
+        mo = m_object->metaObject();
+        qmlPropName = qmlProperties()->value(propertyName);
     }
 
-    return value;
+    int propIndex = mo->indexOfProperty(qmlPropName.toStdString().c_str());
+
+    return mo->property(propIndex);
 }
 
 void PropertyHandler::buildPropertyMap() {
-    if (m_cached) {
+    if (m_propsForClass.contains(m_className)) {
         return;
+    } else {
+        Props* properties = new Props();
+        m_propsForClass[m_className] = properties;
+
+        // Get qml properties of current object (and its parents)
+        getPropertiesFromObject(m_object, properties->m_qmlProperties, properties->m_defaultQmlValues);
+
+        if (m_flexbox) {
+            getPropertiesFromObject(m_flexbox, properties->m_flexboxProperties, properties->m_defaultFlexboxValues);
+        }
     }
-
-    // Get qml properties of current object (and its parents)
-    getPropertiesFromObject(m_object, m_qmlProperties, m_defaultQmlValues);
-
-    if (m_flexbox) {
-        getPropertiesFromObject(m_flexbox, m_flexboxProperties, m_defaultFlexboxValues);
-    }
-
-    m_cached = true;
 }
 
 void PropertyHandler::getPropertiesFromObject(const QObject* object,
-                                              QMap<QString, QMetaProperty>& propertiesMap,
-                                              QMap<QString, QVariant>& defaultValuesMap) {
+                                              QMap<QString, QString>* propertiesMap,
+                                              QMap<QString, QVariant>* defaultValuesMap) {
 
     const QMetaObject* metaObject = object->metaObject();
 
@@ -107,26 +109,58 @@ void PropertyHandler::getPropertiesFromObject(const QObject* object,
     for (int i = 0; i < propertyCount; ++i) {
         QMetaProperty p = metaObject->property(i);
         QString qmlPropName = p.name();
+
         if (p.isScriptable() && qmlPropName.startsWith(QML_PROPERTY_PREFIX)) {
             QString nameWithoutPrefix = qmlPropName.right(qmlPropName.length() - QML_PROPERTY_PREFIX.length());
-            propertiesMap.insert(nameWithoutPrefix, p);
-            defaultValuesMap.insert(nameWithoutPrefix, p.read(object));
+            propertiesMap->insert(nameWithoutPrefix, qmlPropName);
+            defaultValuesMap->insert(nameWithoutPrefix, p.read(object));
         }
     }
 }
 
+const QMap<QString, QString>* PropertyHandler::qmlProperties() {
+    if (!m_propsForClass.contains(m_className)) {
+        buildPropertyMap();
+    }
+    return m_propsForClass[m_className]->m_qmlProperties;
+}
+
+const QMap<QString, QString>* PropertyHandler::flexboxProperties() {
+    if (!m_propsForClass.contains(m_className)) {
+        buildPropertyMap();
+    }
+    return m_propsForClass[m_className]->m_flexboxProperties;
+}
+
+const QMap<QString, QVariant>* PropertyHandler::defaultQmlValues() {
+    if (!m_propsForClass.contains(m_className)) {
+        buildPropertyMap();
+    }
+    return m_propsForClass[m_className]->m_defaultQmlValues;
+}
+
+const QMap<QString, QVariant>* PropertyHandler::defaultFlexboxValues() {
+    if (!m_propsForClass.contains(m_className)) {
+        buildPropertyMap();
+    }
+    return m_propsForClass[m_className]->m_defaultFlexboxValues;
+}
+
 void PropertyHandler::setValueToObjectProperty(QObject* object,
-                                               QMetaProperty property,
+                                               const QString& property,
+                                               const QString& qmlPropertyName,
                                                const QVariant& value,
                                                const QVariant& defaultValue) {
     QVariant newValue;
     if (value.isNull()) {
         newValue = defaultValue;
     } else {
-        newValue = reactCoerceValue(value, property.userType());
+        int propIndex = object->metaObject()->indexOfProperty(qmlPropertyName.toStdString().c_str());
+        QMetaProperty p = object->metaObject()->property(propIndex);
+        newValue = reactCoerceValue(value, p.userType());
     }
+    bool res = object->setProperty(qmlPropertyName.toStdString().c_str(), newValue);
 
-    property.write(object, newValue);
     if (m_setPropertyCallback) {
         m_setPropertyCallback(object, property, value);
     }

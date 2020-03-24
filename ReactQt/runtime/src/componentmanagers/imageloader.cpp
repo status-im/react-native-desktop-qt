@@ -25,13 +25,13 @@
 class ImageLoaderPrivate {
 
 public:
-    QIODevice* cachedData(const QUrl& source) {
+    QIODevice* cachedImageData(const QUrl& source) {
         auto cache = qobject_cast<QNetworkDiskCache*>(bridge->networkAccessManager()->cache());
         return cache->data(source);
     }
 
     bool isCached(const QUrl& source) {
-        auto cached = cachedData(source);
+        auto cached = cachedImageData(source);
         cached->deleteLater();
         return (cached != nullptr);
     }
@@ -76,6 +76,7 @@ public:
         });
     }
 
+public:
     Bridge* bridge = nullptr;
 };
 
@@ -96,9 +97,9 @@ void ImageLoader::getSize(const QString& url, double success, double error) {
     Q_D(ImageLoader);
     d->fetchImage(url, [=](ImageLoader::Event event, const QVariantMap& data) {
         if (event == ImageLoader::Event_LoadSuccess) {
-            if (d->isCached(url)) {
+            auto data = d->cachedImageData(url);
+            if (data) {
                 QSize size;
-                auto data = d->cachedData(url);
                 data->deleteLater();
                 size = QImage::fromData(data->readAll()).size();
                 d->bridge->invokePromiseCallback(

@@ -54,6 +54,7 @@ private Q_SLOTS:
     void scrollBeginDrag();
     void scrollEndDrag();
     void scroll();
+    void onDraggingChanged();
 
 private:
     QVariantMap buildEventData(QQuickItem* item) const;
@@ -63,6 +64,7 @@ private:
 
     static QMap<QQuickItem*, QQuickItem*> m_scrollViewByListViewItem;
     static QMap<QQuickItem*, ScrollViewModelPtr> m_modelByScrollView;
+    static QMap<QQuickItem*, QTimer*> m_scrollTimers;
 };
 
 #endif // SCROLLVIEWMANAGER_H

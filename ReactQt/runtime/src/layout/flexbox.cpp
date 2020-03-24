@@ -170,16 +170,18 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
     auto qmlControl = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_control;
     auto viewManager = static_cast<FlexboxPrivate*>(YGNodeGetContext(node))->m_viewManager;
 
-    bool emitLayoutUpdated =
-        YGNodeLayoutGetLeft(node) != qmlControl->x() || YGNodeLayoutGetTop(node) != qmlControl->y() ||
-        YGNodeLayoutGetWidth(node) != qmlControl->width() || YGNodeLayoutGetHeight(node) != qmlControl->height();
+    bool layoutUpdated = YGNodeLayoutGetLeft(node) != qmlControl->x() || YGNodeLayoutGetTop(node) != qmlControl->y() ||
+                         YGNodeLayoutGetWidth(node) != qmlControl->width() ||
+                         YGNodeLayoutGetHeight(node) != qmlControl->height();
 
-    qmlControl->setX(YGNodeLayoutGetLeft(node));
-    qmlControl->setY(YGNodeLayoutGetTop(node));
-    qmlControl->setWidth(YGNodeLayoutGetWidth(node));
-    qmlControl->setHeight(YGNodeLayoutGetHeight(node));
+    if (layoutUpdated) {
+        qmlControl->setX(YGNodeLayoutGetLeft(node));
+        qmlControl->setY(YGNodeLayoutGetTop(node));
+        qmlControl->setWidth(YGNodeLayoutGetWidth(node));
+        qmlControl->setHeight(YGNodeLayoutGetHeight(node));
+    }
 
-    if (emitLayoutUpdated && viewManager) {
+    if (layoutUpdated && viewManager) {
         viewManager->sendOnLayoutToJs(qmlControl,
                                       YGNodeLayoutGetLeft(node),
                                       YGNodeLayoutGetTop(node),

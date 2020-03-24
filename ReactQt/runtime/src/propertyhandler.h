@@ -18,13 +18,36 @@
 
 #include <QMap>
 #include <QMetaProperty>
+#include <QMutex>
 #include <QObject>
 
 class QQuickItem;
 class Flexbox;
 const QString QML_PROPERTY_PREFIX = "p_";
 
-using SetPropertyCallback = std::function<void(QObject* object, QMetaProperty property, const QVariant& value)>;
+struct Props {
+
+    Props() {
+        m_qmlProperties = new QMap<QString, QString>();
+        m_flexboxProperties = new QMap<QString, QString>();
+        m_defaultQmlValues = new QMap<QString, QVariant>();
+        m_defaultFlexboxValues = new QMap<QString, QVariant>();
+    };
+
+    ~Props() {
+        delete m_qmlProperties;
+        delete m_flexboxProperties;
+        delete m_defaultQmlValues;
+        delete m_defaultFlexboxValues;
+    }
+
+    QMap<QString, QString>* m_qmlProperties = nullptr;
+    QMap<QString, QString>* m_flexboxProperties = nullptr;
+    QMap<QString, QVariant>* m_defaultQmlValues = nullptr;
+    QMap<QString, QVariant>* m_defaultFlexboxValues = nullptr;
+};
+
+using SetPropertyCallback = std::function<void(QObject* object, const QString& propertyName, const QVariant& value)>;
 
 class PropertyHandler : public QObject {
     Q_OBJECT
@@ -33,28 +56,32 @@ public:
     PropertyHandler(QObject* object, SetPropertyCallback callback = SetPropertyCallback());
     virtual ~PropertyHandler();
 
-    virtual QMap<QString, QMetaProperty> availableProperties();
+    virtual QMap<QString, QString> availableProperties();
     virtual void applyProperties(const QVariantMap& properties);
-    QVariant value(const QString& propertyName);
+    QMetaProperty metaProperty(const QString& propertyName);
 
 private:
     void buildPropertyMap();
     void setValueToObjectProperty(QObject* object,
-                                  QMetaProperty property,
+                                  const QString& property,
+                                  const QString& qmlPropertyName,
                                   const QVariant& value,
                                   const QVariant& defaultValue);
     void getPropertiesFromObject(const QObject* object,
-                                 QMap<QString, QMetaProperty>& propertiesMap,
-                                 QMap<QString, QVariant>& defaultValuesMap);
+                                 QMap<QString, QString>* propertiesMap,
+                                 QMap<QString, QVariant>* defaultValuesMap);
 
 private:
-    bool m_cached = false;
     QObject* m_object = nullptr;
     Flexbox* m_flexbox = nullptr;
-    QMap<QString, QMetaProperty> m_qmlProperties;
-    QMap<QString, QMetaProperty> m_flexboxProperties;
-    QMap<QString, QVariant> m_defaultQmlValues;
-    QMap<QString, QVariant> m_defaultFlexboxValues;
+    QString m_className;
+
+    const QMap<QString, QString>* qmlProperties();
+    const QMap<QString, QString>* flexboxProperties();
+    const QMap<QString, QVariant>* defaultQmlValues();
+    const QMap<QString, QVariant>* defaultFlexboxValues();
+    static QMap<QString, Props*> m_propsForClass;
+
     SetPropertyCallback m_setPropertyCallback;
 };
 
