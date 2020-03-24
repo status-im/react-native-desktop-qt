@@ -1,6 +1,6 @@
 ---
 name: 🗣 Start a Discussion
-about: Propose changes or discuss feature requests for `react-native-desktop.
+about: Propose changes or discuss feature requests for `react-native-desktop`.
 ---
 
 # For Discussion
