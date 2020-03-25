@@ -24,6 +24,7 @@ Rectangle {
     codeLocation: ReactNativeProperties.codeLocation
     pluginsPath: ReactNativeProperties.pluginsPath
     serverConnectionType: ReactNativeProperties.executor
+    jsExecutor: ReactNativeProperties.jsExecutor
     externalModules: [${EXTERNAL_MODULES}]
     properties: ReactNativeProperties.initialProps
   }

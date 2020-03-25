@@ -18,7 +18,7 @@
 
 #include <QUrl>
 
-#include "iexecutor.h"
+#include "ijsexecutor.h"
 
 class Bridge;
 

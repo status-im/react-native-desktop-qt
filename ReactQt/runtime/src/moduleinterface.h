@@ -26,6 +26,7 @@ class ModuleMethod;
 
 #ifndef Q_MOC_RUN
 #define REACT_PROMISE
+#define REACT_SYNC
 #endif
 
 class ModuleInterface {

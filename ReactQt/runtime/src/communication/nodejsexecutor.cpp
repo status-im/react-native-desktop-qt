@@ -11,20 +11,20 @@
  *
  */
 
-#include "executor.h"
+#include "nodejsexecutor.h"
 #include <QJsonDocument>
 #include <QSharedPointer>
 
-class ExecutorPrivate : public QObject {
+class NodeJsExecutorPrivate : public QObject {
 public:
-    ExecutorPrivate(Executor* e) : QObject(e), q_ptr(e) {}
+    NodeJsExecutorPrivate(NodeJsExecutor* e) : QObject(e), q_ptr(e) {}
 
     virtual ServerConnection* connection();
     void processRequests();
     bool readPackageHeaderAndAllocateBuffer();
     bool readPackageBodyToBuffer();
     void processRequest(const QByteArray& request,
-                        const Executor::ExecuteCallback& callback = Executor::ExecuteCallback());
+                        const IJsExecutor::ExecuteCallback& callback = IJsExecutor::ExecuteCallback());
 
 public slots:
     void readReply();
@@ -34,27 +34,28 @@ public slots:
 
 public:
     QQueue<QByteArray> m_requestQueue;
-    QQueue<Executor::ExecuteCallback> m_responseQueue;
+    QQueue<IJsExecutor::ExecuteCallback> m_responseQueue;
     QStateMachine* m_machina = nullptr;
     QByteArray m_inputBuffer;
     QSharedPointer<ServerConnection> m_connection = nullptr;
-    Executor* q_ptr = nullptr;
+    NodeJsExecutor* q_ptr = nullptr;
 };
 
-Executor::Executor(ServerConnection* conn, QObject* parent) : IExecutor(parent), d_ptr(new ExecutorPrivate(this)) {
+NodeJsExecutor::NodeJsExecutor(ServerConnection* conn, QObject* parent)
+    : IJsExecutor(parent), d_ptr(new NodeJsExecutorPrivate(this)) {
     Q_ASSERT(conn);
-    Q_D(Executor);
+    Q_D(NodeJsExecutor);
     d->m_connection = QSharedPointer<ServerConnection>(conn);
-    connect(d->connection(), &ServerConnection::dataReady, d, &ExecutorPrivate::readReply);
+    connect(d->connection(), &ServerConnection::dataReady, d, &NodeJsExecutorPrivate::readReply);
 
-    qRegisterMetaType<Executor::ExecuteCallback>();
+    qRegisterMetaType<IJsExecutor::ExecuteCallback>();
 }
 
-Executor::~Executor() {
+NodeJsExecutor::~NodeJsExecutor() {
     resetConnection();
 }
 
-void ExecutorPrivate::setupStateMachine() {
+void NodeJsExecutorPrivate::setupStateMachine() {
     m_machina = new QStateMachine(this);
 
     QState* initialState = new QState();
@@ -74,18 +75,19 @@ void ExecutorPrivate::setupStateMachine() {
     m_machina->setInitialState(initialState);
 }
 
-void Executor::injectJson(const QString& name, const QVariant& data) {
+void NodeJsExecutor::injectJson(const QString& name, const QVariant& data) {
     QJsonDocument doc = QJsonDocument::fromVariant(data);
     d_ptr->processRequest(name.toLocal8Bit() + "=" + doc.toJson(QJsonDocument::Compact) + ";");
 }
 
-void Executor::executeApplicationScript(const QByteArray& script, const QUrl& /*sourceUrl*/) {
+void NodeJsExecutor::executeApplicationScript(const QByteArray& script, const QUrl& /*sourceUrl*/) {
+
     d_ptr->processRequest(script, [=](const QJsonDocument&) { Q_EMIT applicationScriptDone(); });
 }
 
-void Executor::executeJSCall(const QString& method,
-                             const QVariantList& args,
-                             const Executor::ExecuteCallback& callback) {
+void NodeJsExecutor::executeJSCall(const QString& method,
+                                   const QVariantList& args,
+                                   const IJsExecutor::ExecuteCallback& callback) {
 
     QByteArrayList stringifiedArgs;
     for (const QVariant& arg : args) {
@@ -101,21 +103,21 @@ void Executor::executeJSCall(const QString& method,
         QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");", callback);
 }
 
-ServerConnection* ExecutorPrivate::connection() {
+ServerConnection* NodeJsExecutorPrivate::connection() {
     Q_ASSERT(m_connection);
     return m_connection.data();
 }
 
-void Executor::init() {
+void NodeJsExecutor::init() {
     d_ptr->setupStateMachine();
     d_ptr->m_machina->start();
 }
 
-void Executor::resetConnection() {
+void NodeJsExecutor::resetConnection() {
     d_ptr->connection()->device()->close();
 }
 
-void ExecutorPrivate::processRequests() {
+void NodeJsExecutorPrivate::processRequests() {
     if (!connection()->isReady() || m_requestQueue.isEmpty()) {
         return;
     }
@@ -126,7 +128,7 @@ void ExecutorPrivate::processRequests() {
     connection()->device()->write(request.constData(), request.size());
 }
 
-bool ExecutorPrivate::readPackageHeaderAndAllocateBuffer() {
+bool NodeJsExecutorPrivate::readPackageHeaderAndAllocateBuffer() {
     if (m_inputBuffer.capacity() == 0) {
         quint32 length = 0;
         if (connection()->device()->bytesAvailable() < sizeof(length)) {
@@ -138,7 +140,7 @@ bool ExecutorPrivate::readPackageHeaderAndAllocateBuffer() {
     return true;
 }
 
-bool ExecutorPrivate::readPackageBodyToBuffer() {
+bool NodeJsExecutorPrivate::readPackageBodyToBuffer() {
     int toRead = m_inputBuffer.capacity() - m_inputBuffer.size();
     QByteArray read = connection()->device()->read(toRead);
     m_inputBuffer += read;
@@ -149,13 +151,13 @@ bool ExecutorPrivate::readPackageBodyToBuffer() {
     return true;
 }
 
-void ExecutorPrivate::readReply() {
+void NodeJsExecutorPrivate::readReply() {
     while (readCommand()) {
         ;
     }
 }
 
-bool ExecutorPrivate::readCommand() {
+bool NodeJsExecutorPrivate::readCommand() {
 
     if (!readPackageHeaderAndAllocateBuffer())
         return false;
@@ -169,9 +171,9 @@ bool ExecutorPrivate::readCommand() {
     return true;
 }
 
-void ExecutorPrivate::passReceivedDataToCallback(const QByteArray& data) {
+void NodeJsExecutorPrivate::passReceivedDataToCallback(const QByteArray& data) {
     if (m_responseQueue.size()) {
-        Executor::ExecuteCallback callback = m_responseQueue.dequeue();
+        IJsExecutor::ExecuteCallback callback = m_responseQueue.dequeue();
         if (callback) {
             QJsonDocument doc;
             if (data != "undefined") {
@@ -182,7 +184,7 @@ void ExecutorPrivate::passReceivedDataToCallback(const QByteArray& data) {
     }
 }
 
-void ExecutorPrivate::processRequest(const QByteArray& request, const Executor::ExecuteCallback& callback) {
+void NodeJsExecutorPrivate::processRequest(const QByteArray& request, const IJsExecutor::ExecuteCallback& callback) {
 
     m_requestQueue.enqueue(request);
     m_responseQueue.enqueue(callback);

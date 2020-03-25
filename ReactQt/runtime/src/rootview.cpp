@@ -48,6 +48,7 @@ public:
     QUrl codeLocation;
     QVariantMap properties;
     QString pluginsPath;
+    QString jsExecutor = "NodeJsExecutor";
     QString serverConnectionType = "RemoteServerConnection";
     Bridge* bridge = nullptr;
     RootView* q_ptr;
@@ -191,6 +192,18 @@ void RootView::setPluginsPath(const QString& pluginsPath) {
     Q_EMIT pluginsPathChanged();
 }
 
+QString RootView::jsExecutor() const {
+    return d_func()->jsExecutor;
+}
+
+void RootView::setJsExecutor(const QString& jsExecutor) {
+    Q_D(RootView);
+    if (d->jsExecutor == jsExecutor)
+        return;
+    d->jsExecutor = jsExecutor;
+    Q_EMIT jsExecutorChanged();
+}
+
 QString RootView::serverConnectionType() const {
     return d_func()->serverConnectionType;
 }
@@ -321,6 +334,7 @@ void RootView::componentComplete() {
         d->bridge->setNetworkAccessManager(qmlEngine(this)->networkAccessManager());
         d->bridge->setBundleUrl(d->codeLocation);
         d->bridge->setPluginsPath(d->pluginsPath);
+        d->bridge->setJsExecutor(d->jsExecutor);
         d->bridge->setServerConnectionType(d->serverConnectionType);
         d->bridge->setVisualParent(this);
         d->bridge->init();

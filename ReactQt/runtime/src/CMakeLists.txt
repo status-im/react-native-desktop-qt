@@ -21,6 +21,9 @@ find_package(Qt5Qml REQUIRED)
 find_package(Qt5Quick REQUIRED)
 find_package(Qt5WebSockets REQUIRED)
 find_package(Qt5Svg REQUIRED)
+find_package(Qt5WebEngineWidgets REQUIRED)
+find_package(Qt5WebChannel REQUIRED)
+find_package(Qt5Concurrent REQUIRED)
 
 if (USE_QTWEBKIT)
   find_package(Qt5WebKit REQUIRED)
@@ -154,9 +157,10 @@ set(
   layout/flexbox.cpp
   utilities.cpp
   communication/serverconnection.cpp
-  communication/executor.cpp
+  communication/nodejsexecutor.cpp
   communication/websocketexecutor.cpp
-  communication/iexecutor.h
+  communication/jswebengineexecutor.cpp
+  communication/ijsexecutor.h
   websocketmodule.cpp
   ../../../ReactCommon/yoga/yoga/Yoga.cpp
   ../../../ReactCommon/yoga/yoga/YGEnums.cpp
@@ -251,12 +255,11 @@ endif()
 
 include_directories(${REACT_NATIVE_DESKTOP_EXTERNAL_MODULES_INCLUDE_DIRS})
 
-set(USED_QT_MODULES Core Qml Quick WebSockets Svg Concurrent)
-if (USE_QTWEBKIT)
-  set (USED_QT_MODULES ${USED_QT_MODULES} WebKit)
-endif()
+target_link_libraries(react-native Qt5::Core Qt5::Qml Qt5::Quick Qt5::WebSockets Qt5::Svg Qt5::Concurrent Qt5::WebEngineWidgets Qt5::WebChannel)
 
-qt5_use_modules(react-native ${USED_QT_MODULES})
+if (USE_QTWEBKIT)
+  target_link_libraries(react-native Qt5::WebKit)
+endif()
 
 add_custom_target(
   copy-qmldir ALL

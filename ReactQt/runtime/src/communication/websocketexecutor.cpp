@@ -34,7 +34,7 @@ public:
 
     bool processRequests();
     void processRequest(const QByteArray& request,
-                        const IExecutor::ExecuteCallback& callback = IExecutor::ExecuteCallback());
+                        const IJsExecutor::ExecuteCallback& callback = IJsExecutor::ExecuteCallback());
     void setupWebSocket(const QUrl& url);
     QByteArray getMessageData(const QVariantMap& messageData);
 
@@ -44,7 +44,7 @@ public slots:
 
 public:
     QQueue<QByteArray> m_requestQueue;
-    QQueue<IExecutor::ExecuteCallback> m_responseQueue;
+    QQueue<IJsExecutor::ExecuteCallback> m_responseQueue;
     QByteArray m_inputBuffer;
     WebSocketExecutor* q_ptr = nullptr;
     QWebSocket m_webSocket;
@@ -54,7 +54,7 @@ public:
 };
 
 WebSocketExecutor::WebSocketExecutor(const QUrl& url, QObject* parent)
-    : IExecutor(parent), d_ptr(new WebSocketExecutorPrivate(this)) {
+    : IJsExecutor(parent), d_ptr(new WebSocketExecutorPrivate(this)) {
     Q_D(WebSocketExecutor);
 
     d->setupWebSocket(url);
@@ -118,7 +118,7 @@ void WebSocketExecutor::executeApplicationScript(const QByteArray& script, const
 
 void WebSocketExecutor::executeJSCall(const QString& method,
                                       const QVariantList& args,
-                                      const IExecutor::ExecuteCallback& callback) {
+                                      const IJsExecutor::ExecuteCallback& callback) {
 
     QVariantMap message = QVariantMap{{"method", method}, {"arguments", args}};
     QByteArray data = d_ptr->getMessageData(message);
@@ -165,7 +165,7 @@ void WebSocketExecutorPrivate::readReply(const QString& reply) {
 
 void WebSocketExecutorPrivate::passReceivedDataToCallback(const QByteArray& data) {
     if (m_responseQueue.size()) {
-        IExecutor::ExecuteCallback callback = m_responseQueue.dequeue();
+        IJsExecutor::ExecuteCallback callback = m_responseQueue.dequeue();
         if (callback) {
             QJsonDocument doc;
             if (data != "undefined") {
@@ -187,7 +187,7 @@ void WebSocketExecutorPrivate::passReceivedDataToCallback(const QByteArray& data
     }
 }
 
-void WebSocketExecutorPrivate::processRequest(const QByteArray& request, const IExecutor::ExecuteCallback& callback) {
+void WebSocketExecutorPrivate::processRequest(const QByteArray& request, const IJsExecutor::ExecuteCallback& callback) {
 
     m_requestQueue.enqueue(request);
     m_responseQueue.enqueue(callback);

@@ -8,10 +8,10 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+#include <QApplication>
 #include <QCommandLineParser>
 #include <QDirIterator>
 #include <QFontDatabase>
-#include <QGuiApplication>
 #include <QQuickView>
 #include <QUrl>
 
@@ -27,6 +27,7 @@ class ReactNativeProperties : public QObject {
     Q_PROPERTY(QUrl codeLocation READ codeLocation WRITE setCodeLocation NOTIFY codeLocationChanged)
     Q_PROPERTY(QString pluginsPath READ pluginsPath WRITE setPluginsPath NOTIFY pluginsPathChanged)
     Q_PROPERTY(QString executor READ executor WRITE setExecutor NOTIFY executorChanged)
+    Q_PROPERTY(QString jsExecutor READ jsExecutor WRITE setJsExecutor NOTIFY jsExecutorChanged)
     Q_PROPERTY(QVariantMap initialProps READ initialProps WRITE setInitialProps NOTIFY initialPropsChanged)
 public:
     ReactNativeProperties(QObject* parent = 0) : QObject(parent) {
@@ -67,6 +68,15 @@ public:
             return;
         m_executor = executor;
         Q_EMIT executorChanged();
+    }
+    QString jsExecutor() const {
+        return m_jsExecutor;
+    }
+    void setJsExecutor(const QString& jsexecutor) {
+        if (m_jsExecutor == jsexecutor)
+            return;
+        m_jsExecutor = jsexecutor;
+        Q_EMIT jsExecutorChanged();
     }
     QVariantMap initialProps() const {
         return m_initialProps;
@@ -117,6 +127,7 @@ Q_SIGNALS:
     void codeLocationChanged();
     void pluginsPathChanged();
     void executorChanged();
+    void jsExecutorChanged();
     void initialPropsChanged();
 
 private:
@@ -128,6 +139,7 @@ private:
     QUrl m_codeLocation;
     QString m_pluginsPath;
     QString m_executor = "RemoteServerConnection";
+    QString m_jsExecutor = "NodeJsExecutor";
     QVariantMap m_initialProps;
 };
 
@@ -143,8 +155,8 @@ void loadFontsFromResources() {
 }
 
 int main(int argc, char** argv) {
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QGuiApplication app(argc, argv);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication app(argc, argv);
     Q_INIT_RESOURCE(react_resources);
 
     loadFontsFromResources();
