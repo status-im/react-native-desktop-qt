@@ -174,7 +174,7 @@
     "node-fetch": "^2.2.0",
     "node-notifier": "^5.2.1",
     "npmlog": "^2.0.4",
-    "opn": "^3.0.2",
+    "opn": "^6.0.0",
     "optimist": "^0.6.1",
     "plist": "^3.0.0",
     "pretty-format": "^4.2.1",
