@@ -43,6 +43,7 @@ let AndroidHorizontalScrollContentView;
 let AndroidHorizontalScrollView;
 let RCTScrollView;
 let RCTScrollContentView;
+let UbuntuScrollView;
 
 if (Platform.OS === 'android') {
   AndroidScrollView = requireNativeComponent('RCTScrollView');
@@ -55,6 +56,8 @@ if (Platform.OS === 'android') {
 } else if (Platform.OS === 'ios') {
   RCTScrollView = requireNativeComponent('RCTScrollView');
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView');
+} else if (Platform.OS === 'desktop') {
+  UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
 } else {
   RCTScrollView = requireNativeComponent('RCTScrollView');
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView');
@@ -776,6 +779,9 @@ const ScrollView = createReactClass({
         ScrollViewClass = AndroidScrollView;
         ScrollContentContainerViewClass = View;
       }
+    } else if (Platform.OS === 'desktop') {
+      ScrollViewClass = UbuntuScrollView;
+      ScrollContentContainerViewClass = View;
     } else {
       ScrollViewClass = RCTScrollView;
       ScrollContentContainerViewClass = RCTScrollContentView;
@@ -974,13 +980,23 @@ const ScrollView = createReactClass({
         );
       }
     }
-
-    return (
-      // $FlowFixMe Invalid prop usage
-      <ScrollViewClass {...props} ref={this._setScrollViewRef}>
-        {contentContainer}
-      </ScrollViewClass>
-    );
+    if (Platform.OS === 'desktop' && props.enableArrayScrollingOptimization) {
+        return (
+          /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
+           * comment suppresses an error when upgrading Flow's support for React.
+           * To see the error delete this comment and run Flow. */
+          <ScrollViewClass {...props} {...contentSizeChangeProps} ref={this._setScrollViewRef}>
+            {children}
+          </ScrollViewClass>
+        );
+    } else {
+        return (
+          // $FlowFixMe Invalid prop usage
+          <ScrollViewClass {...props} ref={this._setScrollViewRef}>
+            {contentContainer}
+          </ScrollViewClass>
+        );
+    }
   }
 });
 

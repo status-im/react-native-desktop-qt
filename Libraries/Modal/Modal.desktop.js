@@ -247,7 +247,7 @@ class Modal extends React.Component<Object> {
         onStartShouldSetResponder={this._shouldSetResponder}
         supportedOrientations={this.props.supportedOrientations}
         onOrientationChange={this.props.onOrientationChange}>
-        <View style={[styles.container, containerStyles]}>{innerChildren}</View>
+        <View style={[Platform.OS == 'desktop' ? styles.desktopContainer : styles.container, containerStyles]}>{innerChildren}</View>
       </RCTModalHostView>
     );
   }
@@ -267,6 +267,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     [side]: 0,
     top: 0,
+  },
+  desktopContainer: {
+    flex: 1
   },
 });
 
