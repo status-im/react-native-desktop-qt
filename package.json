@@ -1,5 +1,5 @@
 {
-  "name": "react-native-desktop",
+  "name": "react-native-desktop-qt",
   "version": "1.0.0",
   "description": "React native for desktop",
   "scripts": {
@@ -7,17 +7,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vkjr/react-native-desktop.git"
+    "url": "git+https://github.com/status-im/react-native-desktop-qt.git"
   },
   "author": "Volodymyr Kozieiev",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/vkjr/react-native-desktop/issues"
+    "url": "https://github.com/vkjr/react-native-desktop-qt/issues"
   },
-  "homepage": "https://github.com/vkjr/react-native-desktop#readme",
+  "homepage": "https://github.com/vkjr/react-native-desktop-qt#readme",
   "rnpm": {
     "haste": {
-      "providesModuleNodeModules": ["react-native-desktop"],
+      "providesModuleNodeModules": ["react-native-desktop-qt"],
       "platforms": ["desktop-qt"]
     },
     "plugin": "./local-cli/index.js"
