@@ -103,7 +103,7 @@ class Button extends React.Component<{
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
     if (color) {
-      if (Platform.OS === 'ios') {
+      if (Platform.OS === 'ios' || Platform.OS === 'desktop') {
         textStyles.push({color: color});
       } else {
         buttonStyles.push({backgroundColor: color});
@@ -166,6 +166,11 @@ const styles = StyleSheet.create({
       padding: 8,
       fontWeight: '500',
     },
+    desktop: {
+      color: '#007AFF',
+      textAlign: 'center',
+      fontSize: 14,
+    },
   }),
   buttonDisabled: Platform.select({
     ios: {},
@@ -180,6 +185,9 @@ const styles = StyleSheet.create({
     },
     android: {
       color: '#a1a1a1',
+    },
+    desktop: {
+      color: '#cdcdcd',
     },
   }),
 });
