@@ -2,7 +2,8 @@
 #### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
 
 ---
-# [React Native Desktop](https://github.com/status-im/react-native-desktop) &middot; [![Circle CI Status](https://circleci.com/gh/status-im/react-native-desktop.svg?style=shield)](https://circleci.com/gh/status-im/react-native-desktop) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/status-im/react-native-desktop/issues)
+
+# [React Native Desktop](https://github.com/status-im/react-native-desktop) &middot; [![Circle CI Status](https://circleci.com/gh/status-im/react-native-desktop-qt.svg?style=shield)](https://circleci.com/gh/status-im/react-native-desktop-qt) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/status-im/react-native-desktop/issues)
 
 
 Cross-platform React Native Desktop port based on Qt framework.
