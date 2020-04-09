@@ -37,7 +37,7 @@ If you're using macOS, run these commands in 2 different shells (from `DesktopSa
 npm start #starts bundler
 ```
 ```sh
-node node_modules/react-native/ubuntu-server.js #starts js server
+node node_modules/react-native/js-executor.js #starts js server
 ```
 
 Afterwards, in a 3rd shell execute:
@@ -48,7 +48,7 @@ Compilation of desktop project will start. When it finished and app run you can 
 
 ![](./media/react-native-desktop-new-app.png)
 
-**Note:** On non-macOS systems, `npm start` and `node ubuntu-server.js` will be executed automatically by the above command(`react-native run-desktop`)
+**Note:** On non-macOS systems, `npm start` and `node js-executor.js` will be executed automatically by the above command(`react-native run-desktop`)
 
 
 **If you want to know why you had to start bundler and js server** - check the doc on [how react-native-desktop works internally](./HowRNDesktopAppWorks.md)

@@ -90,8 +90,8 @@ jobs:
         background: true
 
       - type: shell
-        name: Start react-native-desktop's ubuntu-server.js
-        command: node ./ubuntu-server.js
+        name: Start react-native-desktop's js-executor.js
+        command: node ./js-executor.js
         background: true
 
       - run:

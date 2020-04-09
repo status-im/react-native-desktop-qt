@@ -25,7 +25,7 @@ It was forked from Canonical/react-native-linux. Canonical in its turn forked fa
 
 ### Does the bundler step in the diagram only happen once at app startup or is all of the JS code appended to a single file on every reload?
 
-On every reload Qt app requests single js files and sends it to execution in ubuntu-server. It is like restart, but quicker. Bundler caches that js file, so collecting it together doesn’t take much time.
+On every reload Qt app requests single js files and sends it to execution in js-executor. It is like restart, but quicker. Bundler caches that js file, so collecting it together doesn’t take much time.
 
 ### Is there a dedicated node mule within react-native for communicating with qt at the javascript code level or does that happen elsewhere, say, in the build pipeline?
 
@@ -33,7 +33,7 @@ No. React-native is designed to have own js part and communication with native p
 Qt code in react-native-desktop contains a bunch of modules that implement controls and API’s natively.
 When Qt Application starts it sends `config` - information about what modules it implements on native side - their names, ids, lists of functions, constants, etc. From this moment react-native part of js code can “invoke” that native methods just by mentioning them in JSON results.
 
-Here is an example communication between Qt app and ubuntu-server. In the app there is a button that changes color when pressed.
+Here is an example communication between Qt app and js-executor. In the app there is a button that changes color when pressed.
 
 When user clicks button, we send following code line for execution in Js:
 `__fbBatchedBridge.callFunctionReturnFlushedQueue(\"RCTEventEmitter\",\"receiveEvent\",[2,\"topPress\",{}]);`

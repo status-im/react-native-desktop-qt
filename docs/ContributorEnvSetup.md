@@ -66,7 +66,7 @@ To do this execute following commands in different terminals:
 npm start #starts bundler
 ```
 ```sh
-node ubuntu-server.js #starts js server
+node js-executor.js #starts js server
 ```
 
 Like you do when [run your new app](CreateNewApp.md#run-the-project)

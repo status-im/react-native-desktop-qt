@@ -13,7 +13,7 @@ When you create a project with `react-native init SomeProject`, you have ios and
 There are 3 participants in react-native-desktop application:
 - Qt application
 - Bundler
-- JS server (right now called ubuntu-server, but this is subject to change)
+- JS server (right now called js-executor, but this is subject to change)
 
 `Qt application` - built from a project in `desktop` folder. When runs it establishes communication with JS server and shows appropriate UI.
 

@@ -52,7 +52,7 @@ fi
 # For net case, try and run executor; it is probably OK if this fails - it's
 # just running elsewhere
 if [[ "$executor" == "ReactNetExecutor" ]]; then
-  (node @CMAKE_BINARY_DIR@/bin/ubuntu-server.js 2>&1 > /dev/null) &
+  (node @CMAKE_BINARY_DIR@/bin/js-executor.js 2>&1 > /dev/null) &
 fi
 
 # if [[ $on_device == 1 ]]; then

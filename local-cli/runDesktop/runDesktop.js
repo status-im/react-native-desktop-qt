@@ -99,9 +99,9 @@ function startPackagerInNewWindow() {
 
 function startUbuntuServerInNewWindow() {
   if (process.platform === "win32") {
-    child_process.spawn('cmd', ['/c', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
+    child_process.spawn('cmd', ['/c', 'node ./desktop/bin/js-executor.js'],{detached: true});
   } else {
-    child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/ubuntu-server.js'],{detached: true});
+    child_process.spawn('gnome-terminal', ['-e', 'node ./desktop/bin/js-executor.js'],{detached: true});
   }
 }
 

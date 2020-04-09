@@ -16,7 +16,7 @@
 
 namespace {
 QString default_executable{"node"};
-QString default_script{"ubuntu-server.js"};
+QString default_script{"js-executor.js"};
 QStringList default_arguments{"--pipe"};
 
 QString itemWithPath(const QString& item, const QStringList& searchPaths) {
