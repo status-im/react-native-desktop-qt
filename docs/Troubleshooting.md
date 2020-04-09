@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 These are some common issues you may run into while setting up React Native Qt.
 
 ### `npm install` hangs

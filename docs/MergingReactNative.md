@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ### Merging new react-native release step by step
 
 - Create new local git branch based on latest master, for example, `merge/rn-0.57`
@@ -5,7 +9,7 @@
   ```
   git remote add facebook https://github.com/facebook/react-native.git
   git fetch --all
-  ``` 
+  ```
 - Determine the name of the source react-native branch to be merged. For example, `0.57-stable`
 - Run script to do the merge and auto resolve merge conflicts "as theirs" for the files which were not modified by react-native-desktop. The maintaining list of files modified by desktop port is taken from `scripts/desktop-modified-files.txt`. This file should be constantly updated.
   ```

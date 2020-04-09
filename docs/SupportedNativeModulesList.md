@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ### Overview
 
 react-native 3rd party native components extended with `Desktop` platform support:

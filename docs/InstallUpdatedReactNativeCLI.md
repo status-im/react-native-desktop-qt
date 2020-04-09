@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ## Overview
 
 Original `react-native-cli` is extended with CLI commands to generate, build and run react-native projects for `desktop` platform. To be able to create react-native apps for `desktop` platform you should either specify `--version` in the original CLI when creating a react-native app, `react-native init DesktopApp --version status-im/react-native-desktop`, or install the extended version of the CLI by following the next steps and then running `react-native init DesktopApp`.

@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ## Overview
 
 `react-native-desktop` depends on cross-platform development tools, so prerequisites are pretty similar for all supported platforms. In nutshell, toolchain is the same as for original `react-native` + native dev tools (Qt framework) + build system based on `cmake`.

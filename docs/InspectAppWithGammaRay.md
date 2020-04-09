@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 There is a tool for inspecting Qt apps - [GammaRay from KDAB](https://github.com/KDAB/GammaRay)
 It can be very convenient to investigate `QQuickItem`s hierarchy in the app.
 

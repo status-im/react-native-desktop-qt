@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 | React Native                | React Native Desktop |
 |-----------------------------|----------------------|
 | **Components**              |                      |

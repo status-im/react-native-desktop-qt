@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 
 ### How `Yoga` engine works
 `Yoga` engine has api that works with "nodes". Every `YGNode` has a set of properties. Some of them used to setup layout settings, some - to read the calculated position of the node.

@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 # Build, develop and debug native Qt modules of react-native-desktop with Qt Creator
 
 ### Prerequisites

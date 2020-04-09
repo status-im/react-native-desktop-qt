@@ -1,3 +1,7 @@
+:warning::warning::warning: 
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ## Apps using react-native-Desktop
 
 If you want your app to be listed here, please make changes in this document and create PR.

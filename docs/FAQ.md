@@ -1,3 +1,7 @@
+:warning::warning::warning:
+#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+
+---
 ### How do Qt and Node communicate?
 
 Qt app contains one type of communication - it sends js code and receives JSON response to process.
@@ -10,7 +14,7 @@ When running it sends short pieces of JS code to invoke React Native functions a
 
 Also: what code should live there? A build tool? Housing build related code?
 
-Right now `react-native-desktop` repo contains original `react-native` code plus desktop support, so its role is `Substitution of react-native repo with desktop platform added`. 
+Right now `react-native-desktop` repo contains original `react-native` code plus desktop support, so its role is `Substitution of react-native repo with desktop platform added`.
 I hope that soon we will cleanup repo and will leave only desktop-related code in it (no original react native code). Than role of repo will be `extension of react-native for desktop support`.
 
 In both cases this repo should contain code and tools required to create, build and deploy react-native applications for desktop.
@@ -26,7 +30,7 @@ On every reload Qt app requests single js files and sends it to execution in ubu
 ### Is there a dedicated node mule within react-native for communicating with qt at the javascript code level or does that happen elsewhere, say, in the build pipeline?
 
 No. React-native is designed to have own js part and communication with native part.
-Qt code in react-native-desktop contains a bunch of modules that implement controls and API’s natively. 
+Qt code in react-native-desktop contains a bunch of modules that implement controls and API’s natively.
 When Qt Application starts it sends `config` - information about what modules it implements on native side - their names, ids, lists of functions, constants, etc. From this moment react-native part of js code can “invoke” that native methods just by mentioning them in JSON results.
 
 Here is an example communication between Qt app and ubuntu-server. In the app there is a button that changes color when pressed.
