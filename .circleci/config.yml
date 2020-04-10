@@ -68,39 +68,3 @@ jobs:
             cmake -DCMAKE_BUILD_TYPE=Release ..
             make -j4
             popd
-
-      - restore_cache:
-          keys:
-            - npm-cache-{{ .Branch }}-{{ .Revision }}
-            - npm-cache-{{ .Branch }}-
-            - npm-cache-
-
-      - run:
-          name: Install and patch NPM dependencies
-          command: npm ci && npx patch-package
-
-      - save_cache:
-          key: npm-cache-{{ .Branch }}-{{ .Revision }}
-          paths:
-            - /root/.npm
-
-      - type: shell
-        name: Start react-native packager
-        command: npm start
-        background: true
-
-      - type: shell
-        name: Start react-native-desktop's js-executor.js
-        command: node ./js-executor.js
-        background: true
-
-      - run:
-          name: Run Jest tests
-          command: npm run-script test-ci
-
-      - run:
-          name: Run integration tests
-          command: |
-            pushd build
-            xvfb-run --server-args="-screen 0 1024x768x24" ctest -VV
-            popd
