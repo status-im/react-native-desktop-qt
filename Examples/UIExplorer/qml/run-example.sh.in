@@ -1,5 +1,0 @@
-#!/bin/bash
-
-(node ${CMAKE_SOURCE_DIR}/js-executor.js 2>&1 > /dev/null) &
-qmlscene -I ${CMAKE_BINARY_DIR}/ReactQt/runtime/src/ ${CMAKE_CURRENT_BINARY_DIR}/${EXAMPLE_NAME}.qml
-

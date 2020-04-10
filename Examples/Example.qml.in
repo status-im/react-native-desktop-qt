@@ -10,7 +10,7 @@ Rectangle {
     anchors.fill: parent
 
     moduleName: "${EXAMPLE_NAME}App"
-    codeLocation: "http://localhost:8081/Examples/${EXAMPLE_NAME}/${EXAMPLE_NAME}App.bundle?platform=desktop&dev=true"
+    codeLocation: "http://localhost:8081/Examples/${EXAMPLE_NAME}/${EXAMPLE_NAME}App.bundle?platform=desktop-qt&dev=true"
     externalModules: []
   }
 }

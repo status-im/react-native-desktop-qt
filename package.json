@@ -6,6 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
+  "main": "Libraries/react-native-desktop-qt/react-native-desktop-qt-implementation.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/status-im/react-native-desktop-qt.git"

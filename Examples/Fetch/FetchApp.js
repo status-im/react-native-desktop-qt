@@ -4,10 +4,12 @@ import {
   AppRegistry,
   View,
   Text,
-  TextInput,
-  NativeButton
+  TextInput
 } from 'react-native';
 
+import {
+  NativeButton
+} from 'react-native-desktop-qt';
 
 export default class FetchReactNative extends Component {
   state = {response: "...", url: "https://api.github.com/gists"};
