@@ -17,7 +17,7 @@ const ReactNative = require('react-native');
 const RNTesterActions = require('./RNTesterActions');
 const RNTesterExampleContainer = require('./RNTesterExampleContainer');
 const RNTesterExampleList = require('./RNTesterExampleList');
-const RNTesterList = require('./RNTesterList.desktop');
+const RNTesterList = require('./RNTesterList.desktop-qt');
 const RNTesterNavigationReducer = require('./RNTesterNavigationReducer');
 const URIActionMap = require('./URIActionMap');
 

@@ -20,6 +20,6 @@ Rectangle {
     anchors.fill: parent
 
     moduleName: "RNTesterApp"
-    codeLocation: "http://localhost:8081/RNTester/js/RNTesterApp.desktop.bundle?platform=desktop&dev=true"
+    codeLocation: "http://localhost:8081/RNTester/js/RNTesterApp.desktop-qt.bundle?platform=desktop-qt&dev=true"
   }
 }
