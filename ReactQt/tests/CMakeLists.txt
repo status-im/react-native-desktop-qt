@@ -56,7 +56,7 @@ add_executable(test-textinput-clear test-textinput-clear.cpp resources.qrc ${REA
 add_executable(test-array-reconciliation test-array-reconciliation.cpp resources.qrc ${REACT_TESTCASE_SRC} ${REACT_TESTCASE_JS})
 
 
-add_test(test-integration test-integration)
+#add_test(test-integration test-integration)
 add_test(test-image-props test-image-props)
 add_test(test-slider-props test-slider-props)
 add_test(test-activityindicator-props test-activityindicator-props)

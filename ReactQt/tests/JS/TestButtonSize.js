@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  View,
-  NativeButton
+  View
 } from 'react-native';
+import {NativeButton} from 'react-native-desktop-qt';
 
 const onButtonPress = () => {
 };

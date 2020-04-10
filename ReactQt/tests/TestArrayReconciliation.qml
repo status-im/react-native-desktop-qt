@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestArrayReconciliationInsertFirst"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestArrayReconciliationInsertFirst.bundle?platform=desktop&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestArrayReconciliationInsertFirst.bundle?platform=desktop-qt&dev=true"
     }
 }

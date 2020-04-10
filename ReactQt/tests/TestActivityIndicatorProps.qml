@@ -20,6 +20,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestActivityIndicatorProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestActivityIndicatorProps.bundle?platform=desktop&dev=true"
+        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestActivityIndicatorProps.bundle?platform=desktop-qt&dev=true"
     }
 }

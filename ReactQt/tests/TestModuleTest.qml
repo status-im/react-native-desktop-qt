@@ -21,6 +21,6 @@ Rectangle {
         anchors.fill: parent
 
         moduleName: "TestModuleTest"
-        codeLocation: "http://localhost:8081/IntegrationTests/TestModuleTest.bundle?platform=desktop&dev=true"
+        codeLocation: "http://localhost:8081/IntegrationTests/TestModuleTest.bundle?platform=desktop-qt&dev=true"
     }
 }

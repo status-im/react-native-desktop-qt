@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
-  NativeButton,
   View,
   Text
 } from 'react-native';
+import {NativeButton} from 'react-native-desktop-qt';
 
 
 export default class ButtonReactNative extends Component {

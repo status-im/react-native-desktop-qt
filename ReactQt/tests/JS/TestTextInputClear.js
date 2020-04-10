@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import {
   AppRegistry,
   View,
-  NativeButton,
   TextInput
 } from 'react-native';
+
+import {NativeButton} from 'react-native-desktop-qt';
 
 export default class TestTextInputClear extends Component {
 
