@@ -4,34 +4,28 @@
 ---
 ## Overview
 
-### Create project
-React native projects creating goes with the help of command line interface (`react-native-cli` package). `react-native-desktop` adds a modification to that package to support desktop platform.
-
-#### Use modified `react-native-cli` globally
-If all the projects you develop need desktop support, you can install modified command line interface globally by following [these steps](./InstallUpdatedReactNativeCLI.md)
-
-After that you create a new project:
+#### Create react native project
 ```sh
-react-native init DesktopSampleApp
-cd DesktopSampleApp
+npm install -g react-native-cli
+react-native init DesktopSampleApp --version react-native@0.57.8
 ```
 
-#### Use modified `react-native-cli` locally
-Alternative and more flexible way is to install original `react-native-cli`:
-```sh
-npm install -g react-native-cli # Or use Yarn
-```
-And create project that uses a react-native-desktop repo:
-```sh
-react-native init DesktopSampleApp --version status-im/react-native-desktop
-```
-Since we used original `react-native-cli`, desktop-related files aren't in project yet. So we should initialize them:
+#### Add desktop rnpm plugin
 ```sh
 cd DesktopSampleApp
-react-native desktop
+yarn add git+https://github.com/status-im/rnpm-plugin-desktop-qt.git --dev
 ```
+RNPM plugin gives you access to a new command that generates desktop files for your project.
 
-### Run the project
+
+#### Generate desktop files
+```sh
+react-native desktop-qt
+```
+This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project.
+
+
+#### Run the project
 If you're using macOS, run these commands in 2 different shells (from `DesktopSampleApp` dir):
 ```sh
 npm start #starts bundler
@@ -44,7 +38,7 @@ Afterwards, in a 3rd shell execute:
 ```sh
 react-native run-desktop
 ```
-Compilation of desktop project will start. When it finished and app run you can see following:
+Compilation of desktop project will start. Then it will run:
 
 ![](./media/react-native-desktop-new-app.png)
 
