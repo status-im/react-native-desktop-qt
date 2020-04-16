@@ -8,6 +8,14 @@ import {
   Text
 } from 'react-native';
 
+import MessageQueue from 'react-native/Libraries/BatchedBridge/MessageQueue.js';
+
+const spyFunction = (msg) => {
+  console.log(msg);
+};
+
+MessageQueue.spy(spyFunction);
+
 
 export default class ButtonReactNative extends Component {
 

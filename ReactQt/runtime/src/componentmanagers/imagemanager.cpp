@@ -66,8 +66,10 @@ QStringList ImageManager::customDirectEventTypes() {
                        normalizeInputEventName("onLoadEnd")};
 }
 
-void ImageManager::manageSource(const QVariantMap& imageSource, QQuickItem* image) {
+void ImageManager::manageSource(const QVariantList& sourceProp, QQuickItem* image) {
     Q_D(ImageManager);
+
+    QVariantMap imageSource = sourceProp.first().value<QVariantMap>();
 
     auto imageLoader = bridge()->imageLoader();
 
