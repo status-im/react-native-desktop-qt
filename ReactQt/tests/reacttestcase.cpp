@@ -83,14 +83,18 @@ QQuickItem* ReactTestCase::topJSComponent() const {
     //  |-<View>
     //    |-<Image>
 
-    QList<QQuickItem*> reactViewChilds = rootView()->childItems();
-    Q_ASSERT(reactViewChilds.count() == 1);
+    QList<QQuickItem*> rootViewChilds = rootView()->childItems();
+    Q_ASSERT(rootViewChilds.count() == 1);
 
-    QQuickItem* view = reactViewChilds[0];
-    QList<QQuickItem*> viewChilds = view->childItems();
-    Q_ASSERT(viewChilds.count() == 1);
+    QQuickItem* tier1view = rootViewChilds[0];
+    QList<QQuickItem*> tier1ViewChilds = tier1view->childItems();
+    Q_ASSERT(tier1ViewChilds.count() == 1);
 
-    QQuickItem* control = viewChilds[0];
+    QQuickItem* tier2view = tier1ViewChilds[0];
+    QList<QQuickItem*> tier2ViewChilds = tier2view->childItems();
+    Q_ASSERT(tier2ViewChilds.count() == 1);
+
+    QQuickItem* control = tier2ViewChilds[0];
     Q_ASSERT(control);
 
     return control;

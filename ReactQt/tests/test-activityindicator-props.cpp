@@ -47,7 +47,11 @@ QQuickItem* TestActivityIndicatorProps::control() const {
     QList<QQuickItem*> view2Childs = view2->childItems();
     Q_ASSERT(view2Childs.count() == 1);
 
-    QQuickItem* activityIndicator = view2Childs[0];
+    QQuickItem* view3 = view2Childs[0];
+    QList<QQuickItem*> view3Childs = view3->childItems();
+    Q_ASSERT(view3Childs.count() == 1);
+
+    QQuickItem* activityIndicator = view3Childs[0];
     Q_ASSERT(activityIndicator);
 
     return activityIndicator;

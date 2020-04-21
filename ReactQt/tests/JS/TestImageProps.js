@@ -20,7 +20,7 @@ export default class ImageReactNative extends Component {
         onLoad={() => console.log("Image.onLoad()")}
         onError={() => console.log("Image.onError()")}
         onProgress={() => console.log("Image.onProgress()")}
-        source={{uri: 'https://facebook.github.io/react-native/img/favicon.png', scale: 2}}
+        source={{uri: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png', scale: 2}}
         style={{width: 100, height: 100}}
         testID={'testImage'}
         resizeMode={'center'}
