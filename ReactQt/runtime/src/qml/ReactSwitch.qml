@@ -15,6 +15,7 @@ Switch {
     property string p_tintColor: "#e0e0e0"
     property string p_thumbTintColor
 
+    objectName: p_testID
     enabled: !p_disabled
 
     property bool sendCheckedUpdate: true

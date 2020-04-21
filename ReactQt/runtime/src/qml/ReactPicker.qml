@@ -7,7 +7,7 @@ Tumbler {
     property var pickerManager: null
     property variant flexbox: React.Flexbox {control: tumbler}
     property variant p_items: []
-    property int p_selected:0
+    property int p_selected: 0
     property bool p_onValueChange: false
     property string p_testID
 

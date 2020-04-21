@@ -162,12 +162,20 @@ void ScrollViewManager::scroll() {
     if (!m_scrollTimers.contains(item)) {
         timer = new QTimer(this);
         m_scrollTimers.insert(item, timer);
+
         connect(timer, &QTimer::timeout, this, [=]() {
             bool scrollFlagSet = item->property("p_onScroll").toBool();
             if (scrollFlagSet) {
                 notifyJsAboutEvent(tag(item), "onScroll", buildEventData(item));
             }
         });
+
+        connect(item, &QQuickItem::destroyed, this, [=] {
+            m_scrollTimers[item]->stop();
+            m_scrollTimers[item]->deleteLater();
+            m_scrollTimers.remove(item);
+        });
+
     } else {
         timer = m_scrollTimers[item];
     }

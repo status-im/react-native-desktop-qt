@@ -10,6 +10,7 @@
 
 #include "reactpropertytestcase.h"
 
+#include "rootview.h"
 #include <QDebug>
 #include <QTest>
 #include <QtQuick/QQuickView>
@@ -27,7 +28,25 @@ protected:
 };
 
 QQuickItem* TestPickerProps::control() const {
-    return topJSComponent();
+    QList<QQuickItem*> reactViewChilds = rootView()->childItems();
+    Q_ASSERT(reactViewChilds.count() == 1);
+
+    QQuickItem* view1 = reactViewChilds[0];
+    QList<QQuickItem*> view1Childs = view1->childItems();
+    Q_ASSERT(view1Childs.count() == 1);
+
+    QQuickItem* view2 = view1Childs[0];
+    QList<QQuickItem*> view2Childs = view2->childItems();
+    Q_ASSERT(view2Childs.count() == 1);
+
+    QQuickItem* view3 = view2Childs[0];
+    QList<QQuickItem*> view3Childs = view3->childItems();
+    Q_ASSERT(view3Childs.count() == 1);
+
+    QQuickItem* pickerControl = view3Childs[0];
+    Q_ASSERT(pickerControl);
+
+    return pickerControl;
 }
 
 void TestPickerProps::initTestCase() {
@@ -42,7 +61,7 @@ QVariantMap TestPickerProps::propValues() const {
     items.append(QVariantMap{{"label", "red"}, {"value", "red"}});
     items.append(QVariantMap{{"label", "green"}, {"value", "green"}});
 
-    return {{"p_testID", "picker"}, {"p_onValueChange", true}, {"p_selected", 1}, {"p_items", items}};
+    return {{"p_testID", "picker"}, {"p_selected", 1}, {"p_items", items}};
 }
 
 QTEST_MAIN(TestPickerProps)
