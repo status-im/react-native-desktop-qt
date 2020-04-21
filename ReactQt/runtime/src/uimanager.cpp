@@ -532,7 +532,6 @@ QVariantMap bubblingEventsDispatchConfig(const QStringList& eventsList) {
     return bubblingEvents;
 }
 
-
 QVariantMap UIManager::constantsToExport() {
     QVariantMap rc;
 
