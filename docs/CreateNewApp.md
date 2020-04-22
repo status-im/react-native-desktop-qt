@@ -7,7 +7,7 @@
 #### Create react native project
 ```sh
 npm install -g react-native-cli
-react-native init DesktopSampleApp --version react-native@0.57.8
+react-native init DesktopSampleApp --version react-native@0.58.6
 ```
 
 #### Add desktop rnpm plugin
