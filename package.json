@@ -1,6 +1,6 @@
 {
   "name": "react-native-desktop-qt",
-  "version": "1.0.0",
+  "version": "0.59.9",
   "description": "React native for desktop",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -29,7 +29,7 @@
     "plugin": "./local-cli/index.js"
   },
   "devDependencies": {
-    "react": "16.6.3",
-    "react-native": "0.58.6"
+    "react": "16.8.3",
+    "react-native": "0.59.9"
   }
 }
