@@ -48,10 +48,11 @@ Diagram code for future changes(mermaid format)
 
 ```
 sequenceDiagram
-QtApplication->>Bundler: Generate single js file from all js sources
-Bundler-->>QtApplication: sends generated js file
-QtApplication->>ubuntuserver.js: execute single js file in sandbox
-ubuntuserver.js-->>ubuntuserver.js: executes js file
-ubuntuserver.js->> QtApplication: send JSON response (result of code execution)
+QtApplication->>Bundler: requiest js sources
+Bundler-->>Bundler: Generates single js file from all js sources
+Bundler-->>QtApplication: returns js file
+QtApplication->>jsexecutor.js: sends js for execution
+jsexecutor.js-->>jsexecutor.js: executes js in a sandbox
+jsexecutor.js->> QtApplication: send JSON response (result of code execution)
 QtApplication-->> QtApplication: process JSON and instantiate UI components
 ```
