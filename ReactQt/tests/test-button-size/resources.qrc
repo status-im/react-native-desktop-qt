@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TestButtonSize.qml</file>
+    </qresource>
+</RCC>

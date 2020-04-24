@@ -19,7 +19,7 @@ Rectangle {
         objectName: "rootView"
         anchors.fill: parent
 
-        moduleName: "TestArrayReconciliationInsertFirst"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestArrayReconciliationInsertFirst.bundle?platform=desktop-qt&dev=true"
+        moduleName: "TestButtonProps"
+        codeLocation: "http://localhost:8081/ReactQt/tests/test-button-props/TestButtonProps.bundle?platform=desktop-qt&dev=true"
     }
 }

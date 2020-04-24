@@ -19,7 +19,7 @@ Rectangle {
         objectName: "rootView"
         anchors.fill: parent
 
-        moduleName: "TestActivityIndicatorProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestActivityIndicatorProps.bundle?platform=desktop-qt&dev=true"
+        moduleName: "TestTextInputClear"
+        codeLocation: "http://localhost:8081/ReactQt/tests/test-textinput-clear/TestTextInputClear.bundle?platform=desktop-qt&dev=true"
     }
 }

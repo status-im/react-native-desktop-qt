@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TestSliderProps.qml</file>
+    </qresource>
+</RCC>

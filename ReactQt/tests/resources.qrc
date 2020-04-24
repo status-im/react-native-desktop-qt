@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>TestModuleTest.qml</file>
-        <file>TestImageProps.qml</file>
-        <file>TestActivityIndicatorProps.qml</file>
         <file>TestButtonProps.qml</file>
         <file>TestSliderProps.qml</file>
         <file>TestButtonSize.qml</file>

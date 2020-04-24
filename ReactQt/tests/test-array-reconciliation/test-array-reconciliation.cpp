@@ -88,7 +88,8 @@ void TestArrayReconciliation::testComponentsArrayFirstElementInsert() {
 }
 
 void TestArrayReconciliation::testComponentsArrayLastElementDelete() {
-    loadJSBundle("TestArrayReconciliationDeleteLast", "ReactQt/tests/JS/TestArrayReconciliationDeleteLast");
+    loadJSBundle("TestArrayReconciliationDeleteLast",
+                 "ReactQt/tests/test-array-reconciliation/TestArrayReconciliationDeleteLast");
 
     waitAndVerifyJsAppStarted();
     showView();
@@ -133,7 +134,8 @@ void TestArrayReconciliation::testComponentsArrayLastElementDelete() {
 void TestArrayReconciliation::testComponentsArrayItemMove() {
     const int ARRAY_ITEMS_COUNT = 4 + 1;
 
-    loadJSBundle("TestArrayReconciliationItemMove", "ReactQt/tests/JS/TestArrayReconciliationItemMove");
+    loadJSBundle("TestArrayReconciliationItemMove",
+                 "ReactQt/tests/test-array-reconciliation/TestArrayReconciliationItemMove");
 
     waitAndVerifyJsAppStarted();
     showView();

@@ -36,7 +36,7 @@ message(STATUS "External modules dirs: ${EXTERNAL_MODULES_DIR}")
 foreach(module_directory ${EXTERNAL_MODULES_DIR})
   message(STATUS "Add external module subdirectory: ${module_directory}")
   add_subdirectory(${module_directory})
-endforeach(loop_var)
+endforeach(module_directory)
 
 add_subdirectory(ReactQt)
 add_subdirectory(Examples)

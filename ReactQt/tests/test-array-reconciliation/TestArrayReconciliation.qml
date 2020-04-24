@@ -19,7 +19,7 @@ Rectangle {
         objectName: "rootView"
         anchors.fill: parent
 
-        moduleName: "TestSliderProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestSliderProps.bundle?platform=desktop-qt&dev=true"
+        moduleName: "TestArrayReconciliationInsertFirst"
+        codeLocation: "http://localhost:8081/ReactQt/tests/test-array-reconciliation/TestArrayReconciliationInsertFirst.bundle?platform=desktop-qt&dev=true"
     }
 }

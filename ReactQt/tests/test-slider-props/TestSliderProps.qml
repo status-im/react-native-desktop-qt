@@ -19,7 +19,7 @@ Rectangle {
         objectName: "rootView"
         anchors.fill: parent
 
-        moduleName: "TestTextInputProps"
-        codeLocation: "http://localhost:8081/ReactQt/tests/JS/TestTextInputProps.bundle?platform=desktop-qt&dev=true"
+        moduleName: "TestSliderProps"
+        codeLocation: "http://localhost:8081/ReactQt/tests/test-slider-props/TestSliderProps.bundle?platform=desktop-qt&dev=true"
     }
 }
