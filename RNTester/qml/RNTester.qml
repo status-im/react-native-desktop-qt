@@ -13,7 +13,7 @@ import React 0.1 as React
 
 Rectangle {
   id: root
-  width: 300; height: 600;
+  width: 450; height: 800;
 
   React.RootView {
     objectName: "rootView"
