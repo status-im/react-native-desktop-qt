@@ -7,6 +7,7 @@
 #include "redbox.h"
 #include "rootview.h"
 #include "utilities.h"
+#include <QLoggingCategory>
 
 const int TIMEOUT_INTERVAL = 30000;
 const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=desktop-qt&dev=true";
@@ -14,6 +15,12 @@ const QString BUNDLE_URL = "http://localhost:8081/%1.bundle?platform=desktop-qt&
 ReactTestCase::ReactTestCase(QObject* parent) : QObject(parent) {
     timeoutTimer.setSingleShot(true);
     timeoutTimer.setInterval(TIMEOUT_INTERVAL);
+
+    QLoggingCategory::setFilterRules("UIManager=false\n"
+                                     "Flexbox=false\n"
+                                     "WebSocketModule=false\n"
+                                     "Networking=false\n"
+                                     "ViewManager=false\n");
 }
 
 void ReactTestCase::initTestCase() {
@@ -88,7 +95,7 @@ QQuickItem* ReactTestCase::topJSComponent() const {
 
     QQuickItem* tier1view = rootViewChilds[0];
     QList<QQuickItem*> tier1ViewChilds = tier1view->childItems();
-    Q_ASSERT(tier1ViewChilds.count() == 1);
+    //    Q_ASSERT(tier1ViewChilds.count() == 1);
 
     QQuickItem* tier2view = tier1ViewChilds[0];
     QList<QQuickItem*> tier2ViewChilds = tier2view->childItems();
