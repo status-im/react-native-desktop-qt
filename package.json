@@ -17,6 +17,9 @@
     "url": "https://github.com/vkjr/react-native-desktop-qt/issues"
   },
   "homepage": "https://github.com/vkjr/react-native-desktop-qt#readme",
+  "dependencies": {
+    "minimist": "^1.2.0"
+  },
   "devDependencies": {
     "react": "16.8.3",
     "react-native": "0.59.9"
