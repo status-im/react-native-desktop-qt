@@ -18,11 +18,11 @@
   },
   "homepage": "https://github.com/vkjr/react-native-desktop-qt#readme",
   "dependencies": {
-    "optimist": "^0.6.1"
+    "optimist": "^0.6.1",
+    "babel-plugin-module-resolver": "^4.0.0"
   },
   "devDependencies": {
     "react": "16.8.6",
-    "react-native": "0.60.6",
-    "babel-plugin-module-resolver": "^4.0.0"
+    "react-native": "0.60.6"
   }
 }
