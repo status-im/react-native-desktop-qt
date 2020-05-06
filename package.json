@@ -21,8 +21,8 @@
     "optimist": "^0.6.1"
   },
   "devDependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.9",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "react": "16.8.6",
+    "react-native": "0.60.6",
+    "babel-plugin-module-resolver": "^4.0.0",
   }
 }
