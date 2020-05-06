@@ -1,6 +1,6 @@
 {
   "name": "react-native-desktop-qt",
-  "version": "0.59.9",
+  "version": "0.60.6",
   "description": "React native for desktop",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -22,6 +22,7 @@
   },
   "devDependencies": {
     "react": "16.8.3",
-    "react-native": "0.59.9"
+    "react-native": "0.59.9",
+    "metro-react-native-babel-preset": "^0.59.0"
   }
 }
