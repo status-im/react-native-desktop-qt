@@ -46,7 +46,6 @@ let AndroidHorizontalScrollContentView;
 let AndroidHorizontalScrollView;
 let RCTScrollView;
 let RCTScrollContentView;
-let UbuntuScrollView;
 
 if (Platform.OS === 'android') {
   AndroidScrollView = requireNativeComponent('RCTScrollView');
@@ -59,8 +58,9 @@ if (Platform.OS === 'android') {
 } else if (Platform.OS === 'ios') {
   RCTScrollView = requireNativeComponent('RCTScrollView');
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView');
-} else if (Platform.OS === 'desktop') {
-  UbuntuScrollView = requireNativeComponent('RCTScrollView', null);
+} else if (Platform.OS === 'desktop-qt') {
+  RCTScrollView = requireNativeComponent('RCTScrollView', null);
+  RCTScrollContentView = View;
 } else {
   RCTScrollView = requireNativeComponent('RCTScrollView');
   RCTScrollContentView = requireNativeComponent('RCTScrollContentView');
@@ -933,9 +933,6 @@ class ScrollView extends React.Component<Props, State> {
         ScrollViewClass = AndroidScrollView;
         ScrollContentContainerViewClass = View;
       }
-    } else if (Platform.OS === 'desktop') {
-      ScrollViewClass = UbuntuScrollView;
-      ScrollContentContainerViewClass = View;
     } else {
       ScrollViewClass = RCTScrollView;
       ScrollContentContainerViewClass = RCTScrollContentView;
@@ -1148,7 +1145,7 @@ class ScrollView extends React.Component<Props, State> {
         );
       }
     }
-    if (Platform.OS === 'desktop' && props.enableArrayScrollingOptimization) {
+    if (Platform.OS === 'desktop-qt' && props.enableArrayScrollingOptimization) {
         return (
           /* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
            * comment suppresses an error when upgrading Flow's support for React.

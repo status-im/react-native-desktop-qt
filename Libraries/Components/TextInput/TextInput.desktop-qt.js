@@ -49,7 +49,7 @@ if (Platform.OS === 'android') {
   RCTSinglelineTextInputView = requireNativeComponent(
     'RCTSinglelineTextInputView',
   );
-} else if (Platform.OS === 'desktop') {
+} else if (Platform.OS === 'desktop-qt') {
    RCTTextInput = requireNativeComponent(
     'RCTTextInputView', TextInput);
 }
@@ -1014,7 +1014,7 @@ const TextInput = createReactClass({
         : this._renderIOSLegacy();
     } else if (Platform.OS === 'android') {
       textInput = this._renderAndroid();
-    } else if (Platform.OS === 'desktop') {
+    } else if (Platform.OS === 'desktop-qt') {
       textInput = this._renderDesktop();
     }
     return (

@@ -54,7 +54,7 @@ class Alert {
       AlertIOS.alert(title, message, buttons);
     } else if (Platform.OS === 'android') {
       AlertAndroid.alert(title, message, buttons, options);
-    } else if (Platform.OS === 'desktop') {
+    } else if (Platform.OS === 'desktop-qt') {
       AlertDesktop.alert(title, message, buttons, options);
     }
   }

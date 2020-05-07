@@ -101,7 +101,7 @@ class Button extends React.Component<ButtonProps> {
     const buttonStyles = [styles.button];
     const textStyles = [styles.text];
     if (color) {
-      if (Platform.OS === 'ios' || Platform.OS === 'desktop') {
+      if (Platform.OS === 'ios' || Platform.OS === 'desktop-qt') {
         textStyles.push({color: color});
       } else {
         buttonStyles.push({backgroundColor: color});

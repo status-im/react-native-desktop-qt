@@ -247,7 +247,7 @@ class Modal extends React.Component<Object> {
         onStartShouldSetResponder={this._shouldSetResponder}
         supportedOrientations={this.props.supportedOrientations}
         onOrientationChange={this.props.onOrientationChange}>
-        <View style={[Platform.OS == 'desktop' ? styles.desktopContainer : styles.container, containerStyles]}>{innerChildren}</View>
+        <View style={[Platform.OS == 'desktop-qt' ? styles.desktopContainer : styles.container, containerStyles]}>{innerChildren}</View>
       </RCTModalHostView>
     );
   }

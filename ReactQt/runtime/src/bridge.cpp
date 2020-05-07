@@ -492,7 +492,7 @@ void Bridge::sourcesFinished() {
         if (d_func()->hotReload) {
             QVariantList args = QVariantList{"HMRClient",
                                              "enable",
-                                             QVariantList{"desktop",
+                                             QVariantList{"desktop-qt",
                                                           d->sourceCode->scriptUrl().path().mid(1),
                                                           d->sourceCode->scriptUrl().host(),
                                                           d->sourceCode->scriptUrl().port(0)}};
