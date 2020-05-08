@@ -56,7 +56,7 @@ function createRndToRnMap(rnPath) {
 module.exports = {
 
   create: function(rnPath, rndPath) {
-    
+
     let rnToRnd = createRnToRndMap(rndPath);
     let rndToRn = createRndToRnMap(rnPath);
 
@@ -83,7 +83,7 @@ module.exports = {
             ],
             resolvePath(sourcePath, currentFile, opts) {
 
-              let map = currentFile.includes(rnPath) ? rnToRnd : rndToRn;
+              let map = currentFile.includes(rnPath+'/') ? rnToRnd : rndToRn;
               if (map.has(sourcePath))
                 return map.get(sourcePath);
 
