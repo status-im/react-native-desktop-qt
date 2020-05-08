@@ -16,6 +16,8 @@ const rnToRnd = new Map([
   ["../Components/ScrollView/ScrollView", "../../../react-native-desktop-qt/Libraries/Components/ScrollView/ScrollView"],
   ["../../Components/ScrollView/ScrollView", "../../../../react-native-desktop-qt/Libraries/Components/ScrollView/ScrollView"],
   ["../../../Components/ScrollView/ScrollView", "../../../../../react-native-desktop-qt/Libraries/Components/ScrollView/ScrollView"],
+  ["SafeAreaView", "../../../react-native-desktop-qt/Libraries/Components/SafeAreaView/SafeAreaView"],
+  ["../../Components/SafeAreaView/SafeAreaView", "../../../../react-native-desktop-qt/Libraries/Components/SafeAreaView/SafeAreaView"],
 ]);
 
 const rndToRn = new Map([
