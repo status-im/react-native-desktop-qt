@@ -21,9 +21,9 @@ import type {ViewProps} from '../../Libraries/Components/View/ViewPropTypes';
 // Verify that RCTSnapshot is part of the UIManager since it is only loaded
 // if you have linked against RCTTest like in tests, otherwise we will have
 // a warning printed out
-const RCTSnapshot = UIManager.getViewManagerConfig('RCTSnapshot')
-  ? require('../RCTTest/RCTSnapshotNativeComponent')
-  : View;
+// const RCTSnapshot = UIManager.getViewManagerConfig('RCTSnapshot')
+//   ? require('../RCTTest/RCTSnapshotNativeComponent')
+//   : View;
 
 type SnapshotReadyEvent = SyntheticEvent<
   $ReadOnly<{
