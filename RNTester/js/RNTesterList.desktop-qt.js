@@ -1,27 +1,23 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
+ * @format
  * @flow
- * @providesModule RNTesterList
  */
+
 'use strict';
 
-export type RNTesterExample = {
-  key: string,
-  module: Object,
-};
+import type {RNTesterExample} from './Shared/RNTesterTypes';
 
 const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'ActivityIndicatorExample',
     module: require('./ActivityIndicatorExample'),
   },
-  // TODO: ArtExample crashes on start!
+  // TODO: crashes on start
   // {
   //   key: 'ARTExample',
   //   module: require('./ARTExample'),
@@ -33,7 +29,6 @@ const ComponentExamples: Array<RNTesterExample> = [
   {
     key: 'DatePickerIOSExample',
     module: require('./DatePickerIOSExample'),
-    supportsTVOS: false,
   },
   {
     key: 'FlatListExample',
@@ -43,11 +38,12 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'ImageExample',
     module: require('./ImageExample'),
   },
+  // Doesn't exist on desktop
   // {
   //   key: 'InputAccessoryViewExample',
   //   module: require('./InputAccessoryViewExample'),
-  //   supportsTVOS: true,
   // },
+  // Doesn't exist on desktop
   // {
   //   key: 'KeyboardAvoidingViewExample',
   //   module: require('./KeyboardAvoidingViewExample'),
@@ -57,23 +53,9 @@ const ComponentExamples: Array<RNTesterExample> = [
     module: require('./LayoutEventsExample'),
   },
   {
-    key: 'ListViewExample',
-    module: require('./ListViewExample'),
+    key: 'MaskedViewExample',
+    module: require('./MaskedViewExample'),
   },
-  {
-    key: 'ListViewGridLayoutExample',
-    module: require('./ListViewGridLayoutExample'),
-  },
-  //TODO: gives error Native animated module is not available
-  // {
-  //   key: 'ListViewPagingExample',
-  //   module: require('./ListViewPagingExample'),
-  // },
-  //TODO: masked view not implemented
-  // {
-  //   key: 'MaskedViewExample',
-  //   module: require('./MaskedViewExample'),
-  // },
   {
     key: 'ModalExample',
     module: require('./ModalExample'),
@@ -82,21 +64,10 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'MultiColumnExample',
     module: require('./MultiColumnExample'),
   },
-  // {
-  //   key: 'NavigatorIOSColorsExample',
-  //   module: require('./NavigatorIOSColorsExample'),
-  //   supportsTVOS: false,
-  // },
-  // {
-  //   key: 'NavigatorIOSBarStyleExample',
-  //   module: require('./NavigatorIOSBarStyleExample'),
-  //   supportsTVOS: false,
-  // },
-  // {
-  //   key: 'NavigatorIOSExample',
-  //   module: require('./NavigatorIOSExample'),
-  //   supportsTVOS: true,
-  // },
+  {
+    key: 'NewAppScreenExample',
+    module: require('./NewAppScreenExample'),
+  },
   {
     key: 'PickerExample',
     module: require('./PickerExample'),
@@ -104,7 +75,6 @@ const ComponentExamples: Array<RNTesterExample> = [
   // {
   //   key: 'PickerIOSExample',
   //   module: require('./PickerIOSExample'),
-  //   supportsTVOS: false,
   // },
   // {
   //   key: 'ProgressViewIOSExample',
@@ -114,21 +84,23 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'RefreshControlExample',
     module: require('./RefreshControlExample'),
   },
-  // {
-  //   key: 'SafeAreaViewExample',
-  //   module: require('./SafeAreaViewExample'),
-  //   supportsTVOS: true,
-  // },
+  {
+    key: 'ScrollViewSimpleExample',
+    module: require('./ScrollViewSimpleExample'),
+  },
+  {
+    key: 'SafeAreaViewExample',
+    module: require('./SafeAreaViewExample'),
+  },
   {
     key: 'ScrollViewExample',
     module: require('./ScrollViewExample'),
   },
-  //TODO: error "native animated module not implemented"
+   //TODO: error "native animated module not implemented"
   // {
   //   key: 'SectionListExample',
   //   module: require('./SectionListExample'),
   // },
-  //TODO: not implemented
   // {
   //   key: 'SegmentedControlIOSExample',
   //   module: require('./SegmentedControlIOSExample'),
@@ -137,78 +109,53 @@ const ComponentExamples: Array<RNTesterExample> = [
     key: 'SliderExample',
     module: require('./SliderExample'),
   },
-  // {
-  //   key: 'StatusBarExample',
-  //   module: require('./StatusBarExample'),
-  //   supportsTVOS: false,
-  // },
   {
-    key: 'SwipeableFlatListExample',
-    module: require('./SwipeableFlatListExample'),
-  },
-  {
-    key: 'SwipeableListViewExample',
-    module: require('./SwipeableListViewExample'),
+    key: 'StatusBarExample',
+    module: require('./StatusBarExample'),
   },
   {
     key: 'SwitchExample',
     module: require('./SwitchExample'),
   },
-  // {
-  //   key: 'TabBarIOSExample',
-  //   module: require('./TabBarIOSExample'),
-  // },
-  // {
-  //   key: 'TabBarIOSBarStyleExample',
-  //   module: require('./TabBarIOSBarStyleExample'),
-  // },
   {
     key: 'TextExample',
-    module: require('./TextExample'),
+    module: require('./TextExample.desktop-qt'),
   },
   {
     key: 'TextInputExample',
-    module: require('./TextInputExample'),
+    module: require('./TextInputExample.desktop-qt'),
   },
   {
     key: 'TouchableExample',
     module: require('./TouchableExample'),
   },
-  // {
-  //   key: 'TransparentHitTestExample',
-  //   module: require('./TransparentHitTestExample'),
-  //   supportsTVOS: false,
-  // },
+  {
+    key: 'TransparentHitTestExample',
+    module: require('./TransparentHitTestExample'),
+  },
   {
     key: 'ViewExample',
     module: require('./ViewExample'),
-  },
-  {
-    key: 'WebViewExample',
-    module: require('./WebViewExample'),
   },
 ];
 
 const APIExamples: Array<RNTesterExample> = [
   // {
+  //   key: 'AccessibilityExample',
+  //   module: require('./AccessibilityExample'),
+  // },
+  // {
   //   key: 'AccessibilityIOSExample',
   //   module: require('./AccessibilityIOSExample'),
-  //   supportsTVOS: false,
   // },
   // {
   //   key: 'ActionSheetIOSExample',
   //   module: require('./ActionSheetIOSExample'),
-  //   supportsTVOS: true,
   // },
   {
-    key: 'AlertExample',
-    module: require('./AlertExample').AlertExample,
+    key: 'AlertIOSExample',
+    module: require('./AlertIOSExample'),
   },
-  // {
-  //   key: 'AlertIOSExample',
-  //   module: require('./AlertIOSExample'),
-  //   supportsTVOS: true,
-  // },
   {
     key: 'AnimatedExample',
     module: require('./AnimatedExample'),
@@ -217,11 +164,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'AnExApp',
     module: require('./AnimatedGratuitousApp/AnExApp'),
   },
-  // {
-  //   key: 'AppStateExample',
-  //   module: require('./AppStateExample'),
-  //   supportsTVOS: true,
-  // },
+  {
+    key: 'AppStateExample',
+    module: require('./AppStateExample'),
+  },
   // {
   //   key: 'AsyncStorageExample',
   //   module: require('./AsyncStorageExample'),
@@ -237,21 +183,19 @@ const APIExamples: Array<RNTesterExample> = [
   // {
   //   key: 'CameraRollExample',
   //   module: require('./CameraRollExample'),
-  //   supportsTVOS: false,
   // },
   {
     key: 'ClipboardExample',
     module: require('./ClipboardExample'),
   },
   {
+    key: 'CrashExample',
+    module: require('./CrashExample'),
+  },
+  {
     key: 'Dimensions',
     module: require('./DimensionsExample'),
   },
-  // {
-  //   key: 'GeolocationExample',
-  //   module: require('./GeolocationExample'),
-  //   supportsTVOS: false,
-  // },
   // {
   //   key: 'ImageEditingExample',
   //   module: require('./ImageEditingExample'),
@@ -264,22 +208,17 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'LayoutExample',
     module: require('./LayoutExample'),
   },
-  {
-    key: 'LinkingExample',
-    module: require('./LinkingExample'),
-  },
+  // {
+  //   key: 'LinkingExample',
+  //   module: require('./LinkingExample'),
+  // },
   {
     key: 'NativeAnimationsExample',
     module: require('./NativeAnimationsExample'),
   },
-  {
-    key: 'NetInfoExample',
-    module: require('./NetInfoExample'),
-  },
   // {
   //   key: 'OrientationChangeExample',
   //   module: require('./OrientationChangeExample'),
-  //   supportsTVOS: false,
   // },
   {
     key: 'PanResponderExample',
@@ -292,7 +231,6 @@ const APIExamples: Array<RNTesterExample> = [
   // {
   //   key: 'PushNotificationIOSExample',
   //   module: require('./PushNotificationIOSExample'),
-  //   supportsTVOS: false,
   // },
   // {
   //   key: 'RCTRootViewIOSExample',
@@ -305,12 +243,10 @@ const APIExamples: Array<RNTesterExample> = [
   // {
   //   key: 'ShareExample',
   //   module: require('./ShareExample'),
-  //   supportsTVOS: true,
   // },
   // {
   //   key: 'SnapshotExample',
   //   module: require('./SnapshotExample'),
-  //   supportsTVOS: true,
   // },
   {
     key: 'TimerExample',
@@ -321,23 +257,25 @@ const APIExamples: Array<RNTesterExample> = [
     module: require('./TransformExample'),
   },
   // {
+  //   key: 'TurboModuleExample',
+  //   module: require('./TurboModuleExample'),
+  // },
+  // {
   //   key: 'TVEventHandlerExample',
   //   module: require('./TVEventHandlerExample'),
-  //   supportsTVOS: true,
   // },
   // {
   //   key: 'VibrationExample',
   //   module: require('./VibrationExample'),
-  //   supportsTVOS: false,
   // },
   {
     key: 'WebSocketExample',
     module: require('./WebSocketExample'),
   },
-  {
-    key: 'XHRExample',
-    module: require('./XHRExample'),
-  },
+  // {
+  //   key: 'XHRExample',
+  //   module: require('./XHRExample'),
+  // },
 ];
 
 const Modules = {};

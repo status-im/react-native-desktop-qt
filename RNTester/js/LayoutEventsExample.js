@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,22 +10,31 @@
 
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {Image, LayoutAnimation, StyleSheet, Text, View} = ReactNative;
+const React = require('react');
+const {
+  Image,
+  LayoutAnimation,
+  StyleSheet,
+  Text,
+  View,
+} = require('react-native');
 
-import type {ViewLayout, ViewLayoutEvent} from 'ViewPropTypes';
+import type {
+  ViewLayout,
+  ViewLayoutEvent,
+} from '../../Libraries/Components/View/ViewPropTypes';
 
+type Props = $ReadOnly<{||}>;
 type State = {
-  containerStyle?: {width: number},
+  containerStyle?: {|width: number|},
   extraText?: string,
   imageLayout?: ViewLayout,
   textLayout?: ViewLayout,
   viewLayout?: ViewLayout,
-  viewStyle: {margin: number},
+  viewStyle: {|margin: number|},
 };
 
-class LayoutEventExample extends React.Component<{}, State> {
+class LayoutEventExample extends React.Component<Props, State> {
   state: State = {
     viewStyle: {
       margin: 20,
@@ -71,9 +80,9 @@ class LayoutEventExample extends React.Component<{}, State> {
   };
 
   render() {
-    var viewStyle = [styles.view, this.state.viewStyle];
-    var textLayout = this.state.textLayout || {width: '?', height: '?'};
-    var imageLayout = this.state.imageLayout || {x: '?', y: '?'};
+    const viewStyle = [styles.view, this.state.viewStyle];
+    const textLayout = this.state.textLayout || {width: '?', height: '?'};
+    const imageLayout = this.state.imageLayout || {x: '?', y: '?'};
     return (
       <View style={this.state.containerStyle}>
         <Text>
@@ -97,7 +106,10 @@ class LayoutEventExample extends React.Component<{}, State> {
           />
           <Text>
             ViewLayout:{' '}
-            {JSON.stringify(this.state.viewLayout, null, '  ') + '\n\n'}
+            {/* $FlowFixMe(>=0.95.0 site=react_native_fb) This comment
+             * suppresses an error found when Flow v0.95 was deployed. To see
+             * the error, delete this comment and run Flow. */
+            JSON.stringify(this.state.viewLayout, null, '  ') + '\n\n'}
           </Text>
           <Text ref="txt" onLayout={this.onTextLayout} style={styles.text}>
             A simple piece of text.{this.state.extraText}
@@ -113,7 +125,7 @@ class LayoutEventExample extends React.Component<{}, State> {
   }
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   view: {
     padding: 12,
     borderColor: 'black',

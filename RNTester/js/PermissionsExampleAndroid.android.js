@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,7 +11,6 @@
 'use strict';
 
 const React = require('react');
-const ReactNative = require('react-native');
 const {
   PermissionsAndroid,
   Picker,
@@ -19,14 +18,9 @@ const {
   Text,
   TouchableWithoutFeedback,
   View,
-} = ReactNative;
+} = require('react-native');
 
 const Item = Picker.Item;
-
-exports.displayName = (undefined: ?string);
-exports.framework = 'React';
-exports.title = 'PermissionsAndroid';
-exports.description = 'Permissions example for API 23+.';
 
 class PermissionsExample extends React.Component<{}, $FlowFixMeState> {
   state = {
@@ -76,7 +70,7 @@ class PermissionsExample extends React.Component<{}, $FlowFixMeState> {
     );
   }
 
-  _onSelectPermission = (permission: string) => {
+  _onSelectPermission = (permission: string | number) => {
     this.setState({
       permission: permission,
     });
@@ -105,6 +99,10 @@ class PermissionsExample extends React.Component<{}, $FlowFixMeState> {
   };
 }
 
+exports.displayName = (undefined: ?string);
+exports.framework = 'React';
+exports.title = 'PermissionsAndroid';
+exports.description = 'Permissions example for API 23+.';
 exports.examples = [
   {
     title: 'Permissions Example',
@@ -114,14 +112,10 @@ exports.examples = [
   },
 ];
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-  },
-  singleLine: {
-    fontSize: 16,
-    padding: 4,
   },
   text: {
     margin: 10,

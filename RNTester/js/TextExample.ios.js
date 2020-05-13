@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,12 +10,29 @@
 
 'use strict';
 
-const Platform = require('Platform');
-var React = require('react');
-var createReactClass = require('create-react-class');
-var ReactNative = require('react-native');
-var {Text, TextInput, View, LayoutAnimation, Button} = ReactNative;
+const React = require('react');
+const {
+  Button,
+  LayoutAnimation,
+  Platform,
+  Text,
+  TextInput,
+  View,
+} = require('react-native');
+const TextAncestor = require('TextAncestor');
+const TextInlineView = require('./Shared/TextInlineView');
 const TextLegend = require('./Shared/TextLegend');
+
+// TODO: Is there a cleaner way to flip the TextAncestor value to false? I
+//   suspect apps won't even be able to leverage this workaround because
+//   TextAncestor is not public.
+function InlineView(props) {
+  return (
+    <TextAncestor.Provider value={false}>
+      <View {...props} />
+    </TextAncestor.Provider>
+  );
+}
 
 type TextAlignExampleRTLState = {|
   isRTL: boolean,
@@ -92,7 +109,7 @@ class AttributeToggler extends React.Component<{}, $FlowFixMeState> {
   };
 
   render() {
-    var curStyle = {
+    const curStyle = {
       fontWeight: this.state.fontWeight,
       fontSize: this.state.fontSize,
     };
@@ -122,12 +139,23 @@ class AttributeToggler extends React.Component<{}, $FlowFixMeState> {
   }
 }
 
-var AdjustingFontSize = createReactClass({
-  displayName: 'AdjustingFontSize',
-  getInitialState: function() {
-    return {dynamicText: '', shouldRender: true};
-  },
-  reset: function() {
+type AdjustingFontSizeProps = $ReadOnly<{||}>;
+
+type AdjustingFontSizeState = {|
+  dynamicText: string,
+  shouldRender: boolean,
+|};
+
+class AdjustingFontSize extends React.Component<
+  AdjustingFontSizeProps,
+  AdjustingFontSizeState,
+> {
+  state = {
+    dynamicText: '',
+    shouldRender: true,
+  };
+
+  reset = () => {
     LayoutAnimation.easeInEaseOut();
     this.setState({
       shouldRender: false,
@@ -139,23 +167,26 @@ var AdjustingFontSize = createReactClass({
         shouldRender: true,
       });
     }, 300);
-  },
-  addText: function() {
+  };
+
+  addText = () => {
     this.setState({
       dynamicText:
         this.state.dynamicText +
         (Math.floor((Math.random() * 10) % 2) ? ' foo' : ' bar'),
     });
-  },
-  removeText: function() {
+  };
+
+  removeText = () => {
     this.setState({
       dynamicText: this.state.dynamicText.slice(
         0,
         this.state.dynamicText.length - 4,
       ),
     });
-  },
-  render: function() {
+  };
+
+  render() {
     if (!this.state.shouldRender) {
       return <View />;
     }
@@ -221,13 +252,13 @@ var AdjustingFontSize = createReactClass({
         </View>
       </View>
     );
-  },
-});
+  }
+}
 
 class TextBaseLineLayoutExample extends React.Component<*, *> {
   render() {
-    var texts = [];
-    for (var i = 9; i >= 0; i--) {
+    const texts = [];
+    for (let i = 9; i >= 0; i--) {
       texts.push(
         <Text key={i} style={{fontSize: 8 + i * 5, backgroundColor: '#eee'}}>
           {i}
@@ -253,6 +284,28 @@ class TextBaseLineLayoutExample extends React.Component<*, *> {
         <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
           {marker}
           {texts}
+          {marker}
+        </View>
+
+        {/* iOS-only because it relies on inline views being able to size to content.
+         * Android's implementation requires that a width and height be specified
+         * on the inline view. */}
+        <Text style={subtitleStyle}>{'Interleaving <View> and <Text>:'}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+          {marker}
+          <Text selectable={true}>
+            Some text.
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'baseline',
+                backgroundColor: '#eee',
+              }}>
+              {marker}
+              <Text>Text inside View.</Text>
+              {marker}
+            </View>
+          </Text>
           {marker}
         </View>
 
@@ -400,6 +453,23 @@ class TextWithCapBaseBox extends React.Component<*, *> {
   }
 }
 
+function LongTextExample() {
+  const [collapsed, setCollapsed] = React.useState(true);
+  return (
+    <View>
+      <Button
+        onPress={() => setCollapsed(state => !state)}
+        title="Toggle long text"
+      />
+      <Text>
+        {Array.from({length: collapsed ? 5 : 5000})
+          .map((_, i) => i)
+          .join('\n')}
+      </Text>
+    </View>
+  );
+}
+
 exports.title = '<Text>';
 exports.description = 'Base component for rendering styled text.';
 exports.displayName = 'TextExample';
@@ -411,6 +481,25 @@ exports.examples = [
         <Text>
           The text should wrap if it goes on multiple lines. See, this is going
           to the next line.
+        </Text>
+      );
+    },
+  },
+  {
+    title: "Substring Emoji (should only see 'test')",
+    render: function() {
+      return <Text>{'test🙃'.substring(0, 5)}</Text>;
+    },
+  },
+  {
+    title: 'Transparent Background Color',
+    render: function() {
+      return (
+        <Text style={{backgroundColor: '#00000020', padding: 10}}>
+          Text in a gray box!
+          <Text style={{backgroundColor: 'red'}}>
+            Another text in a (inline) red box (which is inside the gray box).
+          </Text>
         </Text>
       );
     },
@@ -856,23 +945,46 @@ exports.examples = [
         <View>
           <Text>
             By default, text will respect Text Size accessibility setting on
-            iOS. It means that all font sizes will be increased or descreased
+            iOS. It means that all font sizes will be increased or decreased
             depending on the value of Text Size setting in{' '}
             <Text style={{fontWeight: 'bold'}}>
               Settings.app - Display & Brightness - Text Size
             </Text>
           </Text>
           <Text style={{marginTop: 10}}>
-            You can disable scaling for your Text component by passing {'"'}allowFontScaling={
-              '{'
-            }false{'}"'} prop.
+            You can disable scaling for your Text component by passing {'"'}
+            allowFontScaling={'{'}false{'}"'} prop.
           </Text>
-          <Text allowFontScaling={false} style={{marginTop: 20}}>
-            This text will not scale.
+          <Text allowFontScaling={false} style={{marginTop: 20, fontSize: 15}}>
+            This text will not scale.{' '}
+            <Text style={{fontSize: 15}}>
+              This text also won't scale because it inherits "allowFontScaling"
+              from its parent.
+            </Text>
           </Text>
         </View>
       );
     },
+  },
+  {
+    title: 'Inline views',
+    render: () => <TextInlineView.Basic />,
+  },
+  {
+    title: 'Inline image/view clipped by <Text>',
+    render: () => <TextInlineView.ClippedByText />,
+  },
+  {
+    title: 'Relayout inline image',
+    render: () => <TextInlineView.ChangeImageSize />,
+  },
+  {
+    title: 'Relayout inline view',
+    render: () => <TextInlineView.ChangeViewSize />,
+  },
+  {
+    title: 'Relayout nested inline view',
+    render: () => <TextInlineView.ChangeInnerViewSize />,
   },
   {
     title: 'Text shadow',
@@ -948,6 +1060,34 @@ exports.examples = [
     },
   },
   {
+    title: 'Nested content',
+    render: function() {
+      // iOS-only because it relies on inline views being able to size to content.
+      // Android's implementation requires that a width and height be specified
+      // on the inline view.
+      return (
+        <Text>
+          This text has a view
+          <InlineView style={{borderColor: 'red', borderWidth: 1}}>
+            <Text style={{borderColor: 'blue', borderWidth: 1}}>which has</Text>
+            <Text style={{borderColor: 'green', borderWidth: 1}}>
+              another text inside.
+            </Text>
+            <Text style={{borderColor: 'yellow', borderWidth: 1}}>
+              And moreover, it has another view
+              <InlineView style={{borderColor: 'red', borderWidth: 1}}>
+                <Text style={{borderColor: 'blue', borderWidth: 1}}>
+                  with another text inside!
+                </Text>
+              </InlineView>
+            </Text>
+          </InlineView>
+          Because we need to go deeper.
+        </Text>
+      );
+    },
+  },
+  {
     title: 'Dynamic Font Size Adjustment',
     render: function(): React.Element<any> {
       return <AdjustingFontSize />;
@@ -1000,6 +1140,12 @@ exports.examples = [
           </Text>
         </View>
       );
+    },
+  },
+  {
+    title: 'Async rendering for long text',
+    render: function() {
+      return <LongTextExample />;
     },
   },
 ];

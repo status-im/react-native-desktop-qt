@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,12 +11,11 @@
 'use strict';
 
 const React = require('react');
-const ReactNative = require('react-native');
-const {FlatList, StyleSheet, Text, View} = ReactNative;
+const {FlatList, StyleSheet, Text, View, Alert} = require('react-native');
 
 const RNTesterPage = require('./RNTesterPage');
 
-const infoLog = require('infoLog');
+const infoLog = require('../../Libraries/Utilities/infoLog');
 
 const {
   FooterComponent,
@@ -34,9 +33,6 @@ class MultiColumnExample extends React.PureComponent<
   $FlowFixMeProps,
   $FlowFixMeState,
 > {
-  static title = '<FlatList> - MultiColumn';
-  static description = 'Performant, scrollable grid of data.';
-
   state = {
     data: genItemData(1000),
     filterText: '',
@@ -91,12 +87,13 @@ class MultiColumnExample extends React.PureComponent<
           data={filteredData}
           key={this.state.numColumns + (this.state.fixedHeight ? 'f' : 'v')}
           numColumns={this.state.numColumns || 1}
-          onRefresh={() => alert('onRefresh: nothing to refresh :P')}
+          onRefresh={() =>
+            Alert.alert('Alert', 'onRefresh: nothing to refresh :P')
+          }
           refreshing={false}
           renderItem={this._renderItemComponent}
           disableVirtualization={!this.state.virtualized}
           onViewableItemsChanged={this._onViewableItemsChanged}
-          legacyImplementation={false}
         />
       </RNTesterPage>
     );
@@ -164,4 +161,13 @@ const styles = StyleSheet.create({
   },
 });
 
-module.exports = MultiColumnExample;
+exports.title = '<FlatList> - MultiColumn';
+exports.description = 'Performant, scrollable grid of data.';
+exports.examples = [
+  {
+    title: 'Simple flat list multi column',
+    render: function(): React.Element<typeof MultiColumnExample> {
+      return <MultiColumnExample />;
+    },
+  },
+];

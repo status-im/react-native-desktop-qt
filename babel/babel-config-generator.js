@@ -52,13 +52,21 @@ function createRndToRnMap(rnPath) {
   ]);
 }
 
+function createRnTesterMap(rnPath, rndPath) {
+  return new Map([
+    // imports in RNTester app
+    ["../../Libraries/Interaction/JSEventLoopWatchdog", path.resolve(rnPath, "Libraries/Interaction/JSEventLoopWatchdog")],
+    ["../../Libraries/Utilities/infoLog", path.resolve(rnPath, "Libraries/Utilities/infoLog")],
+    ["../../Libraries/Image/nativeImageSource", path.resolve(rnPath, "Libraries/Image/nativeImageSource")],
+    ["../../Libraries/NewAppScreen", path.resolve(rnPath, "Libraries/NewAppScreen")],
+
+  ]);
+}
+
 
 module.exports = {
 
   create: function(rnPath, rndPath) {
-
-    let rnToRnd = createRnToRndMap(rndPath);
-    let rndToRn = createRndToRnMap(rnPath);
 
     let config = {
       presets: ['module:metro-react-native-babel-preset'],
@@ -83,7 +91,17 @@ module.exports = {
             ],
             resolvePath(sourcePath, currentFile, opts) {
 
-              let map = currentFile.includes(rnPath+'/') ? rnToRnd : rndToRn;
+              let map;
+              if(currentFile.includes(rnPath+'/')) {
+                map = createRnToRndMap(rndPath);
+              }
+              else if(currentFile.includes("RNTester")) {
+                map = createRnTesterMap(rnPath, rndPath)
+              }
+              else {
+                map = createRndToRnMap(rnPath);
+              }
+
               if (map.has(sourcePath))
                 return map.get(sourcePath);
 

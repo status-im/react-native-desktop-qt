@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,7 +11,6 @@
 'use strict';
 
 const React = require('react');
-const ReactNative = require('react-native');
 const {
   View,
   Text,
@@ -19,9 +18,9 @@ const {
   StyleSheet,
   TouchableWithoutFeedback,
   Slider,
-} = ReactNative;
+} = require('react-native');
 
-var AnimatedSlider = Animated.createAnimatedComponent(Slider);
+const AnimatedSlider = Animated.createAnimatedComponent(Slider);
 
 class Tester extends React.Component<$FlowFixMeProps, $FlowFixMeState> {
   state = {
@@ -155,7 +154,7 @@ class LoopExample extends React.Component<{}, $FlowFixMeState> {
   }
 }
 
-const RNTesterSettingSwitchRow = require('RNTesterSettingSwitchRow');
+const RNTesterSettingSwitchRow = require('./RNTesterSettingSwitchRow');
 class InternalSettings extends React.Component<
   {},
   {busyTime: number | string, filteredStall: number},
@@ -188,16 +187,20 @@ class InternalSettings extends React.Component<
           initialValue={false}
           label="Track JS Stalls"
           onEnable={() => {
-            require('JSEventLoopWatchdog').install({thresholdMS: 25});
-            this.setState({busyTime: '<none>'});
-            require('JSEventLoopWatchdog').addHandler({
-              onStall: ({busyTime}) =>
-                this.setState(state => ({
-                  busyTime,
-                  filteredStall:
-                    (state.filteredStall || 0) * 0.97 + busyTime * 0.03,
-                })),
+            require('../../Libraries/Interaction/JSEventLoopWatchdog').install({
+              thresholdMS: 25,
             });
+            this.setState({busyTime: '<none>'});
+            require('../../Libraries/Interaction/JSEventLoopWatchdog').addHandler(
+              {
+                onStall: ({busyTime}) =>
+                  this.setState(state => ({
+                    busyTime,
+                    filteredStall:
+                      (state.filteredStall || 0) * 0.97 + busyTime * 0.03,
+                  })),
+              },
+            );
           }}
           onDisable={() => {
             console.warn('Cannot disable yet....');
@@ -220,24 +223,26 @@ class EventExample extends React.Component<{}, $FlowFixMeState> {
   };
 
   render() {
-    const opacity = this.state.scrollX.interpolate({
-      inputRange: [0, 200],
-      outputRange: [1, 0],
-    });
     return (
       <View>
         <Animated.View
           style={[
             styles.block,
             {
-              opacity,
+              transform: [
+                {
+                  rotate: this.state.scrollX.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ['0deg', '1deg'],
+                  }),
+                },
+              ],
             },
           ]}
         />
         <Animated.ScrollView
           horizontal
           style={{height: 100, marginTop: 16}}
-          scrollEventThrottle={16}
           onScroll={Animated.event(
             [{nativeEvent: {contentOffset: {x: this.state.scrollX}}}],
             {useNativeDriver: true},
@@ -247,8 +252,9 @@ class EventExample extends React.Component<{}, $FlowFixMeState> {
               width: 600,
               backgroundColor: '#eee',
               justifyContent: 'center',
+              paddingLeft: 100,
             }}>
-            <Text>Scroll me!</Text>
+            <Text>Scroll me sideways!</Text>
           </View>
         </Animated.ScrollView>
       </View>
@@ -293,6 +299,9 @@ class TrackingExample extends React.Component<
     this.state.toJS.setValue(nextValue);
   };
 
+  /* $FlowFixMe(>=0.85.0 site=react_native_fb) This comment suppresses an error
+   * found when Flow v0.85 was deployed. To see the error, delete this comment
+   * and run Flow. */
   renderBlock = (anim, dest) => [
     <Animated.View
       key="line"
@@ -634,7 +643,7 @@ exports.examples = [
     },
   },
   {
-    title: 'Drive custom property',
+    title: 'Drive custom property (tap to animate)',
     render: function() {
       return (
         <Tester type="timing" config={{duration: 1000}}>
