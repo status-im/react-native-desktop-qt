@@ -6,12 +6,12 @@
 
 #### Create react native project
 ```sh
-npx react-native init MyProject --version 0.60.6
+npx react-native init DesktopSampleApp --version 0.60.6
 ```
 
 #### Add desktop support by invoking `react-native-desktop-qt-init` package
 ```sh
-cd MyProject
+cd DesktopSampleApp
 npx https://github.com/vkjr/react-native-desktop-qt-init.git
 ```
 This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project files.
