@@ -6,23 +6,15 @@
 
 #### Create react native project
 ```sh
-npm install -g react-native-cli
-react-native init DesktopSampleApp --version react-native@0.58.6
+npx react-native init MyProject --version 0.60.6
 ```
 
-#### Add desktop rnpm plugin
+#### Add desktop support by invoking `react-native-desktop-qt-init` package
 ```sh
-cd DesktopSampleApp
-yarn add git+https://github.com/status-im/rnpm-plugin-desktop-qt.git --dev
+cd MyProject
+npx https://github.com/vkjr/react-native-desktop-qt-init.git
 ```
-RNPM plugin gives you access to a new command that generates desktop files for your project.
-
-
-#### Generate desktop files
-```sh
-react-native desktop-qt
-```
-This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project.
+This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project files.
 
 
 #### Run the project
@@ -31,12 +23,12 @@ If you're using macOS, run these commands in 2 different shells (from `DesktopSa
 npm start #starts bundler
 ```
 ```sh
-node node_modules/react-native/js-executor.js #starts js server
+node node_modules/react-native-desktop-qt/js-executor.js #starts js server
 ```
 
 Afterwards, in a 3rd shell execute:
 ```sh
-react-native run-desktop
+npx react-native run-desktop
 ```
 Compilation of desktop project will start. Then it will run:
 
