@@ -46,6 +46,7 @@ function copyProjectTemplateAndReplace(
     { from: path.join(srcPath, 'main.cpp'), to: path.join(desktopDir, 'main.cpp') },
     { from: path.join(srcPath, 'run-app.bat.in'), to: path.join(desktopDir, 'run-app.bat.in') },
     { from: path.join(srcPath, 'run-app.sh.in'), to: path.join(desktopDir, 'run-app.sh.in') },
+    { from: path.join(srcPath, 'babel.config.js'), to: path.join('.', 'babel.config.js') },
   ].forEach((mapping) => copyAndReplaceWithChangedCallback(mapping.from, destPath, mapping.to, templateVars));
 
 

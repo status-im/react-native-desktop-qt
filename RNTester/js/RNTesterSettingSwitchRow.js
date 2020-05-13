@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,12 +10,9 @@
 
 'use strict';
 
-const React = require('React');
-const StyleSheet = require('StyleSheet');
-const Switch = require('Switch');
-const Text = require('Text');
+const React = require('react');
+const {StyleSheet, Switch, Text, View} = require('react-native');
 const RNTesterStatePersister = require('./RNTesterStatePersister');
-const View = require('View');
 
 class RNTesterSettingSwitchRow extends React.Component<
   $FlowFixMeProps,
@@ -49,6 +46,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 });
+/* $FlowFixMe(>=0.85.0 site=react_native_fb) This comment suppresses an error
+ * found when Flow v0.85 was deployed. To see the error, delete this comment
+ * and run Flow. */
 RNTesterSettingSwitchRow = RNTesterStatePersister.createContainer(
   RNTesterSettingSwitchRow,
   {

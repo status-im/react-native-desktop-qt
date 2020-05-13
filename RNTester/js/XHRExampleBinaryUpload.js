@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -11,7 +11,6 @@
 'use strict';
 
 const React = require('react');
-const ReactNative = require('react-native');
 const {
   Alert,
   Linking,
@@ -20,7 +19,7 @@ const {
   Text,
   TouchableHighlight,
   View,
-} = ReactNative;
+} = require('react-native');
 
 const BINARY_TYPES = {
   String,
@@ -62,12 +61,12 @@ class XHRExampleBinaryUpload extends React.Component<{}, $FlowFixMeState> {
       Alert.alert('Upload failed', 'No response payload.');
       return;
     }
-    var index = xhr.responseText.indexOf('http://www.posttestserver.com/');
+    const index = xhr.responseText.indexOf('http://www.posttestserver.com/');
     if (index === -1) {
       Alert.alert('Upload failed', 'Invalid response payload.');
       return;
     }
-    var url = xhr.responseText.slice(index).split('\n')[0];
+    const url = xhr.responseText.slice(index).split('\n')[0];
     console.log('Upload successful: ' + url);
     Linking.openURL(url);
   }
@@ -77,7 +76,7 @@ class XHRExampleBinaryUpload extends React.Component<{}, $FlowFixMeState> {
   };
 
   _upload = () => {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open('POST', 'http://posttestserver.com/post.php');
     xhr.onload = () => XHRExampleBinaryUpload.handlePostTestServerUpload(xhr);
     xhr.setRequestHeader('Content-Type', 'text/plain');

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -8,16 +8,18 @@
  * @flow
  */
 
+/* eslint-disable react-native/no-inline-styles */
+
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
-var {Image, StyleSheet, Text, View} = ReactNative;
-var RNTesterBlock = require('./RNTesterBlock');
-var RNTesterPage = require('./RNTesterPage');
+const React = require('react');
+const {Image, StyleSheet, Text, View} = require('react-native');
+const RNTesterBlock = require('./RNTesterBlock');
+const RNTesterPage = require('./RNTesterPage');
+const TextInlineView = require('./Shared/TextInlineView');
 const TextLegend = require('./Shared/TextLegend');
 
-class Entity extends React.Component<$FlowFixMeProps> {
+class Entity extends React.Component<{|children: React.Node|}> {
   render() {
     return (
       <Text style={{fontWeight: 'bold', color: '#527fe4'}}>
@@ -26,7 +28,6 @@ class Entity extends React.Component<$FlowFixMeProps> {
     );
   }
 }
-
 class AttributeToggler extends React.Component<{}, $FlowFixMeState> {
   state = {fontWeight: 'bold', fontSize: 15};
 
@@ -43,7 +44,7 @@ class AttributeToggler extends React.Component<{}, $FlowFixMeState> {
   };
 
   render() {
-    var curStyle = {
+    const curStyle = {
       fontWeight: this.state.fontWeight,
       fontSize: this.state.fontSize,
     };
@@ -71,9 +72,6 @@ class AttributeToggler extends React.Component<{}, $FlowFixMeState> {
 }
 
 class TextExample extends React.Component<{}> {
-  static title = '<Text>';
-  static description = 'Base component for rendering styled text.';
-
   render() {
     return (
       <RNTesterPage title="<Text>">
@@ -185,6 +183,42 @@ class TextExample extends React.Component<{}> {
               <Text style={{fontFamily: 'notoserif', fontStyle: 'italic'}}>
                 NotoSerif Italic (Missing Font file)
               </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik',
+                  fontWeight: 'normal',
+                }}>
+                Rubik Regular
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik',
+                  fontWeight: '300',
+                }}>
+                Rubik Light
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik',
+                  fontWeight: '700',
+                }}>
+                Rubik Bold
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik',
+                  fontWeight: '500',
+                }}>
+                Rubik Medium
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik',
+                  fontStyle: 'italic',
+                  fontWeight: '500',
+                }}>
+                Rubik Medium Italic
+              </Text>
             </View>
           </View>
         </RNTesterBlock>
@@ -199,15 +233,15 @@ class TextExample extends React.Component<{}> {
         </RNTesterBlock>
         <RNTesterBlock title="Font Weight">
           <Text style={{fontWeight: 'bold'}}>Move fast and be bold</Text>
-          <Text style={{fontWeight: 'normal'}}>Move fast and be bold</Text>
+          <Text style={{fontWeight: 'normal'}}>Move fast and be normal</Text>
         </RNTesterBlock>
         <RNTesterBlock title="Font Style">
-          <Text style={{fontStyle: 'italic'}}>Move fast and be bold</Text>
-          <Text style={{fontStyle: 'normal'}}>Move fast and be bold</Text>
+          <Text style={{fontStyle: 'italic'}}>Move fast and be italic</Text>
+          <Text style={{fontStyle: 'normal'}}>Move fast and be normal</Text>
         </RNTesterBlock>
         <RNTesterBlock title="Font Style and Weight">
           <Text style={{fontStyle: 'italic', fontWeight: 'bold'}}>
-            Move fast and be bold
+            Move fast and be both bold and italic
           </Text>
         </RNTesterBlock>
         <RNTesterBlock title="Text Decoration">
@@ -326,6 +360,12 @@ class TextExample extends React.Component<{}> {
           <Text style={{textAlign: 'right'}}>
             right right right right right right right right right right right
             right right
+          </Text>
+          <Text style={{textAlign: 'justify'}}>
+            justify (works when api level >= 26 otherwise fallbacks to "left"):
+            this text component{"'"}s contents are laid out with "textAlign:
+            justify" and as you can see all of the lines except the last one
+            span the available width of the parent container.
           </Text>
         </RNTesterBlock>
         <RNTesterBlock title="Unicode">
@@ -465,6 +505,25 @@ class TextExample extends React.Component<{}> {
             keep writing it{"'"}ll just keep going and going
           </Text>
         </RNTesterBlock>
+        <RNTesterBlock title="allowFontScaling attribute">
+          <Text>
+            By default, text will respect Text Size accessibility setting on
+            Android. It means that all font sizes will be increased or decreased
+            depending on the value of the Text Size setting in the OS's Settings
+            app.
+          </Text>
+          <Text style={{marginTop: 10}}>
+            You can disable scaling for your Text component by passing {'"'}
+            allowFontScaling={'{'}false{'}"'} prop.
+          </Text>
+          <Text allowFontScaling={false} style={{marginTop: 20, fontSize: 15}}>
+            This text will not scale.{' '}
+            <Text style={{fontSize: 15}}>
+              This text also won't scale because it inherits "allowFontScaling"
+              from its parent.
+            </Text>
+          </Text>
+        </RNTesterBlock>
         <RNTesterBlock title="selectable attribute">
           <Text selectable>
             This text is selectable if you click-and-hold, and will offer the
@@ -476,11 +535,20 @@ class TextExample extends React.Component<{}> {
             This text will have a orange highlight on selection.
           </Text>
         </RNTesterBlock>
-        <RNTesterBlock title="Inline images">
-          <Text>
-            This text contains an inline image{' '}
-            <Image source={require('./flux.png')} />. Neat, huh?
-          </Text>
+        <RNTesterBlock title="Inline views">
+          <TextInlineView.Basic />
+        </RNTesterBlock>
+        <RNTesterBlock title="Inline image/view clipped by <Text>">
+          <TextInlineView.ClippedByText />
+        </RNTesterBlock>
+        <RNTesterBlock title="Relayout inline image">
+          <TextInlineView.ChangeImageSize />
+        </RNTesterBlock>
+        <RNTesterBlock title="Relayout inline view">
+          <TextInlineView.ChangeViewSize />
+        </RNTesterBlock>
+        <RNTesterBlock title="Relayout nested inline view">
+          <TextInlineView.ChangeInnerViewSize />
         </RNTesterBlock>
         <RNTesterBlock title="Text shadow">
           <Text
@@ -584,13 +652,40 @@ class TextExample extends React.Component<{}> {
               '.aa\tbb\t\tcc  dd EE \r\nZZ I like to eat apples. \n中文éé 我喜欢吃苹果。awdawd   '
             }
           </Text>
+          <Text
+            style={{
+              textTransform: 'uppercase',
+              fontSize: 16,
+              color: 'turquoise',
+              backgroundColor: 'blue',
+              lineHeight: 32,
+              letterSpacing: 2,
+              alignSelf: 'flex-start',
+            }}>
+            Works with other text styles
+          </Text>
+        </RNTesterBlock>
+        <RNTesterBlock title="Substring Emoji (should only see 'test')">
+          <Text>{'test🙃'.substring(0, 5)}</Text>
+        </RNTesterBlock>
+        <RNTesterBlock title="Text linkify">
+          <Text dataDetectorType="phoneNumber">Phone number: 123-123-1234</Text>
+          <Text dataDetectorType="link">Link: https://www.facebook.com</Text>
+          <Text dataDetectorType="email">Email: employee@facebook.com</Text>
+          <Text dataDetectorType="none">
+            Phone number: 123-123-1234 Link: https://www.facebook.com Email:
+            employee@facebook.com
+          </Text>
+          <Text dataDetectorType="all">
+            Phone number: 123-123-1234 Link: https://www.facebook.com Email:
+            employee@facebook.com
+          </Text>
         </RNTesterBlock>
       </RNTesterPage>
     );
   }
 }
-
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   backgroundColorText: {
     left: 5,
     backgroundColor: 'rgba(100, 100, 100, 0.3)',
@@ -604,5 +699,13 @@ var styles = StyleSheet.create({
     alignSelf: 'center',
   },
 });
-
-module.exports = TextExample;
+exports.title = '<Text>';
+exports.description = 'Base component for rendering styled text.';
+exports.examples = [
+  {
+    title: 'Basic text',
+    render: function(): React.Element<typeof TextExample> {
+      return <TextExample />;
+    },
+  },
+];

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,16 +10,20 @@
 
 'use strict';
 
-const AppRegistry = require('AppRegistry');
-const AsyncStorage = require('AsyncStorage');
-const BackHandler = require('BackHandler');
-const Dimensions = require('Dimensions');
-const DrawerLayoutAndroid = require('DrawerLayoutAndroid');
-const Linking = require('Linking');
 const React = require('react');
-const StatusBar = require('StatusBar');
-const StyleSheet = require('StyleSheet');
-const ToolbarAndroid = require('ToolbarAndroid');
+const {
+  AppRegistry,
+  AsyncStorage,
+  BackHandler,
+  Dimensions,
+  DrawerLayoutAndroid,
+  Linking,
+  StatusBar,
+  StyleSheet,
+  ToolbarAndroid,
+  UIManager,
+  View,
+} = require('react-native');
 const RNTesterActions = require('./RNTesterActions');
 const RNTesterExampleContainer = require('./RNTesterExampleContainer');
 const RNTesterExampleList = require('./RNTesterExampleList');
@@ -27,11 +31,9 @@ const RNTesterExampleList = require('./RNTesterExampleList');
  * making Flow check .android.js files. */
 const RNTesterList = require('./RNTesterList');
 const RNTesterNavigationReducer = require('./RNTesterNavigationReducer');
-const UIManager = require('UIManager');
 const URIActionMap = require('./URIActionMap');
-const View = require('View');
 
-const nativeImageSource = require('nativeImageSource');
+const nativeImageSource = require('../../Libraries/Image/nativeImageSource');
 
 import type {RNTesterNavigationState} from './RNTesterNavigationReducer';
 
@@ -122,8 +124,6 @@ class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
   _renderDrawerContent = () => {
     return (
       <View style={styles.drawerContentWrapper}>
-        {/* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was
-          * found when making Flow check .android.js files. */}
         <RNTesterExampleList
           list={RNTesterList}
           displayTitleRow={true}
@@ -188,8 +188,6 @@ class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
           style={styles.toolbar}
           title="RNTester"
         />
-        {/* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was
-          * found when making Flow check .android.js files. */}
         <RNTesterExampleList
           onNavigate={this._handleAction}
           list={RNTesterList}

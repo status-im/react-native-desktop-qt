@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,21 +10,21 @@
 
 'use strict';
 
-var React = require('react');
-var ReactNative = require('react-native');
+const React = require('react');
+const {
+  StyleSheet,
+  Switch,
+  Text,
+  ToolbarAndroid,
+  View,
+} = require('react-native');
 
-var nativeImageSource = require('nativeImageSource');
-var {StyleSheet, Text, View} = ReactNative;
-var RNTesterBlock = require('./RNTesterBlock');
-var RNTesterPage = require('./RNTesterPage');
+const nativeImageSource = require('../../Libraries/Image/nativeImageSource');
 
-var Switch = require('Switch');
-var ToolbarAndroid = require('ToolbarAndroid');
+const RNTesterBlock = require('./RNTesterBlock');
+const RNTesterPage = require('./RNTesterPage');
 
 class ToolbarAndroidExample extends React.Component<{}, $FlowFixMeState> {
-  static title = '<ToolbarAndroid>';
-  static description = 'Examples of using the Android toolbar.';
-
   state = {
     actionText: 'Example app with toolbar component',
     toolbarSwitch: false,
@@ -61,8 +61,7 @@ class ToolbarAndroidExample extends React.Component<{}, $FlowFixMeState> {
               height: 144,
             })}
             style={styles.toolbar}>
-            <View
-              style={{height: 56, flexDirection: 'row', alignItems: 'center'}}>
+            <View style={styles.switchWrapper}>
               <Switch
                 value={this.state.toolbarSwitch}
                 onValueChange={value => this.setState({toolbarSwitch: value})}
@@ -141,7 +140,7 @@ class ToolbarAndroidExample extends React.Component<{}, $FlowFixMeState> {
   };
 }
 
-var toolbarActions = [
+const toolbarActions = [
   {
     title: 'Create',
     icon: nativeImageSource({
@@ -163,11 +162,25 @@ var toolbarActions = [
   },
 ];
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   toolbar: {
     backgroundColor: '#e9eaed',
     height: 56,
   },
+  switchWrapper: {
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
-module.exports = ToolbarAndroidExample;
+exports.title = '<ToolbarAndroid>';
+exports.description = 'Examples of using the Android toolbar.';
+exports.examples = [
+  {
+    title: 'Basic toolbar',
+    render: function(): React.Element<typeof ToolbarAndroidExample> {
+      return <ToolbarAndroidExample />;
+    },
+  },
+];

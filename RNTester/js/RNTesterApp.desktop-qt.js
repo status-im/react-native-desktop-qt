@@ -1,72 +1,79 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
- * All rights reserved.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  *
- * @providesModule RNTesterApp
+ * @format
  * @flow
  */
+
 'use strict';
 
-const AsyncStorage = require('AsyncStorage');
 const React = require('react');
-const ReactNative = require('react-native');
+const {
+  AppRegistry,
+  AsyncStorage,
+  BackHandler,
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  YellowBox,
+} = require('react-native');
 const RNTesterActions = require('./RNTesterActions');
 const RNTesterExampleContainer = require('./RNTesterExampleContainer');
 const RNTesterExampleList = require('./RNTesterExampleList');
 const RNTesterList = require('./RNTesterList.desktop-qt');
 const RNTesterNavigationReducer = require('./RNTesterNavigationReducer');
+const SnapshotViewIOS = require('./SnapshotViewIOS.ios');
 const URIActionMap = require('./URIActionMap');
 
-const {
-  Button,
-  AppRegistry,
-  SnapshotViewIOS,
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView
-} = ReactNative;
-
-import type { RNTesterExample } from './RNTesterList.desktop';
-import type { RNTesterAction } from './RNTesterActions';
-import type { RNTesterNavigationState } from './RNTesterNavigationReducer';
+import type {RNTesterExample} from './Shared/RNTesterTypes';
+import type {RNTesterAction} from './RNTesterActions';
+import type {RNTesterNavigationState} from './RNTesterNavigationReducer';
 
 type Props = {
   exampleFromAppetizeParams: string,
 };
 
+YellowBox.ignoreWarnings([
+  'Module RCTImagePickerManager requires main queue setup',
+]);
+
 const APP_STATE_KEY = 'RNTesterAppState.v2';
 
-const Header = ({ onBack, title }: { onBack?: () => mixed, title: string }) => (
+const Header = ({onBack, title}: {onBack?: () => mixed, title: string}) => (
   <SafeAreaView style={styles.headerContainer}>
     <View style={styles.header}>
       <View style={styles.headerCenter}>
         <Text style={styles.title}>{title}</Text>
       </View>
-      {onBack && <View style={styles.headerLeft}>
-        <Button title="Back" onPress={onBack} />
-      </View>}
+      {onBack && (
+        <View style={styles.headerLeft}>
+          <Button title="Back" onPress={onBack} />
+        </View>
+      )}
     </View>
   </SafeAreaView>
 );
 
 class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
+  UNSAFE_componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this._handleBack);
+  }
 
-    componentDidMount() {
-        this.setState(
-          {openExample: null},
-          () => {}
-        );
-
-    }
+  componentDidMount() {
+      this.setState(
+        {openExample: null},
+        () => {}
+      );
+  }
 
   _handleBack = () => {
     this._handleAction(RNTesterActions.Back());
-  }
+  };
 
   _handleAction = (action: ?RNTesterAction) => {
     if (!action) {
@@ -74,12 +81,11 @@ class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
     }
     const newState = RNTesterNavigationReducer(this.state, action);
     if (this.state !== newState) {
-      this.setState(
-        newState,
-        () => AsyncStorage.setItem(APP_STATE_KEY, JSON.stringify(this.state))
+      this.setState(newState, () =>
+        AsyncStorage.setItem(APP_STATE_KEY, JSON.stringify(this.state)),
       );
     }
-  }
+  };
 
   render() {
     if (!this.state) {
@@ -87,12 +93,8 @@ class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
     }
     if (this.state.openExample) {
       const Component = RNTesterList.Modules[this.state.openExample];
-      if (Component.external) {
-        return (
-          <Component
-            onExampleExit={this._handleBack}
-          />
-        );
+      if (Component && Component.external) {
+        return <Component onExampleExit={this._handleBack} />;
       } else {
         return (
           <View style={styles.exampleContainer}>
@@ -101,14 +103,10 @@ class RNTesterApp extends React.Component<Props, RNTesterNavigationState> {
           </View>
         );
       }
-
     }
     return (
       <View style={styles.exampleContainer}>
         <Header title="RNTester" />
-        {/* $FlowFixMe(>=0.53.0 site=react_native_fb,react_native_oss) This
-          * comment suppresses an error when upgrading Flow's support for
-          * React. To see the error delete this comment and run Flow. */}
         <RNTesterExampleList
           onNavigate={this._handleAction}
           list={RNTesterList}
@@ -126,16 +124,16 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 40,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
-  headerLeft: {
-  },
+  headerLeft: {},
   headerCenter: {
     flex: 1,
     position: 'absolute',
     top: 7,
     left: 0,
     right: 0,
+    alignItems: 'center',
   },
   title: {
     fontSize: 19,
@@ -147,26 +145,35 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('SetPropertiesExampleApp', () => require('./SetPropertiesExampleApp'));
-AppRegistry.registerComponent('RootViewSizeFlexibilityExampleApp', () => require('./RootViewSizeFlexibilityExampleApp'));
+AppRegistry.registerComponent('SetPropertiesExampleApp', () =>
+  require('./SetPropertiesExampleApp'),
+);
+AppRegistry.registerComponent('RootViewSizeFlexibilityExampleApp', () =>
+  require('./RootViewSizeFlexibilityExampleApp'),
+);
 AppRegistry.registerComponent('RNTesterApp', () => RNTesterApp);
 
 // Register suitable examples for snapshot tests
-RNTesterList.ComponentExamples.concat(RNTesterList.APIExamples).forEach((Example: RNTesterExample) => {
-  const ExampleModule = Example.module;
-  if (ExampleModule.displayName) {
-    class Snapshotter extends React.Component<{}> {
-      render() {
-        return (
-          <SnapshotViewIOS>
-            <RNTesterExampleContainer module={ExampleModule} />
-          </SnapshotViewIOS>
-        );
+RNTesterList.ComponentExamples.concat(RNTesterList.APIExamples).forEach(
+  (Example: RNTesterExample) => {
+    const ExampleModule = Example.module;
+    if (ExampleModule.displayName) {
+      class Snapshotter extends React.Component<{}> {
+        render() {
+          return (
+            <SnapshotViewIOS>
+              <RNTesterExampleContainer module={ExampleModule} />
+            </SnapshotViewIOS>
+          );
+        }
       }
-    }
 
-    AppRegistry.registerComponent(ExampleModule.displayName, () => Snapshotter);
-  }
-});
+      AppRegistry.registerComponent(
+        ExampleModule.displayName,
+        () => Snapshotter,
+      );
+    }
+  },
+);
 
 module.exports = RNTesterApp;

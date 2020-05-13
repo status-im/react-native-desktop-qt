@@ -15,7 +15,7 @@
 const NativeModules = require('NativeModules');
 
 var Platform = {
-  OS: 'desktop',
+  OS: 'desktop-qt',
   get isMacOs() {
     const constants = NativeModules.PlatformConstants;
     return constants ? constants.osName === 'macos' : false;
@@ -32,7 +32,7 @@ var Platform = {
     const constants = NativeModules.PlatformConstants;
     return constants ? constants.osName === 'unix' : false;
   },
-  select: (obj: Object) => 'desktop' in obj ? obj.desktop : obj.default,
+  select: (obj: Object) => 'desktop-qt' in obj ? obj.desktop : obj.default,
 };
 
 module.exports = Platform;

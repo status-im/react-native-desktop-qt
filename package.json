@@ -1,10 +1,10 @@
 {
   "name": "react-native-desktop-qt",
-  "version": "0.59.9",
+  "version": "0.60.6",
   "description": "React native for desktop",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node node_modules/react-native/local-cli/cli.js start"
+    "start": "react-native start"
   },
   "main": "Libraries/react-native-desktop-qt/react-native-desktop-qt-implementation.js",
   "repository": {
@@ -17,19 +17,12 @@
     "url": "https://github.com/vkjr/react-native-desktop-qt/issues"
   },
   "homepage": "https://github.com/vkjr/react-native-desktop-qt#readme",
-  "rnpm": {
-    "haste": {
-      "providesModuleNodeModules": [
-        "react-native-desktop-qt"
-      ],
-      "platforms": [
-        "desktop-qt"
-      ]
-    },
-    "plugin": "./local-cli/index.js"
+  "dependencies": {
+    "optimist": "^0.6.1",
+    "babel-plugin-module-resolver": "^4.0.0"
   },
   "devDependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.9"
+    "react": "16.8.6",
+    "react-native": "0.60.6"
   }
 }
