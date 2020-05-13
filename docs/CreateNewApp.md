@@ -15,6 +15,7 @@ cd DesktopSampleApp
 npx https://github.com/vkjr/react-native-desktop-qt-init.git
 ```
 This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project files.
+Unless you have local chagnes, answer 'y' when shell prompts you to replace `babel.config.js`
 
 
 #### Run the project
