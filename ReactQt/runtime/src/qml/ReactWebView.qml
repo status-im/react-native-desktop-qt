@@ -11,7 +11,7 @@ WebView {
     property var flexbox: React.Flexbox {control: webViewRoot}
     property var p_testID
 
-    objectName: p_testID
+    objectName: p_testID ? p_testID : null
 
     onWebViewManagerChanged: {
         if (!webViewManager) {
