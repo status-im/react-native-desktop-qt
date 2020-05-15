@@ -90,7 +90,7 @@ void MouseEventsInterceptor::sendMouseEvent(QMouseEvent* event, const QString& e
     Q_D(MouseEventsInterceptor);
     Q_ASSERT(d->bridge);
 
-    QVariantMap e = makeReactTouchEvent(receiver, event);
+    QVariantMap e = makeReactTouchEvent(receiver, event, d->bridge->visualParent());
     if (e.isEmpty())
         return;
 

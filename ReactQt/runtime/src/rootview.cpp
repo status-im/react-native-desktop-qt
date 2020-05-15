@@ -344,7 +344,7 @@ void RootView::componentComplete() {
 bool RootView::sendMouseEventToJs(QMouseEvent* event, const QString& eventType, QQuickItem* receiver) {
     Q_D(RootView);
 
-    QVariantMap e = makeReactTouchEvent(receiver, event);
+    QVariantMap e = makeReactTouchEvent(receiver, event, this);
     if (e.isEmpty()) {
         return false;
     }

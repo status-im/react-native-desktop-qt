@@ -47,7 +47,7 @@ void removeFlexboxChilds(QQuickItem* item, const QList<int>& removeAtIndices);
 QVariantMap createTouchArgs(int tag, const QPointF& lp, const QPointF& local, const QString& button, ulong timestamp);
 QQuickItem* getChildFromScrollView(QQuickItem* scrollView, const QPointF& scrollViewPos);
 QQuickItem* getChildFromText(QQuickItem* text, const QPointF& pos);
-QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event);
+QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event, QQuickItem* rootView);
 
 } // namespace utilities
 

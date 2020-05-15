@@ -202,14 +202,15 @@ bool pointerEventsBlocked(QQuickItem* item) {
     return false;
 }
 
-QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
+QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event, QQuickItem* rootView) {
 
-    const QPointF& lp = event->localPos();
+    const QPointF& touchPos = event->localPos();
+    const QPointF& rootPos = item->mapToItem(rootView, touchPos);
 
     // Find the deepest match
     QQuickItem* target = nullptr;
     QQuickItem* next = item;
-    QPointF local = lp;
+    QPointF local = touchPos;
     forever {
         target = next;
 
@@ -248,7 +249,7 @@ QVariantMap makeReactTouchEvent(QQuickItem* item, QMouseEvent* event) {
     else if (event->button() & Qt::RightButton)
         button = "right";
 
-    return createTouchArgs(ap->tag(), lp, local, button, event->timestamp());
+    return createTouchArgs(ap->tag(), rootPos, local, button, event->timestamp());
 }
 
 } // namespace utilities

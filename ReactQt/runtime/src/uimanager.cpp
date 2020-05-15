@@ -62,9 +62,17 @@ void UIManager::measure(int reactTag, const ModuleInterface::ListArgumentBlock& 
     }
 
     QPointF rvo(item->x(), item->y());
-    rvo = item->mapToItem(m_bridge->visualParent(), rvo);
+    if (!item->parentItem()) {
+        qCWarning(UIMANAGER) << "Attempting to measure item without parent";
+        callback(m_bridge, QVariantList{});
+        return;
+    }
+    // rvo has coordinates related to parent, not to item itself, so we call mapToItem on parent
+    rvo = item->parentItem()->mapToItem(m_bridge->visualParent(), rvo);
 
-    callback(m_bridge, QVariantList{item->x(), item->y(), item->width(), item->height(), rvo.x(), rvo.y()});
+    QVariantList res = {item->x(), item->y(), item->width(), item->height(), rvo.x(), rvo.y()};
+
+    callback(m_bridge, res);
 }
 
 void UIManager::measureInWindow(int reactTag, const ModuleInterface::ListArgumentBlock& callback) {
