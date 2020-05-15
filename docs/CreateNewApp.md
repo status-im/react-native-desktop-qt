@@ -12,7 +12,7 @@ npx react-native init DesktopSampleApp --version 0.60.6
 #### Add desktop support by invoking `react-native-desktop-qt-init` package
 ```sh
 cd DesktopSampleApp
-npx https://github.com/vkjr/react-native-desktop-qt-init.git
+npx https://github.com/status-im/react-native-desktop-qt-init.git
 ```
 This command will add `react-native-desktop-qt` package to your project and generate `desktop` folder with desktop project files.
 Unless you have local chagnes, answer 'y' when shell prompts you to replace `babel.config.js`
