@@ -101,6 +101,8 @@ void SourceCode::loadSource(QNetworkAccessManager* nam) {
         });
     } else {
         QNetworkRequest request(d->scriptUrl);
+        // we shouldn't use cache in this case to pick the latest data from metro bundler
+        request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
         QNetworkReply* reply = nam->get(request);
         QObject::connect(reply, &QNetworkReply::finished, [=]() {
             reply->deleteLater();
