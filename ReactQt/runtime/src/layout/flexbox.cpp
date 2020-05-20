@@ -196,8 +196,6 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
                                << " changed layout but can't notify js because viewManager is empty";
         }
     }
-
-
 }
 
 void Flexbox::setControl(QQuickItem* value) {
