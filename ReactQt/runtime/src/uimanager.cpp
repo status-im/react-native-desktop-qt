@@ -301,11 +301,8 @@ void UIManager::measureLayout(int reactTag,
         --depth;
     }
 
-    if (item != ancestor) {
-        callback(m_bridge, QVariantList{0, 0, 0, 0});
-    } else {
-        callback(m_bridge, QVariantList{x, y, width, height});
-    }
+    QVariantList layout = (item != ancestor) ? QVariantList{0, 0, 0, 0} : QVariantList{x, y, width, height};
+    callback(m_bridge, layout);
 }
 
 void UIManager::measureLayoutRelativeToParent(int reactTag,

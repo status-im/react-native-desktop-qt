@@ -40,6 +40,8 @@ type Props = {
 
 YellowBox.ignoreWarnings([
   'Module RCTImagePickerManager requires main queue setup',
+//  'Warning:',
+//  'Animated:'
 ]);
 
 const APP_STATE_KEY = 'RNTesterAppState.v2';
