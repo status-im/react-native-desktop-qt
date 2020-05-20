@@ -7,7 +7,7 @@ Flickable {
 
     property var scrollViewManager: null
     property bool p_onScroll: false
-    property var flexbox: React.Flexbox {control: scrollViewRoot}
+    property var flexbox: React.Flexbox {control: scrollViewRoot; viewManager: scrollViewManager}
     property bool p_enableArrayScrollingOptimization: false
     property int p_headerHeight: 0
     property int p_footerWidth: 0

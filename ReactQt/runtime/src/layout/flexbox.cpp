@@ -181,13 +181,23 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
         qmlControl->setHeight(YGNodeLayoutGetHeight(node));
     }
 
-    if (layoutUpdated && viewManager) {
-        viewManager->sendOnLayoutToJs(qmlControl,
-                                      YGNodeLayoutGetLeft(node),
-                                      YGNodeLayoutGetTop(node),
-                                      YGNodeLayoutGetWidth(node),
-                                      YGNodeLayoutGetHeight(node));
+    if (layoutUpdated) {
+
+        if (viewManager) {
+            viewManager->sendOnLayoutToJs(qmlControl,
+                                          YGNodeLayoutGetLeft(node),
+                                          YGNodeLayoutGetTop(node),
+                                          YGNodeLayoutGetWidth(node),
+                                          YGNodeLayoutGetHeight(node));
+
+        } else {
+            qCWarning(FLEXBOX) << "::updatePropertiesForControl: "
+                               << "Control " << qmlControl
+                               << " changed layout but can't notify js because viewManager is empty";
+        }
     }
+
+
 }
 
 void Flexbox::setControl(QQuickItem* value) {

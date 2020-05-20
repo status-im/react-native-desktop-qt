@@ -141,14 +141,12 @@ void ScrollViewManager::addChildItem(QQuickItem* scrollView, QQuickItem* child, 
 }
 
 void ScrollViewManager::scrollBeginDrag() {
-    // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
     notifyJsAboutEvent(tag(item), "scrollBeginDrag", buildEventData(item));
 }
 
 void ScrollViewManager::scrollEndDrag() {
-    // qDebug() << __PRETTY_FUNCTION__;
     QQuickItem* item = qobject_cast<QQuickItem*>(sender());
     Q_ASSERT(item != nullptr);
     notifyJsAboutEvent(tag(item), "scrollEndDrag", buildEventData(item));
@@ -201,7 +199,6 @@ void ScrollViewManager::onDraggingChanged() {
 }
 
 void ScrollViewManager::momentumScrollBegin(QQuickItem* item) {
-    // qDebug() << __PRETTY_FUNCTION__;
     notifyJsAboutEvent(tag(item), "momentumScrollBegin", buildEventData(item));
 }
 

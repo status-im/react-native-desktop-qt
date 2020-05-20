@@ -40,9 +40,6 @@ exports.examples = [
               _scrollView = scrollView;
             }}
             automaticallyAdjustContentInsets={false}
-            onScroll={() => {
-              console.log('onScroll!');
-            }}
             scrollEventThrottle={200}
             style={styles.scrollView}>
             {ITEMS.map(createItemRow)}

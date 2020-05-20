@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 var userData = [];
-for (var i = 1; i <= 20; i++) {
+for (var i = 1; i <= 200; i++) {
    var numberedTitle = "Button "+ i;
    userData.push({id: i, title: numberedTitle});
 }
@@ -84,7 +84,6 @@ render() {
           extraData={this.state}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
-          inverted={true}
         />
         <TextInput defaultValue="Footer text input"
         style={[newStyle]}
