@@ -89,11 +89,9 @@ Q_SIGNALS:
     void jsExecutorChanged();
 
 protected:
-    virtual void updatePolish() override;
 
 private Q_SLOTS:
     void bridgeReady();
-    void requestPolish();
     void onSizeChanged();
     void sendSizeUpdate();
 

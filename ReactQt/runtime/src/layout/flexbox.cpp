@@ -108,7 +108,9 @@ YGSize measure(YGNodeRef node, float width, YGMeasureMode widthMode, float heigh
     return nodeMeasureFunction(node, width, widthMode, height, heightMode);
 }
 
-Flexbox::Flexbox(QObject* parent) : QObject(parent), d_ptr(new FlexboxPrivate()) {}
+Flexbox::Flexbox(QObject* parent) : QObject(parent), d_ptr(new FlexboxPrivate()) {
+    qDebug() << "!! new Flexbox()";
+}
 
 Flexbox::~Flexbox() {}
 
@@ -155,6 +157,26 @@ Flexbox* Flexbox::findFlexbox(QQuickItem* control) {
     return flexbox;
 }
 
+void Flexbox::recalculateLayout(QQuickItem* control, float width, float height) {
+
+    qDebug() << "!! recalculate layout";
+    QQuickItem* view = nullptr;
+    if (control->objectName() == "rootView" && control->childItems().count() == 1) {
+        view = control->childItems().at(0);
+    } else {
+        view = control;
+    }
+
+    Flexbox* flexbox = findFlexbox(view);
+    if (flexbox) {
+        flexbox->recalculateLayout(width, height);
+    } else {
+        QString str = control->objectName();
+        qCWarning(FLEXBOX) << "::recalculateLayout: "
+                           << "can't find flexbox for view " << view;
+    }
+}
+
 void FlexboxPrivate::updatePropertiesForControlsTree(YGNodeRef node) {
     static int level = 1;
 
@@ -195,6 +217,9 @@ void FlexboxPrivate::updatePropertiesForControl(YGNodeRef node) {
                                << "Control " << qmlControl
                                << " changed layout but can't notify js because viewManager is empty";
         }
+    } else {
+        qCWarning(FLEXBOX) << "::updatePropertiesForControl: "
+                           << "called without necessity to update layout";
     }
 }
 

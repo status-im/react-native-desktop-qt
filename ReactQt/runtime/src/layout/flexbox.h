@@ -143,6 +143,7 @@ public:
     void printFlexboxHierarchy();
 
     static Flexbox* findFlexbox(QQuickItem* control);
+    static void recalculateLayout(QQuickItem* control, float width, float height);
 
     QQuickItem* control();
     void setControl(QQuickItem* value);

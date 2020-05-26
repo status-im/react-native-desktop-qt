@@ -154,6 +154,8 @@ TextEdit {
 
 
     function updateHtmlText() {
+
+        var oldDecoratedText = decoratedText;
         var htmlString = "";
 
         for (var i = 0; i < textRoot.children.length; i++)
@@ -161,16 +163,20 @@ TextEdit {
             var child = textRoot.children[i];
             if(isText(child) && child.decoratedText) {
                 var nestedText = child.decoratedText;
-                nestedText = "<a href=\"" + i + "\" style=\"text-decoration: none\">" + nestedText + "</a>"; 
+                nestedText = "<a href=\"" + i + "\" style=\"text-decoration: none\">" + nestedText + "</a>";
                 htmlString += nestedText
             }
             else if(isRawText(child) && child.p_text) {
                 htmlString += textToHtml(child.p_text)
             }
         }
-        decoratedText = htmlString;
-        if (textRoot.flexbox) {
-            textRoot.flexbox.markDirty();
+
+        var textHasChanged = (oldDecoratedText != htmlString);
+        if(textHasChanged) {
+            decoratedText = htmlString;
+            if (textRoot.flexbox) {
+                textRoot.flexbox.markDirty();
+            }
         }
     }
 

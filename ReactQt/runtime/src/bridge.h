@@ -126,6 +126,7 @@ private Q_SLOTS:
     void sourcesFinished();
     void sourcesLoadFailed();
     void applicationScriptDone();
+    void passCallsToNativeModules(const QJsonDocument& doc);
 
 private:
     void loadExternalModules(QObjectList* modules);

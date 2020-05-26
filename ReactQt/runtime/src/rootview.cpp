@@ -258,16 +258,6 @@ void RootView::reloadBridge() {
     d->bridge->reload();
 }
 
-void RootView::updatePolish() {
-    if (childItems().count() == 1) {
-        auto view = childItems().at(0);
-        Flexbox* flexbox = Flexbox::findFlexbox(view);
-        if (flexbox) {
-            flexbox->recalculateLayout(width(), height());
-            // flexbox->printFlexboxHierarchy();
-        }
-    }
-}
 
 void RootView::bridgeReady() {
     Q_D(RootView);
@@ -289,15 +279,13 @@ void RootView::bridgeReady() {
     }
 }
 
-void RootView::requestPolish() {
-    if (!d_ptr->bridge->ready())
-        return;
-    polish();
-}
 
 void RootView::onSizeChanged() {
     sendSizeUpdate();
-    requestPolish();
+    if (!d_ptr->bridge->ready())
+        return;
+    Flexbox::recalculateLayout(this, width(), height());
+
 }
 
 void RootView::sendSizeUpdate() {

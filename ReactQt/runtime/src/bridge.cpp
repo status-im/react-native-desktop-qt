@@ -40,6 +40,7 @@
 #include "deviceinfo.h"
 #include "eventdispatcher.h"
 #include "exceptionsmanager.h"
+#include "layout/flexbox.h"
 #include "linkingmanager.h"
 #include "moduledata.h"
 #include "moduleinterface.h"
@@ -192,6 +193,7 @@ void Bridge::setupExecutor() {
         } else if (d->jsExecutor == "NodeJsExecutor") {
             if (!d->executorThread) {
                 d->executorThread = new QThread();
+                d->executorThread->setObjectName("NodeJsExecutor");
             }
             d->executorThread->start();
             ServerConnection* conn =
@@ -613,6 +615,11 @@ void Bridge::injectModules() {
 void Bridge::processResult(const QJsonDocument& doc) {
     Q_D(Bridge);
 
+    // If executor is threaded, we shouldn't call modules directly because they will be invoked on executor thread!
+    QMetaObject::invokeMethod(this, "passCallsToNativeModules", Qt::AutoConnection, Q_ARG(QJsonDocument, doc));
+}
+
+void Bridge::passCallsToNativeModules(const QJsonDocument& doc) {
     if (doc.isNull())
         return;
 
@@ -630,13 +637,17 @@ void Bridge::processResult(const QJsonDocument& doc) {
     // XXX: this should all really be wrapped up in a Module class
     // including invocations etc
     for (int i = 0; i < moduleIDs.size(); ++i) {
-        QMetaObject::invokeMethod(this,
-                                  "invokeModuleMethod",
-                                  Qt::AutoConnection,
-                                  Q_ARG(int, moduleIDs[i].toInt()),
-                                  Q_ARG(int, methodIDs[i].toInt()),
-                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
+
+        invokeModuleMethod(moduleIDs[i].toInt(), methodIDs[i].toInt(), paramArrays[i].toList());
+        //        QMetaObject::invokeMethod(this,
+        //                                  "invokeModuleMethod",
+        //                                  Qt::AutoConnection,
+        //                                  Q_ARG(int, moduleIDs[i].toInt()),
+        //                                  Q_ARG(int, methodIDs[i].toInt()),
+        //                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
     }
+
+    Flexbox::recalculateLayout(visualParent(), visualParent()->width(), visualParent()->height());
 }
 
 void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args) {

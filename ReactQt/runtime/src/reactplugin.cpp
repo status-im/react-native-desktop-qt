@@ -23,6 +23,9 @@ void ReactPlugin::registerTypes(const char* uri) {
                                      "Flexbox=false\n"
                                      "WebSocketModule=false\n"
                                      "Networking=false\n"
-                                     "ViewManager=false\n");
+                                     "ViewManager=false\n"
+                                     "NODEJSEXECUTOR=false\n"
+                                     "qt.scenegraph.time.renderloop=false\n"
+                                     );
 #endif
 }

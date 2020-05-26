@@ -13,7 +13,10 @@
 
 #include "nodejsexecutor.h"
 #include <QJsonDocument>
+#include <QLoggingCategory>
 #include <QSharedPointer>
+
+Q_LOGGING_CATEGORY(NODEJSEXECUTOR, "NODEJSEXECUTOR")
 
 class NodeJsExecutorPrivate : public QObject {
 public:
@@ -99,8 +102,10 @@ void NodeJsExecutor::executeJSCall(const QString& method,
         }
     }
 
-    d_ptr->processRequest(
-        QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");", callback);
+    QByteArray request =
+        QByteArray("__fbBatchedBridge.") + method.toLocal8Bit() + "(" + stringifiedArgs.join(',') + ");";
+
+    d_ptr->processRequest(request, callback);
 }
 
 ServerConnection* NodeJsExecutorPrivate::connection() {
