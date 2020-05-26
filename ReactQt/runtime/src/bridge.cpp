@@ -49,6 +49,7 @@
 #include "networking.h"
 #include "platform.h"
 #include "redbox.h"
+#include "rootview.h"
 #include "sourcecode.h"
 #include "testmodule.h"
 #include "timing.h"
@@ -611,6 +612,12 @@ void Bridge::injectModules() {
 }
 
 void Bridge::processResult(const QJsonDocument& doc) {
+
+    // If executor is threaded, we shouldn't call modules directly because they will be invoked on executor thread!
+    QMetaObject::invokeMethod(this, "passCallsToNativeModules", Qt::AutoConnection, Q_ARG(QJsonDocument, doc));
+}
+
+void Bridge::passCallsToNativeModules(const QJsonDocument& doc) {
     Q_D(Bridge);
 
     if (doc.isNull())
@@ -630,13 +637,17 @@ void Bridge::processResult(const QJsonDocument& doc) {
     // XXX: this should all really be wrapped up in a Module class
     // including invocations etc
     for (int i = 0; i < moduleIDs.size(); ++i) {
-        QMetaObject::invokeMethod(this,
-                                  "invokeModuleMethod",
-                                  Qt::AutoConnection,
-                                  Q_ARG(int, moduleIDs[i].toInt()),
-                                  Q_ARG(int, methodIDs[i].toInt()),
-                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
+        invokeModuleMethod(moduleIDs[i].toInt(), methodIDs[i].toInt(), paramArrays[i].toList());
+        //        QMetaObject::invokeMethod(this,
+        //                                  "invokeModuleMethod",
+        //                                  Qt::AutoConnection,
+        //                                  Q_ARG(int, moduleIDs[i].toInt()),
+        //                                  Q_ARG(int, methodIDs[i].toInt()),
+        //                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
     }
+
+    auto parent = qobject_cast<RootView*>(visualParent());
+    parent->recalculateLayout();
 }
 
 void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args) {
