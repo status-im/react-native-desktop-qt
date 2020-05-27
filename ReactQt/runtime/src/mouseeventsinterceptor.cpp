@@ -20,6 +20,7 @@
 #include "eventdispatcher.h"
 #include "layout/flexbox.h"
 #include "mouseeventsinterceptor.h"
+#include "rootview.h"
 #include "uimanager.h"
 #include "utilities.h"
 

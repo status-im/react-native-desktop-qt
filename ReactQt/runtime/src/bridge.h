@@ -30,13 +30,14 @@ class EventDispatcher;
 class Redbox;
 class TestModule;
 class ModuleInterface;
+class RootView;
 
 class BridgePrivate;
 class Bridge : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool ready READ ready WRITE setReady NOTIFY readyChanged)
     Q_PROPERTY(bool jsAppStarted READ jsAppStarted NOTIFY jsAppStartedChanged)
-    Q_PROPERTY(QQuickItem* visualParent READ visualParent WRITE setVisualParent)
+    Q_PROPERTY(RootView* visualParent READ visualParent WRITE setVisualParent)
     Q_PROPERTY(QQmlEngine* qmlEngine READ qmlEngine WRITE setQmlEngine)
     Q_PROPERTY(QNetworkAccessManager* networkAccessManager READ networkAccessManager WRITE setNetworkAccessManager)
     Q_PROPERTY(QUrl bundleUrl READ bundleUrl WRITE setBundleUrl)
@@ -72,8 +73,8 @@ public:
 
     bool jsAppStarted() const;
 
-    QQuickItem* visualParent() const;
-    void setVisualParent(QQuickItem* item);
+    RootView* visualParent() const;
+    void setVisualParent(RootView* item);
 
     QQuickItem* topmostVisualParent() const;
 

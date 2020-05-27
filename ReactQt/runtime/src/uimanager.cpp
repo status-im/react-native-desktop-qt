@@ -100,9 +100,6 @@ void UIManager::updateView(int reactTag, const QString& viewName, const QVariant
 
     Q_ASSERT(AttachedProperties::get(item) != nullptr);
     AttachedProperties::get(item)->applyProperties(properties);
-
-    //    auto parent = qobject_cast<RootView*>(m_bridge->visualParent());
-    //    parent->recalculateLayout();
 }
 
 void UIManager::setChildren(int containerReactTag, const QList<int>& childrenTags) {
@@ -256,9 +253,6 @@ void UIManager::manageChildren(int containerReactTag,
             }
         }
     }
-
-    //    auto parent = qobject_cast<RootView*>(m_bridge->visualParent());
-    //    parent->recalculateLayout();
 }
 
 void UIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
@@ -488,8 +482,6 @@ void UIManager::reset() {
     if (rootView) {
         m_views.insert(m_rootTag, rootView);
     }
-    //    auto parent = qobject_cast<RootView*>(m_bridge->visualParent());
-    //    parent->recalculateLayout();
 }
 
 void UIManager::setBridge(Bridge* bridge) {

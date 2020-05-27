@@ -80,7 +80,7 @@ public:
     QString jsExecutor = "NodeJsExecutor";
     IJsExecutor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
-    QQuickItem* visualParent = nullptr;
+    RootView* visualParent = nullptr;
     Redbox* redbox = nullptr;
     QNetworkAccessManager* nam = nullptr;
     UIManager* uiManager = nullptr;
@@ -349,11 +349,11 @@ void Bridge::setJsAppStarted(bool started) {
     emit jsAppStartedChanged();
 }
 
-QQuickItem* Bridge::visualParent() const {
+RootView* Bridge::visualParent() const {
     return d_func()->visualParent;
 }
 
-void Bridge::setVisualParent(QQuickItem* item) {
+void Bridge::setVisualParent(RootView* item) {
     Q_D(Bridge);
 
     if (d->visualParent == item)
@@ -638,12 +638,6 @@ void Bridge::passCallsToNativeModules(const QJsonDocument& doc) {
     // including invocations etc
     for (int i = 0; i < moduleIDs.size(); ++i) {
         invokeModuleMethod(moduleIDs[i].toInt(), methodIDs[i].toInt(), paramArrays[i].toList());
-        //        QMetaObject::invokeMethod(this,
-        //                                  "invokeModuleMethod",
-        //                                  Qt::AutoConnection,
-        //                                  Q_ARG(int, moduleIDs[i].toInt()),
-        //                                  Q_ARG(int, methodIDs[i].toInt()),
-        //                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
     }
 
     auto parent = qobject_cast<RootView*>(visualParent());

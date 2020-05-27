@@ -115,7 +115,6 @@ Flexbox::~Flexbox() {}
 void Flexbox::recalculateLayout(float width, float height) {
     Q_D(Flexbox);
 
-    qDebug() << "recalculateLayout";
     YGNodeCalculateLayout(d->m_node, width, height, YGDirectionLTR);
     d->updatePropertiesForControlsTree(d->m_node);
 }

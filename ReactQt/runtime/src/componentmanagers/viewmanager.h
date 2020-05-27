@@ -52,7 +52,7 @@ public:
     static int tag(QQuickItem* view);
 
     Q_INVOKABLE void sendOnLayoutToJs(QQuickItem* view, float x, float y, float width, float height);
-    Q_INVOKABLE void requestRootPolish();
+    Q_INVOKABLE void requestLayoutRecalculation();
 
 protected:
     virtual QQuickItem* createView(const QVariantMap& properties);

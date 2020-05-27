@@ -22,6 +22,7 @@
 #include "layout/flexbox.h"
 #include "propertyhandler.h"
 #include "reactitem.h"
+#include "rootview.h"
 #include "textmanager.h"
 #include "valuecoercion.h"
 #include "viewmanager.h"
@@ -120,9 +121,9 @@ void ViewManager::sendOnLayoutToJs(QQuickItem* view, float x, float y, float wid
                        QVariantMap{{"layout", QVariantMap{{"x", x}, {"y", y}, {"width", width}, {"height", height}}}});
 }
 
-void ViewManager::requestRootPolish() {
+void ViewManager::requestLayoutRecalculation() {
     if (bridge() && bridge()->visualParent()) {
-        bridge()->visualParent()->polish();
+        bridge()->visualParent()->recalculateLayout();
     }
 }
 
