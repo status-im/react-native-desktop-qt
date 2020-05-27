@@ -60,7 +60,7 @@ Flickable {
             if(fl && textInputRoot.heightSetInternally){
                 textInputRoot.flexbox.p_height = contentHeight;
                 if(textInputRoot.textInputManager) {
-                    textInputRoot.textInputManager.requestRootPolish();
+                    textInputRoot.textInputManager.requestLayoutRecalculation();
                 }
             }
 

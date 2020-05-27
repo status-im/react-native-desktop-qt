@@ -156,6 +156,8 @@ TextEdit {
     function updateHtmlText() {
         var htmlString = "";
 
+        var oldDecoratedText = decoratedText;
+
         for (var i = 0; i < textRoot.children.length; i++)
         {
             var child = textRoot.children[i];
@@ -168,9 +170,13 @@ TextEdit {
                 htmlString += textToHtml(child.p_text)
             }
         }
-        decoratedText = htmlString;
-        if (textRoot.flexbox) {
-            textRoot.flexbox.markDirty();
+
+        var textHasChanged = (oldDecoratedText != htmlString);
+        if(textHasChanged) {
+            decoratedText = htmlString;
+            if (textRoot.flexbox) {
+                textRoot.flexbox.markDirty();
+            }
         }
     }
 

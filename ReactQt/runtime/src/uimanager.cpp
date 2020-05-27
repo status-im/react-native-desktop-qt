@@ -32,6 +32,7 @@
 #include "moduledata.h"
 #include "modulemethod.h"
 #include "reactitem.h"
+#include "rootview.h"
 #include "uimanager.h"
 #include "utilities.h"
 
@@ -99,8 +100,6 @@ void UIManager::updateView(int reactTag, const QString& viewName, const QVariant
 
     Q_ASSERT(AttachedProperties::get(item) != nullptr);
     AttachedProperties::get(item)->applyProperties(properties);
-
-    m_bridge->visualParent()->polish();
 }
 
 void UIManager::setChildren(int containerReactTag, const QList<int>& childrenTags) {
@@ -254,8 +253,6 @@ void UIManager::manageChildren(int containerReactTag,
             }
         }
     }
-
-    m_bridge->visualParent()->polish();
 }
 
 void UIManager::replaceExistingNonRootView(int reactTag, int newReactTag) {
@@ -485,7 +482,6 @@ void UIManager::reset() {
     if (rootView) {
         m_views.insert(m_rootTag, rootView);
     }
-    m_bridge->visualParent()->polish();
 }
 
 void UIManager::setBridge(Bridge* bridge) {

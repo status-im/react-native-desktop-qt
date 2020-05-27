@@ -74,6 +74,7 @@ public:
 
     void loadBundle(const QString& moduleName, const QUrl& codeLocation);
 
+    void recalculateLayout();
     Q_INVOKABLE void startRemoteJSDebugging();
     Q_INVOKABLE void reloadBridge();
 
@@ -88,12 +89,8 @@ Q_SIGNALS:
     void externalModulesChanged();
     void jsExecutorChanged();
 
-protected:
-    virtual void updatePolish() override;
-
 private Q_SLOTS:
     void bridgeReady();
-    void requestPolish();
     void onSizeChanged();
     void sendSizeUpdate();
 

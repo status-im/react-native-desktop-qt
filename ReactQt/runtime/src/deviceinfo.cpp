@@ -12,6 +12,7 @@
 #include "bridge.h"
 #include "eventdispatcher.h"
 
+#include "rootview.h"
 #include <QGuiApplication>
 #include <QQuickItem>
 #include <QScreen>
@@ -43,7 +44,7 @@ QVariantMap DeviceInfo::constantsToExport() {
 
     QScreen* screen = QGuiApplication::primaryScreen();
 
-    QQuickItem* rootView = d->bridge->visualParent();
+    RootView* rootView = d->bridge->visualParent();
     Q_ASSERT(rootView);
     QVariantMap windowValues{{"fontScale", screen->devicePixelRatio()},
                              {"width", rootView->width()},

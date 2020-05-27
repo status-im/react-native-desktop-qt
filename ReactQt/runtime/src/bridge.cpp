@@ -49,6 +49,7 @@
 #include "networking.h"
 #include "platform.h"
 #include "redbox.h"
+#include "rootview.h"
 #include "sourcecode.h"
 #include "testmodule.h"
 #include "timing.h"
@@ -79,7 +80,7 @@ public:
     QString jsExecutor = "NodeJsExecutor";
     IJsExecutor* executor = nullptr;
     QQmlEngine* qmlEngine = nullptr;
-    QQuickItem* visualParent = nullptr;
+    RootView* visualParent = nullptr;
     Redbox* redbox = nullptr;
     QNetworkAccessManager* nam = nullptr;
     UIManager* uiManager = nullptr;
@@ -348,11 +349,11 @@ void Bridge::setJsAppStarted(bool started) {
     emit jsAppStartedChanged();
 }
 
-QQuickItem* Bridge::visualParent() const {
+RootView* Bridge::visualParent() const {
     return d_func()->visualParent;
 }
 
-void Bridge::setVisualParent(QQuickItem* item) {
+void Bridge::setVisualParent(RootView* item) {
     Q_D(Bridge);
 
     if (d->visualParent == item)
@@ -611,6 +612,12 @@ void Bridge::injectModules() {
 }
 
 void Bridge::processResult(const QJsonDocument& doc) {
+
+    // If executor is threaded, we shouldn't call modules directly because they will be invoked on executor thread!
+    QMetaObject::invokeMethod(this, "passCallsToNativeModules", Qt::AutoConnection, Q_ARG(QJsonDocument, doc));
+}
+
+void Bridge::passCallsToNativeModules(const QJsonDocument& doc) {
     Q_D(Bridge);
 
     if (doc.isNull())
@@ -630,13 +637,11 @@ void Bridge::processResult(const QJsonDocument& doc) {
     // XXX: this should all really be wrapped up in a Module class
     // including invocations etc
     for (int i = 0; i < moduleIDs.size(); ++i) {
-        QMetaObject::invokeMethod(this,
-                                  "invokeModuleMethod",
-                                  Qt::AutoConnection,
-                                  Q_ARG(int, moduleIDs[i].toInt()),
-                                  Q_ARG(int, methodIDs[i].toInt()),
-                                  Q_ARG(QList<QVariant>, paramArrays[i].toList()));
+        invokeModuleMethod(moduleIDs[i].toInt(), methodIDs[i].toInt(), paramArrays[i].toList());
     }
+
+    auto parent = qobject_cast<RootView*>(visualParent());
+    parent->recalculateLayout();
 }
 
 void Bridge::invokeModuleMethod(int moduleId, int methodId, QList<QVariant> args) {
