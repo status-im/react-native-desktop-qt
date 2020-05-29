@@ -208,10 +208,10 @@ const APIExamples: Array<RNTesterExample> = [
     key: 'LayoutExample',
     module: require('./LayoutExample'),
   },
-  // {
-  //   key: 'LinkingExample',
-  //   module: require('./LinkingExample'),
-  // },
+  {
+    key: 'LinkingExample',
+    module: require('./LinkingExample'),
+  },
   {
     key: 'NativeAnimationsExample',
     module: require('./NativeAnimationsExample'),

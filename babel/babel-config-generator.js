@@ -19,6 +19,8 @@ function createRnToRndMap(rndPath) {
     ["../../../Components/ScrollView/ScrollView", path.resolve(rndPath, "Libraries/Components/ScrollView/ScrollView")],
     ["SafeAreaView", path.resolve(rndPath, "Libraries/Components/SafeAreaView/SafeAreaView")],
     ["../../Components/SafeAreaView/SafeAreaView", path.resolve(rndPath, "Libraries/Components/SafeAreaView/SafeAreaView")],
+    ["../../Components/SafeAreaView/SafeAreaView", path.resolve(rndPath, "Libraries/Components/SafeAreaView/SafeAreaView")],
+    ["./NativeLinking", path.resolve(rndPath, "Libraries/Linking/NativeLinking")],
   ]);
 }
 
