@@ -1,5 +1,5 @@
 :warning::warning::warning:
-#### React Native Desktop is under active redesign now. Plese consider documentation as out of date until it is adapted.
+#### React Native Desktop project support stopped..
 
 ---
 ## 3rd party react-native-desktop modules support
