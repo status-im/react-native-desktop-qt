@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/DevMenu.qml</file>
+        <file>qml/ReactImage.qml</file>
+        <file>qml/ReactView.qml</file>
+        <file>qml/ReactNavigator.qml</file>
+        <file>qml/ReactScrollView.qml</file>
+        <file>qml/ReactScrollListView.qml</file>
+        <file>qml/ReactRedboxItem.qml</file>
+        <file>qml/ReactRawText.qml</file>
+        <file>qml/ReactText.qml</file>
+        <file>qml/ReactActivityIndicator.qml</file>
+        <file>images/spinner_medium.png</file>
+        <file>qml/ReactButton.qml</file>
+        <file>qml/ReactSlider.qml</file>
+        <file>qml/ReactTextInput.qml</file>
+        <file>js/utils.js</file>
+        <file>qml/ReactModal.qml</file>
+        <file>qml/ReactPicker.qml</file>
+        <file>qml/ReactTextInputArea.qml</file>
+        <file>qml/ReactTextInputField.qml</file>
+        <file>qml/ReactWebView.qml</file>
+        <file>qml/ReactQtWebKitWebView.qml</file>
+        <file>qml/ReactAlert.qml</file>
+        <file>qml/ReactSwitch.qml</file>
+    </qresource>
+</RCC>

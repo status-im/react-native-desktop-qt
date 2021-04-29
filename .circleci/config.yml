@@ -1,0 +1,70 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:xenial
+
+    working_directory: ~/repo
+
+    steps:
+      - run:
+          name: Install apt-get packages
+          command: |
+            apt-get update -qy
+            apt-get install -qy software-properties-common
+            add-apt-repository -y ppa:beineri/opt-qt-5.11.1-xenial
+            apt-get update -qy
+            apt-get install -qy --force-yes dbus xvfb curl cmake clang-format mesa-common-dev \
+                qt511base qt511graphicaleffects qt511quickcontrols2 qt511declarative qt511websockets qt511svg qt511webengine
+
+      - run:
+          name: Configure Qt environment
+          command: |
+            echo 'export PATH=/opt/qt511/bin/:$PATH' >> $BASH_ENV
+            echo 'export QTDIR=/opt/qt511' >> $BASH_ENV
+            echo 'export LD_LIBRARY_PATH=/opt/qt511/lib/x86_64-linux-gnu:/opt/qt511/lib:$LD_LIBRARY_PATH' >> $BASH_ENV
+            echo 'export PKG_CONFIG_PATH=/opt/qt511/lib/pkgconfig:$PKG_CONFIG_PATH' >> $BASH_ENV
+            echo '/opt/qt511/bin/qt511-env.sh' >> ~/.circlerc
+            echo 'export QTWEBENGINE_DISABLE_SANDBOX=1' >> $BASH_ENV
+
+      - checkout
+
+      - run:
+          name: Check C++ code for lint errors with clang-format
+          command: |
+            SOURCE_FILES=`find ./ReactQt/ -name \*.cpp -type f -or -name \*.h -type f`
+            for SOURCE_FILE in $SOURCE_FILES
+            do
+              export FORMATTING_ISSUE_COUNT=`clang-format -output-replacements-xml $SOURCE_FILE | grep offset | wc -l`
+              if [ "$FORMATTING_ISSUE_COUNT" -gt "0" ]; then
+                echo "Source file $SOURCE_FILE contains formatting issues. Please use clang-format tool to resolve found issues."
+                exit 1
+              fi
+            done
+
+      - run:
+          name: Install Node.js and NPM
+          command: |
+            curl -sL https://deb.nodesource.com/setup_8.x | bash -
+            apt-get install -y nodejs
+            npm i -g npm@6
+
+      - run: cmake -version && qmake -version && node -v && npm -v
+
+      - run:
+          name: Build react-native-desktop in Debug mode
+          command: |
+            mkdir build_debug
+            pushd build_debug
+            cmake -DCMAKE_BUILD_TYPE=Debug ..
+            make -j4
+            popd
+
+      - run:
+          name: Build react-native-desktop in Release mode
+          command: |
+            mkdir build
+            pushd build
+            cmake -DCMAKE_BUILD_TYPE=Release ..
+            make -j4
+            popd

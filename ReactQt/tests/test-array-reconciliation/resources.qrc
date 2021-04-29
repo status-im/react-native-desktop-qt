@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TestArrayReconciliation.qml</file>
+    </qresource>
+</RCC>

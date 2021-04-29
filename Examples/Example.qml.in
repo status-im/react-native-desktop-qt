@@ -1,0 +1,16 @@
+
+import QtQuick 2.7
+import React 0.1 as React
+
+Rectangle {
+  id: root
+  width: 640; height: 800;
+
+  React.RootView {
+    anchors.fill: parent
+
+    moduleName: "${EXAMPLE_NAME}App"
+    codeLocation: "http://localhost:8081/Examples/${EXAMPLE_NAME}/${EXAMPLE_NAME}App.bundle?platform=desktop-qt&dev=true"
+    externalModules: []
+  }
+}
